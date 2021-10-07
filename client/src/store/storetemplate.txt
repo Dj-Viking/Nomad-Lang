@@ -1,0 +1,35 @@
+import {
+  MyRootState,
+  RootCommitType,
+  RootDispatchType
+} from "@/types";
+import { ActionContext } from "vuex";
+
+const state = {
+  item: {},
+  items: [],
+};
+const mutations = {
+  ADD_ITEM(state: TodosState, payload: Todo): void {
+    if (typeof payload !== "object" || payload === null)
+      return console.error(
+        "payload must be a specific type of object but it was ",
+        payload
+      );
+    state.todos.unshift(payload);
+  },
+};
+const actions = {};
+const getters = {
+  todos(state: TodosState): Todo[] | [] {
+    return state.todos || [];
+  },
+};
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters,
+};

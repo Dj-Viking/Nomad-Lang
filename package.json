@@ -1,0 +1,27 @@
+{
+  "name": "vue3-typescript",
+  "version": "1.1.0",
+  "description": "",
+  "scripts": {
+    "tscheck": "cd client; npm run tscheck",
+    "client": "cd client; npm run serve",
+    "test": "cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test",
+    "server-compile": "cd server; npm run tsw",
+    "server-dev": "cd server; npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dj-Viking/vue3-typescript-bare-starter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dj-Viking/vue3-typescript-bare-starter/issues"
+  },
+  "homepage": "https://github.com/Dj-Viking/vue3-typescript-bare-starter#readme",
+  "dependencies": {
+    "concurrently": "^5.3.0",
+    "if-env": "^1.0.4"
+  }
+}

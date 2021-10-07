@@ -1,0 +1,7 @@
+node_modules
+.DS_Store
+cypress.env.json
+
+.nyc_output
+coverage
+tests/e2e/videos
