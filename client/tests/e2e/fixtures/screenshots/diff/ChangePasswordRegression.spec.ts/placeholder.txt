@@ -1,0 +1,3 @@
+something to keep this folder committed to the repository.
+
+this is only used for comparing a failed regression test to view the diff photo to see what was different between the base screenshot and the actual screenshot

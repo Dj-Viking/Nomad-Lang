@@ -83,6 +83,9 @@ describe("tries to make account with too short password", () => {
   it("types in some username", () => {
     cy.get("input[name=username]").should("have.length", 1).type("sldkjfkdjfd");
   });
+  it("types in some email", () => {
+    cy.get("input[name=email]").should("have.length", 1).type("alskdjfsadk");
+  });
   it("types password that is too short", () => {
     cy.get("input[name=password]").should("have.length", 1).type("sdf");
   });
@@ -203,7 +206,7 @@ describe("tests the register with valid inputs works, has success message, and n
 
 describe("should be able to login with those credentials that we just registered with", () => {
   it("goes to login page", () => {
-    cy.visit(LOCALHOST_URL + "login");
+    cy.visit(LOCALHOST_URL + "/login");
   });
   it("types in email", () => {
     cy.get("input[name=email-or-username]")
@@ -239,6 +242,6 @@ describe("should be able to login with those credentials that we just registered
 
   it("logs out", () => {
     cy.wait(1000);
-    cy.get("span.link").contains("Logout").click();
+    cy.get("a.link").contains("Logout").click();
   });
 });

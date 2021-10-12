@@ -13,6 +13,8 @@ import { CardResolver } from "./resolvers/card"
 import { GraphQLSchema } from "graphql";
 import { authMiddleware } from "./utils/authMiddleWare";
 import { ColorLog } from "./__tests__/utils/helpers";
+// import { sendEmail } from "./utils/sendEmail";
+// import { MySendEmailOptions } from "./types";
 
 const logger = ColorLog;
 
@@ -20,15 +22,24 @@ const {
   DB_NAME,
   DB_USER,
   DB_PASSWORD,
-  CORS_ALLOWED
+  CORS_ALLOWED,
+  // NODEMAILER_EMAIL_TO
 } = process.env;
 
 (async function(): Promise<void> {
   console.log("hello world");
+  // const testEmailArgs: MySendEmailOptions = {
+  //   fromHeader: "Server Start Test",
+  //   subject: "this is a test", 
+  //   mailTo: NODEMAILER_EMAIL_TO as string,
+  //   mailHtml: "<h1>heres a test</h1>"
+  // }
+  
+  // await sendEmail(testEmailArgs);
   //connect to db
   await createConnection({
     type: "postgres",
-    url: undefined,
+    url: IS_PROD ? "some given URL I dont have it yet" : undefined,
     database: !IS_PROD ? DB_NAME : undefined,
     password: !IS_PROD ? DB_PASSWORD : undefined,
     username: !IS_PROD ? DB_USER : undefined,

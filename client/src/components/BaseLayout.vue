@@ -1,30 +1,47 @@
 <template>
   <div class="container is-widescreen">
     <nav style="margin: 0 auto">
-      <div v-if="!isHome">
-        <router-link class="link" :to="'/'">Home</router-link>
-      </div>
-
-      <div v-if="isHome">
-        <div v-if="isLoggedIn">
-          <span
-            style="cursor: pointer"
-            class="link"
-            @click.prevent="
-              ($event) => {
-                readEvent($event);
-                logout();
-              }
-            "
-            >Logout</span
+      <Transition type="transition" name="fade">
+        <div v-if="!isHome">
+          <router-link style="text-decoration: none" class="link" :to="'/'"
+            >Home</router-link
           >
         </div>
-        <div v-if="!isLoggedIn">
-          <router-link class="link" :to="'/login'">Login</router-link>
-          <span class="divider">|</span>
-          <router-link class="link" :to="'/signup'">Signup</router-link>
+        <div v-else>
+          <Transition type="transition" name="fade">
+            <div v-if="isLoggedIn">
+              <a
+                style="cursor: pointer"
+                class="link"
+                @click.prevent="
+                  ($event) => {
+                    readEvent($event);
+                    logout();
+                  }
+                "
+                >Logout</a
+              >
+            </div>
+            <div v-else>
+              <div class="nav-animate-in">
+                <router-link
+                  style="text-decoration: none"
+                  class="link"
+                  :to="'/login'"
+                  >Login</router-link
+                >
+                <span class="divider">|</span>
+                <router-link
+                  style="text-decoration: none"
+                  class="link"
+                  :to="'/signup'"
+                  >Signup</router-link
+                >
+              </div>
+            </div>
+          </Transition>
         </div>
-      </div>
+      </Transition>
     </nav>
     <slot />
   </div>
@@ -36,7 +53,7 @@ import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { mapState } from "vuex";
 import {
-  Card,
+  ICard,
   MeQueryResponse,
   // MyRootState,
   RootCommitType,
@@ -113,7 +130,7 @@ export default defineComponent({
               createdAt: "right now",
               updatedAt: "just now",
               creatorId: 0,
-            } as Card,
+            } as ICard,
           ],
           { root: true }
         );
@@ -158,5 +175,20 @@ export default defineComponent({
 .link {
   color: green;
   font-size: 40px;
+}
+
+@keyframes animatein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.nav-animate-in {
+  animation-name: animatein;
+  animation-duration: 4s;
+  animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 </style>

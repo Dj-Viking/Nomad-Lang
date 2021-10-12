@@ -8,7 +8,7 @@ import {
   UPDATED_CARD_TEXT,
   HOST,
 } from "../constants";
-import { RegisterResponse, GetUserCardsResponse, AddCardResponse, Card, ClearUserCardsResponse, EditCardByIdResponse, EditCardPayload, AddCardPayload } from "../types";
+import { RegisterResponse, GetUserCardsResponse, AddCardResponse, ICard, ClearUserCardsResponse, EditCardByIdResponse, EditCardPayload, AddCardPayload } from "../types";
 import { ColorLog, logJson, createAddCardMutation, createClearUserCardsMutation, createEditCardMutation, createGetUserCardsQuery } from "./utils/helpers";
 
 const { 
@@ -132,7 +132,7 @@ describe("Tests the card resolvers adding, reading, editing, and deleting", () =
     console.log("\x1b[32m", "res add card", res.addCard, "\x1b[00m");
     console.log("\x1b[33m", "creatorId at this point", newUserId, "\x1b[00m");
     //find the Cards that have the creator's id
-    const foundCard = res.addCard.cards?.filter((card: Card) => card.creatorId === newUserId)[0];
+    const foundCard = res.addCard.cards?.filter((card: ICard) => card.creatorId === newUserId)[0];
     console.log("did i find the card i just made?", foundCard);
   
     expect(typeof foundCard?.id).toBe("number");
@@ -293,7 +293,7 @@ describe("checks editing a card", () => {
       { "authorization": `Bearer ${newToken}`}
     );
     logJson(res.editCardById.cards);
-    const foundEditedCardIndex = res.editCardById.cards?.findIndex((card: Card) => card.id === newCardId);
+    const foundEditedCardIndex = res.editCardById.cards?.findIndex((card: ICard) => card.id === newCardId);
     expect(res.editCardById.cards![foundEditedCardIndex as number].frontSideText).toEqual(UPDATED_CARD_TEXT);
   });
 });

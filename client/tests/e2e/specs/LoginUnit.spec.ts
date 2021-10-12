@@ -60,7 +60,7 @@ describe("tests the login with correct credentials works, has success message, a
     });
 
     it("logs out", () => {
-      cy.get("span.link").contains("Logout").click();
+      cy.get("a.link").contains("Logout").click();
     });
   });
 
@@ -99,7 +99,7 @@ describe("tests the login with correct credentials works, has success message, a
     });
 
     it("logs out", () => {
-      cy.get("span.link").contains("Logout").click();
+      cy.get("a.link").contains("Logout").click();
     });
   });
 });

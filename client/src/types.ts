@@ -1,4 +1,4 @@
-export interface Card {
+export interface ICard {
   __typename?: "Card";
   // eslint-disable-next-line
   id?: number | string | undefined | null | any;
@@ -18,12 +18,12 @@ export interface Card {
 export interface EditCardResponse {
   editCardById: {
     errors: MyErrorResponse;
-    cards?: null | Card[];
+    cards?: null | ICard[];
   };
 }
 export interface Modal {
   context: {
-    card?: Card | null;
+    card: ICard | Record<string, never>;
   };
   activeClass: boolean;
   title: string;
@@ -52,7 +52,7 @@ export interface EditCardCommitPayload {
   color?: string;
 }
 export interface EditCardModalContext {
-  card: Card;
+  card: ICard;
 }
 export interface ModalState {
   modal: Modal;
@@ -89,17 +89,24 @@ export interface MeQueryResponse extends Object {
   me: {
     user: UserEntityBase;
     errors: MyErrorResponse;
-    cards: Card[];
+    cards: ICard[];
   };
 }
 export interface GetUserCardsResponse {
   getUserCards: {
-    cards: Card[];
+    cards: ICard[];
     errors: MyErrorResponse;
+  };
+}
+
+export interface LoadingState {
+  loading: {
+    isLoading: boolean;
   };
 }
 export interface MyRootState {
   user: UserState;
+  loading: LoadingState;
   cards: CardsState;
   modal: ModalState;
   notification: NotificationState;
@@ -109,7 +116,7 @@ export interface UserState {
     username: string | null;
     email: string | null;
     token?: string | null | undefined;
-    cards: Card[];
+    cards: ICard[];
     loggedIn: boolean;
     __typename?: string;
     id?: number;
@@ -122,7 +129,7 @@ export interface SetUserCommitPayload {
   username: string | null;
   email: string | null;
   token?: string | null | undefined;
-  cards: Card[];
+  cards: ICard[];
   loggedIn: boolean;
   __typename?: string;
   id?: number;
@@ -140,7 +147,7 @@ export interface UserEntityBase {
   updatedAt: number;
 }
 export interface CardsState {
-  cards: Array<Card>;
+  cards: Array<ICard>;
 }
 
 export type RootDispatchType =
@@ -164,7 +171,7 @@ export interface AddCardPayload {
 }
 export interface AddCardResponse {
   addCard: {
-    cards: Card[];
+    cards: ICard[];
     errors: MyErrorResponse;
   };
 }
@@ -181,7 +188,8 @@ export type RootCommitType =
   | "modal/SET_MODAL_ACTIVE"
   | "modal/SET_MODAL_CONTEXT"
   | "notification/OPEN_NOTIFICATION"
-  | "notification/CLOSE_NOTIFICATION";
+  | "notification/CLOSE_NOTIFICATION"
+  | "loading/SET_LOADING";
 
 export interface CustomError {
   field: string;
@@ -219,5 +227,21 @@ export interface OpenNotificationPayload {
     message: string;
     toastDown: true;
     toastUp: false;
+  };
+}
+
+export interface ForgotPassResponse {
+  forgotPassword: {
+    done: boolean | null;
+    errors?: MyErrorResponse | null;
+  };
+}
+
+export interface ChangePasswordResponse {
+  changePassword: {
+    done: boolean | null;
+    token: string | null;
+    cards: ICard[];
+    errors?: MyErrorResponse | null;
   };
 }

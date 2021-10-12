@@ -9,6 +9,10 @@ const {
 
 export const COOKIE_NAME: string = "sid";
 export const IS_PROD: boolean | undefined = process.env.NODE_ENV === "production";
+
+export const APP_DOMAIN_PREFIX: string | undefined = IS_PROD
+? "https://not_made_yet"
+: "http://localhost:8080";
 export const FORGET_PASS_PREFIX: string = "forget-password:";
 export const HOST: string | undefined = TEST_HOST;
 export const REGISTER_EMAIL: string | undefined = TEST_EMAIL;
@@ -52,24 +56,3 @@ mutation register {
   }
 }
 `;
-/**
- * string literal of the graphql mutation for the login action
- */
-export const LOGIN_MUTATION: string = `
-mutation login {
-  login(options: {
-    email: "${REGISTER_EMAIL}",
-    password: "${REGISTER_PASSWORD}",
-  }){
-    errors {
-      field
-      message
-    }
-    user {
-      token
-      id
-      username
-      email
-    }
-  }
-}`;

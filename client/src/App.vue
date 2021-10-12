@@ -18,11 +18,13 @@ import Modal from "./components/Modal.vue";
 import Notification from "./components/Notification.vue";
 import store from "./store";
 import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
+// import Spinner from "./components/Spinner.vue";
 export default defineComponent({
   name: "App",
   components: {
     Modal,
     Notification,
+    // Spinner,
     // Modalv2,
   },
   computed: {

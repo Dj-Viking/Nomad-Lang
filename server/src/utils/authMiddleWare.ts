@@ -1,4 +1,4 @@
-import { ANSI_ESCAPES, JwtData, MyContext } from "../types";
+import { MyJwtData, MyContext } from "../types";
 import jwt from "jsonwebtoken";
 require('dotenv').config();
 
@@ -20,9 +20,10 @@ export function authMiddleware(
       { maxAge: EXPIRATION }, //maxage deprecated but still accepted...
       (error, decoded) => {
         if (error?.message.includes("malformed")) throw new Error(error.message);
-        if (error?.message.includes("expired")) throw new Error(error.message)
+        if (error?.message.includes("expired")) throw new Error(error.message);
+        if (error?.message.includes("invalid")) throw new Error(error.message);
         if (decoded) {
-          context.req.user = decoded as JwtData;
+          context.req.user = decoded as MyJwtData;
           // const oldDecoded = decodeToken(token);
           // console.log("comparing old decoded token", oldDecoded);
           // console.log("context user as decoded token", context.req.user);
@@ -58,24 +59,24 @@ export function authMiddleware(
     }
 
     verifyAsync(token).then((decoded) => {
-      context.req.user = <JwtData>decoded;
+      context.req.user = <MyJwtData>decoded;
       // console.log("context user requesting information", context.req.user, Date.now());
       
       //this error will throw in the console....instead of the catch block of the authmiddleware
-    }).catch((err: Error) => {
+    }).catch((_err: Error) => {
       context.req.user = null;
       //cant use logger here because i need the whole stack in the error logs
-      console.error(
+      // console.error(
         
-        `${ANSI_ESCAPES.danger}`, 
-        `ERROR in verifying the token async function ${err.stack}`, 
-        `${ANSI_ESCAPES.reset}`
-      );
+      //   `${ANSI_ESCAPES.danger}`, 
+      //   `ERROR in verifying the token async function ${err.stack}`, 
+      //   `${ANSI_ESCAPES.reset}`
+      // );
     });
     
     return context;
   } catch (error) {
-    console.log("got an error", error);
+    console.log("got an error in the auth middleware", error);
     return context;
   }
 

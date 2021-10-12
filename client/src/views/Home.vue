@@ -1,15 +1,14 @@
 <template>
-  <BaseLayout :isHome="true">
+  <base-layout :isHome="true">
     <div>
       <CardList />
     </div>
-  </BaseLayout>
+  </base-layout>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import CardList from "../components/CardList.vue"; // @ is an alias to /src but stopped working for some reason UGH
-import BaseLayout from "../components/BaseLayout.vue";
 // import Modal from "@/components/Modal.vue";
 import store from "../store";
 import { RootCommitType } from "../types";
@@ -18,7 +17,6 @@ export default defineComponent({
   name: "Home",
   components: {
     CardList,
-    BaseLayout,
     // Modal,
   },
   methods: {

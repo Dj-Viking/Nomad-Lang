@@ -2,7 +2,7 @@ import {
   MyRootState,
   CardsState,
   UserState,
-  Card,
+  ICard,
   RootDispatchType,
   RootCommitType,
   SetUserCommitPayload,
@@ -14,7 +14,7 @@ const state: UserState = {
     username: "",
     email: "",
     token: "",
-    cards: [] as Card[],
+    cards: [] as ICard[],
     loggedIn: false,
   },
 };
@@ -34,7 +34,7 @@ const mutations = {
       ...payload,
     } as UserState["user"];
   },
-  SET_USER_TODOS(state: UserState, payload: Card[]): void {
+  SET_USER_TODOS(state: UserState, payload: ICard[]): void {
     console.log("setting user todos payload!!!", payload);
     state.user.cards = payload;
   },
@@ -56,7 +56,7 @@ const mutations = {
 const actions = {
   async setUserCards(
     { commit }: ActionContext<UserState, MyRootState>,
-    payload: Card[]
+    payload: ICard[]
   ): Promise<void> {
     try {
       commit("user/SET_USER_CARDS" as RootCommitType, payload, { root: true });

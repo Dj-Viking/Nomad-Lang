@@ -1,3 +1,44 @@
+export function createForgotPasswordMutation(): string {
+  return `
+    mutation forgotPassword($email: String!) {
+      forgotPassword(email: $email){
+        done
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+}
+
+export function createChangePasswordMutation(): string {
+  return `
+    mutation changePassword($token: String!, $password: String!){
+      changePassword(token: $token, password: $password){
+        done
+        cards {
+          id
+          creatorId
+          createdAt
+          updatedAt
+          frontSideText
+          frontSidePicture
+          frontSideLanguage
+          backSidePicture
+          backSideLanguage
+          backSideText
+        }
+        token
+        errors {
+          field
+          message
+        }
+      }
+    } 
+  `;
+}
+
 export function createRegisterMutation(): string {
   return `
     mutation register($options: RegisterInput!) {

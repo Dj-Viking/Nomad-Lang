@@ -19,6 +19,15 @@ cd diff; mkdir $DIR;
 echo 'complete';
 echo 'printing new directories'
 cd ..;
+echo 'actuals'
+echo '--------------------'
 cd actuals; ls; cd ..;
+echo '--------------------'
+echo 'base'
+echo '--------------------'
 cd base; ls; cd ..;
+echo '--------------------'
+echo 'diff'
+echo '--------------------'
 cd diff; ls; 
+echo '--------------------'

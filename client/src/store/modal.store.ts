@@ -6,7 +6,7 @@ import { ModalState } from "../../src/types";
 const state: ModalState = {
   modal: {
     context: {
-      card: null,
+      card: {},
     },
     activeClass: false, //inactive by default
     title: "initiall title",
@@ -27,7 +27,7 @@ const mutations = {
     state.modal.context.card = payload;
   },
   CLEAR_MODAL_CONTEXT(state: ModalState): void {
-    state.modal.context.card = null;
+    state.modal.context.card = {};
   },
 };
 const actions = {};

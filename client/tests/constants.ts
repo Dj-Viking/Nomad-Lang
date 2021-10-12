@@ -1,4 +1,4 @@
-import { Card } from "@/types";
+import { ICard } from "@/types";
 import {
   TextColor,
   BackgroundColor,
@@ -75,7 +75,7 @@ export {
 /**
  * localhost domain for the vue app
  */
-export const LOCALHOST_URL = "http://localhost:8080/";
+export const LOCALHOST_URL = "http://localhost:8080";
 
 /**
  * path to actuals when running headless cypress
@@ -121,10 +121,38 @@ export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS =
 export const ACTUALS_SIGNUPUNITSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/SignupUnit.spec.ts";
 /**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/SignupRegression.spec.ts";
+/**
  * path to actuals when running headless electron cypress
  */
 export const ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS =
   "./tests/e2e/fixtures/screenshots/actuals/SignupUnit.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/ForgotPasswordRegression.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/ForgotPasswordRegression.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_CHANGE_PASSWORD_REGRESSION_SPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/ChangePasswordRegression.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_CHANGE_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/ChangePasswordRegression.spec.ts";
 /**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
@@ -136,12 +164,6 @@ export const ACTUALS_CARDUNITSPEC_PATH =
  */
 export const ACTUALS_CARDUNITSPEC_PATH_HEADLESS =
   "./tests/e2e/fixtures/screenshots/actuals/CardUnit.spec.ts";
-/**
- * path to the actuals screenshots folder
- * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
- */
-export const ACTUALS_SIGNUPREGRESSIONSPEC_PATH =
-  "../client/tests/e2e/fixtures/screenshots/actuals/SignupRegression.spec.ts";
 /**
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
@@ -183,7 +205,7 @@ export const PATH_TO_BASE_FROM_TASK_FUNCTION =
   "./tests/e2e/fixtures/screenshots/base/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
 
 /**
- * path to the actual home page screenshot fixture
+ * path to the base home page screenshot fixture
  */
 export const BASE_HOME_FULL_PAGE_FIXTURE =
   "/screenshots/base/HomeRegression.spec.ts/home-page-regression -- screenshots-the-entire-page";
@@ -193,6 +215,29 @@ export const BASE_HOME_FULL_PAGE_FIXTURE =
  */
 export const ACTUAL_HOME_FULL_PAGE_FIXTURE =
   "/screenshots/actuals/HomeRegression.spec.ts/home-page-regression -- screenshots-the-entire-page";
+
+/**
+ * path to the base forgot pass page screenshot fixture
+ */
+export const BASE_FORGOTPASS_FULL_PAGE_FIXTURE =
+  "/screenshots/base/ForgotPasswordRegression.spec.ts/forgotpass-page-regression -- screenshots-the-entire-page";
+
+/**
+ * path to the actual forgot pass page screenshot fixture
+ */
+export const ACTUAL_FORGOTPASS_FULL_PAGE_FIXTURE =
+  "/screenshots/actuals/ForgotPasswordRegression.spec.ts/forgotpass-page-regression -- screenshots-the-entire-page";
+/**
+ * path to the base change pass page screenshot fixture
+ */
+export const BASE_CHANGEPASS_FULL_PAGE_FIXTURE =
+  "/screenshots/base/ChangePasswordRegression.spec.ts/changepass-page-regression -- screenshots-the-entire-page";
+
+/**
+ * path to the actual change pass page screenshot fixture
+ */
+export const ACTUAL_CHANGEPASS_FULL_PAGE_FIXTURE =
+  "/screenshots/actuals/ChangePasswordRegression.spec.ts/changepass-page-regression -- screenshots-the-entire-page";
 
 /**
  * path to the actual login page screenshot fixture
@@ -227,6 +272,16 @@ export const LOGIN_SCREENSHOT_FILE_NAME =
  */
 export const HOME_SCREENSHOT_FILE_NAME =
   "home-page-regression -- screenshots-the-entire-page.png";
+/**
+ * the actual file name including the extension
+ */
+export const FORGOT_PASSWORD_SCREENSHOT_FILE_NAME =
+  "forgotpass-page-regression -- screenshots-the-entire-page.png";
+/**
+ * the actual file name including the extension
+ */
+export const CHANGE_PASSWORD_SCREENSHOT_FILE_NAME =
+  "changepass-page-regression -- screenshots-the-entire-page.png";
 
 /**
  * the actual file name including the extension
@@ -253,27 +308,27 @@ export const backgroundColors: Array<BackgroundColor> = [
 ];
 
 export const lightBackgroundNames: Array<LightBackGroundName> = [
-  "light-danger-text",
-  "light-success-text",
-  "light-warning-text",
-  "light-info-text",
-  "light-link-text",
-  "light-primary-text",
-  "white-text",
-];
-
-export const lightTextNames: Array<LightTextName> = [
   "light-danger-back",
   "light-success-back",
   "light-warning-back",
   "light-info-back",
   "light-link-back",
   "light-primary-back",
+  "light-white-back",
+];
+
+export const lightTextNames: Array<LightTextName> = [
+  "light-danger",
+  "light-success",
+  "light-warning",
+  "light-info",
+  "light-link",
+  "light-primary",
 ];
 
 // export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";
 
-export const EXPECTED_ADD_LOCAL_CARD_OBJECT: Card = {
+export const EXPECTED_ADD_LOCAL_CARD_OBJECT: ICard = {
   id: 0,
   creatorId: 0,
   frontSideText: "front side text",
@@ -287,8 +342,8 @@ export const EXPECTED_ADD_LOCAL_CARD_OBJECT: Card = {
 EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
   EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;
 
-export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: Card = {
-  frontSideText: "some text we expect to be here",
+export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: ICard = {
+  frontSideText: "edited text we expect to be here",
   frontSideLanguage: "RU",
   frontSidePicture: "dkfdkjf",
   backSideText: "backside text",

@@ -1,4 +1,3 @@
-import { Card } from "@/types";
 import {
   LOCALHOST_URL,
   REGISTER_USERNAME,
@@ -90,37 +89,20 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     cy.wait(1000);
     //get the container of the cardlist and traverse down to the card that got added below the default one
     // cy.get("div.some-unique-class").children().eq(1).children().eq(1);
-    cy.get("pre[name=cardInfo]")
-      .first()
-      .then((element) => {
-        console.log("element text of the new added card", element.text());
-        //get the createdAt and updatedAt values which are numbers on client side
-        const createdAtActualVal = Number(
-          element
-            .text()
-            .split(",")
-            .filter((item) => /createdAt/g.test(item))[0]
-            .split(" ")[3]
-        );
-        console.log("created at value", createdAtActualVal);
-        EXPECTED_ADD_LOCAL_CARD_OBJECT.createdAt = createdAtActualVal;
-        const updatedAtActualVal = element
-          .text()
-          .split(",")
-          .filter((item) => /updatedAt/g.test(item))[0]
-          .split(" ")[3];
-        console.log(
-          "updated at actual value",
-          updatedAtActualVal.replace("\n}", "")
-        );
-        EXPECTED_ADD_LOCAL_CARD_OBJECT.updatedAt = Number(
-          updatedAtActualVal.replace("\n}", "")
-        );
-        const parsedPre = JSON.parse(element.text());
-        expect(EXPECTED_ADD_LOCAL_CARD_OBJECT).to.deep.equal(parsedPre);
-      });
+
+    // get the card container and traverse to get the text content that was input
+    cy.get("div.notification.is-light").should("have.length", 1);
+
+    cy.get("p.title.is-4").then((element) => {
+      const textEntered = element.text().split(":")[1].trim();
+      console.log(textEntered);
+      expect(textEntered).to.be.equal(
+        EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText
+      );
+    });
+
     //make an edit modal first to have input elements to select and type in...cant seem to find a use to test the window prompt in cypress
-    it("checks that we can edit the card", () => {
+    it("checks that the edit button exists", () => {
       // clicks edit button
       cy.get("div.some-unique-class")
         .children()
@@ -132,22 +114,11 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     });
   });
 
-  //checks that we actually edited the card
-
   it("checks we can delete a card", () => {
     //deletes and asserts that the card with the edited text is gone
 
     //delete button click
-    cy.get("div.some-unique-class")
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .contains("delete card")
-      .click();
-    // cy.get("div.some-unique-class").children().eq(1).children();
+    cy.get("button.button.is-danger.mx-2").click(); // cy.get("div.some-unique-class").children().eq(1).children();
   });
 
   it("adds a couple more cards and then hits clear button", () => {
@@ -175,11 +146,7 @@ describe("checks all CRUD operations of interactions with cards as not logged in
   });
   it("checks that the cards are gone after clear button click", () => {
     cy.get("button.is-info").contains("clear cards").click();
-    cy.get("div.some-unique-class")
-      .children()
-      .eq(1)
-      .children()
-      .should("have.length", 1);
+    cy.get("div.some-unique-class").children().should("have.length", 2);
   });
 });
 
@@ -266,20 +233,17 @@ describe("registers a new user that will crud the cards", () => {
 
     //wait a bit for it to appear in the DOM
     cy.wait(400);
-    cy.get("div.some-unique-class").children().eq(1).children();
+    cy.get("div.some-unique-class")
+      .children()
+      .eq(2)
+      .children()
+      .eq(1)
+      .children();
 
     //edit standalone operations
 
     //click the edit card button on a card
-    cy.get("div.some-unique-class")
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .children()
-      .eq(2)
-      .contains("Edit Card")
-      .click();
+    cy.get("button.button.is-primary.mx-2").click();
 
     cy.get("input[name=modalEditFsText]").type(
       EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
@@ -303,65 +267,16 @@ describe("registers a new user that will crud the cards", () => {
     cy.get("button").contains("SUBMIT EDIT CARD").click();
     cy.wait(500);
 
-    cy.get("pre[name=cardInfo]").then((element) => {
-      console.log("heres the element we got", element);
-      const textItems = element.text().split(",");
-      console.log("text items split on comma character", textItems);
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.id = Number(
-        textItems
-          //get the text item that matches with the id prop
-          .filter((item) => /id/g.test(item))[0]
-          // only get the number after splitting on the space
-          .split(" ")[3]
+    // just check that we got the card with the edited text on it
+    cy.get("p.title.is-4").then((element) => {
+      const textEntered = element.text().split(":")[1].trim();
+      console.log(textEntered);
+      expect(textEntered).to.be.equal(
+        EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
       );
     });
-    cy.get("pre[name=cardInfo]").then((element) => {
-      console.log("heres the element we got", element);
-      const textItems = element.text().split(",");
-      console.log("text items split on comma character", textItems);
-      //get the number that is a part of the string and
-      // cast it to a number
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.creatorId = Number(
-        textItems
-          //get the text item that matches with the creatorId prop
-          .filter((item) => /creatorId/g.test(item))[0]
-          // only get the number after splitting on the space
-          .split(" ")[3]
-      );
-    });
-    cy.get("pre[name=cardInfo]").then((element) => {
-      console.log(
-        "heres the element we got lets parse it for deep equal comparison later",
-        element
-      );
-      const tmpParsed: Card = JSON.parse(element.text());
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.updatedAt = tmpParsed.updatedAt;
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.createdAt = tmpParsed.createdAt;
-      console.log("parsed json text element", JSON.parse(element.text()));
-    });
-    cy.get("pre[name=cardInfo]").then((element) => {
-      console.log("heres the element we got", element);
-      console.log("element text we got from the pre tag", element.text());
-      console.log("expected card object now", EXPECTED_EDIT_LOCAL_CARD_OBJECT);
-    });
-
-    ///JSON parse the pre
-    cy.get("pre[name=cardInfo]").then((element) => {
-      const parsedPre = JSON.parse(element.text());
-      console.log("parsed pre element", parsedPre);
-      expect(EXPECTED_EDIT_LOCAL_CARD_OBJECT).to.deep.equal(parsedPre);
-    });
-
     //   //delete button click
-    cy.get("div.some-unique-class")
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .contains("delete card")
-      .click();
+    cy.get("button.button.is-danger.mx-2").click();
     //checks it was deleted
     cy.get("div.some-unique-class")
       .children()
@@ -400,15 +315,7 @@ describe("registers a new user that will crud the cards", () => {
     //check that the card can be deleted
     //   //delete button click
     cy.wait(500);
-    cy.get("div.some-unique-class")
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .children()
-      .eq(1)
-      .contains("delete card")
-      .click();
+    cy.get("button.button.is-danger.mx-2").click();
     //checks it was deleted
     cy.get("div.some-unique-class")
       .children()
@@ -467,6 +374,6 @@ describe("registers a new user that will crud the cards", () => {
 
 describe("logs out", () => {
   it("clicks logout", () => {
-    cy.get("span.link").contains("Logout").click();
+    cy.get("a.link").contains("Logout").click();
   });
 });

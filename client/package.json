@@ -1,6 +1,6 @@
 {
-  "name": "vue3-typescript",
-  "version": "0.1.0",
+  "name": "app-lang",
+  "version": "1.3.0",
   "private": true,
   "scripts": {
     "tscheck": "vue-ts-checker",
@@ -33,6 +33,8 @@
     "apollo-link": "^1.2.14",
     "apollo-link-context": "^1.0.20",
     "apollo-link-http": "^1.5.17",
+    "bootstrap": "^5.1.3",
+    "bootstrap-vue-3": "^0.0.4",
     "bulma": "^0.9.3",
     "core-js": "^3.6.5",
     "graphql": "^15.5.3",

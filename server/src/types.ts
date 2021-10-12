@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 // new values on the req.session object
 export type MyContext = {
     req: Request & {
-        user: JwtData | null;
+        user: MyJwtData | null;
         // session: Session & Partial<SessionData> & {
         //     userId?: number;
         // } & {
@@ -25,7 +25,7 @@ export type MyContext = {
  * @example
  * console.log(`${red || "\x1b[31m"}`, "red text in the log", `${reset || "\x1b[00m"}`)
  */
- export enum ANSI_ESCAPES {
+export enum ANSI_ESCAPES {
     danger = "\x1b[31m",
     success = "\x1b[32m",
     info = "\x1b[36m",
@@ -37,7 +37,7 @@ export type MyContext = {
     info_back = "\x1b[44m",
     link_back = "\x1b[45m",
     reset = "\x1b[00m",
-  }
+}
 export interface RegisterResponse {
     register: {
         errors: MyErrorResponse
@@ -74,11 +74,13 @@ export interface LogoutResponse {
     };
 }
 
-export type JwtData = IJwtData;
+export type MyJwtData = IJwtData;
 
 export interface IJwtData extends jwt.JwtPayload {
     username: string;
     email: string;
+    uuid?: string;
+    resetEmail?: string;
     iat?: number;
     exp?: number;
 }
@@ -91,19 +93,19 @@ export type MyErrorResponse = CustomError[];
 
 export interface AddCardResponse {
     addCard: {
-        cards: null | Card[]
+        cards: null | ICard[]
         errors: MyErrorResponse
     }
 }
 
 export interface GetUserCardsResponse {
     getUserCards: {
-        cards?: Card[];
+        cards?: ICard[];
         errors: MyErrorResponse
     }
 }
 
-export interface Card {
+export interface ICard {
     id: number,
     frontSideText: string;
     frontSideLanguage: string;
@@ -127,7 +129,7 @@ export interface ClearUserCardsResponse {
 export interface EditCardByIdResponse {
     editCardById: {
         errors: MyErrorResponse
-        cards?: null | Card[]
+        cards?: null | ICard[]
     }
 }
 
@@ -165,12 +167,40 @@ export interface UserEntityBase {
 export interface MeQueryResponse {
     me: {
         user: {
-          token: string;
-          username: string;
-          email: string;
+            token: string;
+            username: string;
+            email: string;
         };
         token: string;
-        cards: Array<Card>;
+        cards: Array<ICard>;
         errors: MyErrorResponse;
-      };
+    };
+}
+
+/**
+ *  @example
+ * const testEmailArgs: MySendEmailOptions = {
+     fromHeader: "Server Start Test",
+     subject: "this is a test", 
+     mailTo: NODEMAILER_EMAIL_TO as string,
+     mailHtml: "<h1>heres a test</h1>"
+   }
+ */
+export interface MySendEmailOptions {
+    mailTo: string;
+    mailHtml: string;
+    fromHeader?: string;
+    subject?: string;
+}
+
+export interface SignResetPasswordTokenArgs {
+    resetEmail: string;
+    uuid: string;
+    exp: string;
+}
+
+export interface SignLoginRegisterMeTokenArgs {
+    username: string;
+    email: string;
+    uuid?: string;
 }

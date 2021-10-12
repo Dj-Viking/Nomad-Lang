@@ -13,7 +13,7 @@ import {
   Int,
   InputType
 } from 'type-graphql';
-import { getConnection } from 'typeorm';
+import { DeleteResult, getConnection } from 'typeorm';
 import { ANSI_ESCAPES, MyContext } from '../types';
 import { ErrorResponse } from '../utils/ErrorResponse';
 
@@ -220,7 +220,7 @@ export class CardResolver {
     }
 
     try {
-      const result = await Card.delete(id);
+      const result = await Card.delete<Card>(id);
 
       console.log("delete result", result);
       //returns { raw: [], affected: 1 } affected 1 if the operation affected an entity
@@ -265,7 +265,7 @@ export class CardResolver {
       const deletePromises = cardsToDelete.map(async (card: Card) => {
         return Card.delete(card.id);
       });
-      await Promise.all(deletePromises);
+      await Promise.all<DeleteResult>(deletePromises);
       return {
         done: true
       }
@@ -284,8 +284,6 @@ export class CardResolver {
 
     console.log("options input on add card", options)
 
-    // TODO abstract these checks to a middlware ... learn that first
-    console.log("checking context user", req.user);
     if (!req.user) {
       return new ErrorResponse("unauthenticated", "401 user not authenticated");
     }

@@ -2,7 +2,7 @@ import {
   MyRootState,
   CardsState,
   UserState,
-  Card,
+  ICard,
   RootCommitType,
   EditCardCommitPayload,
 } from "@/types";
@@ -26,7 +26,7 @@ const state: CardsState = {
   }),*/,
 };
 const mutations = {
-  SET_CARDS(state: CardsState, payload: Card[]): void {
+  SET_CARDS(state: CardsState, payload: ICard[]): void {
     if (typeof payload !== "object" || payload === null)
       return console.error(
         "payload must be a specific type of object but it was ",
@@ -34,7 +34,7 @@ const mutations = {
       );
     state.cards = payload;
   },
-  ADD_CARD(state: CardsState, payload: Card): void {
+  ADD_CARD(state: CardsState, payload: ICard): void {
     if (typeof payload !== "object" || payload === null)
       return console.error(
         "payload must be a specific type of object but it was ",
@@ -102,7 +102,7 @@ const mutations = {
 const actions = {
   async addCard(
     { commit }: ActionContext<UserState, MyRootState>,
-    payload: Card
+    payload: ICard
   ): Promise<void | boolean> {
     if (typeof payload !== "object" || payload === null)
       return console.error(
@@ -155,7 +155,7 @@ const actions = {
   },
 };
 const getters = {
-  todos(state: CardsState): Card[] | [] {
+  todos(state: CardsState): ICard[] | [] {
     return state.cards || [];
   },
 };

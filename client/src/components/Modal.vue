@@ -69,6 +69,7 @@
                 name="modalEditFsText"
                 type="text"
                 class="input"
+                :placeholder="modalContext.card.frontSideText"
                 v-model="frontSideTextInput"
               />
             </div>
@@ -87,6 +88,7 @@
                 name="modalEditFsTextLanguage"
                 type="text"
                 class="input"
+                :placeholder="modalContext.card.frontSideLanguage"
                 v-model="frontSideLanguageInput"
               />
             </div>
@@ -105,6 +107,7 @@
                 name="modalEditFsTextPicture"
                 type="text"
                 class="input"
+                :placeholder="modalContext.card.frontSidePicture"
                 v-model="frontSidePictureInput"
               />
             </div>
@@ -119,6 +122,7 @@
                 name="modalEditBsText"
                 type="text"
                 class="input"
+                :placeholder="modalContext.card.backSideText"
                 v-model="backSideTextInput"
               />
             </div>
@@ -136,6 +140,7 @@
                 name="modalEditBsTextLanguage"
                 type="text"
                 class="input"
+                :placeholder="modalContext.card.backSideLanguage"
                 v-model="backSideLanguageInput"
               />
             </div>
@@ -153,6 +158,7 @@
                 name="modalEditBsTextPicture"
                 type="text"
                 class="input"
+                :placeholder="modalContext.card.backSidePicture"
                 v-model="backSidePictureInput"
               />
             </div>
@@ -352,7 +358,7 @@ import {
   RootCommitType,
   UserState,
   EditCardResponse,
-  Card,
+  ICard,
   AddCardResponse,
   EditCardCommitPayload,
 } from "@/types";
@@ -458,7 +464,7 @@ export default defineComponent({
           editResponse.value = result.data;
           store.commit(
             "cards/SET_CARDS" as RootCommitType,
-            result.data?.editCardById.cards as Card[],
+            result.data?.editCardById.cards as ICard[],
             { root: true }
           );
         }
@@ -487,7 +493,7 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
-    addLocalCard(event: Event, card: Card): void {
+    addLocalCard(event: Event, card: ICard): void {
       console.log("add local card event and args", event, card);
 
       store.commit("cards/ADD_CARD" as RootCommitType, card, { root: true });

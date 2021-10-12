@@ -78,6 +78,6 @@ describe("logs in to check if the logout link appears when logged in then logs o
 
   it("see logout link and clicks it", () => {
     cy.wait(1000);
-    cy.get("span.link").contains("Logout").click();
+    cy.get("a.link").contains("Logout").click();
   });
 });

@@ -30,7 +30,7 @@ describe("check user was added", () => {
     new logger("blue", "checking that the user got added to the DB").genLog();
     const connection = await connectDb();
     const users = await User.find({ where: { email: REGISTER_EMAIL }});
-    console.log('users set', logJson(users));
+    logJson(users);
     expect(users).toHaveLength(1);
     await connection.close();
   });

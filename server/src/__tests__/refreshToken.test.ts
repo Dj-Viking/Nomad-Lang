@@ -91,7 +91,7 @@ describe("Tests the user register", () => {
     console.log("errors length property should be undefined: ", res.me.errors?.length);
 
     //if the length of the actual array is 0 for some reason the length property is set to typeof "undefined"
-    expect(res.me.errors?.length).toBe(undefined);
+    expect(res.me.errors).toBeNull();
     expect(res.me.user.token).toBeTruthy();
 
     //check if old token is expired
@@ -124,7 +124,7 @@ describe("Tests the user register", () => {
     });
     //check that the token is different than the previous one
     new logger("blue",  `me query OLD TOKEN ${newToken}`, ).genLog();
-    new logger("blue", `me query user NEW TOKEN ${newerMe.me.user.token}`).genLog();
+    new logger("blue", `me query user NEW TOKEN ${newerMe.me.user && newerMe.me.user.token ? newerMe.me.user.token : "couldn't get a token"}`).genLog();
     new logger("blue", `me query outside user NEW TOKEN ${newerMe.me.token}`).genLog();
 
     expect(newerMe.me.token !== newToken).toBe(true);

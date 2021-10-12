@@ -13,10 +13,20 @@ import {
 } from "@apollo/client/core";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import auth from "./utils/AuthService";
-import "bulma";
+
 import Toast from "vue-toastification";
-// Import the CSS or use your own!
 import "vue-toastification/dist/index.css";
+// Import the CSS or use your own!
+
+// import BootstrapVue3 from "bootstrap-vue-3";
+
+// Optional, since every component import their Bootstrap funcionality
+// the following line is not necessary
+// import 'bootstrap'
+
+// import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
+import "bulma";
 
 //init apollo cache
 const cache = new InMemoryCache();
@@ -62,6 +72,7 @@ const app = createApp({
   .use(store)
   .use(router)
   .use(Toast);
+// .use(BootstrapVue3);
 
 app.component("base-layout", BaseLayout);
 

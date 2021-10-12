@@ -14,58 +14,31 @@
     >
       clear cards
     </button>
-    <div class="container is-widescreen" v-if="cards.length > 0">
-      <h3>Your Cards</h3>
-      <div class="notification is-light" v-for="(card, i) in cards" :key="i">
-        <div :style="`color: ${card.color}`">
-          <pre name="cardInfo">{{ card }}</pre>
-          <span style="color: blue">updated at: {{ card.updatedAt }}</span>
-        </div>
-        <button
-          class="button is-danger mx-2"
-          @click.prevent="
-            ($event) => {
-              //update vuex cards that are displayed
-              deleteCard($event, card?.id);
-              //only delete user's cards if they are logged in
-              if (isLoggedIn) {
-                submitDeleteCard({
-                  id: card.id,
-                });
-              }
-            }
-          "
-        >
-          delete card
-        </button>
-        <button
-          class="button is-primary mx-2"
-          style="color: black"
-          @click.prevent="
-            ($event) => {
-              openEditModal($event, card);
-            }
-          "
-        >
-          Edit Card
-        </button>
-      </div>
-    </div>
-    <div v-else>
-      <span>no cards to display...</span>
-    </div>
-
-    <div style="margin-top: 100px">
+    <div style="margin-top: 2em; margin-bottom: 2em">
       <div class="control">
         <button
           @click.prevent="openAddModal($event)"
           class="button is-info mt-3"
           type="submit"
+          style="color: rgb(255, 255, 255)"
         >
           Add New Card
         </button>
       </div>
     </div>
+    <Transition>
+      <div class="container is-widescreen" v-if="cards.length > 0">
+        <h2 class="title">Your Cards</h2>
+        <div
+          style="margin-bottom: 0"
+          class="notification is-light"
+          v-for="(card, i) in cards"
+          :key="i"
+        >
+          <Card :card="card" />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -77,44 +50,27 @@ import {
   RootDispatchType,
   CardsState,
   UserState,
+  LoadingState,
 } from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import {
-  // createAddCardMutation,
-  createDeleteCardMutation,
-  createClearUserCardsMutation,
-  // createEditCardMutation,
-} from "../graphql/mutations/myMutations";
-// import { FetchResult } from "@apollo/client/core";
-import { Card } from "../types";
-import { useToast } from "vue-toastification";
-// import { Store } from "vuex";
+import { createClearUserCardsMutation } from "../graphql/mutations/myMutations";
+
+import Card from "../components/Card.vue";
+// import Spinner from "../components/Spinner.vue";
 
 export default defineComponent({
   name: "CardList",
-  setup(this: void) {
-    const toast = useToast();
+  components: {
+    Card,
+    // Spinner,
+  },
+  setup() {
     const inputId = ref(0);
     const input = ref("");
-    const errMsg = ref("");
-    const successMsg = ref("");
-    const showSuccess = ref(false);
-    const showError = ref(false);
 
-    const { mutate: submitDeleteCard } = useMutation(
-      gql`
-        ${createDeleteCardMutation()}
-      `,
-      {
-        variables: {
-          //using a ref as a type definition of the input that will happen later
-          id: inputId.value,
-        },
-      }
-    );
     const { mutate: submitClearUserCards } = useMutation(
       gql`
         ${createClearUserCardsMutation()}
@@ -123,14 +79,8 @@ export default defineComponent({
 
     return {
       input,
-      submitClearUserCards,
       inputId,
-      submitDeleteCard,
-      showError,
-      showSuccess,
-      errMsg,
-      successMsg,
-      toast,
+      submitClearUserCards,
     };
   },
   data() {
@@ -144,16 +94,14 @@ export default defineComponent({
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
     activeClass: () => store.state.modal.modal.activeClass,
+    isLoading: (): LoadingState["loading"]["isLoading"] =>
+      store.state.loading.loading.isLoading,
   },
   methods: {
     readInputEvent(event: Event) {
       console.log("add card event", event);
     },
-    async deleteCard(_event: Event, index: number): Promise<void> {
-      await store.dispatch("cards/deleteCard" as RootDispatchType, index, {
-        root: true,
-      });
-    },
+
     // eslint-disable-next-line
     clearCards(_event: Event): void {
       store.commit("cards/SET_CARDS" as RootCommitType, [], { root: true });
@@ -187,30 +135,6 @@ export default defineComponent({
         root: true,
       });
     },
-    openEditModal(event: Event, card: Card) {
-      console.log(
-        "able to get id in this loop to also open the modal?????",
-        card
-      );
-      console.log("open modal from card list", event);
-      //adding to element classlist under the hood
-      store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
-        root: true,
-      });
-      // const payload: EditCardModalContext = {
-      //   card,
-      // };
-      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
-        root: true,
-      });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
-        root: true,
-      });
-    },
-    // eslint-disable-next-line
-    textInput(event: any): void {
-      this.inputText = event.target.value as string;
-    },
   },
 });
 </script>
@@ -219,5 +143,15 @@ export default defineComponent({
 <style scoped lang="scss">
 .some-unique-class {
   margin-top: 1px;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity height 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  height: 0;
 }
 </style>
