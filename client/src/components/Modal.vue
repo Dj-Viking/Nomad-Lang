@@ -201,7 +201,7 @@
                 closeModal();
               } else {
                 const card = {
-                  id: 0, //ids must be unique
+                  id: Date.now(), //ids must be unique
                   frontSideText: frontSideTextInput,
                   frontSideLanguage: frontSideLanguageInput,
                   frontSidePicture: frontSidePictureInput,
