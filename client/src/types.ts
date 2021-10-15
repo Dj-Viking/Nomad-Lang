@@ -107,6 +107,7 @@ export interface LoadingState {
 export interface MyRootState {
   user: UserState;
   loading: LoadingState;
+  card: CardState;
   cards: CardsState;
   modal: ModalState;
   notification: NotificationState;
@@ -150,6 +151,14 @@ export interface CardsState {
   cards: Array<ICard>;
 }
 
+export interface CardState {
+  card: {
+    id?: string | number;
+    isFrontSide: boolean;
+    isBackSide: boolean;
+  };
+}
+
 export type RootDispatchType =
   | "user/setUserToken"
   | "user/setUserCards"
@@ -189,7 +198,18 @@ export type RootCommitType =
   | "modal/SET_MODAL_CONTEXT"
   | "notification/OPEN_NOTIFICATION"
   | "notification/CLOSE_NOTIFICATION"
-  | "loading/SET_LOADING";
+  | "loading/SET_LOADING"
+  | "card/CARD_SIDE_FRONT"
+  | "card/CARD_SIDE_BACK";
+
+export interface CardBackPayload {
+  isFrontSide: false;
+  isBackSide: true;
+}
+export interface CardFrontPayload {
+  isFrontSide: true;
+  isBackSide: false;
+}
 
 export interface CustomError {
   field: string;

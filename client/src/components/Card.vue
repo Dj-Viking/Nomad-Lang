@@ -1,67 +1,134 @@
 <template>
   <Transition type="transition" name="fade">
     <div v-if="!isLoading">
-      <div class="card">
-        <div class="card-image">
-          Picture link or base64 string: {{ card?.frontSidePicture }}
-          <figure class="image is-4by3">
-            <img
-              src="https://bulma.io/images/placeholders/1280x960.png"
-              alt="Placeholder image"
-            />
-          </figure>
-        </div>
-        <div class="card-content">
-          <div class="media">
-            <div class="media-content">
-              <p class="title is-4">
-                Frontside text: {{ card?.frontSideText }}
-              </p>
-              <input
-                style="margin: 0 auto; width: 80%"
-                class="input"
-                type="text"
-                placeholder="Type target translation"
-              />
+      <Transition type="transition" name="slide-fade">
+        <div v-if="isFrontSide">
+          <div class="card">
+            <div class="card-image">
+              Picture link or base64 string: {{ card?.frontSidePicture }}
+              <figure class="image is-4by3">
+                <img
+                  src="https://bulma.io/images/placeholders/1280x960.png"
+                  alt="Placeholder image"
+                />
+              </figure>
+            </div>
+            <div class="card-content">
+              <div class="media">
+                <div class="media-content">
+                  <p class="title is-4">
+                    Frontside text: {{ card?.frontSideText }}
+                  </p>
+                  <form
+                    @submit.prevent="
+                      ($event) => {
+                        submitCardFlipCheck($event);
+                      }
+                    "
+                  >
+                    <input
+                      style="margin: 0 auto; width: 80%"
+                      class="input"
+                      type="text"
+                      placeholder="Type target translation"
+                    />
+                    <button
+                      class="button is-primary"
+                      style="color: black"
+                      type="submit"
+                    >
+                      Check
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="content">
+                fs lang: {{ card?.frontSideLanguage }}
+                <br />
+              </div>
             </div>
           </div>
-
-          <div class="content">
-            fs lang: {{ card?.frontSideLanguage }}
-            <br />
+          <div style="margin-top: 1em">
+            <button
+              class="button is-danger mx-2"
+              @click.prevent="
+                ($event) => {
+                  //update vuex cards that are displayed
+                  deleteCard($event, card?.id);
+                  //only delete user's cards if they are logged in
+                  if (isLoggedIn) {
+                    submitDeleteCard({
+                      id: card?.id,
+                    });
+                  }
+                }
+              "
+            >
+              Delete Card
+            </button>
+            <button
+              class="button is-primary mx-2"
+              style="color: black"
+              @click.prevent="
+                ($event) => {
+                  openEditModal($event, card);
+                }
+              "
+            >
+              Edit Card
+            </button>
           </div>
         </div>
-      </div>
-      <div style="margin-top: 1em">
-        <button
-          class="button is-danger mx-2"
-          @click.prevent="
-            ($event) => {
-              //update vuex cards that are displayed
-              deleteCard($event, card?.id);
-              //only delete user's cards if they are logged in
-              if (isLoggedIn) {
-                submitDeleteCard({
-                  id: card?.id,
-                });
-              }
-            }
-          "
-        >
-          Delete Card
-        </button>
-        <button
-          class="button is-primary mx-2"
-          style="color: black"
-          @click.prevent="
-            ($event) => {
-              openEditModal($event, card);
-            }
-          "
-        >
-          Edit Card
-        </button>
-      </div>
+        <div v-else>
+          <div class="card">
+            <div class="card-image">
+              Picture link or base64 string: {{ card?.backSidePicture }}
+              <figure class="image is-4by3">
+                <img
+                  src="https://bulma.io/images/placeholders/1280x960.png"
+                  alt="Placeholder image"
+                />
+              </figure>
+            </div>
+            <div class="card-content">
+              <div class="media">
+                <div class="media-content">
+                  <p class="title is-4">
+                    Backside text: {{ card?.backSideText }}
+                  </p>
+                  <form
+                    @submit.prevent="
+                      ($event) => {
+                        submitCardFlipCheck($event);
+                      }
+                    "
+                  >
+                    <input
+                      style="margin: 0 auto; width: 80%"
+                      class="input"
+                      type="text"
+                      placeholder="Type target translation"
+                    />
+                    <button
+                      class="button is-primary"
+                      style="color: black"
+                      type="submit"
+                    >
+                      Flip
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="content">
+                bs lang: {{ card?.backSideLanguage }}
+                <br />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
     </div>
     <div v-else>
       <Spinner />
@@ -78,8 +145,12 @@ import store from "../store";
 // import Skeleton from "../components/Skeleton.vue";
 import Spinner from "../components/Spinner.vue";
 import {
+  CardBackPayload,
+  CardFrontPayload,
+  CardState,
   ICard,
   LoadingState,
+  ModalState,
   RootCommitType,
   RootDispatchType,
   UserState,
@@ -120,13 +191,40 @@ export default defineComponent({
       store.state.loading.loading.isLoading,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
-    activeClass: () => store.state.modal.modal.activeClass,
+    activeClass: (): ModalState["modal"]["activeClass"] =>
+      store.state.modal.modal.activeClass,
+    isFrontSide: (): CardState["card"]["isFrontSide"] =>
+      store.state.card.card.isFrontSide,
+    isBackSide: (): CardState["card"]["isBackSide"] =>
+      store.state.card.card.isBackSide,
   },
   methods: {
     async deleteCard(_event: Event, index: number): Promise<void> {
       await store.dispatch("cards/deleteCard" as RootDispatchType, index, {
         root: true,
       });
+    },
+    submitCardFlipCheck(event: Event): string {
+      console.log("card flip event", event.target);
+      let returnMe = "flip";
+      //set the class on for the flip animation on the card object itself.
+      if (this.isFrontSide) {
+        //is front side flip to back
+        store.commit(
+          "card/CARD_SIDE_BACK" as RootCommitType,
+          { isFrontSide: false, isBackSide: true } as CardBackPayload,
+          { root: true }
+        );
+      } else {
+        //is backside flip to front
+        store.commit(
+          "card/CARD_SIDE_BACK" as RootCommitType,
+          { isFrontSide: true, isBackSide: false } as CardFrontPayload,
+          { root: true }
+        );
+      }
+      console.log(returnMe);
+      return returnMe;
     },
     openEditModal(event: Event, card: ICard) {
       console.log(
@@ -167,5 +265,23 @@ export default defineComponent({
 .fade-leave-to {
   opacity: 0;
   height: 0;
+}
+
+/*
+make some kind of class for the card 'flipping'
+*/
+
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(100px);
+  opacity: 0;
 }
 </style>

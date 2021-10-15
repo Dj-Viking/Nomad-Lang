@@ -27,10 +27,25 @@
       </div>
     </div>
     <Transition>
-      <div class="container is-widescreen" v-if="cards.length > 0">
+      <div
+        class="container"
+        style="
+          align-items: center;
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+        "
+        v-if="cards.length > 0"
+      >
         <h2 class="title">Your Cards</h2>
         <div
-          style="margin-bottom: 0"
+          style="
+            margin-bottom: 0;
+            width: 80%;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+          "
           class="notification is-light"
           v-for="(card, i) in cards"
           :key="i"
