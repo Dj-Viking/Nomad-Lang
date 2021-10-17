@@ -337,7 +337,6 @@
       </div>
       <div v-else>
         <h3 style="color: white">{{ title }}</h3>
-        <p style="color: white">something else</p>
       </div>
     </div>
     <button

@@ -1,7 +1,7 @@
 <template>
-  <Transition type="transition" name="fade">
+  <Transition type="transition" name="fade" mode="out-in">
     <div v-if="!isLoading">
-      <Transition type="transition" name="slide-fade">
+      <Transition type="transition" name="slide-fade" mode="out-in">
         <div v-if="isFrontSide">
           <div class="card">
             <div class="card-image">

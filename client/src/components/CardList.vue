@@ -14,7 +14,7 @@
     >
       clear cards
     </button>
-    <div style="margin-top: 2em; margin-bottom: 2em">
+    <div style="margin-top: 1em; margin-bottom: 2em">
       <div class="control">
         <button
           @click.prevent="openAddModal($event)"
@@ -26,7 +26,7 @@
         </button>
       </div>
     </div>
-    <Transition>
+    <Transition type="transition" name="fade" mode="out-in">
       <div
         class="container"
         style="
@@ -94,7 +94,6 @@ export default defineComponent({
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
-    activeClass: () => store.state.modal.modal.activeClass,
     isLoading: (): LoadingState["loading"]["isLoading"] =>
       store.state.loading.loading.isLoading,
   },

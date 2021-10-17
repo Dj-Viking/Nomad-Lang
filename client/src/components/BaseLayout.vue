@@ -48,14 +48,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { mapState } from "vuex";
 import {
   ICard,
   MeQueryResponse,
-  // MyRootState,
   RootCommitType,
   RootDispatchType,
   UserState,
@@ -70,14 +69,13 @@ export default defineComponent({
   setup() {
     //graphql me query for checking if the token is expired.
     //basically if the backend returns a token whenever the route changes. the user gets a new token. otherwise if user is idle on the page, the token would expire after about an hour...for now
-    let globalEmail = inject("$email");
     const { result: meResult, refetch } = useQuery(
       gql`
         ${createMeQuery()}
       `
     );
 
-    return { meResult, refetch, globalEmail };
+    return { meResult, refetch };
   },
   computed: {
     ...mapState(["user"]),
@@ -144,7 +142,6 @@ export default defineComponent({
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
           root: true,
         });
-        this.isLoggedIn = true;
         store.commit("cards/SET_CARDS" as RootCommitType, newValue.me.cards, {
           root: true,
         });
@@ -158,10 +155,6 @@ export default defineComponent({
         );
       }
     },
-  },
-  async mounted() {
-    console.log("cards vuex state on mounted", store.state.cards);
-    //set the cards if there are any defined
   },
 });
 </script>
