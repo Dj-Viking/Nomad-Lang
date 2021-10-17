@@ -58,15 +58,7 @@
 </template>
 
 <script lang="ts">
-import {
-  // AddCardResponse,
-  // EditCardModalContext,
-  RootCommitType,
-  RootDispatchType,
-  CardsState,
-  UserState,
-  LoadingState,
-} from "../types";
+import { RootCommitType, CardsState, UserState, LoadingState } from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
 import { useMutation } from "@vue/apollo-composable";
@@ -98,12 +90,6 @@ export default defineComponent({
       submitClearUserCards,
     };
   },
-  data() {
-    return {
-      inputText: "",
-      store: store,
-    };
-  },
   computed: {
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
@@ -120,24 +106,6 @@ export default defineComponent({
     // eslint-disable-next-line
     clearCards(_event: Event): void {
       store.commit("cards/SET_CARDS" as RootCommitType, [], { root: true });
-    },
-    // eslint-disable-next-line
-    async addCard(_event: Event): Promise<void | boolean> {
-      if (!this.inputText) return;
-      const payload = {
-        id: Date.now(),
-        text: this.inputText,
-        color: "blue",
-      };
-      const addResponse: boolean = await store.dispatch(
-        "cards/addCard" as RootDispatchType,
-        payload,
-        {
-          root: true,
-        }
-      );
-      this.inputText = "";
-      return addResponse;
     },
     openAddModal(event: MouseEvent): void {
       console.log("open add modal click event", event);
