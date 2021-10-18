@@ -5,6 +5,9 @@ import {
   ICard,
   RootCommitType,
   EditCardCommitPayload,
+  SetCategorizedCardsCommitPayload,
+  SetCategorizedCardsActionPayload,
+  CategorizedCardMapClass,
 } from "@/types";
 import { ActionContext } from "vuex";
 
@@ -26,7 +29,14 @@ const state: CardsState = {
   }),*/,
 };
 const mutations = {
-  SET_CARDS(state: CardsState, payload: ICard[]): void {
+  SET_CATEGORIZED_CARD_MAP(
+    state: CardsState,
+    payload: CategorizedCardMapClass
+  ): void {
+    //just update the state asynchronously resolved from the action
+    state.categorized = payload as CategorizedCardMapClass; //map should just absorb through the loop
+  },
+  SET_CARDS(state: CardsState, payload: Array<ICard>): void {
     if (typeof payload !== "object" || payload === null)
       return console.error(
         "payload must be a specific type of object but it was ",
@@ -150,6 +160,64 @@ const actions = {
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
+      return Promise.resolve(false);
+    }
+  },
+  async setCategorizedCards(
+    { commit }: ActionContext<CardsState, MyRootState>,
+    payload: SetCategorizedCardsActionPayload
+  ): Promise<boolean | Error> {
+    try {
+      const { cards } = payload;
+      // taking in the cards array and sorting the categories by creating an object
+      // that has a key that is dynamic which will be this metalist of categories
+      // because trying to do this with type-graphql typeorm was very strange and
+      // probably nobody is trying to do that sort of thing right now....
+      //create a new cards Object to return that contains the cards categorized by their frontside language
+      const uncategorized = [] as Array<ICard>;
+      // const key = 0;
+      // const value = "temppvalue";
+      // let categorized = {} as CategorizedCardMap["categorized"];
+
+      //init before falling into the loop where it will change and return as the comit payload
+      let returnCategories = new CategorizedCardMapClass();
+      let tempLanguage = "";
+      let currentLoopId = 0;
+      console.log("categorized cards instance", returnCategories);
+
+      let iterator = 0;
+      while (iterator < cards.length) {
+        currentLoopId = cards[iterator].id as number;
+        tempLanguage = cards[currentLoopId].frontSideLanguage as string;
+
+        //if on second iteration
+        if (returnCategories instanceof CategorizedCardMapClass) {
+          //place all unnamed frontside labels in own category
+          if (!cards[iterator].frontSideLanguage) {
+            uncategorized.push(cards[iterator]);
+          }
+          returnCategories.set(currentLoopId, tempLanguage);
+          // want to commit to state categorized object map too the cards state
+
+          commit(
+            "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
+            returnCategories,
+            { root: true }
+          );
+        }
+        iterator++;
+      }
+
+      console.log("does this log");
+      // console.log("does this log")
+      // console.log("does this log")
+      // console.log("does this log")
+      // console.log("does this log")
+      // console.log("does this log")
+      // console.log("categorized cards instance ", categorized);
+      return Promise.resolve(true);
+    } catch (error) {
+      console.error(error as Error);
       return Promise.resolve(false);
     }
   },

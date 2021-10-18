@@ -1,7 +1,7 @@
 export interface ICard {
   __typename?: "Card";
   // eslint-disable-next-line
-  id?: number | string | undefined | null | any;
+  id?: number | undefined;
   cardId?: number | string;
   creatorId?: number | string;
   frontSideText: string;
@@ -12,7 +12,36 @@ export interface ICard {
   backSidePicture: string;
   updatedAt?: number | string;
   createdAt?: number | string;
+  categorized: CategorizedCardMapClass;
+  uncategorized: Array<ICard>;
   color?: string | "blue"; //TODO remove
+}
+export interface SetCategorizedCardsCommitPayload {
+  categorized: Map<number, string>;
+}
+export interface SetCategorizedCardsActionPayload {
+  cards: Array<ICard>;
+}
+
+export type LanguageSymbol = "frontSideLanguage";
+
+export type LiteralLanguageSymbol = `${LanguageSymbol}`;
+
+export class CategorizedCardMapClass extends Map {
+  private categorizedMap!: Map<ICard["id"], string>;
+  constructor() {
+    super();
+    this.categorizedMap = new Map();
+    // this.categorizedMap = this.setSelf(key as number, value as string);
+  }
+  public clearSelf(): void {
+    Object.keys(this.categorizedMap).map((key) => {
+      delete this.categorizedMap[key];
+    });
+  }
+  public printMe(): void {
+    console.log(this.categorizedMap);
+  }
 }
 
 export interface EditCardResponse {
@@ -149,6 +178,8 @@ export interface UserEntityBase {
 }
 export interface CardsState {
   cards: Array<ICard>;
+  categorized?: Map<number, string>; //class of categorized
+  uncategorized?: Array<ICard>;
 }
 
 export interface CardState {
@@ -200,7 +231,8 @@ export type RootCommitType =
   | "notification/CLOSE_NOTIFICATION"
   | "loading/SET_LOADING"
   | "card/CARD_SIDE_FRONT"
-  | "card/CARD_SIDE_BACK";
+  | "card/CARD_SIDE_BACK"
+  | "cards/SET_CATEGORIZED_CARD_MAP";
 
 export interface CardBackPayload {
   isFrontSide: false;

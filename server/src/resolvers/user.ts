@@ -12,7 +12,7 @@ import {
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import argon2 from 'argon2';
-import { CategorizedCardMapClass, CategorizedCardMap, MyContext, MyJwtData, MySendEmailOptions, /*CategorizedCardMapClassScalar*/ } from '../types';
+import { /*CategorizedCardMapClass,*/ CategorizedCardMap, MyContext, MyJwtData, MySendEmailOptions, /*CategorizedCardMapClassScalar*/ } from '../types';
 
 import { User } from '../entities/User';
 import { Card } from '../entities/Card';
@@ -42,13 +42,13 @@ class UserFieldError {
 }
 
 
-@ObjectType()
-class CategorizedCardsOutputClass {
-  @Field(() => CategorizedCardMapClass, { nullable: true })
-  categorized: {
-    [key: string]: Card[]
-  };
-}
+// @ObjectType()
+// class CategorizedCardsOutputClass {
+//   @Field(() => new CategorizedCardMapClass(), { nullable: true })
+//   categorized: {
+//     [key: string]: Card[]
+//   };
+// }
 
 //user returned if worked
 // or error returned if error was there
@@ -81,10 +81,12 @@ class MeQueryResponse {
   @Field(() => [Card], { nullable: true })
   cards?: Card[] | null;
 
-  @Field(() => CategorizedCardsOutputClass)
-  categorized?: {
-    [key: string]: Card[]
-  }
+  // @Field(() => CategorizedCardsOutputClass)
+  // categorized?: {
+  //   categorized: {
+  //     [key: string]: Card[]
+  //   }
+  // }
 
   @Field(() => [Card], { nullable: true })
   uncategorized?: Card[] | null;
@@ -177,7 +179,7 @@ export class UserResolver {
       while (iterator < cards.length) {
         if (!cards[iterator].frontSideLanguage) {
           uncategorized.push(cards[iterator]);
-        } else {
+        } else { 
           categorized = {
             ...categorized,
             // @ts-ignore
@@ -225,7 +227,7 @@ export class UserResolver {
         token: newToken,
         user: changedUser.raw[0],
         cards: cards,
-        categorized: categorized
+        categorized: {categorized: categorized}
       });
 
       return {
@@ -233,7 +235,7 @@ export class UserResolver {
         user: changedUser.raw[0],
         cards: cards,
         uncategorized,
-        categorized: categorized
+        // categorized: categorized // TODO: do this categorizing on the front end!!!
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {

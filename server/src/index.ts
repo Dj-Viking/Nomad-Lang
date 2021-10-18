@@ -13,7 +13,7 @@ import { CardResolver } from "./resolvers/card"
 import { GraphQLSchema } from "graphql";
 import { authMiddleware } from "./utils/authMiddleWare";
 import { ColorLog } from "./__tests__/utils/helpers";
-import { CategorizedCardMapClass, CategorizedCardMapClassScalar } from "./types";
+import { /*CategorizedCardMapClass,*/ /*CategorizedCardMapClassScalar*/ } from "./types";
 // import { sendEmail } from "./utils/sendEmail";
 // import { MySendEmailOptions } from "./types";
 
@@ -72,7 +72,7 @@ const {
   
   MyGraphQLSchema = await buildSchema({
     resolvers: [UserResolver, CardResolver],
-    scalarsMap: [{ type: CategorizedCardMapClass, scalar: CategorizedCardMapClassScalar }],
+    // scalarsMap: [{ type: CategorizedCardMapClass, scalar: CategorizedCardMapClassScalar }],
     validate: false
   });
   new logger("purple", "graphql schema build success").genLog();
