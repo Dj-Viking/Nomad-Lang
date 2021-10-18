@@ -5,7 +5,7 @@ import {
   ICard,
   RootCommitType,
   EditCardCommitPayload,
-  SetCategorizedCardsCommitPayload,
+  // SetCategorizedCardsCommitPayload,
   SetCategorizedCardsActionPayload,
   CategorizedCardMapClass,
 } from "@/types";
