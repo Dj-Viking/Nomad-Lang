@@ -49,15 +49,4 @@ const cards = [
   }
   console.log("some obj", someObj);
   console.log("some obj keys now", Object.keys(someObj));
-  // console.log(
-  //   "hersmy set values ",
-  //   set.values().next().value,
-  //   "next\n\n",
-  //   set.values().next().value.Russian
-  // );
-  // console.log(
-  //   "hersmy set entries ",
-  //   set.entries().next().value,
-  //   set.entries().next().value
-  // );
 })();
