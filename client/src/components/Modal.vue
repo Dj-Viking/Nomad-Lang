@@ -360,6 +360,7 @@ import {
   ICard,
   AddCardResponse,
   EditCardCommitPayload,
+  RootDispatchType,
 } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
@@ -377,7 +378,7 @@ export default defineComponent({
     const backSideTextInput = ref();
     const backSideLanguageInput = ref();
     const backSidePictureInput = ref();
-    const inputId = ref(0);
+    const inputId = ref();
     const errMsg = ref("");
     const showErrMsg = ref(false);
     const editResponse = ref();
@@ -425,6 +426,15 @@ export default defineComponent({
               root: true,
             }
           );
+
+          //set categorized cards object in them store
+          (async (): Promise<void> => {
+            return await store.dispatch(
+              "cards/setCategorizedCards" as RootDispatchType,
+              { cards: result.data?.addCard.cards },
+              { root: true }
+            );
+          })();
         }
       }
     );
