@@ -6,6 +6,17 @@
       </div>
     </div>
     <div v-else>
+      <div style="display: flex; justify-content: flex-start">
+        <div style="display: flex; flex-direction: column">
+          <div v-for="(key, i) of Object.keys(categories)" :key="i">
+            <a 
+              @click.prevent="($event) => {
+                readCategoryEvent($event);
+              }" 
+              :href="`/`">{{ key }}</a>
+          </div>
+        </div>
+      </div>
       <router-view />
     </div>
   </Transition>
@@ -16,7 +27,13 @@ import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
 // import SideBar from "./components/SideBar.vue";
 import store from "./store";
-import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
+import {
+  CardsState,
+  CategorizedCardsObject,
+  ModalState,
+  OpenNotificationPayload,
+  RootCommitType,
+} from "./types";
 export default defineComponent({
   name: "App",
   components: {
@@ -26,8 +43,13 @@ export default defineComponent({
   computed: {
     activeClass: (): ModalState["modal"]["activeClass"] =>
       store.state.modal.modal.activeClass,
+    categories: (): CardsState["categorized"] =>
+      store.state.cards.categorized as CategorizedCardsObject,
   },
   methods: {
+    readCategoryEvent(event: any) {
+      console.log("event of clicking the category", event);
+    },
     openModal(event: Event) {
       console.log("open modal event", event);
       store.commit("modal/SET_MODAL_TITLE", "setting title from home page", {

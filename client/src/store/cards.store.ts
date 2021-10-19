@@ -27,6 +27,7 @@ const state: CardsState = {
       updatedAt: Date.now(),
     };
   }),*/,
+  categorized: {},
 };
 const mutations = {
   SET_CATEGORIZED_CARD_MAP(

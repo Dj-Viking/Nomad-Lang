@@ -428,13 +428,13 @@ export default defineComponent({
           );
 
           //set categorized cards object in them store
-          (async (): Promise<void> => {
-            return await store.dispatch(
+          store
+            .dispatch(
               "cards/setCategorizedCards" as RootDispatchType,
-              { cards: result.data?.addCard.cards },
+              result.data?.addCard.cards,
               { root: true }
-            );
-          })();
+            )
+            .then(() => void 0);
         }
       }
     );

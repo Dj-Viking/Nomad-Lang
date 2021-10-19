@@ -178,7 +178,7 @@ export interface UserEntityBase {
 }
 export interface CardsState {
   cards: Array<ICard>;
-  categorized?: CategorizedCardsObject; //class of categorized
+  categorized: CategorizedCardsObject; //class of categorized
   uncategorized?: Array<ICard>;
 }
 export interface CategorizedCardsObject {
