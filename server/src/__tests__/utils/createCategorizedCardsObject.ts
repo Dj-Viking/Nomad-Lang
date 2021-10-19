@@ -54,7 +54,7 @@ export function createCategorizedCardsObject(
   }
   console.log("some obj", categorizedCardMap);
   console.log("some obj keys now", Object.keys(categorizedCardMap));
-  console.log("some obj keys now", Object.entries(categorizedCardMap));
+  console.log("some obj entries now", Object.entries(categorizedCardMap));
   return categorizedCardMap;
 }
 

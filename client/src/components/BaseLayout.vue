@@ -145,6 +145,14 @@ export default defineComponent({
         store.commit("cards/SET_CARDS" as RootCommitType, newValue.me.cards, {
           root: true,
         });
+
+        const res = await store.dispatch(
+          "cards/setCategorizedCards" as RootDispatchType,
+          { cards: newValue.me.cards },
+          { root: true }
+        );
+
+        console.log("response of dispatch of set cat cards", res);
         //set user vuex state with cards
         await store.dispatch(
           "user/setUser" as RootDispatchType,

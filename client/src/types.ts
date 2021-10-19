@@ -4,16 +4,16 @@ export interface ICard {
   id?: number | undefined;
   cardId?: number | string;
   creatorId?: number | string;
-  frontSideText: string;
-  frontSideLanguage: string;
-  frontSidePicture: string;
-  backSideText: string;
-  backSideLanguage: string;
-  backSidePicture: string;
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
   updatedAt?: number | string;
   createdAt?: number | string;
-  categorized: CategorizedCardMapClass;
-  uncategorized: Array<ICard>;
+  categorized?: { [key: string]: ICard[] };
+  uncategorized?: Array<ICard>;
   color?: string | "blue"; //TODO remove
 }
 export interface SetCategorizedCardsCommitPayload {
@@ -178,8 +178,13 @@ export interface UserEntityBase {
 }
 export interface CardsState {
   cards: Array<ICard>;
-  categorized?: Map<number, string>; //class of categorized
+  categorized?: CategorizedCardsObject; //class of categorized
   uncategorized?: Array<ICard>;
+}
+export interface CategorizedCardsObject {
+  [key: string]: {
+    cards: ICard[];
+  };
 }
 
 export interface CardState {
@@ -197,7 +202,8 @@ export type RootDispatchType =
   | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
-  | "cards/addCard";
+  | "cards/addCard"
+  | "cards/setCategorizedCards";
 
 export interface AddCardPayload {
   options: {

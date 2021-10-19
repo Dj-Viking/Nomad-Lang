@@ -5,10 +5,10 @@ import {
   ICard,
   RootCommitType,
   EditCardCommitPayload,
-  // SetCategorizedCardsCommitPayload,
   SetCategorizedCardsActionPayload,
-  CategorizedCardMapClass,
+  CategorizedCardsObject,
 } from "@/types";
+import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
 import { ActionContext } from "vuex";
 
 const state: CardsState = {
@@ -31,10 +31,10 @@ const state: CardsState = {
 const mutations = {
   SET_CATEGORIZED_CARD_MAP(
     state: CardsState,
-    payload: CategorizedCardMapClass
+    payload: CategorizedCardsObject
   ): void {
     //just update the state asynchronously resolved from the action
-    state.categorized = payload as CategorizedCardMapClass; //map should just absorb through the loop
+    state.categorized = payload; //map should just absorb through the loop
   },
   SET_CARDS(state: CardsState, payload: Array<ICard>): void {
     if (typeof payload !== "object" || payload === null)
@@ -174,47 +174,36 @@ const actions = {
       // because trying to do this with type-graphql typeorm was very strange and
       // probably nobody is trying to do that sort of thing right now....
       //create a new cards Object to return that contains the cards categorized by their frontside language
+
+      //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;
-      // const key = 0;
-      // const value = "temppvalue";
-      // let categorized = {} as CategorizedCardMap["categorized"];
+      const toCategorize = [] as Array<ICard>;
 
-      //init before falling into the loop where it will change and return as the comit payload
-      let returnCategories = new CategorizedCardMapClass();
-      let tempLanguage = "";
-      let currentLoopId = 0;
-      console.log("categorized cards instance", returnCategories);
-
-      let iterator = 0;
-      while (iterator < cards.length) {
-        currentLoopId = cards[iterator].id as number;
-        tempLanguage = cards[currentLoopId].frontSideLanguage as string;
-
-        //if on second iteration
-        if (returnCategories instanceof CategorizedCardMapClass) {
-          //place all unnamed frontside labels in own category
-          if (!cards[iterator].frontSideLanguage) {
-            uncategorized.push(cards[iterator]);
-          }
-          returnCategories.set(currentLoopId, tempLanguage);
-          // want to commit to state categorized object map too the cards state
-
-          commit(
-            "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
-            returnCategories,
-            { root: true }
-          );
+      let iter = 0;
+      while (iter < cards.length) {
+        if (cards[iter].frontSideLanguage === "") {
+          uncategorized.push(cards[iter]);
         }
-        iterator++;
+        if (cards[iter].frontSideLanguage !== "") {
+          toCategorize.push(cards[iter]);
+        }
+        iter++;
       }
 
-      console.log("does this log");
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("categorized cards instance ", categorized);
+      //init before falling into the loop where it will change and return as the comit payload
+      let returnCategorized = createCategorizedCardsObject(
+        toCategorize as ICard[]
+      );
+      console.log(
+        "categorized cards returned from new function",
+        returnCategorized
+      );
+
+      commit(
+        "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
+        returnCategorized,
+        { root: true }
+      );
       return Promise.resolve(true);
     } catch (error) {
       console.error(error as Error);
