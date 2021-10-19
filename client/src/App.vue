@@ -1,5 +1,4 @@
 <template>
-  <SideBar />
   <Transition name="fade" type="transition">
     <div v-if="activeClass">
       <div>
@@ -15,14 +14,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
-import SideBar from "./components/SideBar.vue";
+// import SideBar from "./components/SideBar.vue";
 import store from "./store";
 import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
 export default defineComponent({
   name: "App",
   components: {
     Modal,
-    SideBar,
+    // SideBar,
   },
   computed: {
     activeClass: (): ModalState["modal"]["activeClass"] =>

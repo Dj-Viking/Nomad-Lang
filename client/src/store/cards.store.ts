@@ -212,7 +212,7 @@ const actions = {
   },
 };
 const getters = {
-  todos(state: CardsState): ICard[] | [] {
+  cards(state: CardsState): ICard[] | [] {
     return state.cards || [];
   },
 };
