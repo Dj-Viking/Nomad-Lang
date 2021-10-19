@@ -12,12 +12,7 @@ import {
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
 import { decodeToken } from "../utils/decodeToken";
-// import jwt from "jsonwebtoken";
-const {
-  // NOT_FOUND_EMAIL,
-  // NOT_MY_EMAIL
-} = process.env;
-
+// import jwt from "
 let connection;
 const logger = ColorLog;
 let newToken: string = "";

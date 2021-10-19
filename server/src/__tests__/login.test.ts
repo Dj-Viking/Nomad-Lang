@@ -11,7 +11,6 @@ import { connectDb } from "./utils/connectDb";
 import { LoginInput, LoginResponse, RegisterResponse } from "../types";
 import { logJson, ColorLog } from "./utils/helpers";
 import { createLoginMutation } from "./graphql/myMutations";
-// import { connectDb } from "./utils/connectDb";
 
 const logger = ColorLog;
 
