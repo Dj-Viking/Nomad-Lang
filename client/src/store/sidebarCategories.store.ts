@@ -31,13 +31,14 @@ const mutations = {
             isActive: false,
           };
         } else {
-          //if it was inactive when we clicked it deactivate it
+          //if it was inactive when we clicked it activate it
           state.categories[key] = {
             ...state.categories[key],
             isActive: true,
           };
         }
       } else {
+        //any other categories just set inactive
         state.categories[key] = {
           ...state.categories[key],
           isActive: false,
