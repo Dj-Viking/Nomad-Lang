@@ -183,14 +183,6 @@ export interface CardsState {
   uncategorized?: Array<ICard>;
 }
 
-export interface SideBarCategoriesState {
-  categories: Array<{
-    id: string | number;
-    name: string;
-    isActive: boolean;
-  }>;
-}
-
 export interface CategorizedCardsObject {
   [key: string]: {
     id?: number;
