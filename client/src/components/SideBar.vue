@@ -24,6 +24,7 @@
             :allCards="allCards"
             :isActive="categories[key].isActive"
             :categoryName="key"
+            :categories="categories"
             :categorizedCards="categories[key].cards"
           />
         </div>

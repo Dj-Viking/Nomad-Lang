@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { RootCommitType } from "@/types";
+import { CategorizedCardsObject, RootCommitType } from "@/types";
 import { defineComponent, ref } from "@vue/runtime-core";
 import store from "../store";
 
@@ -22,7 +22,8 @@ export default defineComponent({
     id: String,
     isActive: Boolean,
     categoryName: String,
-    categorizedCards: Object,
+    categorizedCards: Array,
+    categories: Object,
     allCards: Array,
   },
   setup() {
@@ -34,23 +35,22 @@ export default defineComponent({
   methods: {
     toggleActiveCategory(event: any): void {
       console.log("event of clicking the category", event);
+      const id = event.target.id;
       switch (true) {
         case this.isActive:
           {
-            // this.categoryIsActive = false;
             store.commit(
               "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE" as RootCommitType,
-              { id: event.target.id },
+              { id: id },
               { root: true }
             );
           }
           break;
-        case !this.categoryIsActive:
+        case !this.isActive:
           {
-            // this.categoryIsActive = true;
             store.commit(
               "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE" as RootCommitType,
-              { id: event.target.id },
+              { id: id },
               { root: true }
             );
           }
@@ -58,18 +58,36 @@ export default defineComponent({
         default:
           return void 0;
       }
-      if (!this.categoryIsActive) {
-        store.commit("cards/SET_CARDS" as RootCommitType, this.allCards, {
-          root: true,
-        });
-      } else {
-        store.commit(
-          "cards/SET_CARDS" as RootCommitType,
-          this.categorizedCards,
-          {
+      for (const key in this.categories as CategorizedCardsObject) {
+        // if all inactive reset to all cards again
+        let inactiveCount = 0;
+        let activeCount = 0;
+        // eslint-disable-next-line
+          // @ts-ignore
+        !this.categories[key].isActive && inactiveCount++;
+        // eslint-disable-next-line
+          // @ts-ignore
+        this.categories[key].isActive && activeCount++;
+        if (inactiveCount > 1 && activeCount === 0) {
+          //reset all cards again
+          store.commit("cards/SET_CARDS" as RootCommitType, this.allCards, {
             root: true,
-          }
-        );
+          });
+        }
+        // if one is active, set cards to that active category
+        // eslint-disable-next-line
+              // @ts-ignore
+        if (activeCount === 1 && this.categories[key].id === id) {
+          store.commit(
+            "cards/SET_CARDS" as RootCommitType,
+            // eslint-disable-next-line
+                  // @ts-ignore
+            this.categories[key].cards,
+            {
+              root: true,
+            }
+          );
+        }
       }
     },
   },
