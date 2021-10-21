@@ -3,7 +3,7 @@
     <div style="display: flex; justify-content: flex-start">
       <div style="display: flex; flex-direction: column">
         <div style="display: flex; flex-direction: row">
-          <h3 class="title">Your Categories</h3>
+          <h4 style="font-size: 20px" class="title">Your Categories</h4>
           <i
             @click.prevent="
               ($event) => {
@@ -20,8 +20,9 @@
         </div>
         <div v-for="(key, i) of Object.keys(categories)" :key="i">
           <SideBarNode
-            :id="categories[key].id"
-            :allCards="cards"
+            :id="categories[key].id?.toString()"
+            :allCards="allCards"
+            :isActive="categories[key].isActive"
             :categoryName="key"
             :categorizedCards="categories[key].cards"
           />
@@ -33,7 +34,7 @@
 
 <script lang="ts">
 import store from "@/store";
-import { CardsState, CategorizedCardsObject } from "@/types";
+import { CardsState, CategorizedCardsObject, ICard } from "@/types";
 import SideBarNode from "./SideBarNode.vue";
 import { defineComponent, ref } from "@vue/runtime-core";
 
@@ -48,6 +49,11 @@ export default defineComponent({
       sidebarOpen,
     };
   },
+  data() {
+    return {
+      allCards: [] as ICard[],
+    };
+  },
   computed: {
     cards: (): CardsState["cards"] => store.state.cards.cards,
     categories: (): CardsState["categorized"] =>
@@ -59,6 +65,17 @@ export default defineComponent({
       if (this.sidebarOpen) this.sidebarOpen = false;
       else this.sidebarOpen = true;
     },
+  },
+  mounted() {
+    //have to wait until the cards resolve from the me query or however i get cards
+    // and then assign it to the prop that the sidebar item needs to set cards when
+    // activating and deactivating a category
+    setTimeout(() => {
+      if (this.cards) {
+        console.log("what is cards here on sidebar mounting", this.cards);
+        this.allCards = this.cards;
+      }
+    }, 400);
   },
 });
 </script>

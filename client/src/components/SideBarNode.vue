@@ -2,8 +2,8 @@
   <a
     :id="id"
     :class="{
-      'category-item-active': categoryIsActive,
-      'category-item-inactive': !categoryIsActive,
+      'category-item-active': isActive,
+      'category-item-inactive': !isActive,
     }"
     @click.prevent="toggleActiveCategory($event)"
     :href="`/${categoryName}`"
@@ -12,16 +12,18 @@
 </template>
 
 <script lang="ts">
-import { RootCommitType, SidebarCategorizedCardsState } from "@/types";
+import { RootCommitType } from "@/types";
 import { defineComponent, ref } from "@vue/runtime-core";
 import store from "../store";
 
 export default defineComponent({
   name: "SideBarNode",
-  props: ["id", "categoryName", "categorizedCards", "allCards"],
-  computed: {
-    sidebarCategoriesState: (): SidebarCategorizedCardsState =>
-      store.state.sideBarCategories,
+  props: {
+    id: String,
+    isActive: Boolean,
+    categoryName: String,
+    categorizedCards: Object,
+    allCards: Array,
   },
   setup() {
     const categoryIsActive = ref(false);
@@ -29,22 +31,28 @@ export default defineComponent({
       categoryIsActive,
     };
   },
-  mounted() {
-    console.log("do we have sidebar state", this.sidebarCategoriesState);
-  },
   methods: {
     toggleActiveCategory(event: any): void {
       console.log("event of clicking the category", event);
-      // console.log("do i have the id here", (<HTMLElement>event.target).id as string);
       switch (true) {
-        case this.categoryIsActive:
+        case this.isActive:
           {
-            this.categoryIsActive = false;
+            // this.categoryIsActive = false;
+            store.commit(
+              "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE" as RootCommitType,
+              { id: event.target.id },
+              { root: true }
+            );
           }
           break;
         case !this.categoryIsActive:
           {
-            this.categoryIsActive = true;
+            // this.categoryIsActive = true;
+            store.commit(
+              "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE" as RootCommitType,
+              { id: event.target.id },
+              { root: true }
+            );
           }
           break;
         default:
@@ -61,11 +69,6 @@ export default defineComponent({
           {
             root: true,
           }
-        );
-        store.commit(
-          "sidebarCategories/SET_ONE_SIDECATEG_ACTIVE" as RootCommitType,
-          { id: Number(event.target.id) },
-          { root: true }
         );
       }
     },

@@ -46,7 +46,7 @@ export function createCategorizedCardsObject(
             : // and add any new ones that we dont have yet on that category
               [cards[iterator]],
           isActive: false,
-          id: iterator,
+          id: iterator.toString(),
         },
       };
       iterator++;

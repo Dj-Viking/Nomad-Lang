@@ -185,7 +185,7 @@ export interface CardsState {
 
 export interface CategorizedCardsObject {
   [key: string]: {
-    id?: number;
+    id?: string;
     cards: ICard[];
     isActive: boolean;
   };
@@ -193,7 +193,7 @@ export interface CategorizedCardsObject {
 export interface SidebarCategorizedCardsState {
   categories: {
     [key: string]: {
-      id: number;
+      id: string;
       isActive: boolean;
       cards: ICard[];
     };
@@ -253,7 +253,7 @@ export type RootCommitType =
   | "card/CARD_SIDE_BACK"
   | "cards/SET_CATEGORIZED_CARD_MAP"
   | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
-  | "sidebarCategories/SET_ONE_SIDECATEG_ACTIVE";
+  | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE";
 
 export interface CardBackPayload {
   isFrontSide: false;
