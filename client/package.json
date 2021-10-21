@@ -24,7 +24,7 @@
     "showActuals": "ts-node ./tests/scripts/showActuals.ts",
     "showColors": "ts-node ./tests/scripts/showColors.ts",
     "test:map": "ts-node ./tests/scripts/CategorizedCardMapClass.ts",
-    "test:categorizess": "ts-node ./tests/scripts/createCategorizedCardsObject.ts"
+    "test:categ": "ts-node ./tests/scripts/createCategorizedCardsObject.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.4.11",

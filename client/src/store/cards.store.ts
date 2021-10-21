@@ -183,10 +183,10 @@ const actions = {
       let iter = 0;
       while (iter < cards.length) {
         if (cards[iter].frontSideLanguage === "") {
-          uncategorized.push(cards[iter]);
+          uncategorized.unshift(cards[iter]);
         }
         if (cards[iter].frontSideLanguage !== "") {
-          toCategorize.push(cards[iter]);
+          toCategorize.unshift(cards[iter]);
         }
         iter++;
       }
@@ -202,6 +202,12 @@ const actions = {
 
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
+        returnCategorized,
+        { root: true }
+      );
+
+      commit(
+        "sidebarCategories/INIT_SIDEBAR_CATEGORIES" as RootCommitType,
         returnCategorized,
         { root: true }
       );

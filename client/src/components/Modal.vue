@@ -378,6 +378,7 @@ export default defineComponent({
     const backSideTextInput = ref();
     const backSideLanguageInput = ref();
     const backSidePictureInput = ref();
+    const addCardResult = ref();
     const inputId = ref();
     const errMsg = ref("");
     const showErrMsg = ref(false);
@@ -416,6 +417,7 @@ export default defineComponent({
             }
           );
         } else {
+          addCardResult.value = result.data;
           toast.success("Success: added a card to your list!", {
             timeout: 3000,
           });
@@ -426,15 +428,6 @@ export default defineComponent({
               root: true,
             }
           );
-
-          //set categorized cards object in them store
-          store
-            .dispatch(
-              "cards/setCategorizedCards" as RootDispatchType,
-              result.data?.addCard.cards,
-              { root: true }
-            )
-            .then(() => void 0);
         }
       }
     );
@@ -456,7 +449,7 @@ export default defineComponent({
           },
         },
       }
-    ); // TODO change this to the cards to props to edit
+    );
 
     onEditCardDone(
       (
@@ -489,8 +482,24 @@ export default defineComponent({
       backSidePictureInput,
       submitEditCard,
       errMsg,
+      addCardResult,
       showErrMsg,
     };
+  },
+  watch: {
+    addCardResult: async function (
+      newVal: AddCardResponse["addCard"]
+    ): Promise<void> {
+      if (newVal.errors === null) {
+        await store.dispatch(
+          "cards/setCategorizedCards" as RootDispatchType,
+          newVal.cards,
+          {
+            root: true,
+          }
+        );
+      }
+    },
   },
   computed: {
     title: (): ModalState["modal"]["title"] => store.state.modal.modal.title,

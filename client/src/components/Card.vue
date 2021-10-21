@@ -162,8 +162,8 @@ export default defineComponent({
   components: {
     Spinner,
   },
-  setup(props) {
-    console.log("what are props", props);
+  setup() {
+    // console.log("what are props", props);
 
     // const { card } = toRef(props, "card");
     // console.log("what is card here", card);

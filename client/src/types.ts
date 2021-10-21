@@ -136,6 +136,7 @@ export interface LoadingState {
 export interface MyRootState {
   user: UserState;
   loading: LoadingState;
+  sideBarCategories: SidebarCategorizedCardsState;
   card: CardState;
   cards: CardsState;
   modal: ModalState;
@@ -181,9 +182,29 @@ export interface CardsState {
   categorized: CategorizedCardsObject; //class of categorized
   uncategorized?: Array<ICard>;
 }
+
+export interface SideBarCategoriesState {
+  categories: Array<{
+    id: string | number;
+    name: string;
+    isActive: boolean;
+  }>;
+}
+
 export interface CategorizedCardsObject {
   [key: string]: {
+    id?: number;
     cards: ICard[];
+    isActive: boolean;
+  };
+}
+export interface SidebarCategorizedCardsState {
+  categories: {
+    [key: string]: {
+      id: number;
+      isActive: boolean;
+      cards: ICard[];
+    };
   };
 }
 
@@ -238,7 +259,9 @@ export type RootCommitType =
   | "loading/SET_LOADING"
   | "card/CARD_SIDE_FRONT"
   | "card/CARD_SIDE_BACK"
-  | "cards/SET_CATEGORIZED_CARD_MAP";
+  | "cards/SET_CATEGORIZED_CARD_MAP"
+  | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
+  | "sidebarCategories/SET_ONE_SIDECATEG_ACTIVE";
 
 export interface CardBackPayload {
   isFrontSide: false;
