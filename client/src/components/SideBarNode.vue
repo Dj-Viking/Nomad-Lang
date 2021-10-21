@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { CategorizedCardsObject, RootCommitType } from "@/types";
-import { defineComponent, ref } from "@vue/runtime-core";
+import { defineComponent } from "@vue/runtime-core";
 import store from "../store";
 
 export default defineComponent({
@@ -25,12 +25,6 @@ export default defineComponent({
     categorizedCards: Array,
     categories: Object,
     allCards: Array,
-  },
-  setup() {
-    const categoryIsActive = ref(false);
-    return {
-      categoryIsActive,
-    };
   },
   methods: {
     toggleActiveCategory(event: any): void {
