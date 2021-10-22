@@ -191,8 +191,6 @@ export class UserResolver {
       
       console.log("categorized cards instance ", categorized);
       
-
-
       //sign a new token
       const newToken = signToken({
         username: req.user.username,
