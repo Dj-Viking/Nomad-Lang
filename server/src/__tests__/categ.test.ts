@@ -8,16 +8,6 @@ import { User } from "../entities/User";
 import { decodeToken } from "../utils/decodeToken";
 import { createCategorizedCardsObject } from "./utils/createCategorizedCardsObject";
 
-// const cards = [
-//     { id: 3, frontSideLanguage: "Russian", desc: "im a card" },
-//     { id: 1, frontSideLanguage: "Russian", frontSideText: "im a card" },
-//     { id: 1, frontSideLanguage: "English", frontSideText: "im a card" },
-//     { id: 1, frontSideLanguage: "English", frontSideText: "im a card" },
-//     { id: 0, frontSideLanguage: "Russian", desc: "im a card" },
-//     { id: 2, frontSideLanguage: "Chinese", frontSideText: "im a card" },
-//     { id: 0, frontSideLanguage: "Russian", desc: "im a card" },
-//     { id: 1, frontSideLanguage: "Russian", frontSideText: "im a card" },
-//   ] as Array<ICard>;
 let creatorId: number = 0;
 let newCardId: number | undefined = 0;
 let newUserId: number = 0;

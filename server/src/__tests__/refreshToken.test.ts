@@ -1,9 +1,7 @@
 require("dotenv").config();
 import { request } from "graphql-request";
 import { User } from "../entities/User";
-import { 
-  HOST, 
-} from "../constants";
+import { HOST } from "../constants";
 import { connectDb } from "./utils/connectDb";
 import {
   REGISTER_MUTATION, 
@@ -12,7 +10,7 @@ import {
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
 import { decodeToken } from "../utils/decodeToken";
-// import jwt from "
+
 let connection;
 const logger = ColorLog;
 let newToken: string = "";

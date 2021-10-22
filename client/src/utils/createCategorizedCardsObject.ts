@@ -1,23 +1,5 @@
 import { ICard, CategorizedCardsObject } from "src/types";
 
-// const set = new Set<{
-//   [key: string]: {
-//     cards: Array<ICard>;
-//   };
-// }>();
-// const cardsLength = 5;
-
-// const cards = [
-//   { id: 3, frontSideLanguage: "Russian", desc: "im a card" },
-//   { id: 1, frontSideLanguage: "Russian", frontSideText: "im a card" },
-//   { id: 1, frontSideLanguage: "English", frontSideText: "im a card" },
-//   { id: 1, frontSideLanguage: "English", frontSideText: "im a card" },
-//   { id: 0, frontSideLanguage: "Russian", desc: "im a card" },
-//   { id: 2, frontSideLanguage: "Chinese", frontSideText: "im a card" },
-//   { id: 0, frontSideLanguage: "Russian", desc: "im a card" },
-//   { id: 1, frontSideLanguage: "Russian", frontSideText: "im a card" },
-// ] as Array<ICard>;
-
 export function createCategorizedCardsObject(
   cards: Array<ICard>
 ): CategorizedCardsObject {
@@ -52,11 +34,8 @@ export function createCategorizedCardsObject(
       iterator++;
     }
   }
-  console.log("some obj", categorizedCardMap);
-  console.log("some obj keys now", Object.keys(categorizedCardMap));
-  console.log("some obj entries now", Object.entries(categorizedCardMap));
+  // console.log("some obj", categorizedCardMap);
+  // console.log("some obj keys now", Object.keys(categorizedCardMap));
+  // console.log("some obj entries now", Object.entries(categorizedCardMap));
   return categorizedCardMap;
 }
-
-//can't have top level await here...
-// createCategorizedCardsObject(cards);

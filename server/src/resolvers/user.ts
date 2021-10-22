@@ -189,14 +189,7 @@ export class UserResolver {
         iterator++;
       }
       
-      console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
-      // console.log("does this log")
       console.log("categorized cards instance ", categorized);
-      // console.log("does this log")
       
 
 
