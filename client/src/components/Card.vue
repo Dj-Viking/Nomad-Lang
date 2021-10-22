@@ -95,7 +95,7 @@
               <div class="media">
                 <div class="media-content">
                   <p class="title is-4">
-                    Backside text: {{ card?.backSideText }}
+                    {{ card?.backSideText }}
                   </p>
                   <form
                     @submit.prevent="
