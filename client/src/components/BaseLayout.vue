@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ 'side-bar-shrink': sidebarOpen, 'side-bar-adjust': !sidebarOpen }"
+    :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }"
     class="container is-widescreen"
   >
     <nav style="margin: 0 auto">
@@ -193,11 +193,11 @@ export default defineComponent({
   }
 }
 
-.side-bar-shrink {
+.content-shrink {
   margin-left: 100px;
   transition: 0.2s;
 }
-.side-bar-adjust {
+.content-adjust {
   margin-left: 0px;
   transition: 0.2s ease 0.3s;
 }
