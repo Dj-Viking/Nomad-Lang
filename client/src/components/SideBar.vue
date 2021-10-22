@@ -9,7 +9,6 @@
               justify-content: center;
               flex-direction: column;
             "
-            mode="out-in"
           >
             <i
               @click.prevent="
