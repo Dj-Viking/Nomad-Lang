@@ -23,27 +23,6 @@ export interface SetCategorizedCardsActionPayload {
   cards: Array<ICard>;
 }
 
-export type LanguageSymbol = "frontSideLanguage";
-
-export type LiteralLanguageSymbol = `${LanguageSymbol}`;
-
-export class CategorizedCardMapClass extends Map {
-  private categorizedMap!: Map<ICard["id"], string>;
-  constructor() {
-    super();
-    this.categorizedMap = new Map();
-    // this.categorizedMap = this.setSelf(key as number, value as string);
-  }
-  public clearSelf(): void {
-    Object.keys(this.categorizedMap).map((key) => {
-      delete this.categorizedMap[key];
-    });
-  }
-  public printMe(): void {
-    console.log(this.categorizedMap);
-  }
-}
-
 export interface EditCardResponse {
   editCardById: {
     errors: MyErrorResponse;
