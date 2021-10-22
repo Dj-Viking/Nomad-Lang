@@ -1,5 +1,4 @@
 <template>
-  <Notification />
   <Transition name="fade" type="transition">
     <div v-if="activeClass">
       <div>
@@ -7,6 +6,7 @@
       </div>
     </div>
     <div v-else>
+      <SideBar />
       <router-view />
     </div>
   </Transition>
@@ -15,17 +15,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
-import Notification from "./components/Notification.vue";
+import SideBar from "./components/SideBar.vue";
 import store from "./store";
 import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
-// import Spinner from "./components/Spinner.vue";
 export default defineComponent({
   name: "App",
   components: {
     Modal,
-    Notification,
-    // Spinner,
-    // Modalv2,
+    SideBar,
   },
   computed: {
     activeClass: (): ModalState["modal"]["activeClass"] =>

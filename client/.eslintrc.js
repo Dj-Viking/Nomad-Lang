@@ -14,6 +14,8 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    "prefer-const": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     semi: ["error", "always"],

@@ -352,6 +352,7 @@ export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: ICard = {
   createdAt: "right now",
   updatedAt: "right now",
   creatorId: 0,
+  categorized: { test: [{ id: 0 }] },
   __typename: "Card",
 };
 EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture =

@@ -12,7 +12,7 @@ import {
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import argon2 from 'argon2';
-import { MyContext, MyJwtData, MySendEmailOptions } from '../types';
+import { /*CategorizedCardMapClass,*/ CategorizedCardMap, MyContext, MyJwtData, MySendEmailOptions, /*CategorizedCardMapClassScalar*/ } from '../types';
 
 import { User } from '../entities/User';
 import { Card } from '../entities/Card';
@@ -36,10 +36,19 @@ class RegisterInput {
 @ObjectType()
 class UserFieldError {
   @Field()
-  field: String;
+  field: string;
   @Field()
-  message: String; 
+  message: string; 
 }
+
+
+// @ObjectType()
+// class CategorizedCardsOutputClass {
+//   @Field(() => new CategorizedCardMapClass(), { nullable: true })
+//   categorized: {
+//     [key: string]: Card[]
+//   };
+// }
 
 //user returned if worked
 // or error returned if error was there
@@ -71,6 +80,17 @@ class MeQueryResponse {
 
   @Field(() => [Card], { nullable: true })
   cards?: Card[] | null;
+
+  // @Field(() => CategorizedCardsOutputClass)
+  // categorized?: {
+  //   categorized: {
+  //     [key: string]: Card[]
+  //   }
+  // }
+
+  @Field(() => [Card], { nullable: true })
+  uncategorized?: Card[] | null;
+  
 }
 
 @ObjectType()
@@ -142,13 +162,36 @@ export class UserResolver {
       // user not found
 
       // console.log("user requesting their profile infomation and refreshtoken", req.user);
-
+      
       const user = await User.findOne({ where:{ email: req.user.email }});
       
       // console.log("user found", user);
-
+      
       const cards = await Card.find({ where: { creatorId: user?.id as number }});
       // console.log("checking cards given the creatorId", cards);
+      
+      //create a new cards Object to return that contains the cards categorized by their frontside language
+      const uncategorized = [] as Array<Card>;
+      let categorized = {} as CategorizedCardMap;
+      console.log("categorized cards instance", categorized);
+      
+      let iterator = 0
+      while (iterator < cards.length) {
+        if (!cards[iterator].frontSideLanguage) {
+          uncategorized.push(cards[iterator]);
+        } else { 
+          categorized = {
+            ...categorized,
+            // @ts-ignore
+            [cards[iterator].frontSideLanguage]: [cards[iterator]]
+          };
+        }
+        iterator++;
+      }
+      
+      console.log("categorized cards instance ", categorized);
+      
+
 
       //sign a new token
       const newToken = signToken({
@@ -173,11 +216,19 @@ export class UserResolver {
 
       // console.log("updated user's info adding in todos", changedUser);
       
+      console.log("what the hell is going on here", {
+        token: newToken,
+        user: changedUser.raw[0],
+        cards: cards,
+        categorized: {categorized: categorized}
+      });
 
       return {
         token: newToken,
         user: changedUser.raw[0],
-        cards: cards
+        cards: cards,
+        uncategorized,
+        // categorized: categorized // TODO: do this categorizing on the front end!!!
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {

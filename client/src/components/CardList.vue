@@ -14,7 +14,7 @@
     >
       clear cards
     </button>
-    <div style="margin-top: 2em; margin-bottom: 2em">
+    <div style="margin-top: 1em; margin-bottom: 2em">
       <div class="control">
         <button
           @click.prevent="openAddModal($event)"
@@ -26,7 +26,7 @@
         </button>
       </div>
     </div>
-    <Transition>
+    <Transition type="transition" name="fade" mode="out-in">
       <div
         class="container"
         style="
@@ -58,15 +58,7 @@
 </template>
 
 <script lang="ts">
-import {
-  // AddCardResponse,
-  // EditCardModalContext,
-  RootCommitType,
-  RootDispatchType,
-  CardsState,
-  UserState,
-  LoadingState,
-} from "../types";
+import { RootCommitType, CardsState, UserState, LoadingState } from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
 import { useMutation } from "@vue/apollo-composable";
@@ -98,17 +90,10 @@ export default defineComponent({
       submitClearUserCards,
     };
   },
-  data() {
-    return {
-      inputText: "",
-      store: store,
-    };
-  },
   computed: {
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
-    activeClass: () => store.state.modal.modal.activeClass,
     isLoading: (): LoadingState["loading"]["isLoading"] =>
       store.state.loading.loading.isLoading,
   },
@@ -120,24 +105,6 @@ export default defineComponent({
     // eslint-disable-next-line
     clearCards(_event: Event): void {
       store.commit("cards/SET_CARDS" as RootCommitType, [], { root: true });
-    },
-    // eslint-disable-next-line
-    async addCard(_event: Event): Promise<void | boolean> {
-      if (!this.inputText) return;
-      const payload = {
-        id: Date.now(),
-        text: this.inputText,
-        color: "blue",
-      };
-      const addResponse: boolean = await store.dispatch(
-        "cards/addCard" as RootDispatchType,
-        payload,
-        {
-          root: true,
-        }
-      );
-      this.inputText = "";
-      return addResponse;
     },
     openAddModal(event: MouseEvent): void {
       console.log("open add modal click event", event);

@@ -337,7 +337,6 @@
       </div>
       <div v-else>
         <h3 style="color: white">{{ title }}</h3>
-        <p style="color: white">something else</p>
       </div>
     </div>
     <button
@@ -361,6 +360,7 @@ import {
   ICard,
   AddCardResponse,
   EditCardCommitPayload,
+  RootDispatchType,
 } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
@@ -378,7 +378,8 @@ export default defineComponent({
     const backSideTextInput = ref();
     const backSideLanguageInput = ref();
     const backSidePictureInput = ref();
-    const inputId = ref(0);
+    const addCardResult = ref();
+    const inputId = ref();
     const errMsg = ref("");
     const showErrMsg = ref(false);
     const editResponse = ref();
@@ -416,6 +417,7 @@ export default defineComponent({
             }
           );
         } else {
+          addCardResult.value = result.data;
           toast.success("Success: added a card to your list!", {
             timeout: 3000,
           });
@@ -447,7 +449,7 @@ export default defineComponent({
           },
         },
       }
-    ); // TODO change this to the cards to props to edit
+    );
 
     onEditCardDone(
       (
@@ -480,8 +482,24 @@ export default defineComponent({
       backSidePictureInput,
       submitEditCard,
       errMsg,
+      addCardResult,
       showErrMsg,
     };
+  },
+  watch: {
+    addCardResult: async function (
+      newVal: AddCardResponse["addCard"]
+    ): Promise<void> {
+      if (newVal.errors === null) {
+        await store.dispatch(
+          "cards/setCategorizedCards" as RootDispatchType,
+          newVal.cards,
+          {
+            root: true,
+          }
+        );
+      }
+    },
   },
   computed: {
     title: (): ModalState["modal"]["title"] => store.state.modal.modal.title,

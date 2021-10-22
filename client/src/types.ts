@@ -1,18 +1,26 @@
 export interface ICard {
   __typename?: "Card";
   // eslint-disable-next-line
-  id?: number | string | undefined | null | any;
+  id?: number | undefined;
   cardId?: number | string;
   creatorId?: number | string;
-  frontSideText: string;
-  frontSideLanguage: string;
-  frontSidePicture: string;
-  backSideText: string;
-  backSideLanguage: string;
-  backSidePicture: string;
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
   updatedAt?: number | string;
   createdAt?: number | string;
+  categorized?: { [key: string]: ICard[] };
+  uncategorized?: Array<ICard>;
   color?: string | "blue"; //TODO remove
+}
+export interface SetCategorizedCardsCommitPayload {
+  categorized: Map<number, string>;
+}
+export interface SetCategorizedCardsActionPayload {
+  cards: Array<ICard>;
 }
 
 export interface EditCardResponse {
@@ -104,10 +112,19 @@ export interface LoadingState {
     isLoading: boolean;
   };
 }
+
+export interface SidebarState {
+  sidebar: {
+    isOpen: boolean;
+  };
+}
+
 export interface MyRootState {
   user: UserState;
   loading: LoadingState;
+  sideBarCategories: SidebarCategorizedCardsState;
   card: CardState;
+  sidebar: SidebarState;
   cards: CardsState;
   modal: ModalState;
   notification: NotificationState;
@@ -149,6 +166,25 @@ export interface UserEntityBase {
 }
 export interface CardsState {
   cards: Array<ICard>;
+  categorized: CategorizedCardsObject; //class of categorized
+  uncategorized?: Array<ICard>;
+}
+
+export interface CategorizedCardsObject {
+  [key: string]: {
+    id?: string;
+    cards: ICard[];
+    isActive: boolean;
+  };
+}
+export interface SidebarCategorizedCardsState {
+  categories: {
+    [key: string]: {
+      id: string;
+      isActive: boolean;
+      cards: ICard[];
+    };
+  };
 }
 
 export interface CardState {
@@ -166,7 +202,8 @@ export type RootDispatchType =
   | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
-  | "cards/addCard";
+  | "cards/addCard"
+  | "cards/setCategorizedCards";
 
 export interface AddCardPayload {
   options: {
@@ -200,7 +237,11 @@ export type RootCommitType =
   | "notification/CLOSE_NOTIFICATION"
   | "loading/SET_LOADING"
   | "card/CARD_SIDE_FRONT"
-  | "card/CARD_SIDE_BACK";
+  | "card/CARD_SIDE_BACK"
+  | "cards/SET_CATEGORIZED_CARD_MAP"
+  | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
+  | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE"
+  | "sidebar/TOGGLE_SIDEBAR";
 
 export interface CardBackPayload {
   isFrontSide: false;

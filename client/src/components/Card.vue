@@ -1,7 +1,7 @@
 <template>
-  <Transition type="transition" name="fade">
+  <Transition type="transition" name="fade" mode="out-in">
     <div v-if="!isLoading">
-      <Transition type="transition" name="slide-fade">
+      <Transition type="transition" name="slide-fade" mode="out-in">
         <div v-if="isFrontSide">
           <div class="card">
             <div class="card-image">
@@ -17,7 +17,7 @@
               <div class="media">
                 <div class="media-content">
                   <p class="title is-4">
-                    Frontside text: {{ card?.frontSideText }}
+                    {{ card?.frontSideText }}
                   </p>
                   <form
                     @submit.prevent="
@@ -95,7 +95,7 @@
               <div class="media">
                 <div class="media-content">
                   <p class="title is-4">
-                    Backside text: {{ card?.backSideText }}
+                    {{ card?.backSideText }}
                   </p>
                   <form
                     @submit.prevent="
@@ -162,8 +162,8 @@ export default defineComponent({
   components: {
     Spinner,
   },
-  setup(props) {
-    console.log("what are props", props);
+  setup() {
+    // console.log("what are props", props);
 
     // const { card } = toRef(props, "card");
     // console.log("what is card here", card);

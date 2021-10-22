@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+// import { GraphQLScalarType, Kind } from 'graphql';
 import jwt from 'jsonwebtoken';
+import { Card } from "./entities/Card";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -117,6 +119,77 @@ export interface ICard {
     updatedAt: string;
     creatorId: number;
 
+}
+
+
+// export const CategorizedCardMapClassScalar = new GraphQLScalarType({ 
+//     name: "CategorizedCardMapClass",
+//     description: "My Custom Card Map Class",
+//     serialize(value: any): CategorizedCardMapClass {
+//         if (!(value instanceof CategorizedCardMapClass)) {
+//             throw new Error(`CategorizedCardMapClass can only serialize said class instances. but got the value ${value}`);
+//         }
+//         return value;
+//     },
+//     parseValue(value: unknown): CategorizedCardMapClass {
+//         // check the type of the received value
+//         if (typeof value !== "object"){
+//             throw new Error("CategorizedCardMapClass can only parse objects");
+//         }
+//         // @ts-ignore
+//         return new CategorizedCardMapClass(value);
+//     },
+//     parseLiteral(ast): CategorizedCardMapClass {
+//         // check the type of the received value
+//         if (ast.kind !== Kind.OBJECT) {
+//             throw new Error("CategorizedCardMapClass can only parse object values");
+//         }
+//         // @ts-ignore
+//         return new CategorizedCardMapClass(ast.fields);
+//     }
+
+// })
+
+// export class CategorizedCardMapClass extends GraphQLScalarType implements CategorizedCardMap {
+//     public categorized!: {
+//         [key: string]: Array<Card>
+//     }
+//     constructor() {
+//         super ({ 
+//             name: "CategorizedCardMapClass",
+//             description: "My Custom Card Map Class",
+//             serialize(value: any): CategorizedCardMapClass {
+//                 if (!(value instanceof CategorizedCardMapClass)) {
+//                     throw new Error(`CategorizedCardMapClass can only serialize said class instances. but got the value ${value}`);
+//                 }
+//                 return value;
+//             },
+//             parseValue(value: unknown): CategorizedCardMapClass {
+//                 // check the type of the received value
+//                 if (typeof value !== "object"){
+//                     throw new Error("CategorizedCardMapClass can only parse objects");
+//                 }
+//                 // @ts-ignore
+//                 return new CategorizedCardMapClass(value);
+//             },
+//             parseLiteral(ast): CategorizedCardMapClass {
+//                 // check the type of the received value
+//                 if (ast.kind !== Kind.OBJECT) {
+//                     throw new Error("CategorizedCardMapClass can only parse object values");
+//                 }
+//                 // @ts-ignore
+//                 return new CategorizedCardMapClass(ast.fields);
+//             }
+        
+//         })
+//         this.categorized = {};
+//     }
+// }
+
+export interface CategorizedCardMap {
+    categorized: {
+        [key: string]: Array<Card>;
+    }
 }
 
 export interface ClearUserCardsResponse {

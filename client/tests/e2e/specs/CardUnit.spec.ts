@@ -64,22 +64,22 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     cy.get("button").contains("Add New Card").click();
     //select input fields and type
     cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText as string
     );
     cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage as string
     );
     cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture as string
     );
     cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText as string
     );
     cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage as string
     );
     cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture as string
     );
     //get the submit edit button
     cy.get("button[name=submitAddCard]").contains("SUBMIT ADD CARD").click();
@@ -210,22 +210,22 @@ describe("registers a new user that will crud the cards", () => {
     cy.get("button").contains("Add New Card").click();
     //select input fields and type
     cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText as string
     );
     cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage as string
     );
     cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture as string
     );
     cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText as string
     );
     cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage as string
     );
     cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture
+      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture as string
     );
     //get the submit add button
     cy.get("button[name=submitAddCard]").click();
@@ -246,22 +246,22 @@ describe("registers a new user that will crud the cards", () => {
     cy.get("button.button.is-primary.mx-2").click();
 
     cy.get("input[name=modalEditFsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
     );
     cy.get("input[name=modalEditFsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
     );
     cy.get("input[name=modalEditFsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
     );
     cy.get("input[name=modalEditBsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
     );
     cy.get("input[name=modalEditBsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
     );
     cy.get("input[name=modalEditBsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
     );
 
     cy.get("button").contains("SUBMIT EDIT CARD").click();
@@ -291,22 +291,22 @@ describe("registers a new user that will crud the cards", () => {
     //add card start
     //select input fields and type
     cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
     );
     cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
     );
     cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
     );
     cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
     );
     cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
     );
     cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
     );
     //get the submit add button
     cy.get("button[name=submitAddCard]").click();
@@ -327,22 +327,22 @@ describe("registers a new user that will crud the cards", () => {
     cy.get("button").contains("Add New Card").click();
     //select input fields and type
     cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
     );
     cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
     );
     cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
     );
     cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
     );
     cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
     );
     cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture
+      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
     );
     //get the submit add button
     cy.get("button[name=submitAddCard]").click();

@@ -1,5 +1,8 @@
 <template>
-  <div class="container is-widescreen">
+  <div
+    :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }"
+    class="container is-widescreen"
+  >
     <nav style="margin: 0 auto">
       <Transition type="transition" name="fade">
         <div v-if="!isHome">
@@ -48,16 +51,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent } from "vue";
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { mapState } from "vuex";
 import {
   ICard,
   MeQueryResponse,
-  // MyRootState,
   RootCommitType,
   RootDispatchType,
+  SidebarState,
   UserState,
 } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
@@ -70,20 +73,21 @@ export default defineComponent({
   setup() {
     //graphql me query for checking if the token is expired.
     //basically if the backend returns a token whenever the route changes. the user gets a new token. otherwise if user is idle on the page, the token would expire after about an hour...for now
-    let globalEmail = inject("$email");
     const { result: meResult, refetch } = useQuery(
       gql`
         ${createMeQuery()}
       `
     );
 
-    return { meResult, refetch, globalEmail };
+    return { meResult, refetch };
   },
   computed: {
     ...mapState(["user"]),
     //if i need to change this read only state i need to dispatch an action or commit some mutation
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
+    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
+      store.state.sidebar.sidebar.isOpen,
   },
   methods: {
     // eslint-disable-next-line
@@ -144,10 +148,17 @@ export default defineComponent({
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
           root: true,
         });
-        this.isLoggedIn = true;
         store.commit("cards/SET_CARDS" as RootCommitType, newValue.me.cards, {
           root: true,
         });
+
+        const res = await store.dispatch(
+          "cards/setCategorizedCards" as RootDispatchType,
+          { cards: newValue.me.cards },
+          { root: true }
+        );
+
+        console.log("response of dispatch of set cat cards", res);
         //set user vuex state with cards
         await store.dispatch(
           "user/setUser" as RootDispatchType,
@@ -158,10 +169,6 @@ export default defineComponent({
         );
       }
     },
-  },
-  async mounted() {
-    console.log("cards vuex state on mounted", store.state.cards);
-    //set the cards if there are any defined
   },
 });
 </script>
@@ -184,6 +191,15 @@ export default defineComponent({
   to {
     opacity: 1;
   }
+}
+
+.content-shrink {
+  margin-left: 100px;
+  transition: 0.2s;
+}
+.content-adjust {
+  margin-left: 0px;
+  transition: 0.2s ease 0.3s;
 }
 
 .nav-animate-in {

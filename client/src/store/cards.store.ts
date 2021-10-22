@@ -5,7 +5,10 @@ import {
   ICard,
   RootCommitType,
   EditCardCommitPayload,
+  SetCategorizedCardsActionPayload,
+  CategorizedCardsObject,
 } from "@/types";
+import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
 import { ActionContext } from "vuex";
 
 const state: CardsState = {
@@ -24,9 +27,17 @@ const state: CardsState = {
       updatedAt: Date.now(),
     };
   }),*/,
+  categorized: {},
 };
 const mutations = {
-  SET_CARDS(state: CardsState, payload: ICard[]): void {
+  SET_CATEGORIZED_CARD_MAP(
+    state: CardsState,
+    payload: CategorizedCardsObject
+  ): void {
+    //just update the state asynchronously resolved from the action
+    state.categorized = payload; //map should just absorb through the loop
+  },
+  SET_CARDS(state: CardsState, payload: Array<ICard>): void {
     if (typeof payload !== "object" || payload === null)
       return console.error(
         "payload must be a specific type of object but it was ",
@@ -153,9 +164,62 @@ const actions = {
       return Promise.resolve(false);
     }
   },
+  async setCategorizedCards(
+    { commit }: ActionContext<CardsState, MyRootState>,
+    payload: SetCategorizedCardsActionPayload
+  ): Promise<boolean | Error> {
+    try {
+      const { cards } = payload;
+      // taking in the cards array and sorting the categories by creating an object
+      // that has a key that is dynamic which will be this metalist of categories
+      // because trying to do this with type-graphql typeorm was very strange and
+      // probably nobody is trying to do that sort of thing right now....
+      //create a new cards Object to return that contains the cards categorized by their frontside language
+
+      //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
+      const uncategorized = [] as Array<ICard>;
+      const toCategorize = [] as Array<ICard>;
+
+      let iter = 0;
+      while (iter < cards.length) {
+        if (cards[iter].frontSideLanguage === "") {
+          uncategorized.unshift(cards[iter]);
+        }
+        if (cards[iter].frontSideLanguage !== "") {
+          toCategorize.unshift(cards[iter]);
+        }
+        iter++;
+      }
+
+      //init before falling into the loop where it will change and return as the comit payload
+      let returnCategorized = createCategorizedCardsObject(
+        toCategorize as ICard[]
+      );
+      console.log(
+        "categorized cards returned from new function",
+        returnCategorized
+      );
+
+      commit(
+        "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
+        returnCategorized,
+        { root: true }
+      );
+
+      commit(
+        "sidebarCategories/INIT_SIDEBAR_CATEGORIES" as RootCommitType,
+        returnCategorized,
+        { root: true }
+      );
+      return Promise.resolve(true);
+    } catch (error) {
+      console.error(error as Error);
+      return Promise.resolve(false);
+    }
+  },
 };
 const getters = {
-  todos(state: CardsState): ICard[] | [] {
+  cards(state: CardsState): ICard[] | [] {
     return state.cards || [];
   },
 };

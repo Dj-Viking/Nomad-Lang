@@ -5,6 +5,8 @@ import modal from "./modal.store";
 import notification from "./notification.store";
 import cards from "./cards.store";
 import card from "./card.store";
+import sidebarCategories from "./sidebarCategories.store";
+import sidebar from "./sidebar.store";
 import loading from "./loading.store";
 import { MyRootState } from "@/types";
 
@@ -12,6 +14,8 @@ const store: Store<MyRootState> = createStore({
   modules: {
     cards,
     card,
+    sidebar,
+    sidebarCategories,
     loading,
     modal,
     notification,
