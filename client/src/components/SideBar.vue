@@ -1,6 +1,6 @@
 <template>
   <div class="side-bar" :class="{ open: sidebarOpen, closed: !sidebarOpen }">
-    <div style="display: flex; flex-direction: column; min-width: 200px">
+    <div style="display: flex; flex-direction: column; min-width: 100px">
       <Transition type="transition" name="fade" mode="out-in">
         <div v-if="sidebarOpen">
           <div
@@ -31,7 +31,7 @@
             ></i>
             <h4
               style="
-                font-size: 20px;
+                font-size: 15px;
                 margin-bottom: 1em;
                 margin-top: 1em;
                 margin-left: 10px;
@@ -82,21 +82,27 @@
 
 <script lang="ts">
 import store from "@/store";
-import { CardsState, CategorizedCardsObject, ICard } from "@/types";
+import {
+  CardsState,
+  CategorizedCardsObject,
+  ICard,
+  RootCommitType,
+  SidebarState,
+} from "@/types";
 import SideBarNode from "./SideBarNode.vue";
-import { defineComponent, ref } from "@vue/runtime-core";
+import { defineComponent } from "@vue/runtime-core";
 
 export default defineComponent({
   name: "SideBar",
   components: {
     SideBarNode,
   },
-  setup() {
-    const sidebarOpen = ref(false);
-    return {
-      sidebarOpen,
-    };
-  },
+  // setup() {
+  //   const sidebarOpen = ref(false);
+  //   return {
+  //     sidebarOpen,
+  //   };
+  // },
   data() {
     return {
       allCards: [] as ICard[],
@@ -106,12 +112,17 @@ export default defineComponent({
     cards: (): CardsState["cards"] => store.state.cards.cards,
     categories: (): CardsState["categorized"] =>
       store.state.cards.categorized as CategorizedCardsObject,
+    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
+      store.state.sidebar.sidebar.isOpen,
   },
   methods: {
     toggleSideBar(event: MouseEvent): void {
       console.log("open side bar click event", event);
-      if (this.sidebarOpen) this.sidebarOpen = false;
-      else this.sidebarOpen = true;
+      store.commit(
+        "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
+        {},
+        { root: true }
+      );
     },
   },
   mounted() {
@@ -139,7 +150,7 @@ export default defineComponent({
 }
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity height 0.2s ease;
+  transition: opacity height 0.1s ease;
 }
 
 .fade-enter-from,
@@ -153,7 +164,7 @@ export default defineComponent({
 }
 
 .open {
-  width: 200px;
+  width: 100px;
   transition: 0.2s;
 }
 

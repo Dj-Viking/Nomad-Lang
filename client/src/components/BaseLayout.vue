@@ -1,5 +1,8 @@
 <template>
-  <div class="container is-widescreen">
+  <div
+    :class="{ 'side-bar-shrink': sidebarOpen, 'side-bar-adjust': !sidebarOpen }"
+    class="container is-widescreen"
+  >
     <nav style="margin: 0 auto">
       <Transition type="transition" name="fade">
         <div v-if="!isHome">
@@ -57,6 +60,7 @@ import {
   MeQueryResponse,
   RootCommitType,
   RootDispatchType,
+  SidebarState,
   UserState,
 } from "../types";
 import { createMeQuery } from "../graphql/queries/myQueries";
@@ -82,6 +86,8 @@ export default defineComponent({
     //if i need to change this read only state i need to dispatch an action or commit some mutation
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
+    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
+      store.state.sidebar.sidebar.isOpen,
   },
   methods: {
     // eslint-disable-next-line
@@ -185,6 +191,15 @@ export default defineComponent({
   to {
     opacity: 1;
   }
+}
+
+.side-bar-shrink {
+  margin-left: 100px;
+  transition: 0.2s;
+}
+.side-bar-adjust {
+  margin-left: 0px;
+  transition: 0.2s ease 0.3s;
 }
 
 .nav-animate-in {

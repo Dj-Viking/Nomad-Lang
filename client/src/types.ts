@@ -133,11 +133,19 @@ export interface LoadingState {
     isLoading: boolean;
   };
 }
+
+export interface SidebarState {
+  sidebar: {
+    isOpen: boolean;
+  };
+}
+
 export interface MyRootState {
   user: UserState;
   loading: LoadingState;
   sideBarCategories: SidebarCategorizedCardsState;
   card: CardState;
+  sidebar: SidebarState;
   cards: CardsState;
   modal: ModalState;
   notification: NotificationState;
@@ -253,7 +261,8 @@ export type RootCommitType =
   | "card/CARD_SIDE_BACK"
   | "cards/SET_CATEGORIZED_CARD_MAP"
   | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
-  | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE";
+  | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE"
+  | "sidebar/TOGGLE_SIDEBAR";
 
 export interface CardBackPayload {
   isFrontSide: false;
