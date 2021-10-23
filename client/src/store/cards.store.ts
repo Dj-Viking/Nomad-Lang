@@ -92,6 +92,9 @@ const mutations = {
 
     //return a filtered array that doesn't have the id passed as an argument
     state.cards = state.cards.filter((card) => card.id !== id);
+
+    //create new all cards array to reference all user's cards
+    state.allCards = state.allCards.filter((card) => card.id !== id);
   },
   //only for local state
   // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
@@ -180,15 +183,20 @@ const actions = {
   },
   async deleteCard(
     { state, commit, dispatch }: ActionContext<CardsState, MyRootState>,
-    index: number
+    id: number
   ): Promise<void | boolean> {
     try {
-      commit("cards/DELETE_CARD" as RootCommitType, index, { root: true });
-      await dispatch(
+      // this returns new cards arrays for display and the total amount of user's cards
+      commit("cards/DELETE_CARD" as RootCommitType, id, { root: true });
+
+      //reset the categorized cards
+
+      dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
-        { cards: state.cards },
+        { cards: state.allCards },
         { root: true }
       );
+
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);

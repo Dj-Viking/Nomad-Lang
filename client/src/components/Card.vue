@@ -147,6 +147,7 @@ import store from "../store";
 // import Skeleton from "../components/Skeleton.vue";
 import Spinner from "../components/Spinner.vue";
 import {
+  DeleteCardResponse,
   ICard,
   LoadingState,
   ModalState,
@@ -155,6 +156,7 @@ import {
   UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
+import { FetchResult } from "@apollo/client/core";
 export default defineComponent({
   name: "Card",
   props: ["cards", "card", "id"],
@@ -168,7 +170,7 @@ export default defineComponent({
     // console.log("what is card here", card);
     const toast = useToast();
     const inputId = ref(0);
-    const { mutate: submitDeleteCard } = useMutation(
+    const { mutate: submitDeleteCard, onDone: onDeleteDone } = useMutation(
       gql`
         ${createDeleteCardMutation()}
       `,
@@ -177,6 +179,26 @@ export default defineComponent({
           //using a ref as a type definition of the input that will happen later
           id: inputId.value,
         },
+      }
+    );
+
+    onDeleteDone(
+      (
+        result: FetchResult<
+          DeleteCardResponse,
+          Record<string, unknown>,
+          Record<string, unknown>
+        >
+      ): void => {
+        if (result.data?.deleteCard.errors?.length) {
+          toast.error("There was a problem deleting a card", {
+            timeout: 3000,
+          });
+        } else {
+          //set the cards again
+          //, which will also reset the categorized object
+          // use the async dispatch set cards
+        }
       }
     );
 
@@ -194,8 +216,8 @@ export default defineComponent({
       store.state.modal.modal.activeClass,
   },
   methods: {
-    async deleteCard(_event: Event, index: number): Promise<void> {
-      await store.dispatch("cards/deleteCard" as RootDispatchType, index, {
+    async deleteCard(_event: Event, id: number): Promise<void> {
+      await store.dispatch("cards/deleteCard" as RootDispatchType, id, {
         root: true,
       });
     },

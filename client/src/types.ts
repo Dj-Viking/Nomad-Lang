@@ -25,6 +25,13 @@ export interface SetCategorizedCardsActionPayload {
   cards: Array<ICard>;
 }
 
+export interface DeleteCardResponse {
+  deleteCard: {
+    errors: MyErrorResponse;
+    cards: ICard[];
+  };
+}
+
 export interface EditCardResponse {
   editCardById: {
     errors: MyErrorResponse;
