@@ -210,6 +210,8 @@
                   backSidePicture: backSidePictureInput,
                   color: 'blue',
                   creatorId: 0,
+                  isFrontSide: true,
+                  isBackSide: false,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 };
@@ -378,7 +380,7 @@ export default defineComponent({
     const backSideTextInput = ref();
     const backSideLanguageInput = ref();
     const backSidePictureInput = ref();
-    const addCardResult = ref();
+    // const addCardResult = ref();
     const inputId = ref();
     const errMsg = ref("");
     const showErrMsg = ref(false);
@@ -417,17 +419,25 @@ export default defineComponent({
             }
           );
         } else {
-          addCardResult.value = result.data;
+          // addCardResult.value = result.data;
           toast.success("Success: added a card to your list!", {
             timeout: 3000,
           });
           store.commit(
-            "cards/SET_CARDS" as RootCommitType,
-            result.data?.addCard.cards,
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: result.data?.addCard.cards },
             {
               root: true,
             }
           );
+          store
+            .dispatch(
+              "cards/setCategorizedCards" as RootDispatchType,
+              { cards: result.data?.addCard.cards },
+              { root: true }
+            )
+            .then(() => console.log("set categorized when adding a card"))
+            .catch(console.log);
         }
       }
     );
@@ -465,8 +475,8 @@ export default defineComponent({
         } else {
           editResponse.value = result.data;
           store.commit(
-            "cards/SET_CARDS" as RootCommitType,
-            result.data?.editCardById.cards as ICard[],
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: result.data?.editCardById.cards as ICard[] },
             { root: true }
           );
         }
@@ -482,25 +492,25 @@ export default defineComponent({
       backSidePictureInput,
       submitEditCard,
       errMsg,
-      addCardResult,
+      // addCardResult,
       showErrMsg,
     };
   },
-  watch: {
-    addCardResult: async function (
-      newVal: AddCardResponse["addCard"]
-    ): Promise<void> {
-      if (newVal.errors === null) {
-        await store.dispatch(
-          "cards/setCategorizedCards" as RootDispatchType,
-          newVal.cards,
-          {
-            root: true,
-          }
-        );
-      }
-    },
-  },
+  // watch: {
+  //   addCardResult: async function (
+  //     newVal: AddCardResponse["addCard"]
+  //   ): Promise<void> {
+  //     if (newVal.errors === null) {
+  //       await store.dispatch(
+  //         "cards/setCategorizedCards" as RootDispatchType,
+  //         newVal.cards,
+  //         {
+  //           root: true,
+  //         }
+  //       );
+  //     }
+  //   },
+  // },
   computed: {
     title: (): ModalState["modal"]["title"] => store.state.modal.modal.title,
     activeClass: (): ModalState["modal"]["activeClass"] =>

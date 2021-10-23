@@ -167,6 +167,7 @@ export interface UserEntityBase {
   updatedAt: number;
 }
 export interface CardsState {
+  allCards: Array<ICard>;
   cards: Array<ICard>;
   categorized: CategorizedCardsObject; //class of categorized
   uncategorized?: Array<ICard>;
@@ -232,7 +233,8 @@ export type RootCommitType =
   | "user/SET_USER_CARDS"
   /** */
   | "cards/ADD_CARD"
-  | "cards/SET_CARDS"
+  | "cards/SET_ALL_CARDS"
+  | "cards/SET_DISPLAY_CARDS"
   | "cards/DELETE_CARD"
   | "cards/EDIT_CARD"
   | "cards/SET_CATEGORIZED_CARD_MAP"
@@ -274,6 +276,7 @@ export interface RegisterResponse {
 }
 export interface LoginResponse {
   login: {
+    cards: ICard[];
     errors: MyErrorResponse;
     token: string | null;
     user: UserEntityBase | null;

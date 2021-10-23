@@ -8,10 +8,10 @@
     "client": "cd client; npm run serve",
     "test": "cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test",
     "server-compile": "cd server; npm run tsw",
-    "start:dev": "cd server; npm run dev",
+    "server:dev": "cd server; npm run dev",
     "heroku-postbuild": "cd client && npm run build",
-    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
-    "start:prod": "cd server && npm start"
+    "start": "if-env NODE_ENV=production && npm run server:prod || npm run server:dev",
+    "server:prod": "cd server && npm start"
   },
   "repository": {
     "type": "git",

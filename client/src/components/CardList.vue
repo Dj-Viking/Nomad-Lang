@@ -111,7 +111,11 @@ export default defineComponent({
 
     // eslint-disable-next-line
     clearCards(_event: Event): void {
-      store.commit("cards/SET_CARDS" as RootCommitType, [], { root: true });
+      store.commit(
+        "cards/SET_DISPLAY_CARDS" as RootCommitType,
+        { cards: [] },
+        { root: true }
+      );
     },
     openAddModal(event: MouseEvent): void {
       console.log("open add modal click event", event);

@@ -5,6 +5,7 @@
       style="margin: 0 20%"
       @submit.prevent="
         ($event) => {
+          store.commit('loading/SET_LOADING', true, { root: true });
           let event = $event;
           readEvent(event);
           submitLogin({
@@ -69,9 +70,10 @@
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { defineComponent, inject, ref, onMounted } from "vue";
+import { useStore } from "vuex";
 // import BaseLayout from "../components/BaseLayout.vue";
 import { createLoginMutation } from "../graphql/mutations/myMutations";
-import { LoginResponse, RootCommitType } from "../types";
+import { LoadingState, LoginResponse, RootCommitType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
 import store from "../store";
@@ -83,14 +85,18 @@ export default defineComponent({
   components: {
     // BaseLayout,
   },
+  computed: {
+    isLoading: (): LoadingState["loading"]["isLoading"] =>
+      store.state.loading.loading.isLoading,
+  },
   setup(this: void) {
     let globalEmail = inject("$email");
     const toast = useToast();
+    const store = useStore();
     const loginInput = ref("");
     const password = ref("");
     const successMsg = ref("");
     const showSuccess = ref(false);
-    const isLoading = ref(false);
     const {
       mutate: submitLogin,
       loading: loginIsLoading,
@@ -123,13 +129,17 @@ export default defineComponent({
           toast.error(`Error: ${result.data.login.errors[0].message}`, {
             timeout: 3000,
           });
+          store.commit("loading/SET_LOADING" as RootCommitType, false, {
+            root: true,
+          });
         } else {
-          isLoading.value = true;
           toast.success("Logged in", {
             timeout: 2000,
           });
           setTimeout(() => {
-            isLoading.value = false;
+            store.commit("loading/SET_LOADING" as RootCommitType, false, {
+              root: true,
+            });
             showSuccess.value = false;
             successMsg.value = "";
             console.log("login response new value", result.data?.login);
@@ -140,6 +150,11 @@ export default defineComponent({
             store.commit("user/SET_USER" as RootCommitType, payload, {
               root: true,
             });
+            store.commit(
+              "cards/SET_DISPLAY_CARDS" as RootCommitType,
+              { cards: result.data?.login.cards },
+              { root: true }
+            );
             globalEmail = result?.data?.login.user?.email;
             auth.setToken(result?.data?.login.token as string);
             auth.setEmail(globalEmail as string);
@@ -150,6 +165,7 @@ export default defineComponent({
     );
 
     onMounted(() => {
+      store.commit("loading/SET_LOADING", false, { root: true });
       document.title = "Login";
     });
 
@@ -157,8 +173,8 @@ export default defineComponent({
       loginInput,
       password,
       submitLogin,
+      store,
       loginIsLoading,
-      isLoading,
       loginError,
       globalEmail,
     };

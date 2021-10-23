@@ -104,9 +104,13 @@ export default defineComponent({
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
       // this.refetch();
-      await store.dispatch("cards/setCards" as RootDispatchType, [], {
-        root: true,
-      });
+      await store.commit(
+        "cards/SET_DISPLAY_CARDS" as RootCommitType,
+        { cards: [] },
+        {
+          root: true,
+        }
+      );
     },
   },
   watch: {
@@ -121,21 +125,23 @@ export default defineComponent({
         this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
         store.commit(
-          "cards/SET_CARDS" as RootCommitType,
-          [
-            {
-              frontSideText: "sign in to see and add your own cards!!!",
-              frontSideLanguage: "sign in to see and add your own cards!!!",
-              frontSidePicture: "sign in to see and add your own cards!!!",
-              backSideText: "sign in to see and add your own cards!!!",
-              backSideLanguage: "sign in to see and add your own cards!!!",
-              backSidePicture: "sign in to see and add your own cards!!!",
-              id: 0,
-              createdAt: "right now",
-              updatedAt: "just now",
-              creatorId: 0,
-            } as ICard,
-          ],
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          {
+            cards: [
+              {
+                frontSideText: "sign in to see and add your own cards!!!",
+                frontSideLanguage: "sign in to see and add your own cards!!!",
+                frontSidePicture: "sign in to see and add your own cards!!!",
+                backSideText: "sign in to see and add your own cards!!!",
+                backSideLanguage: "sign in to see and add your own cards!!!",
+                backSidePicture: "sign in to see and add your own cards!!!",
+                id: 0,
+                createdAt: "right now",
+                updatedAt: "just now",
+                creatorId: 0,
+              } as ICard,
+            ],
+          },
           { root: true }
         );
         store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
@@ -148,17 +154,29 @@ export default defineComponent({
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
           root: true,
         });
-        store.commit("cards/SET_CARDS" as RootCommitType, newValue.me.cards, {
-          root: true,
-        });
 
-        const res = await store.dispatch(
+        store.commit(
+          "cards/SET_ALL_CARDS" as RootCommitType,
+          { cards: newValue.me.cards },
+          {
+            root: true,
+          }
+        );
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: newValue.me.cards },
+          {
+            root: true,
+          }
+        );
+
+        await store.dispatch(
           "cards/setCategorizedCards" as RootDispatchType,
           { cards: newValue.me.cards },
           { root: true }
         );
 
-        console.log("response of dispatch of set cat cards", res);
+        // console.log("response of dispatch of set cat cards", res);
         //set user vuex state with cards
         await store.dispatch(
           "user/setUser" as RootDispatchType,
