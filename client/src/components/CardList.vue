@@ -53,7 +53,8 @@
           <Card
             :id="card.id"
             :cards="cards"
-            :isFrontSide="false"
+            :isFrontSide="true"
+            :isBackSide="false"
             :card="card"
           />
         </div>
