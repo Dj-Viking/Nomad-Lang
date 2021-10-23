@@ -50,7 +50,12 @@
           v-for="(card, i) in cards"
           :key="i"
         >
-          <Card :card="card" />
+          <Card
+            :id="card.id"
+            :cards="cards"
+            :isFrontSide="false"
+            :card="card"
+          />
         </div>
       </div>
     </Transition>
@@ -74,6 +79,7 @@ export default defineComponent({
     Card,
     // Spinner,
   },
+
   setup() {
     const inputId = ref(0);
     const input = ref("");

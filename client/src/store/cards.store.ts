@@ -30,6 +30,29 @@ const state: CardsState = {
   categorized: {},
 };
 const mutations = {
+  TOGGLE_CARD_SIDE(state: CardsState, payload: { id: number }): void {
+    const { id } = payload;
+    state.cards = state.cards.map((card) => {
+      if (id === card.id) {
+        if (card.isFrontSide) {
+          return {
+            ...card,
+            isFrontSide: false,
+            isBackSide: true,
+          };
+        } else {
+          return {
+            ...card,
+            isBackSide: false,
+            isFrontSide: true,
+          };
+        }
+      } else
+        return {
+          ...card,
+        };
+    });
+  },
   SET_CATEGORIZED_CARD_MAP(
     state: CardsState,
     payload: CategorizedCardsObject
@@ -43,7 +66,13 @@ const mutations = {
         "payload must be a specific type of object but it was ",
         payload
       );
-    state.cards = payload;
+    state.cards = payload.map((card) => {
+      return {
+        ...card,
+        isFrontSide: true,
+        isBackSide: false,
+      };
+    });
   },
   ADD_CARD(state: CardsState, payload: ICard): void {
     if (typeof payload !== "object" || payload === null)

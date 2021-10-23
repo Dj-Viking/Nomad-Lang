@@ -1,7 +1,7 @@
 export interface ICard {
   __typename?: "Card";
   // eslint-disable-next-line
-  id?: number | undefined;
+  id?: number;
   cardId?: number | string;
   creatorId?: number | string;
   frontSideText?: string;
@@ -12,6 +12,8 @@ export interface ICard {
   backSidePicture?: string;
   updatedAt?: number | string;
   createdAt?: number | string;
+  isFrontSide: boolean;
+  isBackSide: boolean;
   categorized?: { [key: string]: ICard[] };
   uncategorized?: Array<ICard>;
   color?: string | "blue"; //TODO remove
@@ -199,6 +201,7 @@ export type RootDispatchType =
   | "user/setUserToken"
   | "user/setUserCards"
   | "user/setUser"
+  /** */
   | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
@@ -227,18 +230,22 @@ export type RootCommitType =
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
   | "user/SET_USER_CARDS"
+  /** */
   | "cards/ADD_CARD"
   | "cards/SET_CARDS"
   | "cards/DELETE_CARD"
   | "cards/EDIT_CARD"
+  | "cards/SET_CATEGORIZED_CARD_MAP"
+  | "cards/TOGGLE_CARD_SIDE"
+  /** */
   | "modal/SET_MODAL_ACTIVE"
   | "modal/SET_MODAL_CONTEXT"
+  /** */
   | "notification/OPEN_NOTIFICATION"
   | "notification/CLOSE_NOTIFICATION"
+  /** */
   | "loading/SET_LOADING"
-  | "card/CARD_SIDE_FRONT"
-  | "card/CARD_SIDE_BACK"
-  | "cards/SET_CATEGORIZED_CARD_MAP"
+  /** */
   | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
   | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE"
   | "sidebar/TOGGLE_SIDEBAR";
