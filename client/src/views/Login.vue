@@ -119,7 +119,7 @@ export default defineComponent({
     );
 
     onLoginDone(
-      (
+      async (
         result: FetchResult<
           LoginResponse,
           Record<string, unknown>,
@@ -137,33 +137,31 @@ export default defineComponent({
           toast.success("Logged in", {
             timeout: 2000,
           });
-          setTimeout(async () => {
-            store.commit("loading/SET_LOADING" as RootCommitType, false, {
-              root: true,
-            });
-            showSuccess.value = false;
-            successMsg.value = "";
-            const payload = {
-              user: result.data?.login.user,
-              loggedIn: true,
-            };
-            store.commit("user/SET_USER" as RootCommitType, payload, {
-              root: true,
-            });
-            await store
-              .dispatch(
-                "cards/setCards" as RootDispatchType,
-                { cards: result.data?.login.cards },
-                { root: true }
-              )
-              .catch((e) =>
-                console.error("error when setting cards after logging in", e)
-              );
-            globalEmail = result?.data?.login.user?.email;
-            auth.setToken(result?.data?.login.token as string);
-            auth.setEmail(globalEmail as string);
-            router.push("/");
-          }, 2000);
+          store.commit("loading/SET_LOADING" as RootCommitType, false, {
+            root: true,
+          });
+          showSuccess.value = false;
+          successMsg.value = "";
+          const payload = {
+            user: result.data?.login.user,
+            loggedIn: true,
+          };
+          store.commit("user/SET_USER" as RootCommitType, payload, {
+            root: true,
+          });
+          await store
+            .dispatch(
+              "cards/setCards" as RootDispatchType,
+              { cards: result.data?.login.cards },
+              { root: true }
+            )
+            .catch((e) =>
+              console.error("error when setting cards after logging in", e)
+            );
+          globalEmail = result?.data?.login.user?.email;
+          auth.setToken(result?.data?.login.token as string);
+          auth.setEmail(globalEmail as string);
+          router.push("/");
         }
       }
     );

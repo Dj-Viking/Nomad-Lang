@@ -263,10 +263,6 @@ const actions = {
       let returnCategorized = createCategorizedCardsObject(
         toCategorize as ICard[]
       );
-      console.log(
-        "categorized cards returned from new function",
-        returnCategorized
-      );
 
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
