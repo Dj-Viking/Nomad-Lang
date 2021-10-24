@@ -23,17 +23,17 @@ export async function sendEmail(args: MySendEmailOptions): Promise<void> {
   // console.log("creating transporter", transporter);
 
   // send mail with defined transport object
-  let info = await transporter.sendMail({
+  await transporter.sendMail({
     from: `${fromHeader} <${process.env.NODEMAILER_AUTH_EMAIL}>`, // sender address
     to: mailTo, // list of receivers
     subject: subject, // Subject line
     html: mailHtml
   });
 
-  console.log("Message sent: %s", info.messageId);
+  // console.log("Message sent: %s", info.messageId);
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
   // // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  // console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
   // // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }

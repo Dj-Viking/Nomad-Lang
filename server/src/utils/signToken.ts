@@ -8,7 +8,6 @@ const {
 } = process.env;
 
 export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPasswordTokenArgs): string {
-  console.log("what are args here to sign a token", args);
   
   const {
     username, 

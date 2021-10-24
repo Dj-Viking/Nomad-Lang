@@ -4,7 +4,6 @@ export function createCategorizedCardsObject(
   cards: Array<ICard>
 ): CategorizedCardsObject {
   let categorizedCardMap = {} as CategorizedCardsObject;
-  console.log("keys of smoe obj", Object.keys(categorizedCardMap));
   let iterator = 0;
   while (iterator < cards.length) {
     if (cards[iterator].frontSideLanguage) {
@@ -34,8 +33,5 @@ export function createCategorizedCardsObject(
       iterator++;
     }
   }
-  // console.log("some obj", categorizedCardMap);
-  // console.log("some obj keys now", Object.keys(categorizedCardMap));
-  // console.log("some obj entries now", Object.entries(categorizedCardMap));
   return categorizedCardMap;
 }

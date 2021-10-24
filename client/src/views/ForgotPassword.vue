@@ -113,8 +113,9 @@ export default defineComponent({
     };
   },
   methods: {
-    readEvent(event: Event) {
-      console.log("submitted the form", event);
+    // eslint-disable-next-line
+    readEvent(_event: Event) {
+      // do nothing
     },
   },
 });

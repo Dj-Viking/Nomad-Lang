@@ -15,18 +15,15 @@ export default defineComponent({
   setup() {
     const menuOpen = ref(false);
     const toggleMenu = () => {
-      console.log("menu toggle");
       menuOpen.value = !menuOpen.value;
     };
     const onClickAway = () => {
       if (menuOpen.value === true) menuOpen.value = false;
     };
     const onContentClick = () => {
-      console.log("clicked content");
       menuOpen.value = false;
     };
     const onClick = () => {
-      console.log("on triggered");
       toggleMenu();
     };
     return { toggleMenu, menuOpen, onClickAway, onContentClick, onClick };

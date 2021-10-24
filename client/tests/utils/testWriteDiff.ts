@@ -10,19 +10,12 @@ import {
 (async function () {
   // eslint-disable-next-line
   return new Promise((resolve, _reject) => {
-    // const baseFileBuffer = fs.readFileSync(
-    //   "./tests/e2e/fixtures/screenshots/diff/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window"
-    // );
-
-    // resolve(console.log("base file buffer?", baseFileBuffer));
     const dir: Array<string> = fs.readdirSync(
       "./tests/e2e/fixtures/screenshots/base/LoadHome.spec.ts"
     );
     console.log("directory", dir);
 
-    // resolve(console.log("diff directory", dir));
     const baseFile = fs.readFileSync(PATH_TO_BASE_FROM_TASK_FUNCTION);
-    // resolve(console.log("file", file));
     const basePng: PNGWithMetadata = PNG.sync.read(baseFile);
     console.log("basepng", basePng);
     const actualFile = fs.readFileSync(PATH_TO_ACTUAL_FROM_TASK_FUNCTION);

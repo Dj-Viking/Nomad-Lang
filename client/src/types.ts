@@ -12,8 +12,8 @@ export interface ICard {
   backSidePicture?: string;
   updatedAt?: number | string;
   createdAt?: number | string;
-  isFrontSide: boolean;
-  isBackSide: boolean;
+  isFrontSide?: boolean;
+  isBackSide?: boolean;
   categorized?: { [key: string]: ICard[] };
   uncategorized?: Array<ICard>;
   color?: string | "blue"; //TODO remove

@@ -20,7 +20,6 @@ const state: UserState = {
 };
 const mutations = {
   SET_USER(state: UserState, payload: SetUserCommitPayload): void {
-    // console.log("set user commit some payload", payload);
     // eslint-disable-next-line
     if (payload && payload.hasOwnProperty("token")) {
       delete payload.__typename;
@@ -35,11 +34,9 @@ const mutations = {
     } as UserState["user"];
   },
   SET_USER_TODOS(state: UserState, payload: ICard[]): void {
-    console.log("setting user todos payload!!!", payload);
     state.user.cards = payload;
   },
   SET_LOGGED_IN(state: UserState, payload: boolean): void {
-    console.log("setting logged in", payload);
     state.user = {
       ...state.user,
       loggedIn: payload,

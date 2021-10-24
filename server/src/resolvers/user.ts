@@ -81,16 +81,6 @@ class MeQueryResponse {
   @Field(() => [Card], { nullable: true })
   cards?: Card[] | null;
 
-  // @Field(() => CategorizedCardsOutputClass)
-  // categorized?: {
-  //   categorized: {
-  //     [key: string]: Card[]
-  //   }
-  // }
-
-  @Field(() => [Card], { nullable: true })
-  uncategorized?: Card[] | null;
-  
 }
 
 @ObjectType()
@@ -159,16 +149,10 @@ export class UserResolver {
     try {
       //cant query themselves if they are not logged in with a fresh token to make a me query
       if (!req.user) return new ErrorResponse("unauthenticated", "401 user not authenticated");
-      // user not found
 
-      // console.log("user requesting their profile infomation and refreshtoken", req.user);
-      
       const user = await User.findOne({ where:{ email: req.user.email }});
       
-      // console.log("user found", user);
-      
       const cards = await Card.find({ where: { creatorId: user?.id as number }});
-      // console.log("checking cards given the creatorId", cards);
       
       //create a new cards Object to return that contains the cards categorized by their frontside language
       const uncategorized = [] as Array<Card>;
@@ -198,10 +182,6 @@ export class UserResolver {
         uuid: uuid.v4()
       });
 
-      //debug
-      // const profile = decodeToken(newToken);
-      // console.log("heres the profile of the person doing me query", profile);
-      
       const changedUser = await getConnection()
       .getRepository(User)
       .createQueryBuilder("user")
@@ -212,7 +192,6 @@ export class UserResolver {
       .updateEntity(true)
       .execute();
 
-      // console.log("updated user's info adding in todos", changedUser);
       
       console.log("what the hell is going on here", {
         token: newToken,
@@ -225,8 +204,6 @@ export class UserResolver {
         token: newToken,
         user: changedUser.raw[0],
         cards: cards,
-        uncategorized,
-        // categorized: categorized // TODO: do this categorizing on the front end!!!
       }
       //if user is found sign a new token for them with a new expiration
     } catch (error) {
@@ -269,7 +246,6 @@ export class UserResolver {
       user = result.raw[0];
 
       req.user = user;
-      // console.log('what is the result', result.raw[0]);
       
       
       return {
@@ -295,14 +271,11 @@ export class UserResolver {
     @Arg('options', () => LoginInput) options: LoginInput,
     @Ctx() _context: MyContext
   ): Promise<UserResponse>{ 
-    // console.log("args sent from client", options);
     
     let user;
     user = await User.findOne({ where: { email: options.email } });
-    // console.log("found user by email?", user);
     if (!user) {
       user = await User.findOne({ where: { username: options.username } });
-      // console.log("found user by username", user);
     }
     if (!user) 
     {
@@ -336,10 +309,7 @@ export class UserResolver {
     .where("email = :email", { email: user.email })
     .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
     .updateEntity(true)
-    .execute();
-
-    // console.log("updated user's token after logging in ", changedUser.raw[0]);
-      
+    .execute();  
 
     const cards = await Card.find({ where: { creatorId: user.id }});
     // console.log("got cards", cards);
@@ -368,9 +338,6 @@ export class UserResolver {
       //check if token is expired if so return an error response
       let verified: MyJwtData | null | any = "something";
       verified = await verifyAsync(token);
-      // console.log("what is the response of verify async here as an awaited function", verified);
-      // console.log("verified is an instance of Error??", verified instanceof Error);
-      
       //create the error response if verifying the token creates an error
       if (verified instanceof Error && verified.message.includes("expired")) 
         return new ErrorResponse("invalid", "reset token expired");
@@ -382,7 +349,6 @@ export class UserResolver {
       ) return new ErrorResponse("invalid", "invalid token");
       
       const decodedToken = decodeToken(token);
-      // console.log("decoded token", decodedToken);
       
       //create a new password to update the user table with
       const hashedPassword = await argon2.hash(password);
@@ -484,8 +450,6 @@ export class UserResolver {
     @Arg("email", () => String) email: string,
     @Ctx() context: MyContext
   ): Promise<LogoutResponse | ErrorResponse> {
-    // console.log('context user', context.req.user);
-    // console.log("email entered", email);
     
     if (!email) return new ErrorResponse("noemail", "no email entered")
     try {

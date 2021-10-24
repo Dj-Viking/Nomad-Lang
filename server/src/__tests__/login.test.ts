@@ -34,7 +34,6 @@ describe("Tests the user register", () => {
   });
   
   it("and check that the user got added to the db", async () => {
-    // console.log(`${ANSI_ESCAPES.blue}`, `checking that the user got added to the DB`, `${ANSI_ESCAPES.reset}`);
     new logger("blue", "checking that the user got added to the DB").genLog();
     const connection = await connectDb();
     const users = await User.find({ where: { email: REGISTER_EMAIL }});
@@ -93,16 +92,6 @@ describe("do the login mutation", () => {
     expect(res.login.user?.username).toEqual(REGISTER_USERNAME);
   }); 
 });
-
-// do a me query
-//not sure how to test this yet
-// describe("do a me query to check that I am logged in", () => {
-//   it("me query", async () => {
-//     console.log(`${ANSI_ESCAPES.blue}`, `check the me query`, `${ANSI_ESCAPES.reset}`);
-//     const res = await request(HOST + "/graphql", ME_QUERY);
-//     logJson(res);
-//   });
-// }); 
 
 describe("delete the user we just made", () => {
   //delete the user

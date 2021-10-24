@@ -14,7 +14,6 @@ const state: ModalState = {
 };
 const mutations = {
   SET_MODAL_ACTIVE(state: ModalState, payload: boolean): void {
-    console.log("calling vuex open modal active commit", payload);
     state.modal.activeClass = payload;
   },
   SET_MODAL_TITLE(state: ModalState, payload: string): void {

@@ -10,7 +10,6 @@ export function createCategorizedCardsObject(
   cards: Array<ICard>
 ): CategorizedCardsObject {
   let categorizedCardMap = {} as CategorizedCardsObject;
-  console.log("keys of smoe obj", Object.keys(categorizedCardMap));
   let iterator = 0;
   while (iterator < cards.length) {
     categorizedCardMap = {

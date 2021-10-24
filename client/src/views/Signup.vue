@@ -126,10 +126,6 @@ export default defineComponent({
         } else {
           toast.success("Good luck, have fun!", { timeout: 2000 });
           isLoading.value = true;
-          console.log(
-            "what is token here on signup done",
-            result.data?.register.token
-          );
           store.commit(
             "user/SET_USER" as RootCommitType,
             result.data?.register.user,

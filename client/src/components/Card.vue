@@ -222,7 +222,6 @@ export default defineComponent({
       });
     },
     submitCardFlipCheck(event: any): void {
-      console.log("card flip event", event.target.id);
       // const id = event.target.id;
       //set the class on for the flip animation on the card object itself.
       store.commit(
@@ -234,12 +233,12 @@ export default defineComponent({
         }
       );
     },
-    openEditModal(event: Event, card: ICard) {
+    // eslint-disable-next-line
+    openEditModal(_event: Event, card: ICard) {
       console.log(
         "able to get id in this loop to also open the modal?????",
         card
       );
-      console.log("open modal from card list", event);
       store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
         root: true,
       });
@@ -252,7 +251,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.log("mounted do we have props", this.card);
     if (this.card) {
       setTimeout(() => {
         store.commit("loading/SET_LOADING" as RootCommitType, false, {

@@ -120,8 +120,6 @@ export default defineComponent({
           Record<string, unknown>
         >
       ): void => {
-        console.log("what was the result", result.data);
-
         if (result.data?.changePassword?.errors?.length) {
           setTimeout(() => {
             isLoading.value = false;
@@ -170,8 +168,9 @@ export default defineComponent({
     };
   },
   methods: {
-    readEvent(event: Event): void {
-      console.log("submit event for changing password", event);
+    // eslint-disable-next-line
+    readEvent(_event: Event): void {
+      // do nothing
     },
   },
 });
