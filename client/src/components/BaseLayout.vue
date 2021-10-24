@@ -147,7 +147,6 @@ export default defineComponent({
           root: true,
         });
       } else {
-        console.log("value of me query result", newValue);
         //set new token in storage
         auth.setToken(newValue.me.user.token as string);
         store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
