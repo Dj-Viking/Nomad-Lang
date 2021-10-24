@@ -50,7 +50,13 @@
           v-for="(card, i) in cards"
           :key="i"
         >
-          <Card :card="card" />
+          <Card
+            :id="card.id"
+            :cards="cards"
+            :isFrontSide="true"
+            :isBackSide="false"
+            :card="card"
+          />
         </div>
       </div>
     </Transition>
@@ -74,6 +80,7 @@ export default defineComponent({
     Card,
     // Spinner,
   },
+
   setup() {
     const inputId = ref(0);
     const input = ref("");
@@ -104,7 +111,11 @@ export default defineComponent({
 
     // eslint-disable-next-line
     clearCards(_event: Event): void {
-      store.commit("cards/SET_CARDS" as RootCommitType, [], { root: true });
+      store.commit(
+        "cards/SET_DISPLAY_CARDS" as RootCommitType,
+        { cards: [] },
+        { root: true }
+      );
     },
     openAddModal(event: MouseEvent): void {
       console.log("open add modal click event", event);

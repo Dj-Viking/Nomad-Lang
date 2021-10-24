@@ -2,7 +2,7 @@
   <Transition type="transition" name="fade" mode="out-in">
     <div v-if="!isLoading">
       <Transition type="transition" name="slide-fade" mode="out-in">
-        <div v-if="isFrontSide">
+        <div v-if="card.isFrontSide">
           <div class="card">
             <div class="card-image">
               Picture link or base64 string: {{ card?.frontSidePicture }}
@@ -20,6 +20,7 @@
                     {{ card?.frontSideText }}
                   </p>
                   <form
+                    :id="id"
                     @submit.prevent="
                       ($event) => {
                         submitCardFlipCheck($event);
@@ -98,6 +99,7 @@
                     {{ card?.backSideText }}
                   </p>
                   <form
+                    :id="id"
                     @submit.prevent="
                       ($event) => {
                         submitCardFlipCheck($event);
@@ -145,9 +147,7 @@ import store from "../store";
 // import Skeleton from "../components/Skeleton.vue";
 import Spinner from "../components/Spinner.vue";
 import {
-  CardBackPayload,
-  CardFrontPayload,
-  CardState,
+  DeleteCardResponse,
   ICard,
   LoadingState,
   ModalState,
@@ -156,9 +156,10 @@ import {
   UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
+import { FetchResult } from "@apollo/client/core";
 export default defineComponent({
   name: "Card",
-  props: ["card"],
+  props: ["cards", "card", "id"],
   components: {
     Spinner,
   },
@@ -169,7 +170,7 @@ export default defineComponent({
     // console.log("what is card here", card);
     const toast = useToast();
     const inputId = ref(0);
-    const { mutate: submitDeleteCard } = useMutation(
+    const { mutate: submitDeleteCard, onDone: onDeleteDone } = useMutation(
       gql`
         ${createDeleteCardMutation()}
       `,
@@ -178,6 +179,26 @@ export default defineComponent({
           //using a ref as a type definition of the input that will happen later
           id: inputId.value,
         },
+      }
+    );
+
+    onDeleteDone(
+      (
+        result: FetchResult<
+          DeleteCardResponse,
+          Record<string, unknown>,
+          Record<string, unknown>
+        >
+      ): void => {
+        if (result.data?.deleteCard.errors?.length) {
+          toast.error("There was a problem deleting a card", {
+            timeout: 3000,
+          });
+        } else {
+          //set the cards again
+          //, which will also reset the categorized object
+          // use the async dispatch set cards
+        }
       }
     );
 
@@ -193,38 +214,25 @@ export default defineComponent({
       store.state.user.user.loggedIn,
     activeClass: (): ModalState["modal"]["activeClass"] =>
       store.state.modal.modal.activeClass,
-    isFrontSide: (): CardState["card"]["isFrontSide"] =>
-      store.state.card.card.isFrontSide,
-    isBackSide: (): CardState["card"]["isBackSide"] =>
-      store.state.card.card.isBackSide,
   },
   methods: {
-    async deleteCard(_event: Event, index: number): Promise<void> {
-      await store.dispatch("cards/deleteCard" as RootDispatchType, index, {
+    async deleteCard(_event: Event, id: number): Promise<void> {
+      await store.dispatch("cards/deleteCard" as RootDispatchType, id, {
         root: true,
       });
     },
-    submitCardFlipCheck(event: Event): string {
-      console.log("card flip event", event.target);
-      let returnMe = "flip";
+    submitCardFlipCheck(event: any): void {
+      console.log("card flip event", event.target.id);
+      // const id = event.target.id;
       //set the class on for the flip animation on the card object itself.
-      if (this.isFrontSide) {
-        //is front side flip to back
-        store.commit(
-          "card/CARD_SIDE_BACK" as RootCommitType,
-          { isFrontSide: false, isBackSide: true } as CardBackPayload,
-          { root: true }
-        );
-      } else {
-        //is backside flip to front
-        store.commit(
-          "card/CARD_SIDE_BACK" as RootCommitType,
-          { isFrontSide: true, isBackSide: false } as CardFrontPayload,
-          { root: true }
-        );
-      }
-      console.log(returnMe);
-      return returnMe;
+      store.commit(
+        "cards/TOGGLE_CARD_SIDE" as RootCommitType,
+        //send as number because target.id is a string and all cards db assigned id's are numbers
+        { id: Number(event.target.id) },
+        {
+          root: true,
+        }
+      );
     },
     openEditModal(event: Event, card: ICard) {
       console.log(

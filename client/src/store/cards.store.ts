@@ -7,29 +7,40 @@ import {
   EditCardCommitPayload,
   SetCategorizedCardsActionPayload,
   CategorizedCardsObject,
+  RootDispatchType,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
 import { ActionContext } from "vuex";
 
 const state: CardsState = {
-  cards: [] /*new Array(2).fill(undefined).map((_, index: number) => {
-    return {
-      id: Date.now() + index, //ids must be unique
-      frontSideText: "heres some front side text",
-      frontSideLanguage: "heres the front side language",
-      frontSidePicture: "gonna be a picture eventually",
-      backSideText: "backside text",
-      backSideLanguage: "backside Language",
-      backSidePicture: "backsidePicture",
-      color: "blue",
-      creatorId: 69420,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-  }),*/,
+  allCards: [],
+  cards: [],
   categorized: {},
 };
 const mutations = {
+  TOGGLE_CARD_SIDE(state: CardsState, payload: { id: number }): void {
+    const { id } = payload;
+    state.cards = state.cards.map((card) => {
+      if (id === card.id) {
+        if (card.isFrontSide) {
+          return {
+            ...card,
+            isFrontSide: false,
+            isBackSide: true,
+          };
+        } else {
+          return {
+            ...card,
+            isBackSide: false,
+            isFrontSide: true,
+          };
+        }
+      } else
+        return {
+          ...card,
+        };
+    });
+  },
   SET_CATEGORIZED_CARD_MAP(
     state: CardsState,
     payload: CategorizedCardsObject
@@ -37,13 +48,35 @@ const mutations = {
     //just update the state asynchronously resolved from the action
     state.categorized = payload; //map should just absorb through the loop
   },
-  SET_CARDS(state: CardsState, payload: Array<ICard>): void {
+  SET_ALL_CARDS(state: CardsState, payload: { cards: Array<ICard> }): void {
+    const { cards } = payload;
     if (typeof payload !== "object" || payload === null)
       return console.error(
         "payload must be a specific type of object but it was ",
         payload
       );
-    state.cards = payload;
+    state.allCards = cards.map((card) => {
+      return {
+        ...card,
+        isFrontSide: true,
+        isBackSide: false,
+      };
+    });
+  },
+  SET_DISPLAY_CARDS(state: CardsState, payload: { cards: Array<ICard> }): void {
+    const { cards } = payload;
+    if (typeof payload !== "object" || payload === null)
+      return console.error(
+        "payload must be a specific type of object but it was ",
+        payload
+      );
+    state.cards = cards.map((card) => {
+      return {
+        ...card,
+        isFrontSide: true,
+        isBackSide: false,
+      };
+    });
   },
   ADD_CARD(state: CardsState, payload: ICard): void {
     if (typeof payload !== "object" || payload === null)
@@ -58,7 +91,10 @@ const mutations = {
       return console.error("index argument must be a number but it was: ", id);
 
     //return a filtered array that doesn't have the id passed as an argument
-    state.cards = state.cards.filter((todo) => todo.id !== id);
+    state.cards = state.cards.filter((card) => card.id !== id);
+
+    //create new all cards array to reference all user's cards
+    state.allCards = state.allCards.filter((card) => card.id !== id);
   },
   //only for local state
   // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
@@ -132,8 +168,13 @@ const actions = {
     { commit }: ActionContext<CardsState, MyRootState>,
     payload: CardsState
   ): Promise<void | boolean> {
+    const { cards } = payload;
     try {
-      commit("cards/SET_CARDS" as RootCommitType, payload, { root: true });
+      commit(
+        "cards/SET_DISPLAY_CARDS" as RootCommitType,
+        { cards: cards },
+        { root: true }
+      );
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
@@ -141,11 +182,21 @@ const actions = {
     }
   },
   async deleteCard(
-    { commit }: ActionContext<CardsState, MyRootState>,
-    index: number
+    { state, commit, dispatch }: ActionContext<CardsState, MyRootState>,
+    id: number
   ): Promise<void | boolean> {
     try {
-      commit("cards/DELETE_CARD" as RootCommitType, index, { root: true });
+      // this returns new cards arrays for display and the total amount of user's cards
+      commit("cards/DELETE_CARD" as RootCommitType, id, { root: true });
+
+      //reset the categorized cards
+
+      dispatch(
+        "cards/setCategorizedCards" as RootDispatchType,
+        { cards: state.allCards },
+        { root: true }
+      );
+
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
@@ -158,6 +209,7 @@ const actions = {
   ): Promise<void | boolean> {
     try {
       commit("cards/EDIT_CARD" as RootCommitType, payload, { root: true });
+
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);

@@ -137,8 +137,8 @@ export default defineComponent({
           });
           // set cards
           store.commit(
-            "cards/SET_CARDS" as RootCommitType,
-            result.data?.changePassword.cards,
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: result.data?.changePassword.cards },
             { root: true }
           );
           setTimeout(() => {

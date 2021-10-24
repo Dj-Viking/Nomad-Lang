@@ -65,19 +65,23 @@ export default defineComponent({
       }
       if (inactiveCount > 1 && activeCount === 0) {
         //reset all cards again
-        store.commit("cards/SET_CARDS" as RootCommitType, this.allCards, {
-          root: true,
-        });
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: this.allCards },
+          {
+            root: true,
+          }
+        );
       }
       // if one is active, set cards to that active category
       // eslint-disable-next-line
               // @ts-ignore
       if (activeCount === 1 && this.categories[this.categoryName].id === id) {
         store.commit(
-          "cards/SET_CARDS" as RootCommitType,
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
           // eslint-disable-next-line
                   // @ts-ignore
-          this.categories[this.categoryName].cards,
+          { cards: this.categories[this.categoryName].cards },
           {
             root: true,
           }
