@@ -235,10 +235,6 @@ export default defineComponent({
     },
     // eslint-disable-next-line
     openEditModal(_event: Event, card: ICard) {
-      console.log(
-        "able to get id in this loop to also open the modal?????",
-        card
-      );
       store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
         root: true,
       });
