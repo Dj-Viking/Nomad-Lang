@@ -1,34 +1,38 @@
 <template>
   <div class="container some-unique-class">
-    <button
-      class="button is-info"
-      @click.prevent="
-        ($event) => {
-          //clear local cards
-          clearCards($event);
-          if (isLoggedIn) {
-            submitClearUserCards();
+    <h2 v-if="cards.length > 0" class="title mb-0">Your Cards</h2>
+    <h2 v-else class="title mb-0">No Cards Yet</h2>
+    <div style="display: flex; flex-direction: row; justify-content: center">
+      <button
+        style="margin-right: 0.5em"
+        class="button is-info"
+        @click.prevent="
+          ($event) => {
+            //clear local cards
+            clearCards($event);
+            if (isLoggedIn) {
+              submitClearUserCards();
+            }
           }
-        }
-      "
-    >
-      clear cards
-    </button>
-    <div style="margin-top: 1em; margin-bottom: 2em">
-      <div class="control">
-        <button
-          @click.prevent="openAddModal($event)"
-          class="button is-info mt-3"
-          type="submit"
-          style="color: rgb(255, 255, 255)"
-        >
-          Add New Card
-        </button>
+        "
+      >
+        clear cards
+      </button>
+      <div>
+        <div class="control">
+          <button
+            @click.prevent="openAddModal($event)"
+            class="button is-info"
+            type="submit"
+            style="color: rgb(255, 255, 255); margin-left: 0.5em"
+          >
+            Add New Card
+          </button>
+        </div>
       </div>
     </div>
     <Transition type="transition" name="fade" mode="out-in">
       <div
-        class="container"
         style="
           align-items: center;
           display: flex;
@@ -37,7 +41,6 @@
         "
         v-if="cards.length > 0"
       >
-        <h2 class="title">Your Cards</h2>
         <div
           style="
             margin-bottom: 0;

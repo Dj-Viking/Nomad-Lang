@@ -4,8 +4,46 @@
       <Transition type="transition" name="slide-fade" mode="out-in">
         <div v-if="card.isFrontSide">
           <div class="card">
+            <div style="display: flex; justify-content: space-between">
+              <i
+                style="
+                  color: #f14668;
+                  font-size: 30px;
+                  margin-top: 0.2em;
+                  margin-left: 0.4em;
+                  margin-bottom: 0.4em;
+                  cursor: pointer;
+                "
+                class="fa fa-trash"
+                @click.prevent="
+                  ($event) => {
+                    //update vuex cards that are displayed
+                    deleteCard($event, card?.id);
+                    //only delete user's cards if they are logged in
+                    if (isLoggedIn) {
+                      submitDeleteCard({
+                        id: card?.id,
+                      });
+                    }
+                  }
+                "
+              ></i>
+              <button
+                class="button is-primary ml-6"
+                style="color: black; margin-top: 0.3em; margin-right: 0.4em"
+                @click.prevent="
+                  ($event) => {
+                    openEditModal($event, card);
+                  }
+                "
+              >
+                Edit
+                <i style="margin-left: 0.5em" class="fa fa-pencil-square-o">
+                </i>
+              </button>
+            </div>
             <div class="card-image">
-              Picture link or base64 string: {{ card?.frontSidePicture }}
+              {{ card?.frontSidePicture }}
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
@@ -31,7 +69,7 @@
                       style="margin: 0 auto; width: 80%"
                       class="input"
                       type="text"
-                      placeholder="Type target translation"
+                      placeholder="Translate!"
                     />
                     <button
                       class="button is-primary"
@@ -43,48 +81,14 @@
                   </form>
                 </div>
               </div>
-
-              <div class="content">
-                fs lang: {{ card?.frontSideLanguage }}
-                <br />
-              </div>
             </div>
-          </div>
-          <div style="margin-top: 1em">
-            <button
-              class="button is-danger mx-2"
-              @click.prevent="
-                ($event) => {
-                  //update vuex cards that are displayed
-                  deleteCard($event, card?.id);
-                  //only delete user's cards if they are logged in
-                  if (isLoggedIn) {
-                    submitDeleteCard({
-                      id: card?.id,
-                    });
-                  }
-                }
-              "
-            >
-              Delete Card
-            </button>
-            <button
-              class="button is-primary mx-2"
-              style="color: black"
-              @click.prevent="
-                ($event) => {
-                  openEditModal($event, card);
-                }
-              "
-            >
-              Edit Card
-            </button>
           </div>
         </div>
         <div v-else>
           <div class="card">
+            <div style="height: 48px">&nbsp;</div>
             <div class="card-image">
-              Picture link or base64 string: {{ card?.backSidePicture }}
+              {{ card?.backSidePicture }}
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
@@ -110,7 +114,7 @@
                       style="margin: 0 auto; width: 80%"
                       class="input"
                       type="text"
-                      placeholder="Type target translation"
+                      placeholder="Translate!"
                     />
                     <button
                       class="button is-primary"
@@ -121,11 +125,6 @@
                     </button>
                   </form>
                 </div>
-              </div>
-
-              <div class="content">
-                bs lang: {{ card?.backSideLanguage }}
-                <br />
               </div>
             </div>
           </div>
