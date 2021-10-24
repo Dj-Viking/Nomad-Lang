@@ -46,8 +46,8 @@ export default defineComponent({
       store.state.notification.notification.toastDown,
   },
   methods: {
-    closeNotification(event: MouseEvent): void {
-      console.log("clicked close button on notification", event.target);
+    // eslint-disable-next-line
+    closeNotification(_event: MouseEvent): void {
       store.commit(
         "notification/CLOSE_NOTIFICATION" as RootCommitType,
         {},

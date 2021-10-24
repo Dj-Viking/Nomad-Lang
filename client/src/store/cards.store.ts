@@ -78,13 +78,20 @@ const mutations = {
       };
     });
   },
-  ADD_CARD(state: CardsState, payload: ICard): void {
-    if (typeof payload !== "object" || payload === null)
+  ADD_CARD(state: CardsState, card: ICard): void {
+    if (typeof card !== "object" || card === null)
       return console.error(
-        "payload must be a specific type of object but it was ",
-        payload
+        "card must be a specific type of object but it was ",
+        card
       );
-    state.cards.unshift(payload);
+
+    const initCard = {
+      ...card,
+      isFrontSide: true,
+      isBackSide: false,
+    };
+    state.cards.unshift(initCard);
+    state.allCards.unshift(initCard);
   },
   DELETE_CARD(state: CardsState, id: number): void {
     if (typeof id !== "number" || id === null)
@@ -99,7 +106,6 @@ const mutations = {
   //only for local state
   // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
   EDIT_CARD(state: CardsState, payload: EditCardCommitPayload): void {
-    console.log("payload in edit card store", payload);
     const {
       id,
       frontSideText,
@@ -149,15 +155,15 @@ const mutations = {
 const actions = {
   async addCard(
     { commit }: ActionContext<UserState, MyRootState>,
-    payload: ICard
+    card: ICard
   ): Promise<void | boolean> {
-    if (typeof payload !== "object" || payload === null)
+    if (typeof card !== "object" || card === null)
       return console.error(
-        "payload must be a specific type of object but it was ",
-        payload
+        "card must be a specific type of object but it was ",
+        card
       );
     try {
-      commit("todos/ADD_TODO" as RootCommitType, payload, { root: true });
+      commit("cards/ADD_CARD" as RootCommitType, card, { root: true });
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
@@ -165,14 +171,24 @@ const actions = {
     }
   },
   async setCards(
-    { commit }: ActionContext<CardsState, MyRootState>,
+    { state, dispatch, commit }: ActionContext<CardsState, MyRootState>,
     payload: CardsState
   ): Promise<void | boolean> {
     const { cards } = payload;
     try {
       commit(
+        "cards/SET_ALL_CARDS" as RootCommitType,
+        { cards: cards },
+        { root: true }
+      );
+      commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: cards },
+        { root: true }
+      );
+      await dispatch(
+        "cards/setCategorizedCards" as RootDispatchType,
+        { cards: state.allCards },
         { root: true }
       );
       return Promise.resolve(true);
@@ -191,7 +207,7 @@ const actions = {
 
       //reset the categorized cards
 
-      dispatch(
+      await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
         { cards: state.allCards },
         { root: true }
@@ -223,10 +239,10 @@ const actions = {
     try {
       const { cards } = payload;
       // taking in the cards array and sorting the categories by creating an object
-      // that has a key that is dynamic which will be this metalist of categories
+      // that has a key that is dynamic which will be this meta-list of categories
       // because trying to do this with type-graphql typeorm was very strange and
       // probably nobody is trying to do that sort of thing right now....
-      //create a new cards Object to return that contains the cards categorized by their frontside language
+      // create a new cards Object to return that contains the cards categorized by their frontside language
 
       //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;

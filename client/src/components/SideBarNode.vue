@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { CategorizedCardsObject, RootCommitType } from "@/types";
+import { CardsState, CategorizedCardsObject, RootCommitType } from "@/types";
 import { defineComponent } from "@vue/runtime-core";
 import store from "../store";
 
@@ -24,11 +24,12 @@ export default defineComponent({
     categoryName: String,
     categorizedCards: Array,
     categories: Object,
-    allCards: Array,
+  },
+  computed: {
+    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
   },
   methods: {
     toggleActiveCategory(event: any): void {
-      // console.log("event of clicking the category", event);
       const id = event.target.id;
       switch (true) {
         case this.isActive:

@@ -71,9 +71,13 @@ import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { defineComponent, inject, ref, onMounted } from "vue";
 import { useStore } from "vuex";
-// import BaseLayout from "../components/BaseLayout.vue";
 import { createLoginMutation } from "../graphql/mutations/myMutations";
-import { LoadingState, LoginResponse, RootCommitType } from "../types";
+import {
+  LoadingState,
+  LoginResponse,
+  RootCommitType,
+  RootDispatchType,
+} from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
 import store from "../store";
@@ -82,9 +86,6 @@ import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "Login",
-  components: {
-    // BaseLayout,
-  },
   computed: {
     isLoading: (): LoadingState["loading"]["isLoading"] =>
       store.state.loading.loading.isLoading,
@@ -136,13 +137,12 @@ export default defineComponent({
           toast.success("Logged in", {
             timeout: 2000,
           });
-          setTimeout(() => {
+          setTimeout(async () => {
             store.commit("loading/SET_LOADING" as RootCommitType, false, {
               root: true,
             });
             showSuccess.value = false;
             successMsg.value = "";
-            console.log("login response new value", result.data?.login);
             const payload = {
               user: result.data?.login.user,
               loggedIn: true,
@@ -150,11 +150,15 @@ export default defineComponent({
             store.commit("user/SET_USER" as RootCommitType, payload, {
               root: true,
             });
-            store.commit(
-              "cards/SET_DISPLAY_CARDS" as RootCommitType,
-              { cards: result.data?.login.cards },
-              { root: true }
-            );
+            await store
+              .dispatch(
+                "cards/setCards" as RootDispatchType,
+                { cards: result.data?.login.cards },
+                { root: true }
+              )
+              .catch((e) =>
+                console.error("error when setting cards after logging in", e)
+              );
             globalEmail = result?.data?.login.user?.email;
             auth.setToken(result?.data?.login.token as string);
             auth.setEmail(globalEmail as string);

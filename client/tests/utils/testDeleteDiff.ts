@@ -10,12 +10,6 @@ interface IDeleteDiffResult {
 
 (async function testDeleteDiff(testName: string): Promise<IDeleteDiffResult> {
   try {
-    // const something = true;
-    // if (something) {
-    //   _resolve((() => console.log(something))());
-    // } else {
-    //   _reject();
-    // }
     const dir: Array<string> = fs.readdirSync(
       `./tests/e2e/fixtures/screenshots/diff/${testName}`
     );

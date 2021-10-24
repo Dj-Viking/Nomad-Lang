@@ -105,8 +105,9 @@ export default defineComponent({
       store.state.loading.loading.isLoading,
   },
   methods: {
-    readInputEvent(event: Event) {
-      console.log("add card event", event);
+    // eslint-disable-next-line
+    readInputEvent(_event: Event) {
+      //do nothing
     },
 
     // eslint-disable-next-line
@@ -117,8 +118,8 @@ export default defineComponent({
         { root: true }
       );
     },
-    openAddModal(event: MouseEvent): void {
-      console.log("open add modal click event", event);
+    // eslint-disable-next-line
+    openAddModal(_event: MouseEvent): void {
       //set modal title
       store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
         root: true,

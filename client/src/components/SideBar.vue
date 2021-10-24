@@ -44,7 +44,6 @@
           <div v-for="(key, i) of Object.keys(categories)" :key="i">
             <SideBarNode
               :id="categories[key].id?.toString()"
-              :allCards="allCards"
               :isActive="categories[key].isActive"
               :categoryName="key"
               :categories="categories"
@@ -96,12 +95,6 @@ export default defineComponent({
   components: {
     SideBarNode,
   },
-  // setup() {
-  //   const sidebarOpen = ref(false);
-  //   return {
-  //     sidebarOpen,
-  //   };
-  // },
   data() {
     return {
       allCards: [] as ICard[],
@@ -115,25 +108,14 @@ export default defineComponent({
       store.state.sidebar.sidebar.isOpen,
   },
   methods: {
-    toggleSideBar(event: MouseEvent): void {
-      console.log("open side bar click event", event);
+    // eslint-disable-next-line
+    toggleSideBar(_event: MouseEvent): void {
       store.commit(
         "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
         {},
         { root: true }
       );
     },
-  },
-  mounted() {
-    //have to wait until the cards resolve from the me query or however i get cards
-    // and then assign it to the prop that the sidebar item needs to set cards when
-    // activating and deactivating a category
-    setTimeout(() => {
-      if (this.cards) {
-        console.log("what is cards here on sidebar mounting", this.cards);
-        this.allCards = this.cards;
-      }
-    }, 400);
   },
 });
 </script>

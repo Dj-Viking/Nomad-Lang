@@ -183,6 +183,9 @@
         <form
           @submit.prevent="
             ($event) => {
+              //update local state with the extra propertiesa 'front' and 'back' sides
+              // also if not logged in create an ID as Date.now()
+
               if (isLoggedIn) {
                 //graphql mutation pass data to the modal for it to use.
                 const card = {
@@ -200,7 +203,7 @@
                 clearCardInputFields();
                 closeModal();
               } else {
-                const card = {
+                const offlineCard = {
                   id: Date.now(), //ids must be unique
                   frontSideText: frontSideTextInput,
                   frontSideLanguage: frontSideLanguageInput,
@@ -208,14 +211,13 @@
                   backSideText: backSideTextInput,
                   backSideLanguage: backSideLanguageInput,
                   backSidePicture: backSidePictureInput,
-                  color: 'blue',
                   creatorId: 0,
                   isFrontSide: true,
                   isBackSide: false,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 };
-                addLocalCard($event, card);
+                addLocalCard($event, offlineCard);
                 clearCardInputFields();
                 closeModal();
               }
@@ -404,13 +406,13 @@ export default defineComponent({
     );
 
     onAddCardDone(
-      (
+      async (
         result: FetchResult<
           AddCardResponse,
           Record<string, unknown>,
           Record<string, unknown>
         >
-      ): void => {
+      ): Promise<void> => {
         if (result.data?.addCard.errors) {
           toast.error(
             `Error: there was an error adding a card - ${result.data?.addCard.errors[0].message}`,
@@ -419,25 +421,15 @@ export default defineComponent({
             }
           );
         } else {
-          // addCardResult.value = result.data;
           toast.success("Success: added a card to your list!", {
             timeout: 3000,
           });
-          store.commit(
-            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          //use the all in one cards setter, sets both displayed cards and all the cards and the categories in global state
+          await store.dispatch(
+            "cards/setCards" as RootDispatchType,
             { cards: result.data?.addCard.cards },
-            {
-              root: true,
-            }
+            { root: true }
           );
-          store
-            .dispatch(
-              "cards/setCategorizedCards" as RootDispatchType,
-              { cards: result.data?.addCard.cards },
-              { root: true }
-            )
-            .then(() => console.log("set categorized when adding a card"))
-            .catch(console.log);
         }
       }
     );
@@ -521,9 +513,8 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
-    addLocalCard(event: Event, card: ICard): void {
-      console.log("add local card event and args", event, card);
-
+    // eslint-disable-next-line
+    addLocalCard(_event: Event, card: ICard): void {
       store.commit("cards/ADD_CARD" as RootCommitType, card, { root: true });
     },
     clearCardInputFields(): void {
@@ -534,21 +525,20 @@ export default defineComponent({
       this.backSideLanguageInput = "";
       this.backSidePictureInput = "";
     },
-    closeModal(event?: Event): void {
-      console.log("close modal event", event);
+    // eslint-disable-next-line
+    closeModal(_event?: Event): void {
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
     },
+    //
     editLocalCard(_event: Event, card: EditCardCommitPayload): void {
-      console.log("editing a local card if not logged in", _event);
       store.commit("cards/EDIT_CARD" as RootCommitType, card, {
         root: true,
       });
     },
     closeModalViaEsc(event: KeyboardEvent): void {
       if (event.key === "Escape") {
-        console.log("close modal event with escape key", event);
         store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
           root: true,
         });

@@ -93,7 +93,6 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       //do nothing
-      console.log(_event);
     },
     async logout() {
       auth.setToken("");

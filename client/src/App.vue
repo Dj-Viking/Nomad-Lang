@@ -29,8 +29,7 @@ export default defineComponent({
       store.state.modal.modal.activeClass,
   },
   methods: {
-    openModal(event: Event) {
-      console.log("open modal event", event);
+    openModal() {
       store.commit("modal/SET_MODAL_TITLE", "setting title from home page", {
         root: true,
       });
@@ -38,9 +37,7 @@ export default defineComponent({
         root: true,
       });
     },
-    openError(event: MouseEvent): void {
-      console.log("open notification click event", event.target);
-
+    openError(): void {
       store.commit(
         "notification/OPEN_NOTIFICATION" as RootCommitType,
         {
@@ -57,9 +54,7 @@ export default defineComponent({
         this.closeNotification();
       }, 3000);
     },
-    openSuccess(event: MouseEvent): void {
-      console.log("open notification click event", event.target);
-
+    openSuccess(): void {
       store.commit(
         "notification/OPEN_NOTIFICATION" as RootCommitType,
         {
@@ -77,7 +72,6 @@ export default defineComponent({
       }, 3000);
     },
     closeNotification(): void {
-      console.log("clicked close button on notification after some time ");
       store.commit(
         "notification/CLOSE_NOTIFICATION" as RootCommitType,
         {},
