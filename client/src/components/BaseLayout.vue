@@ -1,9 +1,8 @@
 <template>
   <div
     :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }"
-    class="container is-widescreen"
   >
-    <nav style="margin: 0 auto">
+    <nav style="margin: 0">
       <Transition type="transition" name="fade">
         <div v-if="!isHome">
           <router-link style="text-decoration: none" class="link" :to="'/'"
@@ -12,10 +11,10 @@
         </div>
         <div v-else>
           <Transition type="transition" name="fade">
-            <div v-if="isLoggedIn">
+            <div v-if="isLoggedIn" class="nav-buttons">
               <a
                 style="cursor: pointer"
-                class="link"
+                class="button is-danger"
                 @click.prevent="
                   ($event) => {
                     readEvent($event);
@@ -25,18 +24,17 @@
                 >Logout</a
               >
             </div>
-            <div v-else>
+            <div v-else class="nav-buttons">
               <div class="nav-animate-in">
                 <router-link
-                  style="text-decoration: none"
-                  class="link"
+                  style="text-decoration: none; margin-right: 0.5em"
+                  class="button is-success"
                   :to="'/login'"
                   >Login</router-link
                 >
-                <span class="divider">|</span>
                 <router-link
                   style="text-decoration: none"
-                  class="link"
+                  class="button is-success"
                   :to="'/signup'"
                   >Signup</router-link
                 >
@@ -189,6 +187,11 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+.nav-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.5em;
+}
 .divider {
   color: green;
   font-size: 40px;
@@ -211,10 +214,12 @@ export default defineComponent({
 
 .content-shrink {
   margin-left: 100px;
+  margin-right: 0px !important;
   transition: 0.2s;
 }
 .content-adjust {
-  margin-left: 0px;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
   transition: 0.2s ease 0.3s;
 }
 

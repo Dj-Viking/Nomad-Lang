@@ -127,7 +127,7 @@ export default defineComponent({
   top: 0;
   height: 100vh;
 
-  z-index: 10000;
+  z-index: 100;
 }
 .fade-enter-active,
 .fade-leave-active {

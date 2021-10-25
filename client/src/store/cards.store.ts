@@ -148,7 +148,6 @@ const mutations = {
       return void 0;
     });
 
-    // state.cards[index].text = text;
     state.cards[index].updatedAt = Date.now();
   },
 };
