@@ -45,12 +45,13 @@
           style="
             margin-bottom: 0;
             width: 80%;
+            position: relative;
             align-items: center;
             display: flex;
             justify-content: center;
           "
           class="notification is-light"
-          v-for="(card, i) in cards"
+          v-for="(card, i) of cards"
           :key="i"
         >
           <Card

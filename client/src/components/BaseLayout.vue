@@ -151,23 +151,8 @@ export default defineComponent({
           root: true,
         });
 
-        store.commit(
-          "cards/SET_ALL_CARDS" as RootCommitType,
-          { cards: newValue.me.cards },
-          {
-            root: true,
-          }
-        );
-        store.commit(
-          "cards/SET_DISPLAY_CARDS" as RootCommitType,
-          { cards: newValue.me.cards },
-          {
-            root: true,
-          }
-        );
-
         await store.dispatch(
-          "cards/setCategorizedCards" as RootDispatchType,
+          "cards/setCards" as RootDispatchType,
           { cards: newValue.me.cards },
           { root: true }
         );

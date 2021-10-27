@@ -79,6 +79,17 @@
                       Check
                     </button>
                   </form>
+                  <button
+                    :id="card && card?.id"
+                    class="button is-warning"
+                    @click.prevent="
+                      ($event) => {
+                        shiftCardNext($event);
+                      }
+                    "
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
             </div>
@@ -227,6 +238,17 @@ export default defineComponent({
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
         //send as number because target.id is a string and all cards db assigned id's are numbers
         { id: Number(event.target.id) },
+        {
+          root: true,
+        }
+      );
+    },
+    shiftCardNext(event: any): void {
+      //update display cards array state
+      // to shift a card out of the stack after done using it
+      store.dispatch(
+        "cards/shiftCardNext" as RootDispatchType,
+        Number(event.target.id),
         {
           root: true,
         }

@@ -10,6 +10,7 @@ import {
   RootDispatchType,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
+import { shuffleArray } from "@/utils/shuffleArray";
 import { ActionContext } from "vuex";
 
 const state: CardsState = {
@@ -47,6 +48,9 @@ const mutations = {
   ): void {
     //just update the state asynchronously resolved from the action
     state.categorized = payload; //map should just absorb through the loop
+  },
+  SHIFT_CARD_NEXT(state: CardsState, id: number): void {
+    state.cards = state.cards.filter((card) => card.id !== id);
   },
   SET_ALL_CARDS(state: CardsState, payload: { cards: Array<ICard> }): void {
     const { cards } = payload;
@@ -174,17 +178,23 @@ const actions = {
     payload: CardsState
   ): Promise<void | boolean> {
     const { cards } = payload;
+
+    const disconnectedCards = [...cards];
+
+    const shuffledCards = shuffleArray(disconnectedCards);
+
     try {
       commit(
         "cards/SET_ALL_CARDS" as RootCommitType,
-        { cards: cards },
+        { cards: shuffledCards },
         { root: true }
       );
       commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
-        { cards: cards },
+        { cards: shuffledCards },
         { root: true }
       );
+      //after commits are done set the categories
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
         { cards: state.allCards },
@@ -194,6 +204,18 @@ const actions = {
     } catch (error) {
       console.error(error);
       return Promise.resolve(false);
+    }
+  },
+  async shiftCardNext(
+    { commit }: ActionContext<CardsState, MyRootState>,
+    id: number
+  ): Promise<void> {
+    try {
+      commit("cards/SHIFT_CARD_NEXT" as RootCommitType, id, { root: true });
+      Promise.resolve(true);
+    } catch (error) {
+      console.error(error as Error);
+      Promise.resolve(false);
     }
   },
   async deleteCard(

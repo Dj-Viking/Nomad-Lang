@@ -214,6 +214,7 @@ export type RootDispatchType =
   | "cards/deleteCard"
   | "cards/editCard"
   | "cards/addCard"
+  | "cards/shiftCardNext"
   | "cards/setCategorizedCards";
 
 export interface AddCardPayload {
@@ -246,6 +247,7 @@ export type RootCommitType =
   | "cards/EDIT_CARD"
   | "cards/SET_CATEGORIZED_CARD_MAP"
   | "cards/TOGGLE_CARD_SIDE"
+  | "cards/SHIFT_CARD_NEXT"
   /** */
   | "modal/SET_MODAL_ACTIVE"
   | "modal/SET_MODAL_CONTEXT"
