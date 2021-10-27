@@ -42,7 +42,6 @@
                   backSideText: backSideTextInput,
                   backSideLanguage: backSideLanguageInput,
                   backSidePicture: backSidePictureInput,
-                  color: 'blue',
                   creatorId: 0,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
@@ -365,23 +364,38 @@ import {
   AddCardResponse,
   EditCardCommitPayload,
   RootDispatchType,
+  MyRootState,
 } from "@/types";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import { defineComponent, ref } from "@vue/runtime-core";
+import { useStore } from "vuex";
 import { gql } from "graphql-tag";
 import { useToast } from "vue-toastification";
 import store from "../store";
 export default defineComponent({
   name: "Modal",
   setup() {
+    const store = useStore<MyRootState>();
     const toast = useToast();
-    const frontSideTextInput = ref();
-    const frontSideLanguageInput = ref();
-    const frontSidePictureInput = ref();
-    const backSideTextInput = ref();
-    const backSideLanguageInput = ref();
-    const backSidePictureInput = ref();
+    const frontSideTextInput = ref(
+      store.state.modal.modal.context.card.frontSideText as any
+    );
+    const frontSideLanguageInput = ref(
+      store.state.modal.modal.context.card.frontSideLanguage as any
+    );
+    const frontSidePictureInput = ref(
+      store.state.modal.modal.context.card.frontSidePicture as any
+    );
+    const backSideTextInput = ref(
+      store.state.modal.modal.context.card.backSideText as any
+    );
+    const backSideLanguageInput = ref(
+      store.state.modal.modal.context.card.backSideLanguage as any
+    );
+    const backSidePictureInput = ref(
+      store.state.modal.modal.context.card.backSidePicture as any
+    );
     // const addCardResult = ref();
     const inputId = ref();
     const errMsg = ref("");
