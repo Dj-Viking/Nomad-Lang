@@ -116,6 +116,19 @@ export default defineComponent({
         { root: true }
       );
     },
+    toggleSideBarWithC(event: any): void {
+      if (event.key === "c" || event.key === "C") {
+        store.commit("sidebar/TOGGLE_SIDEBAR" as RootCommitType, false, {
+          root: true,
+        });
+      } else return;
+    },
+  },
+  created: function (): void {
+    document.addEventListener("keyup", this.toggleSideBarWithC);
+  },
+  unmounted: function (): void {
+    document.removeEventListener("keyup", this.toggleSideBarWithC);
   },
 });
 </script>

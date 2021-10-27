@@ -488,21 +488,6 @@ export default defineComponent({
       showErrMsg,
     };
   },
-  // watch: {
-  //   addCardResult: async function (
-  //     newVal: AddCardResponse["addCard"]
-  //   ): Promise<void> {
-  //     if (newVal.errors === null) {
-  //       await store.dispatch(
-  //         "cards/setCategorizedCards" as RootDispatchType,
-  //         newVal.cards,
-  //         {
-  //           root: true,
-  //         }
-  //       );
-  //     }
-  //   },
-  // },
   computed: {
     title: (): ModalState["modal"]["title"] => store.state.modal.modal.title,
     activeClass: (): ModalState["modal"]["activeClass"] =>
