@@ -454,7 +454,7 @@ export default defineComponent({
     );
 
     onEditCardDone(
-      (
+      async (
         result: FetchResult<
           EditCardResponse,
           Record<string, unknown>,
@@ -466,11 +466,9 @@ export default defineComponent({
           errMsg.value = result.data?.editCardById.errors[0].message;
         } else {
           editResponse.value = result.data;
-          store.commit(
-            "cards/SET_DISPLAY_CARDS" as RootCommitType,
-            { cards: result.data?.editCardById.cards as ICard[] },
-            { root: true }
-          );
+          await store.dispatch("cards/setCards" as RootDispatchType, {
+            cards: result.data?.editCardById.cards,
+          });
         }
       }
     );
