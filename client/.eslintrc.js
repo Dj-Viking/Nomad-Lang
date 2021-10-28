@@ -14,6 +14,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    "no-prototype-builtins": "off",
     "prefer-const": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",

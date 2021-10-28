@@ -534,16 +534,20 @@ export default defineComponent({
         root: true,
       });
     },
-    closeModalViaEsc(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
-          root: true,
-        });
-      } else return;
+    closeModalViaEsc(): void {
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+        root: true,
+      });
     },
   },
   created: function (): void {
-    document.addEventListener("keyup", this.closeModalViaEsc);
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "Escape") {
+        this.closeModalViaEsc();
+      } else {
+        return console.log("dont listen please");
+      }
+    });
   },
   unmounted: function (): void {
     document.removeEventListener("keyup", this.closeModalViaEsc);

@@ -41,14 +41,19 @@
               Your Categories
             </h4>
           </div>
-          <div v-for="(key, i) of Object.keys(categories)" :key="i">
-            <SideBarNode
-              :id="categories[key].id?.toString()"
-              :isActive="categories[key].isActive"
-              :categoryName="key"
-              :categories="categories"
-              :categorizedCards="categories[key].cards"
-            />
+          <div id="cards-container">
+            <div v-for="(key, i) of Object.keys(categories)" :key="i">
+              <span :id="categories[key].cards[0]?.frontSideLanguage"
+                >{{ i + 1 }}.&nbsp;</span
+              >
+              <SideBarNode
+                :id="categories[key].id?.toString()"
+                :isActive="categories[key].isActive"
+                :categoryName="key"
+                :categories="categories"
+                :categorizedCards="categories[key].cards"
+              />
+            </div>
           </div>
         </div>
         <div v-else>
@@ -121,11 +126,106 @@ export default defineComponent({
         store.commit("sidebar/TOGGLE_SIDEBAR" as RootCommitType, false, {
           root: true,
         });
-      } else return;
+      }
+    },
+    toggleActiveCategory(eventOrId: any, categoryName: string): void {
+      let id = "";
+      let wasClicked = true;
+      console.log("categoryname passed from 1 key press", categoryName);
+      // eslint-disable-next-line
+      if (typeof eventOrId === "object") {
+        // eslint-disable-next-line
+        id = eventOrId.target.id;
+      } else {
+        // eslint-disable-next-line
+        id = eventOrId;
+        wasClicked = false;
+        console.log(
+          "whats the id inside toggle active function now after one keypress",
+          id
+        );
+      }
+      let inactiveCount = 0;
+      let activeCount = 0;
+      // const categoriesKeys = Object.keys(this.categories);
+      // console.log("categories keys", categoriesKeys);
+      for (const key in this.categories as CategorizedCardsObject) {
+        if (!this.categories[key].isActive) {
+          // if all inactive reset to all cards again
+          // eslint-disable-next-line
+            // @ts-ignore
+          !this.categories[key].isActive && inactiveCount++;
+        }
+
+        if (this.categories[key].isActive) {
+          // eslint-disable-next-line
+              // @ts-ignore
+          this.categories[key].isActive && activeCount++;
+        }
+      }
+      if (inactiveCount > 1 && activeCount === 0) {
+        if (!wasClicked) {
+          console.log(
+            "what is active here when not clicked",
+            this.categories[categoryName].isActive
+          );
+        }
+        //reset all cards again
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: this.allCards },
+          {
+            root: true,
+          }
+        );
+      }
+      if (activeCount === 1 && inactiveCount >= 1) {
+        if (!wasClicked && this.categories[categoryName].isActive) {
+          console.log("was not clicked used 1 key press");
+          console.log(
+            "what is active here",
+            this.categories[categoryName].isActive
+          );
+          store.commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: this.allCards },
+            { root: true }
+          );
+        }
+        console.log("are we here only one active and 1 or more inactive");
+        //toggle with the information we got, id and categoryname
+        store.commit(
+          "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE" as RootCommitType,
+          { id: id },
+          { root: true }
+        );
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: this.categories[categoryName].cards },
+          {
+            root: true,
+          }
+        );
+      }
     },
   },
-  created: function (): void {
-    document.addEventListener("keyup", this.toggleSideBarWithC);
+  mounted: function (): void {
+    //arrow function because i need "this" keyword to be in context of vue component
+    document.addEventListener("keyup", (event) => {
+      if (event.key === "c" || event.key === "C") {
+        this.toggleSideBarWithC(event);
+      } else if (event.key === "1") {
+        console.log("pressed 1 key", event.target);
+        const id =
+          document.querySelector(`div#cards-container`)?.children[0].children[1]
+            .id;
+
+        const categoryName = document.querySelector(`div#cards-container`)
+          ?.children[0].children[0].id as any;
+
+        this.toggleActiveCategory(id, categoryName);
+      }
+    });
   },
   unmounted: function (): void {
     document.removeEventListener("keyup", this.toggleSideBarWithC);

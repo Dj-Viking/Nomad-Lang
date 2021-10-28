@@ -20,9 +20,14 @@ const mutations = {
     state: SidebarCategorizedCardsState,
     payload: { id: string }
   ): void {
+    console.log("should be getting payload id thing", payload);
     const { id } = payload;
 
     for (const key in state.categories) {
+      console.log(
+        "printing categories why you no chnage",
+        state.categories[key]
+      );
       if (state.categories[key].id === id) {
         //if the one we clicked was already active deactivate it
         if (state.categories[key].isActive) {
