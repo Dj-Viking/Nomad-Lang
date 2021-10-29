@@ -127,13 +127,10 @@ export default defineComponent({
         root: true,
       });
     },
-    async toggleCategoryWithOneKey(
-      id: string,
-      categoryName: string
-    ): Promise<void> {
+    async toggleCategoryWithOneKey(categoryName: string): Promise<void> {
       await store.dispatch(
         "sidebarCategories/toggleWithOneKey" as RootDispatchType,
-        { id, categoryName },
+        { categoryName },
         { root: true }
       );
     },
@@ -150,13 +147,13 @@ export default defineComponent({
         case event.key === "1":
           {
             console.log("pressed 1 key", event.target);
-            const id = document.querySelector(`div#cards-container`)
-              ?.children[0].children[1].id as string;
+            // const id = document.querySelector(`div#cards-container`)
+            //   ?.children[0].children[1].id as string;
 
             const categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
 
-            this.toggleCategoryWithOneKey(id, categoryName);
+            this.toggleCategoryWithOneKey(categoryName);
           }
           break;
         default:
