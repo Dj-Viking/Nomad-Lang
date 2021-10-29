@@ -193,8 +193,6 @@ describe("tests the register with valid inputs works, has success message, and n
     cy.window().then((window: Cypress.AUTWindow) => {
       // cy.restoreLocalStorage();
       const token = window.localStorage.getItem("id_token");
-      // const email = window.localStorage.getItem("global_email");
-      // expect(email).to.equal(unique_email);
       expect(token).to.not.be.null;
     });
     cy.wait(2000);
