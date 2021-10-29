@@ -544,9 +544,7 @@ export default defineComponent({
     document.addEventListener("keyup", (event) => {
       if (event.key === "Escape") {
         this.closeModalViaEsc();
-      } else {
-        return console.log("dont listen please");
-      }
+      } else return;
     });
   },
   unmounted: function (): void {
