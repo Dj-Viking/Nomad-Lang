@@ -131,16 +131,6 @@ export default defineComponent({
       id: string,
       categoryName: string
     ): Promise<void> {
-      /**
-       * 
-      //if category with that id is active, deactiveate that one
-      // and then reset all cards
-
-      // if none are active and 1 key was pushed. activate the id adjacent to the child element next to the 1.
-      // set the displayed cards to the cards within the categoryname
-      // and deactivate any other ones
-       */
-
       await store.dispatch(
         "sidebarCategories/toggleWithOneKey" as RootDispatchType,
         { id, categoryName },
