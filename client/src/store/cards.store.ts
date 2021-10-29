@@ -5,7 +5,6 @@ import {
   ICard,
   RootCommitType,
   EditCardCommitPayload,
-  SetCategorizedCardsActionPayload,
   CategorizedCardsObject,
   RootDispatchType,
 } from "@/types";
@@ -255,7 +254,7 @@ const actions = {
   },
   async setCategorizedCards(
     { commit }: ActionContext<CardsState, MyRootState>,
-    payload: SetCategorizedCardsActionPayload
+    payload: { cards: ICard[] }
   ): Promise<boolean | Error> {
     try {
       const { cards } = payload;

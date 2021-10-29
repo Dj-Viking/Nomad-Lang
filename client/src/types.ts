@@ -18,12 +18,6 @@ export interface ICard {
   uncategorized?: Array<ICard>;
   color?: string | "blue"; //TODO remove
 }
-export interface SetCategorizedCardsCommitPayload {
-  categorized: Map<number, string>;
-}
-export interface SetCategorizedCardsActionPayload {
-  cards: Array<ICard>;
-}
 
 export interface DeleteCardResponse {
   deleteCard: {
