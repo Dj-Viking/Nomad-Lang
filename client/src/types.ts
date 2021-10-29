@@ -210,6 +210,8 @@ export type RootDispatchType =
   | "user/setUserCards"
   | "user/setUser"
   /** */
+  | "sidebarCategories/toggleWithOneKey"
+  /** */
   | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
@@ -259,6 +261,7 @@ export type RootCommitType =
   /** */
   | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
   | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE"
+  | "sidebarCategories/TOGGLE_WITH_ONE_KEY"
   | "sidebar/TOGGLE_SIDEBAR";
 
 export interface CardBackPayload {
