@@ -147,8 +147,6 @@ export default defineComponent({
         case event.key === "1":
           {
             console.log("pressed 1 key", event.target);
-            // const id = document.querySelector(`div#cards-container`)
-            //   ?.children[0].children[1].id as string;
 
             const categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
