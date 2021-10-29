@@ -123,9 +123,13 @@ export default defineComponent({
       );
     },
     toggleSideBarWithC(): void {
-      store.commit("sidebar/TOGGLE_SIDEBAR" as RootCommitType, false, {
-        root: true,
-      });
+      store.commit(
+        "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
+        {},
+        {
+          root: true,
+        }
+      );
     },
     async toggleCategoryWithOneKey(categoryName: string): Promise<void> {
       await store.dispatch(
