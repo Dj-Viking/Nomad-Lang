@@ -69,7 +69,7 @@ const actions = {
       const { categoryName } = payload;
 
       let totalInactive = 0;
-      let totalActive = 1;
+      let totalActive = 0;
       let wasActive = [] as Array<string>;
       for (const key in state.categories) {
         state.categories[key].isActive === true && wasActive.push(key);
@@ -90,7 +90,7 @@ const actions = {
       switch (true) {
         case wasActive.length > 0 &&
           !wasActive.includes(categoryName) &&
-          totalActive > 1 &&
+          totalActive === 1 &&
           totalInactive >= 1: {
           state.categories[categoryName] = {
             ...state.categories[categoryName],
@@ -103,7 +103,9 @@ const actions = {
           );
           return;
         }
-        case wasActive.length === 0 && totalActive === 1 && totalActive >= 1: {
+        case wasActive.length === 0 &&
+          totalActive === 0 &&
+          totalInactive >= 1: {
           state.categories[categoryName] = {
             ...state.categories[categoryName],
             isActive: true,
@@ -116,7 +118,7 @@ const actions = {
           return;
         }
         case wasActive.includes(categoryName) &&
-          totalActive > 1 &&
+          totalActive === 1 &&
           totalInactive >= 1: {
           state.categories[categoryName] = {
             ...state.categories[categoryName],

@@ -94,7 +94,6 @@ export default defineComponent({
     },
     async logout() {
       auth.setToken("");
-      auth.setEmail("");
       store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
         root: true,
       });
@@ -118,7 +117,6 @@ export default defineComponent({
     meResult: async function (newValue: MeQueryResponse) {
       if (newValue.me.errors?.length) {
         auth.clearToken();
-        auth.setEmail("");
         this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
         store.commit(
