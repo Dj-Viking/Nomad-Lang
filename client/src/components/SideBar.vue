@@ -28,6 +28,16 @@
               }"
               aria-hidden="true"
             ></i>
+
+            <input
+              placeholder="Search"
+              class="input"
+              type="text"
+              v-model="searchTerm"
+              @input.prevent="search"
+              name="searchTerm"
+            />
+
             <h4
               style="
                 font-size: 15px;
@@ -92,22 +102,22 @@ import store from "@/store";
 import {
   CardsState,
   CategorizedCardsObject,
-  ICard,
   RootCommitType,
   RootDispatchType,
   SidebarState,
 } from "@/types";
 import SideBarNode from "./SideBarNode.vue";
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, ref } from "@vue/runtime-core";
 
 export default defineComponent({
   name: "SideBar",
   components: {
     SideBarNode,
   },
-  data() {
+  setup() {
+    const searchTerm = ref("");
     return {
-      allCards: [] as ICard[],
+      searchTerm,
     };
   },
   computed: {
@@ -118,6 +128,13 @@ export default defineComponent({
       store.state.sidebar.sidebar.isOpen,
   },
   methods: {
+    search(event: any): void {
+      console.log("search value", event.target.value);
+      //set categories that match the content of the cards in the array
+
+      //highlight them in the DOM
+      return;
+    },
     // eslint-disable-next-line
     toggleSideBar(_event: MouseEvent): void {
       store.commit(
@@ -161,7 +178,8 @@ export default defineComponent({
 
             // edge case if sidebar was closed don't set undefined category
             // because it breaks a lot of things lol
-            if (categoryName === undefined) {
+            console.log("category name hopefully defined", categoryName);
+            if (categoryName === undefined && this.searchTerm !== "") {
               return;
             }
 
