@@ -159,6 +159,8 @@ export default defineComponent({
             let categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
 
+            // edge case if sidebar was closed don't set undefined category
+            // because it breaks a lot of things lol
             if (categoryName === undefined) {
               return;
             }
