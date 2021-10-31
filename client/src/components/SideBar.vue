@@ -43,7 +43,11 @@
           </div>
           <div id="cards-container">
             <div v-for="(key, i) of Object.keys(categories)" :key="i">
-              <span :id="categories[key].cards[0]?.frontSideLanguage"
+              <span
+                :id="
+                  !!categories[key] &&
+                  categories[key].cards[0]?.frontSideLanguage
+                "
                 >{{ i + 1 }}.&nbsp;</span
               >
               <SideBarNode
@@ -152,8 +156,12 @@ export default defineComponent({
           {
             console.log("pressed 1 key", event.target);
 
-            const categoryName = document.querySelector(`div#cards-container`)
+            let categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
+
+            if (categoryName === undefined) {
+              return;
+            }
 
             this.toggleCategoryWithOneKey(categoryName);
           }
