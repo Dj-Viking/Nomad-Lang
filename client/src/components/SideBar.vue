@@ -151,6 +151,7 @@ export default defineComponent({
     toggleSideBar(_event: MouseEvent): void {
       this.searchTerm = "";
       let searchTermEl: HTMLElement | null = null;
+
       setTimeout(() => {
         searchTermEl = document.querySelector(`input#iamsearch`);
         console.log("searchterm el", searchTermEl);
@@ -184,6 +185,7 @@ export default defineComponent({
     toggleSideBarWithC(): void {
       this.searchTerm = "";
       let searchTermEl: HTMLElement | null = null;
+
       setTimeout(() => {
         searchTermEl = document.querySelector(`input#iamsearch`);
         console.log("searchterm el", searchTermEl);

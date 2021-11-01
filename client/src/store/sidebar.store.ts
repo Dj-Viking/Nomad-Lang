@@ -15,7 +15,7 @@ const mutations = {
       state.sidebar.isOpen = false;
       document
         .querySelector("input#iamsearch")
-        ?.removeEventListener("blue", () => {
+        ?.removeEventListener("blur", () => {
           console.log("removed blur event listener");
         });
     } else {
