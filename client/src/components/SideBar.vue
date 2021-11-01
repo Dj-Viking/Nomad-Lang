@@ -179,9 +179,20 @@ export default defineComponent({
             // edge case if sidebar was closed don't set undefined category
             // because it breaks a lot of things lol
             console.log("category name hopefully defined", categoryName);
-            if (categoryName === undefined && this.searchTerm !== "") {
+            console.log(
+              "did search term change before category name",
+              !!this.searchTerm
+            );
+
+            // eslint-disable-next-line
+            if (!!this.searchTerm) {
               return;
             }
+
+            if (categoryName === undefined && !!this.searchTerm.length) {
+              return;
+            }
+            console.log("did search term change", this.searchTerm);
 
             this.toggleCategoryWithOneKey(categoryName);
           }
