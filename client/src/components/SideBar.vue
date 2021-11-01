@@ -21,6 +21,7 @@
                 margin-top: 0.5em;
                 margin-left: 0.5em;
                 margin-right: 0.5em;
+                margin-bottom: 0.5em;
               "
               :class="{
                 'fa fa-chevron-left big': sidebarOpen,
@@ -34,7 +35,7 @@
               class="input"
               type="text"
               autocomplete="off"
-              id="searchTerm"
+              id="iamsearch"
               v-model="searchTerm"
               @input.prevent="search"
               name="searchTerm"
@@ -108,6 +109,7 @@ import {
   RootDispatchType,
   SidebarState,
 } from "@/types";
+import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
 import { defineComponent, ref } from "@vue/runtime-core";
 
@@ -128,16 +130,18 @@ export default defineComponent({
       store.state.cards.categorized as CategorizedCardsObject,
     sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
       store.state.sidebar.sidebar.isOpen,
+    sidebarSearchTerm: (): SidebarState["sidebar"]["searchTerm"] =>
+      store.state.sidebar.sidebar.searchTerm,
   },
   methods: {
-    escapeRegexp(string = ""): string {
-      return string.replace(/[-[\]{}()*+?.,\\^$#\s]/g, "\\$&");
-    },
     search(event: any): void {
       const input = event.target.value;
+      store.commit("sidebar/SET_SEARCH_TERM" as RootCommitType, input, {
+        root: true,
+      });
       console.log("search value", input);
       //set categories that match the content of the cards in the array
-      const searchRegex = new RegExp(`(${this.escapeRegexp(input)})+`, "g");
+      const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
       console.log("search regex", searchRegex);
 
       //highlight them in the DOM
@@ -145,6 +149,32 @@ export default defineComponent({
     },
     // eslint-disable-next-line
     toggleSideBar(_event: MouseEvent): void {
+      this.searchTerm = "";
+      let searchTermEl: HTMLElement | null = null;
+      setTimeout(() => {
+        searchTermEl = document.querySelector(`input#iamsearch`);
+        console.log("searchterm el", searchTermEl);
+      }, 1200);
+
+      // let tempSearchTerm = this.sidebarSearchTerm;
+
+      // eslint-disable-next-line
+      const self = this;
+
+      (async function (ms: number): Promise<void> {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            if (searchTermEl !== null) {
+              searchTermEl.addEventListener("blur", () => {
+                if (self.searchTerm !== "") {
+                  self.searchTerm = "";
+                }
+              });
+            }
+            resolve();
+          }, ms);
+        });
+      })(1300);
       store.commit(
         "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
         {},
@@ -153,10 +183,33 @@ export default defineComponent({
     },
     toggleSideBarWithC(): void {
       this.searchTerm = "";
+      let searchTermEl: HTMLElement | null = null;
       setTimeout(() => {
-        const searchTermEl = document.querySelector("input#searchTerm");
+        searchTermEl = document.querySelector(`input#iamsearch`);
         console.log("searchterm el", searchTermEl);
-      }, 100);
+      }, 1200);
+
+      // let tempSearchTerm = this.sidebarSearchTerm;
+
+      // eslint-disable-next-line
+      const self = this;
+
+      (async function (ms: number): Promise<void> {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            if (searchTermEl !== null) {
+              searchTermEl.addEventListener("blur", () => {
+                console.log("listening on blur");
+                if (self.searchTerm !== "") {
+                  self.searchTerm = "";
+                }
+              });
+            }
+            resolve();
+          }, ms);
+        });
+      })(1500);
+
       store.commit(
         "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
         {},
@@ -198,15 +251,11 @@ export default defineComponent({
               return;
             }
 
-            //input in focus???
-            console.log("event target should be input el", event.target);
-
             // edge case if sidebar was closed don't set undefined category
             // because it breaks a lot of things lol
             if (categoryName === undefined || !!this.searchTerm.length) {
               return;
             }
-            console.log("did search term change", this.searchTerm);
 
             this.toggleCategoryWithOneKey(categoryName);
           }

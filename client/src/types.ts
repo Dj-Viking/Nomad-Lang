@@ -118,6 +118,7 @@ export interface LoadingState {
 
 export interface SidebarState {
   sidebar: {
+    searchTerm: string;
     isOpen: boolean;
   };
 }
@@ -256,6 +257,8 @@ export type RootCommitType =
   | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
   | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE"
   | "sidebarCategories/TOGGLE_WITH_ONE_KEY"
+  /** */
+  | "sidebar/SET_SEARCH_TERM"
   | "sidebar/TOGGLE_SIDEBAR";
 
 export interface CardBackPayload {
