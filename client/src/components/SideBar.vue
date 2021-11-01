@@ -33,6 +33,7 @@
               placeholder="Search"
               class="input"
               type="text"
+              id="searchTerm"
               v-model="searchTerm"
               @input.prevent="search"
               name="searchTerm"
@@ -128,9 +129,15 @@ export default defineComponent({
       store.state.sidebar.sidebar.isOpen,
   },
   methods: {
+    escapeRegexp(string = ""): string {
+      return string.replace(/[-[\]{}()*+?.,\\^$#\s]/g, "\\$&");
+    },
     search(event: any): void {
-      console.log("search value", event.target.value);
+      const input = event.target.value;
+      console.log("search value", input);
       //set categories that match the content of the cards in the array
+      const searchRegex = new RegExp(`(${this.escapeRegexp(input)})+`, "g");
+      console.log("search regex", searchRegex);
 
       //highlight them in the DOM
       return;
@@ -162,6 +169,14 @@ export default defineComponent({
   },
   mounted: function (): void {
     //arrow function because i need "this" keyword to be in context of vue component
+    const searchTermEl = document.querySelector("input#searchTerm");
+
+    if (searchTermEl) {
+      console.log("searchterm exists");
+      searchTermEl.addEventListener("onblur", () => {
+        console.log("element is blurred");
+      });
+    }
     document.addEventListener("keyup", (event) => {
       switch (true) {
         case event.key === "c" || event.key === "C":
@@ -176,19 +191,16 @@ export default defineComponent({
             let categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
 
-            // edge case if sidebar was closed don't set undefined category
-            // because it breaks a lot of things lol
-            console.log("category name hopefully defined", categoryName);
-            console.log(
-              "did search term change before category name",
-              !!this.searchTerm
-            );
-
             // eslint-disable-next-line
             if (!!this.searchTerm) {
               return;
             }
 
+            //input in focus???
+            console.log("event target should be input el", event.target);
+
+            // edge case if sidebar was closed don't set undefined category
+            // because it breaks a lot of things lol
             if (categoryName === undefined && !!this.searchTerm.length) {
               return;
             }
