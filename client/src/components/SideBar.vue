@@ -33,6 +33,7 @@
               placeholder="Search"
               class="input"
               type="text"
+              autocomplete="off"
               id="searchTerm"
               v-model="searchTerm"
               @input.prevent="search"
@@ -151,6 +152,11 @@ export default defineComponent({
       );
     },
     toggleSideBarWithC(): void {
+      this.searchTerm = "";
+      setTimeout(() => {
+        const searchTermEl = document.querySelector("input#searchTerm");
+        console.log("searchterm el", searchTermEl);
+      }, 100);
       store.commit(
         "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
         {},
@@ -169,18 +175,14 @@ export default defineComponent({
   },
   mounted: function (): void {
     //arrow function because i need "this" keyword to be in context of vue component
-    const searchTermEl = document.querySelector("input#searchTerm");
 
-    if (searchTermEl) {
-      console.log("searchterm exists");
-      searchTermEl.addEventListener("onblur", () => {
-        console.log("element is blurred");
-      });
-    }
     document.addEventListener("keyup", (event) => {
       switch (true) {
         case event.key === "c" || event.key === "C":
           {
+            // eslint-disable-next-line
+            if (!!this.searchTerm) return;
+
             this.toggleSideBarWithC();
           }
           break;
@@ -201,7 +203,7 @@ export default defineComponent({
 
             // edge case if sidebar was closed don't set undefined category
             // because it breaks a lot of things lol
-            if (categoryName === undefined && !!this.searchTerm.length) {
+            if (categoryName === undefined || !!this.searchTerm.length) {
               return;
             }
             console.log("did search term change", this.searchTerm);

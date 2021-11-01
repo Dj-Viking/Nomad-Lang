@@ -54,7 +54,7 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-4">
+                  <p class="title is-5">
                     {{ card?.frontSideText }}
                   </p>
                   <form
@@ -110,7 +110,7 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-4">
+                  <p class="title is-5">
                     {{ card?.backSideText }}
                   </p>
                   <form
