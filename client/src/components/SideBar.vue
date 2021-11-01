@@ -125,6 +125,7 @@ export default defineComponent({
     };
   },
   computed: {
+    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     categories: (): CardsState["categorized"] =>
       store.state.cards.categorized as CategorizedCardsObject,
@@ -136,15 +137,56 @@ export default defineComponent({
   methods: {
     search(event: any): void {
       const input = event.target.value;
+      const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
+
       store.commit("sidebar/SET_SEARCH_TERM" as RootCommitType, input, {
         root: true,
       });
-      console.log("search value", input);
+      // console.log("search value", input);
       //set categories that match the content of the cards in the array
-      const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
-      console.log("search regex", searchRegex);
 
-      //highlight them in the DOM
+      //create the frontside text content to be the html that will be
+      // injected with v-html in the spans
+      // stored inside the card's frontside text content
+
+      // the content string will be the entire string stored in frontside text
+      const content = (() => {
+        let str = "";
+        for (const card of this.allCards) {
+          if (searchRegex.test(card.frontSideText as string)) {
+            str = card.frontSideText as string;
+          }
+        }
+        if (str) return str;
+        else return "";
+      })();
+
+      console.log("matched content", content);
+
+      const createHighlightedCardTextHtml = (
+        input: string,
+        matchedContent: string
+      ): string => {
+        //need to search through the content of all cards and
+        //find which cards have content that match the pattern typed in search
+        // use all cards
+
+        // console.log("search regex", searchRegex);
+
+        let parts: string[] = [];
+        if (input) {
+          parts = matchedContent.trim().split(searchRegex);
+        }
+        /*.replace(/,|\\/g, "")*/
+
+        let returnHtml = `some parts \n${parts}`;
+        return returnHtml;
+      };
+
+      const html = createHighlightedCardTextHtml(input, content as string);
+
+      console.log("created html", html);
+
       return;
     },
     // eslint-disable-next-line
@@ -154,7 +196,6 @@ export default defineComponent({
 
       setTimeout(() => {
         searchTermEl = document.querySelector(`input#iamsearch`);
-        console.log("searchterm el", searchTermEl);
       }, 1200);
 
       // let tempSearchTerm = this.sidebarSearchTerm;
@@ -188,7 +229,6 @@ export default defineComponent({
 
       setTimeout(() => {
         searchTermEl = document.querySelector(`input#iamsearch`);
-        console.log("searchterm el", searchTermEl);
       }, 1200);
 
       // let tempSearchTerm = this.sidebarSearchTerm;
@@ -201,7 +241,6 @@ export default defineComponent({
           setTimeout(function () {
             if (searchTermEl !== null) {
               searchTermEl.addEventListener("blur", () => {
-                console.log("listening on blur");
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
                 }
