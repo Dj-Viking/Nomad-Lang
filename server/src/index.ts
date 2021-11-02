@@ -16,6 +16,7 @@ import { ColorLog } from "./__tests__/utils/helpers";
 import { /*CategorizedCardMapClass,*/ /*CategorizedCardMapClassScalar*/ } from "./types";
 // import { sendEmail } from "./utils/sendEmail";
 // import { MySendEmailOptions } from "./types";
+import path from "path";
 
 const logger = ColorLog;
 
@@ -23,7 +24,9 @@ const {
   DB_NAME,
   DB_USER,
   DB_PASSWORD,
-  CORS_ALLOWED,
+  CORS_ALLOWED_PROD,
+  CORS_ALLOWED_DEV,
+  DB_URL,
   // NODEMAILER_EMAIL_TO
 } = process.env;
 
@@ -40,7 +43,7 @@ const {
   //connect to db
   await createConnection({
     type: "postgres",
-    url: IS_PROD ? "some given URL I dont have it yet" : undefined,
+    url: IS_PROD ? DB_URL : undefined,
     database: !IS_PROD ? DB_NAME : undefined,
     password: !IS_PROD ? DB_PASSWORD : undefined,
     username: !IS_PROD ? DB_USER : undefined,
@@ -77,9 +80,17 @@ const {
   });
   new logger("purple", "graphql schema build success").genLog();
 
+  const corsRegExp = ((): RegExp => {
+    if (IS_PROD) {
+      return new RegExp(CORS_ALLOWED_PROD as string);
+    } else {
+      return new RegExp(CORS_ALLOWED_DEV as string);
+    }
+  })();
+
   // express cors
   app.use(cors({
-    origin: new RegExp(CORS_ALLOWED as string),
+    origin: new RegExp(corsRegExp),
     credentials: true
   }))
   
@@ -92,7 +103,7 @@ const {
   apolloServer.applyMiddleware({
     app,
     cors: {
-      origin: new RegExp(CORS_ALLOWED as string),
+      origin: new RegExp(corsRegExp),
       credentials: true
     }
   });
@@ -106,29 +117,29 @@ const {
 
   //other post deployment configs
 
-  // //IF-ENV IN PRODUCTION
-  // if (process.env.NODE_ENV === 'production') {
-  //   //STATIC ASSETS FROM VUE BUILD FOLDER
-  //   app.use(express.static(
-  //     path.join(__dirname, '../../client/dist')
-  //   ));
-  //   // IF TRAVELS ANY ROUTE OUTSIDE VUE'S CURRENT PAGE REDIRECT TO ROOT
-  //   app.get('*', (_req, res, next) => {
-  //     res.sendFile(path.join(
-  //       __dirname, '../client/dist/index.html'
-  //     ));
-  //     next();
-  //   });
-  //   //REDIRECT HTTP TRAFFIC TO HTTPS
-  //   app.use((req, res, next) => {
-  //     if (req.header('x-forwarded-proto') !== 'https') res.redirect(`https://${req.header('host')}${req.url}`);
-  //     next();
-  //   });
-  // }
+  //IF-ENV IN PRODUCTION
+  if (process.env.NODE_ENV === 'production') {
+    //STATIC ASSETS FROM VUE BUILD FOLDER
+    app.use(express.static(
+      path.join(__dirname, '../../client/dist')
+    ));
+    // IF TRAVELS ANY ROUTE OUTSIDE VUE'S CURRENT PAGE REDIRECT TO ROOT
+    // app.get('*', (_req, res, next) => {
+    //   res.sendFile(path.join(
+    //     __dirname, '../client/dist/index.html'
+    //   ));
+    //   next();
+    // });
+    //REDIRECT HTTP TRAFFIC TO HTTPS
+    app.use((req, res, next) => {
+      if (req.header('x-forwarded-proto') !== 'https') res.redirect(`https://${req.header('host')}${req.url}`);
+      next();
+    });
+  }
 
-  // app.use('/', async (_, res) => {
-  //   res.status(404).send("client path eventually")
-  // });
+  app.use('/', async (_, res) => {
+    res.status(404).send("client path eventually")
+  });
 
   //CREATE PORT
   const PORT = process.env.PORT || 4000;
