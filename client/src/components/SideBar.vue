@@ -133,8 +133,6 @@ export default defineComponent({
       store.state.cards.categorized as CategorizedCardsObject,
     sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
       store.state.sidebar.sidebar.isOpen,
-    sidebarSearchTerm: (): SidebarState["sidebar"]["searchTerm"] =>
-      store.state.sidebar.sidebar.searchTerm,
   },
   methods: {
     search(event: any): void {
@@ -142,9 +140,6 @@ export default defineComponent({
       const input = event.target.value;
       const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
 
-      store.commit("sidebar/SET_SEARCH_TERM" as RootCommitType, input, {
-        root: true,
-      });
       // console.log("search value", input);
       //set categories that match the content of the cards in the array
 
@@ -164,8 +159,6 @@ export default defineComponent({
         else return "";
       })();
 
-      console.log("matched content", content);
-
       const createHighlightedCardTextHtml = (
         input: string,
         matchedContent: string
@@ -180,12 +173,8 @@ export default defineComponent({
         if (input) {
           parts = matchedContent.trim().split(searchRegex);
         }
-        /*.replace(/,|\\/g, "")*/
 
-        console.log("matched content", matchedContent);
-        console.log("parts matched", parts);
-
-        let returnHtml = `${`<span>
+        return `${`<span>
             ${
               parts.length > 0 && !!input
                 ? parts.map((part) => {
@@ -197,7 +186,6 @@ export default defineComponent({
             }
             ${!input === true ? escapeHTML(matchedContent) : ""}
           </span>`.replace(/,|\\/g, "")}`;
-        return returnHtml;
       };
 
       const html = createHighlightedCardTextHtml(input, content as string);
