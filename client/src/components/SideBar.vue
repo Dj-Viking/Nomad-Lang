@@ -204,8 +204,6 @@ export default defineComponent({
         searchTermEl = document.querySelector(`input#iamsearch`);
       }, 1200);
 
-      // let tempSearchTerm = this.sidebarSearchTerm;
-
       // eslint-disable-next-line
       const self = this;
 
