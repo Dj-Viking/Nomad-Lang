@@ -61,11 +61,10 @@
     "type-graphql": "^1.1.1",
     "typeorm": "^0.2.34",
     "typescript": "^4.3.5",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
+    "uuid": "^8.3.2",
     "@types/nodemailer": "^6.4.4",
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.6"
-  }
+  },
+  "devDependencies": {}
 }
