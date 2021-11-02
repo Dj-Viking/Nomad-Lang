@@ -105,6 +105,7 @@ import store from "@/store";
 import {
   CardsState,
   CategorizedCardsObject,
+  ICard,
   RootCommitType,
   RootDispatchType,
   SidebarState,
@@ -112,6 +113,7 @@ import {
 import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
 import { defineComponent, ref } from "@vue/runtime-core";
+import he from "he";
 
 export default defineComponent({
   name: "SideBar",
@@ -136,6 +138,7 @@ export default defineComponent({
   },
   methods: {
     search(event: any): void {
+      const escapeHTML = he.escape;
       const input = event.target.value;
       const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
 
@@ -179,7 +182,21 @@ export default defineComponent({
         }
         /*.replace(/,|\\/g, "")*/
 
-        let returnHtml = `some parts \n${parts}`;
+        console.log("matched content", matchedContent);
+        console.log("parts matched", parts);
+
+        let returnHtml = `${`<span>
+            ${
+              parts.length > 0 && !!input
+                ? parts.map((part) => {
+                    return part === input
+                      ? `<strong>${escapeHTML(part)}</strong>`
+                      : escapeHTML(part);
+                  })
+                : ""
+            }
+            ${!input === true ? escapeHTML(matchedContent) : ""}
+          </span>`.replace(/,|\\/g, "")}`;
         return returnHtml;
       };
 
@@ -187,7 +204,37 @@ export default defineComponent({
 
       console.log("created html", html);
 
-      return;
+      if (
+        html.split("strong>")[1] &&
+        html.split("strong>")[1].replace("</", "").length
+      ) {
+        console.log(
+          "got something here??",
+          html.split("strong>")[1].replace("</", "")
+        );
+        //replace this html text with the frontside text of the displayed list of cards that matches the content
+        let matchedCards: Array<ICard> = [];
+        for (const card of this.allCards) {
+          if (content === (card.frontSideText as string)) {
+            matchedCards.push({
+              ...card,
+              frontSideText: html,
+            });
+          }
+        }
+
+        store.commit("cards/SET_DISPLAY_CARDS" as RootCommitType, {
+          cards: matchedCards,
+        });
+      } else {
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: this.allCards },
+          { root: true }
+        );
+      }
+
+      return void 0;
     },
     // eslint-disable-next-line
     toggleSideBar(_event: MouseEvent): void {

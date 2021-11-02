@@ -54,9 +54,12 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-5">
+                  <div v-if="/<strong>/g.test(card?.frontSideText)">
+                    <p v-html="card?.frontSideText"></p>
+                  </div>
+                  <div v-else class="title is-5">
                     {{ card?.frontSideText }}
-                  </p>
+                  </div>
                   <form
                     :id="id"
                     @submit.prevent="
