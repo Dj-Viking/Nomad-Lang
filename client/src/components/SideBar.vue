@@ -163,12 +163,6 @@ export default defineComponent({
         input: string,
         matchedContent: string
       ): string => {
-        //need to search through the content of all cards and
-        //find which cards have content that match the pattern typed in search
-        // use all cards
-
-        // console.log("search regex", searchRegex);
-
         let parts: string[] = [];
         if (input) {
           parts = matchedContent.trim().split(searchRegex);
@@ -190,8 +184,6 @@ export default defineComponent({
 
       const html = createHighlightedCardTextHtml(input, content as string);
 
-      console.log("created html", html);
-
       if (
         html.split("strong>")[1] &&
         html.split("strong>")[1].replace("</", "").length
@@ -200,7 +192,6 @@ export default defineComponent({
           "got something here??",
           html.split("strong>")[1].replace("</", "")
         );
-        //replace this html text with the frontside text of the displayed list of cards that matches the content
         let matchedCards: Array<ICard> = [];
         for (const card of this.allCards) {
           if (content === (card.frontSideText as string)) {
