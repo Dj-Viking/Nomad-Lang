@@ -57,7 +57,7 @@
                   <div v-if="/<strong>/g.test(card?.frontSideText)">
                     <p v-html="card?.frontSideText"></p>
                   </div>
-                  <div v-else class="title is-5">
+                  <div v-else>
                     {{ card?.frontSideText }}
                   </div>
                   <form

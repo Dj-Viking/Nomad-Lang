@@ -257,6 +257,11 @@ export default defineComponent({
               searchTermEl.addEventListener("blur", () => {
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
+                  store.commit(
+                    "cards/SET_DISPLAY_CARDS" as RootCommitType,
+                    { cards: self.allCards },
+                    { root: true }
+                  );
                 }
               });
             }
@@ -290,6 +295,11 @@ export default defineComponent({
               searchTermEl.addEventListener("blur", () => {
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
+                  store.commit(
+                    "cards/SET_DISPLAY_CARDS" as RootCommitType,
+                    { cards: self.allCards },
+                    { root: true }
+                  );
                 }
               });
             }
