@@ -113,7 +113,7 @@ import {
 import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
 import { defineComponent, ref } from "@vue/runtime-core";
-import he from "he";
+import { createHighlightedCardTextHtml } from "@/utils/createHighlightedCardTextHtml";
 
 export default defineComponent({
   name: "SideBar",
@@ -136,7 +136,6 @@ export default defineComponent({
   },
   methods: {
     search(event: any): void {
-      const escapeHTML = he.escape;
       const input = event.target.value;
       const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
 
@@ -159,30 +158,11 @@ export default defineComponent({
         else return "";
       })();
 
-      const createHighlightedCardTextHtml = (
-        input: string,
-        matchedContent: string
-      ): string => {
-        let parts: string[] = [];
-        if (input) {
-          parts = matchedContent.trim().split(searchRegex);
-        }
-
-        return `${`<span>
-            ${
-              parts.length > 0 && !!input
-                ? parts.map((part) => {
-                    return part === input
-                      ? `<strong>${escapeHTML(part)}</strong>`
-                      : escapeHTML(part);
-                  })
-                : ""
-            }
-            ${!input === true ? escapeHTML(matchedContent) : ""}
-          </span>`.replace(/,|\\/g, "")}`;
-      };
-
-      const html = createHighlightedCardTextHtml(input, content as string);
+      const html = createHighlightedCardTextHtml(
+        input,
+        content as string,
+        searchRegex
+      );
 
       if (
         html.split("strong>")[1] &&
