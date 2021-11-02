@@ -8,6 +8,7 @@
     "test": "jest --verbose --detectOpenHandles",
     "tsw": "tsc -w",
     "tsc": "tsc",
+    "start": "npm run tsc; node dist/index.js",
     "ts:run": "ts-node src/index.ts",
     "ts:watch": "nodemon src/index.ts",
     "dev": "npm run tsc; nodemon dist/index.js",
