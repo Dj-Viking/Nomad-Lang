@@ -27,6 +27,7 @@
     "test:categ": "ts-node ./tests/scripts/createCategorizedCardsObject.ts"
   },
   "dependencies": {
+    "@vue/cli-service": "~4.5.0",
     "@apollo/client": "^3.4.11",
     "@types/node": "^16.9.1",
     "@vue/apollo-composable": "^4.0.0-alpha.14",
@@ -70,7 +71,6 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
