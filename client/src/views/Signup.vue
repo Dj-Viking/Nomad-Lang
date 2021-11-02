@@ -64,7 +64,7 @@
   </base-layout>
 </template>
 <script lang="ts">
-import { defineComponent, inject, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { useMutation } from "@vue/apollo-composable";
 import { gql } from "graphql-tag";
@@ -82,7 +82,6 @@ export default defineComponent({
     PasswordStrengthMeter,
   },
   setup(this: void) {
-    let globalEmail = inject("$email");
     const toast = useToast();
     const email = ref("");
     const username = ref("");
@@ -135,9 +134,7 @@ export default defineComponent({
           registerResponse.value = result?.data as RegisterResponse;
           submitted.value = false;
           auth.setToken(result?.data?.register.token as string);
-          auth.setEmail(globalEmail as string);
           setTimeout(() => {
-            globalEmail = result?.data?.register.user?.email;
             router.push("/");
             isLoading.value = false;
           }, 2000);

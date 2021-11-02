@@ -1,5 +1,6 @@
 <template>
   <a
+    name="sidebarnode"
     :id="id"
     :class="{
       'category-item-active': isActive,
@@ -29,8 +30,17 @@ export default defineComponent({
     allCards: (): CardsState["allCards"] => store.state.cards.allCards,
   },
   methods: {
-    toggleActiveCategory(event: any): void {
-      const id = event.target.id;
+    toggleActiveCategory(eventOrId: any): void {
+      let id = "";
+      // eslint-disable-next-line
+      if (typeof eventOrId === "object") {
+        // eslint-disable-next-line
+        id = eventOrId.target.id;
+      } else {
+        // eslint-disable-next-line
+        id = eventOrId;
+      }
+
       switch (true) {
         case this.isActive:
           {

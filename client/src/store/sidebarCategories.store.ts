@@ -1,4 +1,9 @@
-import { SidebarCategorizedCardsState } from "@/types";
+import {
+  MyRootState,
+  RootCommitType,
+  SidebarCategorizedCardsState,
+} from "@/types";
+import { ActionContext } from "vuex";
 
 const state = {
   categories: {
@@ -47,7 +52,89 @@ const mutations = {
     }
   },
 };
-const actions = {};
+const actions = {
+  async toggleWithOneKey(
+    {
+      state,
+      rootState,
+      commit,
+    }: ActionContext<SidebarCategorizedCardsState, MyRootState>,
+    payload: { categoryName: string }
+  ): Promise<void | boolean> {
+    try {
+      const { categoryName } = payload;
+
+      let totalInactive = 0;
+      let totalActive = 0;
+      let wasActive = [] as Array<string>;
+      for (const key in state.categories) {
+        state.categories[key].isActive === true && wasActive.push(key);
+        state.categories[key].isActive === true && totalActive++;
+        state.categories[key].isActive === false && totalInactive++;
+      }
+      for (const key in state.categories) {
+        //set everything inactive
+        state.categories[key] = {
+          ...state.categories[key],
+          isActive: false,
+        };
+      }
+      // console.log("category that was active", wasActive);
+      // console.log("total inactive once 1 key pressed", totalInactive);
+      // console.log("total active once 1 key pressed", totalActive);
+
+      switch (true) {
+        case wasActive.length > 0 &&
+          !wasActive.includes(categoryName) &&
+          totalActive === 1 &&
+          totalInactive >= 1: {
+          state.categories[categoryName] = {
+            ...state.categories[categoryName],
+            isActive: true,
+          };
+          commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: state.categories[categoryName].cards },
+            { root: true }
+          );
+          return;
+        }
+        case wasActive.length === 0 &&
+          totalActive === 0 &&
+          totalInactive >= 1: {
+          state.categories[categoryName] = {
+            ...state.categories[categoryName],
+            isActive: true,
+          };
+          commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: state.categories[categoryName].cards },
+            { root: true }
+          );
+          return;
+        }
+        case wasActive.includes(categoryName) &&
+          totalActive === 1 &&
+          totalInactive >= 1: {
+          state.categories[categoryName] = {
+            ...state.categories[categoryName],
+            isActive: false,
+          };
+          commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: rootState.cards.allCards },
+            { root: true }
+          );
+          return;
+        }
+      }
+      return Promise.resolve(true);
+    } catch (error) {
+      console.error("error when toggling with one key", error as Error);
+      return Promise.resolve(false);
+    }
+  },
+};
 const getters = {};
 
 export default {

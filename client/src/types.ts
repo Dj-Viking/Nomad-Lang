@@ -18,12 +18,6 @@ export interface ICard {
   uncategorized?: Array<ICard>;
   color?: string | "blue"; //TODO remove
 }
-export interface SetCategorizedCardsCommitPayload {
-  categorized: Map<number, string>;
-}
-export interface SetCategorizedCardsActionPayload {
-  cards: Array<ICard>;
-}
 
 export interface DeleteCardResponse {
   deleteCard: {
@@ -124,6 +118,7 @@ export interface LoadingState {
 
 export interface SidebarState {
   sidebar: {
+    searchTerm: string;
     isOpen: boolean;
   };
 }
@@ -210,10 +205,13 @@ export type RootDispatchType =
   | "user/setUserCards"
   | "user/setUser"
   /** */
+  | "sidebarCategories/toggleWithOneKey"
+  /** */
   | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
   | "cards/addCard"
+  | "cards/shiftCardNext"
   | "cards/setCategorizedCards";
 
 export interface AddCardPayload {
@@ -246,6 +244,7 @@ export type RootCommitType =
   | "cards/EDIT_CARD"
   | "cards/SET_CATEGORIZED_CARD_MAP"
   | "cards/TOGGLE_CARD_SIDE"
+  | "cards/SHIFT_CARD_NEXT"
   /** */
   | "modal/SET_MODAL_ACTIVE"
   | "modal/SET_MODAL_CONTEXT"
@@ -257,6 +256,9 @@ export type RootCommitType =
   /** */
   | "sidebarCategories/INIT_SIDEBAR_CATEGORIES"
   | "sidebarCategories/TOGGLE_ONE_SIDECATEG_ACTIVE"
+  | "sidebarCategories/TOGGLE_WITH_ONE_KEY"
+  /** */
+  | "sidebar/SET_SEARCH_TERM"
   | "sidebar/TOGGLE_SIDEBAR";
 
 export interface CardBackPayload {

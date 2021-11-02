@@ -54,9 +54,12 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-4">
+                  <div v-if="/<strong>/g.test(card?.frontSideText)">
+                    <p v-html="card?.frontSideText"></p>
+                  </div>
+                  <div v-else>
                     {{ card?.frontSideText }}
-                  </p>
+                  </div>
                   <form
                     :id="id"
                     @submit.prevent="
@@ -79,6 +82,17 @@
                       Check
                     </button>
                   </form>
+                  <button
+                    :id="card && card?.id"
+                    class="button is-warning"
+                    @click.prevent="
+                      ($event) => {
+                        shiftCardNext($event);
+                      }
+                    "
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
             </div>
@@ -99,7 +113,7 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-4">
+                  <p class="title is-5">
                     {{ card?.backSideText }}
                   </p>
                   <form
@@ -227,6 +241,17 @@ export default defineComponent({
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
         //send as number because target.id is a string and all cards db assigned id's are numbers
         { id: Number(event.target.id) },
+        {
+          root: true,
+        }
+      );
+    },
+    shiftCardNext(event: any): void {
+      //update display cards array state
+      // to shift a card out of the stack after done using it
+      store.dispatch(
+        "cards/shiftCardNext" as RootDispatchType,
+        Number(event.target.id),
         {
           root: true,
         }

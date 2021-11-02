@@ -70,8 +70,6 @@ describe("logs in to check if the logout link appears when logged in then logs o
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
       const token = window.localStorage.getItem("id_token");
-      const email = window.localStorage.getItem("global_email");
-      expect(email).to.equal(EMAIL);
       expect(token).to.not.be.null;
     });
   });

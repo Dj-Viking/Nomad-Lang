@@ -20,10 +20,6 @@ class AuthService {
     return;
   }
 
-  public setEmail(email: string): void {
-    localStorage.setItem("global_email", email);
-  }
-
   public async clearToken(): Promise<void | Error> {
     const token = this.getToken();
     if (token) {

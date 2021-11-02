@@ -65,7 +65,6 @@ const apolloClient = new ApolloClient({
 const app = createApp({
   setup() {
     provide(DefaultApolloClient, apolloClient);
-    provide("$email", `${localStorage.getItem("global_email") || null}`);
   },
   render: () => h(App),
 })

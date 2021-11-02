@@ -69,7 +69,7 @@
 <script lang="ts">
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { defineComponent, inject, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { createLoginMutation } from "../graphql/mutations/myMutations";
 import {
@@ -91,7 +91,6 @@ export default defineComponent({
       store.state.loading.loading.isLoading,
   },
   setup(this: void) {
-    let globalEmail = inject("$email");
     const toast = useToast();
     const store = useStore();
     const loginInput = ref("");
@@ -158,9 +157,7 @@ export default defineComponent({
             .catch((e) =>
               console.error("error when setting cards after logging in", e)
             );
-          globalEmail = result?.data?.login.user?.email;
           auth.setToken(result?.data?.login.token as string);
-          auth.setEmail(globalEmail as string);
           router.push("/");
         }
       }
@@ -178,7 +175,6 @@ export default defineComponent({
       store,
       loginIsLoading,
       loginError,
-      globalEmail,
     };
   },
   methods: {

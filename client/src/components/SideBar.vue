@@ -21,6 +21,7 @@
                 margin-top: 0.5em;
                 margin-left: 0.5em;
                 margin-right: 0.5em;
+                margin-bottom: 0.5em;
               "
               :class="{
                 'fa fa-chevron-left big': sidebarOpen,
@@ -28,6 +29,18 @@
               }"
               aria-hidden="true"
             ></i>
+
+            <input
+              placeholder="Search"
+              class="input"
+              type="text"
+              autocomplete="off"
+              id="iamsearch"
+              v-model="searchTerm"
+              @input.prevent="search"
+              name="searchTerm"
+            />
+
             <h4
               style="
                 font-size: 15px;
@@ -41,14 +54,23 @@
               Your Categories
             </h4>
           </div>
-          <div v-for="(key, i) of Object.keys(categories)" :key="i">
-            <SideBarNode
-              :id="categories[key].id?.toString()"
-              :isActive="categories[key].isActive"
-              :categoryName="key"
-              :categories="categories"
-              :categorizedCards="categories[key].cards"
-            />
+          <div id="cards-container">
+            <div v-for="(key, i) of Object.keys(categories)" :key="i">
+              <span
+                :id="
+                  !!categories[key] &&
+                  categories[key].cards[0]?.frontSideLanguage
+                "
+                >{{ i + 1 }}.&nbsp;</span
+              >
+              <SideBarNode
+                :id="categories[key].id?.toString()"
+                :isActive="categories[key].isActive"
+                :categoryName="key"
+                :categories="categories"
+                :categorizedCards="categories[key].cards"
+              />
+            </div>
           </div>
         </div>
         <div v-else>
@@ -85,22 +107,27 @@ import {
   CategorizedCardsObject,
   ICard,
   RootCommitType,
+  RootDispatchType,
   SidebarState,
 } from "@/types";
+import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, ref } from "@vue/runtime-core";
+import { createHighlightedCardTextHtml } from "@/utils/createHighlightedCardTextHtml";
 
 export default defineComponent({
   name: "SideBar",
   components: {
     SideBarNode,
   },
-  data() {
+  setup() {
+    const searchTerm = ref("");
     return {
-      allCards: [] as ICard[],
+      searchTerm,
     };
   },
   computed: {
+    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     categories: (): CardsState["categorized"] =>
       store.state.cards.categorized as CategorizedCardsObject,
@@ -108,14 +135,183 @@ export default defineComponent({
       store.state.sidebar.sidebar.isOpen,
   },
   methods: {
+    search(event: any): void {
+      const input = event.target.value;
+      const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
+
+      // console.log("search value", input);
+      //set categories that match the content of the cards in the array
+
+      //create the frontside text content to be the html that will be
+      // injected with v-html in the spans
+      // stored inside the card's frontside text content
+
+      // the content string will be the entire string stored in frontside text
+      const content = (() => {
+        let str = "";
+        for (const card of this.allCards) {
+          if (searchRegex.test(card.frontSideText as string)) {
+            str = card.frontSideText as string;
+          }
+        }
+        if (str) return str;
+        else return "";
+      })();
+
+      const html = createHighlightedCardTextHtml(
+        input,
+        content as string,
+        searchRegex
+      );
+
+      if (
+        html.split("strong>")[1] &&
+        html.split("strong>")[1].replace("</", "").length
+      ) {
+        console.log(
+          "got something here??",
+          html.split("strong>")[1].replace("</", "")
+        );
+        let matchedCards: Array<ICard> = [];
+        for (const card of this.allCards) {
+          if (content === (card.frontSideText as string)) {
+            matchedCards.push({
+              ...card,
+              frontSideText: html,
+            });
+          }
+        }
+
+        store.commit("cards/SET_DISPLAY_CARDS" as RootCommitType, {
+          cards: matchedCards,
+        });
+      } else {
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: this.allCards },
+          { root: true }
+        );
+      }
+
+      return void 0;
+    },
     // eslint-disable-next-line
     toggleSideBar(_event: MouseEvent): void {
+      this.searchTerm = "";
+      let searchTermEl: HTMLElement | null = null;
+
+      setTimeout(() => {
+        searchTermEl = document.querySelector(`input#iamsearch`);
+      }, 1200);
+
+      // eslint-disable-next-line
+      const self = this;
+
+      (async function (ms: number): Promise<void> {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            if (searchTermEl !== null) {
+              searchTermEl.addEventListener("blur", () => {
+                if (self.searchTerm !== "") {
+                  self.searchTerm = "";
+                }
+              });
+            }
+            resolve();
+          }, ms);
+        });
+      })(1300);
       store.commit(
         "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
         {},
         { root: true }
       );
     },
+    toggleSideBarWithC(): void {
+      this.searchTerm = "";
+      let searchTermEl: HTMLElement | null = null;
+
+      setTimeout(() => {
+        searchTermEl = document.querySelector(`input#iamsearch`);
+      }, 1200);
+
+      // let tempSearchTerm = this.sidebarSearchTerm;
+
+      // eslint-disable-next-line
+      const self = this;
+
+      (async function (ms: number): Promise<void> {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            if (searchTermEl !== null) {
+              searchTermEl.addEventListener("blur", () => {
+                if (self.searchTerm !== "") {
+                  self.searchTerm = "";
+                }
+              });
+            }
+            resolve();
+          }, ms);
+        });
+      })(1500);
+
+      store.commit(
+        "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
+        {},
+        {
+          root: true,
+        }
+      );
+    },
+    async toggleCategoryWithOneKey(categoryName: string): Promise<void> {
+      await store.dispatch(
+        "sidebarCategories/toggleWithOneKey" as RootDispatchType,
+        { categoryName },
+        { root: true }
+      );
+    },
+  },
+  mounted: function (): void {
+    //arrow function because i need "this" keyword to be in context of vue component
+
+    document.addEventListener("keyup", (event) => {
+      switch (true) {
+        case event.key === "c" || event.key === "C":
+          {
+            // eslint-disable-next-line
+            if (!!this.searchTerm) return;
+
+            this.toggleSideBarWithC();
+          }
+          break;
+        case event.key === "1":
+          {
+            console.log("pressed 1 key", event.target);
+
+            let categoryName = document.querySelector(`div#cards-container`)
+              ?.children[0].children[0].id as string;
+
+            // eslint-disable-next-line
+            if (!!this.searchTerm) {
+              return;
+            }
+
+            // edge case if sidebar was closed don't set undefined category
+            // because it breaks a lot of things lol
+            if (categoryName === undefined || !!this.searchTerm.length) {
+              return;
+            }
+
+            this.toggleCategoryWithOneKey(categoryName);
+          }
+          break;
+        default:
+          return;
+      }
+    });
+  },
+  unmounted: function (): void {
+    document.removeEventListener("keyup", this.toggleSideBarWithC);
   },
 });
 </script>
