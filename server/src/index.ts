@@ -47,7 +47,7 @@ const {
     database: !IS_PROD ? DB_NAME : undefined,
     password: !IS_PROD ? DB_PASSWORD : undefined,
     username: !IS_PROD ? DB_USER : undefined,
-    logging: true,
+    logging: !IS_PROD,
     synchronize: true,
     ssl: IS_PROD,
     extra: IS_PROD && {
