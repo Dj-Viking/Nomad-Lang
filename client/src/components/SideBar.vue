@@ -113,6 +113,7 @@ import {
 import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
 import { defineComponent, ref } from "@vue/runtime-core";
+import { useRoute } from "vue-router";
 import { createHighlightedCardTextHtml } from "@/utils/createHighlightedCardTextHtml";
 
 export default defineComponent({
@@ -121,9 +122,11 @@ export default defineComponent({
     SideBarNode,
   },
   setup() {
+    const route = useRoute();
     const searchTerm = ref("");
     return {
       searchTerm,
+      route,
     };
   },
   computed: {
@@ -228,6 +231,8 @@ export default defineComponent({
       );
     },
     toggleSideBarWithC(): void {
+      if (this.route.fullPath !== "/") return;
+
       this.searchTerm = "";
       let searchTermEl: HTMLElement | null = null;
 
