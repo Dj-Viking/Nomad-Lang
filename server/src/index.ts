@@ -83,16 +83,15 @@ const {
   const corsRegExp = ((): RegExp => {
     if (IS_PROD) {
       return new RegExp(CORS_ALLOWED_PROD as string);
-    } else {
-      return new RegExp(CORS_ALLOWED_DEV as string);
     }
+    return new RegExp(CORS_ALLOWED_DEV as string);
   })();
 
   // express cors
   app.use(cors({
-    origin: new RegExp(corsRegExp),
+    origin: corsRegExp,
     credentials: true
-  }))
+  }));
   
   //create apollo server
   const apolloServer = new ApolloServer({
@@ -103,7 +102,7 @@ const {
   apolloServer.applyMiddleware({
     app,
     cors: {
-      origin: new RegExp(corsRegExp),
+      origin: corsRegExp,
       credentials: true
     }
   });
