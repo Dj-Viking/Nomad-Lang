@@ -4,6 +4,7 @@ echo 'checking javascript'
 cd server;
 PWD=$(pwd)
 SVDIR="$(ls $PWD)"
+echo $SVDIR
 echo '----------------------------'
 echo '----------------------------'
 
