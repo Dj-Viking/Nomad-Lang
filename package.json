@@ -7,11 +7,11 @@
     "tscheck": "cd client; npm run tscheck",
     "client": "cd client; npm run serve",
     "test": "cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test",
-    "server-compile": "cd server; npm run tsw",
+    "server:compile": "cd server; npm run tsw",
     "server:dev": "cd server; npm run dev",
     "heroku-postbuild": "cd client && npm run build",
-    "start": "if-env NODE_ENV=production && npm run server:prod || npm run server:dev",
-    "server:prod": "cd server && npm start"
+    "start": "if-env NODE_ENV=production && npm run server:prod",
+    "server:prod": "sh start.sh"
   },
   "repository": {
     "type": "git",
