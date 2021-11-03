@@ -1,4 +1,4 @@
-import { ICard } from "src/types";
+import { ICard } from "../../types";
 
 export interface CategorizedCardsObject {
   [key: string]: {

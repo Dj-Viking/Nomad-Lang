@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { MyJwtData } from "src/types";
+import { MyJwtData } from "../types";
 
 const {
   EXPIRATION,
