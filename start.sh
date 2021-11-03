@@ -19,7 +19,7 @@ elif ! [ -d "dist" ]; then
   echo "no dist folder detected, compiling typescript, and then starting server"
   npm run tsc;
   echo $SVDIR
-  ts-node index.ts
+  node dist/index.js
 fi
 
 # echo '----------------------------'
