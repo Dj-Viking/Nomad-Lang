@@ -17,7 +17,9 @@ if [ -d "dist" ]; then
   node dist/index.js
 elif ! [ -d "dist" ]; then
   echo "no dist folder detected, compiling typescript, and then starting server"
-  npm start
+  npm run tsc;
+  echo $SVDIR
+  npm run start
 fi
 
 # echo '----------------------------'
