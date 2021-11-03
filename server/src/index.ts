@@ -26,7 +26,7 @@ const {
   DB_PASSWORD,
   CORS_ALLOWED_PROD,
   CORS_ALLOWED_DEV,
-  DB_URL,
+  DATABASE_URL,
   // NODEMAILER_EMAIL_TO
 } = process.env;
 
@@ -43,7 +43,7 @@ const {
   //connect to db
   await createConnection({
     type: "postgres",
-    url: IS_PROD ? DB_URL : undefined,
+    url: IS_PROD ? DATABASE_URL : undefined,
     database: !IS_PROD ? DB_NAME : undefined,
     password: !IS_PROD ? DB_PASSWORD : undefined,
     username: !IS_PROD ? DB_USER : undefined,
