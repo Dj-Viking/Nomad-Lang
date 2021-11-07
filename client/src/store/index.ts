@@ -7,12 +7,14 @@ import cards from "./cards.store";
 import sidebarCategories from "./sidebarCategories.store";
 import sidebar from "./sidebar.store";
 import loading from "./loading.store";
+import theme from "./theme.store";
 import { MyRootState } from "@/types";
 
 const store: Store<MyRootState> = createStore({
   modules: {
     cards,
     sidebar,
+    theme,
     sidebarCategories,
     loading,
     modal,

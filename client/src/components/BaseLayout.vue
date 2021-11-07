@@ -23,6 +23,7 @@
                 "
                 >Logout</a
               >
+              <ToggleButton />
             </div>
             <div v-else class="nav-buttons">
               <div class="nav-animate-in">
@@ -39,6 +40,7 @@
                   >Signup</router-link
                 >
               </div>
+              <ToggleButton />
             </div>
           </Transition>
         </div>
@@ -64,9 +66,13 @@ import {
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
 import store from "../store";
+import ToggleButton from "./ToggleButton.vue";
 
 export default defineComponent({
   name: "BaseLayout",
+  components: {
+    ToggleButton,
+  },
   props: ["isHome"],
   setup() {
     //graphql me query for checking if the token is expired.

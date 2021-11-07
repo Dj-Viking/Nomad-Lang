@@ -11,6 +11,19 @@ export function createForgotPasswordMutation(): string {
     }
   `;
 }
+export function createSetUserThemeMutation(): string {
+  return `
+    mutation setUserTheme($themePref: String!) {
+      setUserTheme(themePref: $themePref) {
+        themePref
+        errors {
+          field
+          message
+        }
+      }
+    }
+  `;
+}
 
 export function createChangePasswordMutation(): string {
   return `
