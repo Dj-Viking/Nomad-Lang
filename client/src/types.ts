@@ -247,6 +247,7 @@ export type RootCommitType =
   | "cards/SHIFT_CARD_NEXT"
   /** */
   | "modal/SET_MODAL_ACTIVE"
+  | "modal/SET_MODAL_TITLE"
   | "modal/SET_MODAL_CONTEXT"
   /** */
   | "notification/OPEN_NOTIFICATION"
