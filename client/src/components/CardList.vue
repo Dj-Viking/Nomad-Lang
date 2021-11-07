@@ -9,10 +9,7 @@
         @click.prevent="
           ($event) => {
             //clear local cards
-            clearCards($event);
-            if (isLoggedIn) {
-              submitClearUserCards();
-            }
+            clearCardsModal($event);
           }
         "
       >
@@ -71,10 +68,6 @@
 import { RootCommitType, CardsState, UserState, LoadingState } from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
-import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
-import { createClearUserCardsMutation } from "../graphql/mutations/myMutations";
-
 import Card from "../components/Card.vue";
 // import Spinner from "../components/Spinner.vue";
 
@@ -89,16 +82,9 @@ export default defineComponent({
     const inputId = ref(0);
     const input = ref("");
 
-    const { mutate: submitClearUserCards } = useMutation(
-      gql`
-        ${createClearUserCardsMutation()}
-      `
-    );
-
     return {
       input,
       inputId,
-      submitClearUserCards,
     };
   },
   computed: {
@@ -115,12 +101,13 @@ export default defineComponent({
     },
 
     // eslint-disable-next-line
-    clearCards(_event: Event): void {
-      store.commit(
-        "cards/SET_DISPLAY_CARDS" as RootCommitType,
-        { cards: [] },
-        { root: true }
-      );
+    clearCardsModal(_event: Event): void {
+      store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Clear Cards", {
+        root: true,
+      });
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+        root: true,
+      });
     },
     // eslint-disable-next-line
     openAddModal(_event: MouseEvent): void {

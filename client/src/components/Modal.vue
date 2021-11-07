@@ -2,6 +2,44 @@
   <div :class="{ 'is-active': activeClass }" class="modal" name="modal">
     <div class="modal-background"></div>
     <div class="modal-content" style="width: 75%">
+      <div v-if="/Clear/g.test(title)">
+        <div class="field">
+          <label for="inputText" style="color: white" class="label"
+            >{{ title }}
+          </label>
+        </div>
+        <label style="color: white" class="label"
+          >Are you sure you want to clear your cards? This cannot be undone!
+          (yet)</label
+        >
+        <button
+          style="margin-right: 1em; width: 100px"
+          class="button is-info"
+          type="button"
+          @click.prevent="
+            ($event) => {
+              confirmClearButtonEvent($event);
+              if (isLoggedIn) {
+                submitClearUserCards();
+              }
+            }
+          "
+        >
+          Yes
+        </button>
+        <button
+          style="margin-right: 1em; width: 100px"
+          class="button is-info"
+          type="button"
+          @click.prevent="
+            ($event) => {
+              cancelClearButtonEvent($event);
+            }
+          "
+        >
+          No
+        </button>
+      </div>
       <div v-if="/Edit/g.test(title)">
         <form
           @submit.prevent="
@@ -338,9 +376,6 @@
           </div>
         </form>
       </div>
-      <div v-else>
-        <h3 style="color: white">{{ title }}</h3>
-      </div>
     </div>
     <button
       @click.prevent="closeModal($event)"
@@ -366,6 +401,7 @@ import {
   RootDispatchType,
   MyRootState,
 } from "@/types";
+import { createClearUserCardsMutation } from "@/graphql/mutations/myMutations";
 import { FetchResult } from "@apollo/client/core";
 import { useMutation } from "@vue/apollo-composable";
 import { defineComponent, ref } from "@vue/runtime-core";
@@ -486,7 +522,14 @@ export default defineComponent({
         }
       }
     );
+
+    const { mutate: submitClearUserCards } = useMutation(
+      gql`
+        ${createClearUserCardsMutation()}
+      `
+    );
     return {
+      submitClearUserCards,
       submitAddCard,
       frontSideTextInput,
       frontSideLanguageInput,
@@ -510,6 +553,23 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
+    // eslint-disable-next-line
+    async confirmClearButtonEvent(_event: any): Promise<void> {
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+        root: true,
+      });
+      await store.dispatch(
+        "cards/setCards" as RootDispatchType,
+        { cards: [] },
+        { root: true }
+      );
+    },
+    // eslint-disable-next-line
+    cancelClearButtonEvent(_event: any): void {
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+        root: true,
+      });
+    },
     // eslint-disable-next-line
     addLocalCard(_event: Event, card: ICard): void {
       store.commit("cards/ADD_CARD" as RootCommitType, card, { root: true });

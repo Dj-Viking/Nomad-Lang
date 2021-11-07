@@ -291,8 +291,6 @@ export default defineComponent({
           break;
         case event.key === "1":
           {
-            console.log("pressed 1 key", event.target);
-
             let categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
 

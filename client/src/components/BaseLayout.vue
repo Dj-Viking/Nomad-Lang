@@ -117,7 +117,6 @@ export default defineComponent({
     meResult: async function (newValue: MeQueryResponse) {
       if (newValue.me.errors?.length) {
         auth.clearToken();
-        this.isLoggedIn = false;
         await store.dispatch("user/setUser", null, { root: true });
         store.commit(
           "cards/SET_DISPLAY_CARDS" as RootCommitType,
