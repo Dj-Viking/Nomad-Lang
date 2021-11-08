@@ -5,9 +5,16 @@
     <nav style="margin: 0">
       <Transition type="transition" name="fade">
         <div v-if="!isHome">
-          <router-link style="text-decoration: none" class="link" :to="'/'"
-            >Home</router-link
-          >
+          <div class="nav-buttons">
+            <div class="nav-animate-in">
+              <router-link
+                style="text-decoration: none"
+                class="button is-success"
+                :to="'/'"
+                >Home</router-link
+              >
+            </div>
+          </div>
         </div>
         <div v-else>
           <Transition type="transition" name="fade">
@@ -23,7 +30,6 @@
                 "
                 >Logout</a
               >
-              <ToggleButton />
             </div>
             <div v-else class="nav-buttons">
               <div class="nav-animate-in">
@@ -40,7 +46,6 @@
                   >Signup</router-link
                 >
               </div>
-              <ToggleButton />
             </div>
           </Transition>
         </div>
@@ -66,13 +71,9 @@ import {
 import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
 import store from "../store";
-import ToggleButton from "./ToggleButton.vue";
 
 export default defineComponent({
   name: "BaseLayout",
-  components: {
-    ToggleButton,
-  },
   props: ["isHome"],
   setup() {
     //graphql me query for checking if the token is expired.
@@ -227,7 +228,7 @@ export default defineComponent({
 
 .nav-animate-in {
   animation-name: animatein;
-  animation-duration: 4s;
+  animation-duration: 2s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 </style>

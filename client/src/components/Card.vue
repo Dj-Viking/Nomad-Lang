@@ -146,7 +146,9 @@
       </Transition>
     </div>
     <div v-else>
-      <Spinner />
+      <div style="height: 0; margin: 0; padding: 0">
+        <Spinner />
+      </div>
     </div>
   </Transition>
 </template>

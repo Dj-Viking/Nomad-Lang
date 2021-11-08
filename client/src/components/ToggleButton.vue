@@ -1,6 +1,6 @@
 <template>
-  <Transition>
-    <div v-if="cards.length > 0">
+  <Transition type="transition" name="fade" mode="out-in">
+    <div v-if="cards.length > 0" style="width: 100px">
       <div
         :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
         @click.prevent="
@@ -25,7 +25,7 @@
       </button>
     </div>
     <div v-else>
-      <div style="height: 40px">&nbsp;</div>
+      <div></div>
     </div>
   </Transition>
 </template>
@@ -115,15 +115,15 @@ export default defineComponent({
   }
 }
 .toggle-slot-light {
+  margin-top: 0.5em;
+  margin-left: 0.6em;
   animation: toggle-slot-light;
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
   cursor: pointer;
   background-color: rgb(255, 172, 49);
-  position: relative;
   width: 100px;
   height: 40px;
-  margin-left: 0.5em;
   border-radius: 20px;
 }
 
@@ -136,24 +136,24 @@ export default defineComponent({
   }
 }
 .toggle-slot-dark {
+  margin-top: 0.5em;
+  margin-left: 0.6em;
   animation: toggle-slot-dark;
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
   background-color: rgb(34, 34, 34);
   cursor: pointer;
-  position: relative;
   width: 100px;
   height: 40px;
-  margin-left: 0.5em;
   border-radius: 20px;
 }
 
 @keyframes toggle-dark {
   from {
-    right: 8px;
+    left: 8px;
   }
   to {
-    right: 68px;
+    left: 69.5px;
   }
 }
 .my-toggle-dark {
@@ -170,16 +170,16 @@ export default defineComponent({
   position: absolute;
   cursor: pointer;
   top: 8px;
-  right: 68px;
+  left: 69.5px;
   border-radius: 50%;
 }
 
 @keyframes toggle-light {
   from {
-    right: 68px;
+    left: 68px;
   }
   to {
-    right: 8px;
+    left: 8px;
   }
 }
 .my-toggle-light {
@@ -196,7 +196,7 @@ export default defineComponent({
   position: absolute;
   cursor: pointer;
   top: 8px;
-  right: 8px;
+  left: 8px;
   border-radius: 50%;
 }
 </style>
