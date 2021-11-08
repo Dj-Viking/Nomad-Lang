@@ -1,47 +1,119 @@
 <template>
-  <div
-    :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
-    @click.prevent="
-      ($event) => {
-        toggleTheme($event);
-      }
-    "
-  >
-    &nbsp;
-  </div>
-  <button
-    id="toggle-btn"
-    type="button"
-    @click.prevent="
-      ($event) => {
-        toggleTheme($event);
-      }
-    "
-    :class="{ 'my-toggle-light': isLight, 'my-toggle-dark': isDark }"
-  >
-    <i :class="{ 'fa fa-sun-o': isLight, 'fa fa-moon-o': isDark }"></i>
-  </button>
+  <Transition>
+    <div v-if="cards.length > 0">
+      <div
+        :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
+        @click.prevent="
+          ($event) => {
+            toggleTheme($event);
+          }
+        "
+      >
+        &nbsp;
+      </div>
+      <button
+        id="toggle-btn"
+        type="button"
+        @click.prevent="
+          ($event) => {
+            toggleTheme($event);
+          }
+        "
+        :class="{ 'my-toggle-light': isLight, 'my-toggle-dark': isDark }"
+      >
+        <i :class="{ 'fa fa-sun-o': isLight, 'fa fa-moon-o': isDark }"></i>
+      </button>
+    </div>
+    <div v-else>
+      <div style="height: 40px">&nbsp;</div>
+    </div>
+  </Transition>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
-import { RootCommitType } from "@/types";
+import { defineComponent, ref } from "@vue/runtime-core";
+import {
+  CardsState,
+  RootCommitType,
+  ThemePrefChangeResponse,
+  UserState,
+} from "@/types";
 import store from "../store";
+import { useMutation } from "@vue/apollo-composable";
+import { gql } from "graphql-tag";
+import { createSetUserThemeMutation } from "@/graphql/mutations/myMutations";
+import { FetchResult } from "@apollo/client/core";
+import { useToast } from "vue-toastification";
 export default defineComponent({
   name: "ToggleButton",
   computed: {
+    cards: (): CardsState["cards"] => store.state.cards.cards,
+    isLoggedIn: (): UserState["user"]["loggedIn"] =>
+      store.state.user.user.loggedIn,
     isLight: () => store.state.theme.theme === "light",
     isDark: () => store.state.theme.theme === "dark",
+  },
+  setup() {
+    const toast = useToast();
+    const themePrefRef = ref("");
+    const { mutate: submitThemePrefChange, onDone: onThemePrefChangeDone } =
+      useMutation(
+        gql`
+          ${createSetUserThemeMutation()}
+        `,
+        {
+          variables: {
+            themePref: themePrefRef.value,
+          },
+        }
+      );
+
+    onThemePrefChangeDone(
+      async (
+        result: FetchResult<
+          ThemePrefChangeResponse,
+          Record<string, unknown>,
+          Record<string, unknown>
+        >
+      ): Promise<void> => {
+        if (result.data?.setUserTheme.errors?.length) {
+          toast.error(
+            "We're sorry, There was a problem updating your preferred theme.",
+            {
+              timeout: 3000,
+            }
+          );
+        }
+      }
+    );
+    return {
+      submitThemePrefChange,
+    };
   },
   methods: {
     toggleTheme(event: any): void {
       console.log("toggle event", event.target);
       store.commit("theme/TOGGLE_THEME" as RootCommitType, {}, { root: true });
+      setTimeout(() => {
+        if (this.isLoggedIn) {
+          this.submitThemePrefChange({
+            themePref: this.isLight ? "light" : "dark",
+          });
+        }
+      }, 300);
     },
   },
 });
 </script>
 <style lang="scss">
+@keyframes toggle-slot-light {
+  from {
+    background-color: rgb(34, 34, 34);
+  }
+  to {
+    background-color: rgb(255, 172, 49);
+  }
+}
 .toggle-slot-light {
   animation: toggle-slot-light;
   animation-duration: 0.5s;
@@ -50,8 +122,18 @@ export default defineComponent({
   background-color: rgb(255, 172, 49);
   position: relative;
   width: 100px;
+  height: 40px;
   margin-left: 0.5em;
   border-radius: 20px;
+}
+
+@keyframes toggle-slot-dark {
+  from {
+    background-color: rgb(255, 172, 49);
+  }
+  to {
+    background-color: rgb(34, 34, 34);
+  }
 }
 .toggle-slot-dark {
   animation: toggle-slot-dark;
@@ -61,25 +143,9 @@ export default defineComponent({
   cursor: pointer;
   position: relative;
   width: 100px;
+  height: 40px;
   margin-left: 0.5em;
   border-radius: 20px;
-}
-
-@keyframes toggle-slot-light {
-  from {
-    background-color: rgb(34, 34, 34);
-  }
-  to {
-    background-color: rgb(255, 172, 49);
-  }
-}
-@keyframes toggle-slot-dark {
-  from {
-    background-color: rgb(255, 172, 49);
-  }
-  to {
-    background-color: rgb(34, 34, 34);
-  }
 }
 
 @keyframes toggle-dark {
@@ -90,15 +156,6 @@ export default defineComponent({
     right: 68px;
   }
 }
-@keyframes toggle-light {
-  from {
-    right: 68px;
-  }
-  to {
-    right: 8px;
-  }
-}
-
 .my-toggle-dark {
   font-size: 20px;
   color: rgb(34, 34, 34);
@@ -116,6 +173,15 @@ export default defineComponent({
   right: 68px;
   border-radius: 50%;
 }
+
+@keyframes toggle-light {
+  from {
+    right: 68px;
+  }
+  to {
+    right: 8px;
+  }
+}
 .my-toggle-light {
   font-size: 20px;
   color: rgb(255, 172, 49);
@@ -130,6 +196,7 @@ export default defineComponent({
   position: absolute;
   cursor: pointer;
   top: 8px;
+  right: 8px;
   border-radius: 50%;
 }
 </style>

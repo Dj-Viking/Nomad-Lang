@@ -19,6 +19,12 @@ export interface ICard {
   color?: string | "blue"; //TODO remove
 }
 
+export interface ThemePrefChangeResponse {
+  setUserTheme: {
+    themePref: string;
+    errors: MyErrorResponse;
+  };
+}
 export interface DeleteCardResponse {
   deleteCard: {
     errors: MyErrorResponse;
@@ -166,6 +172,7 @@ export interface UserEntityBase {
   __typename?: string;
   id?: number;
   username: string;
+  themePref: string;
   email: string;
   token: string | null;
   createdAt: number;
@@ -241,6 +248,7 @@ export type RootCommitType =
   | "user/SET_USER_CARDS"
   /** */
   | "theme/TOGGLE_THEME"
+  | "theme/SET_THEME"
   /** */
   | "cards/ADD_CARD"
   | "cards/SET_ALL_CARDS"
