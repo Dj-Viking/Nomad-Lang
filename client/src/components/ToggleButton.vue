@@ -200,6 +200,7 @@ export default defineComponent({
   cursor: pointer;
   top: 8px;
   left: 8px;
+  z-index: 10000;
   border-radius: 50%;
 }
 </style>
