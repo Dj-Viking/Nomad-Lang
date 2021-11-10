@@ -19,6 +19,7 @@
             toggleTheme($event);
           }
         "
+        class="button"
         :class="{ 'my-toggle-light': isLight, 'my-toggle-dark': isDark }"
       >
         <i :class="{ 'fa fa-sun-o': isLight, 'fa fa-moon-o': isDark }"></i>
