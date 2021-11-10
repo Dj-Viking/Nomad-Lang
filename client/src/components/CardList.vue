@@ -1,7 +1,15 @@
 <template>
   <div class="container some-unique-class">
-    <h2 v-if="cards.length > 0" class="title mb-0">Your Cards</h2>
-    <h2 v-else class="title mb-0">No Cards Yet</h2>
+    <h2
+      v-if="cards.length > 0"
+      :class="{ 'title-light': isLight, 'title-dark': isDark }"
+      class="title mb-0"
+    >
+      Your Cards
+    </h2>
+    <h2 v-else :class="{ title: isLight, 'title-dark': isDark }" class="mb-0">
+      No Cards Yet
+    </h2>
     <div style="display: flex; flex-direction: row; justify-content: center">
       <button
         style="margin-right: 0.5em"
@@ -47,7 +55,10 @@
             display: flex;
             justify-content: center;
           "
-          class="notification is-light"
+          :class="{
+            'notification is-light': isLight,
+            'notification is-dark': isDark,
+          }"
           v-for="(card, i) of cards"
           :key="i"
         >
@@ -77,7 +88,6 @@ export default defineComponent({
     Card,
     // Spinner,
   },
-
   setup() {
     const inputId = ref(0);
     const input = ref("");
@@ -88,6 +98,8 @@ export default defineComponent({
     };
   },
   computed: {
+    isLight: () => store.state.theme.theme === "light",
+    isDark: () => store.state.theme.theme === "dark",
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,

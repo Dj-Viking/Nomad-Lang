@@ -86,6 +86,31 @@ export default defineComponent({
       );
     },
   },
+  mounted() {
+    const theme = window.localStorage.getItem("theme");
+    if (!theme) {
+      document.body.classList.add("body-light");
+    } else {
+      switch (true) {
+        case theme === "light":
+          {
+            document.body.classList.remove("body-dark");
+            document.body.classList.add("body-light");
+            // eslint-disable-next-line
+            document.querySelector("html")!.style.backgroundColor = "white";
+          }
+          break;
+        case theme === "dark":
+          {
+            document.body.classList.remove("body-light");
+            document.body.classList.add("body-dark");
+            // eslint-disable-next-line
+            document.querySelector("html")!.style.backgroundColor = "#222222";
+          }
+          break;
+      }
+    }
+  },
 });
 </script>
 

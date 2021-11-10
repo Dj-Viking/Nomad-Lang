@@ -27,7 +27,7 @@
                 margin-bottom: 0.5em;
               "
               :class="{
-                'fa fa-chevron-left big': sidebarOpen,
+                'fa fa-chevron-left big-light': sidebarOpen,
                 'fa fa-chevron-right big': !sidebarOpen,
               }"
               aria-hidden="true"
@@ -95,7 +95,8 @@
               "
               :class="{
                 'fa fa-chevron-left big': sidebarOpen,
-                'fa fa-chevron-right big': !sidebarOpen,
+                'fa fa-chevron-right big-dark': !sidebarOpen && isDark,
+                'fa fa-chevron-right big-light': !sidebarOpen && isLight,
               }"
               aria-hidden="true"
             ></i>
@@ -138,6 +139,8 @@ export default defineComponent({
     };
   },
   computed: {
+    isLight: () => store.state.theme.theme === "light",
+    isDark: () => store.state.theme.theme === "dark",
     allCards: (): CardsState["allCards"] => store.state.cards.allCards,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     categories: (): CardsState["categorized"] =>
@@ -347,7 +350,12 @@ export default defineComponent({
   height: 0;
 }
 
-.big {
+.big-light {
+  color: #2c3e50;
+  font-size: 30px;
+}
+.big-dark {
+  color: white;
   font-size: 30px;
 }
 

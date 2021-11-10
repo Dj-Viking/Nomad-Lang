@@ -3,7 +3,7 @@
     :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }"
   >
     <nav style="margin: 0">
-      <Transition type="transition" name="fade">
+      <Transition type="transition" name="fade" mode="out-in">
         <div v-if="!isHome">
           <div class="nav-buttons">
             <div class="nav-animate-in">
@@ -17,7 +17,7 @@
           </div>
         </div>
         <div v-else>
-          <Transition type="transition" name="fade">
+          <Transition type="transition" name="fade" mode="out-in">
             <div v-if="isLoggedIn" class="nav-buttons">
               <a
                 style="cursor: pointer"
