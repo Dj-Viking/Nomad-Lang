@@ -127,7 +127,7 @@ export default defineComponent({
   background-color: rgb(255, 172, 49);
   width: 100px;
   height: 40px;
-  z-index: 9999;
+  z-index: 8000;
   border-radius: 20px;
 }
 
@@ -149,7 +149,7 @@ export default defineComponent({
   cursor: pointer;
   width: 100px;
   height: 40px;
-  z-index: 9999;
+  z-index: 8000;
   border-radius: 20px;
 }
 
