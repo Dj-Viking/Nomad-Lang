@@ -10,6 +10,9 @@
               flex-direction: column;
             "
           >
+            <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
+              <ToggleButton />
+            </div>
             <i
               @click.prevent="
                 ($event) => {
@@ -24,7 +27,7 @@
                 margin-bottom: 0.5em;
               "
               :class="{
-                'fa fa-chevron-left big': sidebarOpen,
+                'fa fa-chevron-left big-light': sidebarOpen,
                 'fa fa-chevron-right big': !sidebarOpen,
               }"
               aria-hidden="true"
@@ -74,7 +77,10 @@
           </div>
         </div>
         <div v-else>
-          <div style="display: flex; flex-direction: row">
+          <div style="display: flex; flex-direction: column">
+            <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
+              <ToggleButton />
+            </div>
             <i
               @click.prevent="
                 ($event) => {
@@ -89,7 +95,8 @@
               "
               :class="{
                 'fa fa-chevron-left big': sidebarOpen,
-                'fa fa-chevron-right big': !sidebarOpen,
+                'fa fa-chevron-right big-dark': !sidebarOpen && isDark,
+                'fa fa-chevron-right big-light': !sidebarOpen && isLight,
               }"
               aria-hidden="true"
             ></i>
@@ -114,12 +121,14 @@ import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
 import { defineComponent, ref } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
+import ToggleButton from "../components/ToggleButton.vue";
 import { createHighlightedCardTextHtml } from "@/utils/createHighlightedCardTextHtml";
 
 export default defineComponent({
   name: "SideBar",
   components: {
     SideBarNode,
+    ToggleButton,
   },
   setup() {
     const route = useRoute();
@@ -130,6 +139,8 @@ export default defineComponent({
     };
   },
   computed: {
+    isLight: () => store.state.theme.theme === "light",
+    isDark: () => store.state.theme.theme === "dark",
     allCards: (): CardsState["allCards"] => store.state.cards.allCards,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     categories: (): CardsState["categorized"] =>
@@ -339,17 +350,28 @@ export default defineComponent({
   height: 0;
 }
 
-.big {
+.big-light {
+  color: #2c3e50;
+  font-size: 30px;
+}
+.big-dark {
+  color: white;
   font-size: 30px;
 }
 
 .open {
-  width: 100px;
+  width: 120px;
   transition: 0.2s;
 }
 
 .closed {
   width: 0px;
   transition: 0.1s ease 0.3s;
+}
+.show-me {
+  display: block;
+}
+.hide-me {
+  display: none;
 }
 </style>

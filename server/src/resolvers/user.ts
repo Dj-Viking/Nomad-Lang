@@ -50,13 +50,21 @@ class UserFieldError {
 //   };
 // }
 
+@ObjectType()
+class ThemeChangeResponse {
+  @Field(() => String, { nullable: true })
+  themePref?: string | null;
+  @Field(() => [UserFieldError], { nullable: true })
+  errors?: UserFieldError[] | null
+}
+
 //user returned if worked
 // or error returned if error was there
 @ObjectType()
 class UserResponse {
   @Field(() => [UserFieldError], { nullable: true })
   errors?: UserFieldError[] | null
-
+  
   @Field(() => User, { nullable: true })
   user?: User | null
   
@@ -157,7 +165,6 @@ export class UserResolver {
       //create a new cards Object to return that contains the cards categorized by their frontside language
       const uncategorized = [] as Array<Card>;
       let categorized = {} as CategorizedCardMap;
-      console.log("categorized cards instance", categorized);
       
       let iterator = 0
       while (iterator < cards.length) {
@@ -173,7 +180,6 @@ export class UserResolver {
         iterator++;
       }
       
-      console.log("categorized cards instance ", categorized);
       
       //sign a new token
       const newToken = signToken({
@@ -188,17 +194,9 @@ export class UserResolver {
       .update<User>(User, 
                     { token: newToken })
       .where("email = :email", { email: req.user.email })
-      .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
+      .returning(["id", "username", "createdAt", "updatedAt", "token", "email", "themePref"])
       .updateEntity(true)
       .execute();
-
-      
-      console.log("what the hell is going on here", {
-        token: newToken,
-        user: changedUser.raw[0],
-        cards: cards,
-        categorized: {categorized: categorized}
-      });
 
       return {
         token: newToken,
@@ -208,6 +206,37 @@ export class UserResolver {
       //if user is found sign a new token for them with a new expiration
     } catch (error) {
       return new ErrorResponse("error during me query", error.message);
+    }
+  }
+
+  @Mutation(() => ThemeChangeResponse)
+  async setUserTheme(
+    @Arg("themePref", () => String) themePref: string,
+    @Ctx() { req }: MyContext
+  ): Promise<ThemeChangeResponse | ErrorResponse> {
+    //cant query themselves if they are not logged in with a fresh token to make a me query
+    if (!req.user) return new ErrorResponse("unauthenticated", "401 user not authenticated");
+
+    const user = await User.findOne({ where:{ email: req.user.email }});
+    
+    try {
+      const changedUser = await getConnection()
+    .getRepository(User)
+    .createQueryBuilder("user")
+    .update<User>(User, 
+                  { themePref })
+    .where("email = :email", { email: user?.email })
+    .returning(["themePref"])
+    .updateEntity(true)
+    .execute();  
+
+    return {
+      themePref: changedUser.raw[0].themePref as User["themePref"]
+    }
+
+    } catch (error) {
+      const err = error as Error;
+      return new ErrorResponse("theme change", err.message);
     }
   }
 
@@ -238,7 +267,7 @@ export class UserResolver {
           token: token
         }
       )
-      .returning(['username', 'token', 'email'])
+      .returning(["themePref", "username", "token", "email"])
       .execute();
       //only returning the first user object in the array, 
       // i guess I could insert as many objects into the table and will
@@ -307,7 +336,7 @@ export class UserResolver {
     .update<User>(User, 
                   { token })
     .where("email = :email", { email: user.email })
-    .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+    .returning(["id", "username", "createdAt", "updatedAt", "email", "token", "themePref"])
     .updateEntity(true)
     .execute();  
 
@@ -361,12 +390,9 @@ export class UserResolver {
       .update<User>(User, 
                     { password: hashedPassword })
       .where("email = :email", { email: decodedToken?.resetEmail })
-      .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+      .returning(["id", "username", "createdAt", "updatedAt", "email", "token", "themePref"])
       .updateEntity(true)
       .execute();
-
-      console.log("did we get a changed user", changedUser.raw[0]);
-      
 
       const loginToken = signToken({
         username: changedUser.raw[0].username,
@@ -382,7 +408,7 @@ export class UserResolver {
       .update<User>(User, 
                     { token: loginToken })
       .where("email = :email", { email: decodedToken?.resetEmail })
-      .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+      .returning(["id", "username", "createdAt", "updatedAt", "email", "token", "themePref"])
       .updateEntity(true)
       .execute();
       //decode the token to have the email of the person who isn't logged in 
@@ -460,12 +486,10 @@ export class UserResolver {
       .update<User>(User, 
                     { token: "" })
       .where("email = :email", { email: email })
-      .returning(["id", "username", "createdAt", "updatedAt", "email"])
+      .returning(["id", "username", "createdAt", "updatedAt", "email", "themePref"])
       .updateEntity(true)
       .execute();
       if (!changedUser) return new ErrorResponse("user", "user not found");
-
-      // console.log('changed user', changedUser.raw[0]);
 
       context.req.user = null;
       

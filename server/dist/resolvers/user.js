@@ -68,6 +68,19 @@ __decorate([
 UserFieldError = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], UserFieldError);
+let ThemeChangeResponse = class ThemeChangeResponse {
+};
+__decorate([
+    (0, type_graphql_1.Field)(() => String, { nullable: true }),
+    __metadata("design:type", Object)
+], ThemeChangeResponse.prototype, "themePref", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(() => [UserFieldError], { nullable: true }),
+    __metadata("design:type", Object)
+], ThemeChangeResponse.prototype, "errors", void 0);
+ThemeChangeResponse = __decorate([
+    (0, type_graphql_1.ObjectType)()
+], ThemeChangeResponse);
 let UserResponse = class UserResponse {
 };
 __decorate([
@@ -189,7 +202,6 @@ let UserResolver = class UserResolver {
                 const cards = yield Card_1.Card.find({ where: { creatorId: user === null || user === void 0 ? void 0 : user.id } });
                 const uncategorized = [];
                 let categorized = {};
-                console.log("categorized cards instance", categorized);
                 let iterator = 0;
                 while (iterator < cards.length) {
                     if (!cards[iterator].frontSideLanguage) {
@@ -200,7 +212,6 @@ let UserResolver = class UserResolver {
                     }
                     iterator++;
                 }
-                console.log("categorized cards instance ", categorized);
                 const newToken = (0, signToken_1.signToken)({
                     username: req.user.username,
                     email: req.user.email,
@@ -211,15 +222,9 @@ let UserResolver = class UserResolver {
                     .createQueryBuilder("user")
                     .update(User_1.User, { token: newToken })
                     .where("email = :email", { email: req.user.email })
-                    .returning(["id", "username", "createdAt", "updatedAt", "token", "email"])
+                    .returning(["id", "username", "createdAt", "updatedAt", "token", "email", "themePref"])
                     .updateEntity(true)
                     .execute();
-                console.log("what the hell is going on here", {
-                    token: newToken,
-                    user: changedUser.raw[0],
-                    cards: cards,
-                    categorized: { categorized: categorized }
-                });
                 return {
                     token: newToken,
                     user: changedUser.raw[0],
@@ -228,6 +233,30 @@ let UserResolver = class UserResolver {
             }
             catch (error) {
                 return new ErrorResponse_1.ErrorResponse("error during me query", error.message);
+            }
+        });
+    }
+    setUserTheme(themePref, { req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!req.user)
+                return new ErrorResponse_1.ErrorResponse("unauthenticated", "401 user not authenticated");
+            const user = yield User_1.User.findOne({ where: { email: req.user.email } });
+            try {
+                const changedUser = yield (0, typeorm_1.getConnection)()
+                    .getRepository(User_1.User)
+                    .createQueryBuilder("user")
+                    .update(User_1.User, { themePref })
+                    .where("email = :email", { email: user === null || user === void 0 ? void 0 : user.email })
+                    .returning(["themePref"])
+                    .updateEntity(true)
+                    .execute();
+                return {
+                    themePref: changedUser.raw[0].themePref
+                };
+            }
+            catch (error) {
+                const err = error;
+                return new ErrorResponse_1.ErrorResponse("theme change", err.message);
             }
         });
     }
@@ -251,7 +280,7 @@ let UserResolver = class UserResolver {
                     password: hashedPassword,
                     token: token
                 })
-                    .returning(['username', 'token', 'email'])
+                    .returning(["themePref", "username", "token", "email"])
                     .execute();
                 user = result.raw[0];
                 req.user = user;
@@ -298,7 +327,7 @@ let UserResolver = class UserResolver {
                 .createQueryBuilder("user")
                 .update(User_1.User, { token })
                 .where("email = :email", { email: user.email })
-                .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+                .returning(["id", "username", "createdAt", "updatedAt", "email", "token", "themePref"])
                 .updateEntity(true)
                 .execute();
             const cards = yield Card_1.Card.find({ where: { creatorId: user.id } });
@@ -326,10 +355,9 @@ let UserResolver = class UserResolver {
                     .createQueryBuilder("user")
                     .update(User_1.User, { password: hashedPassword })
                     .where("email = :email", { email: decodedToken === null || decodedToken === void 0 ? void 0 : decodedToken.resetEmail })
-                    .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+                    .returning(["id", "username", "createdAt", "updatedAt", "email", "token", "themePref"])
                     .updateEntity(true)
                     .execute();
-                console.log("did we get a changed user", changedUser.raw[0]);
                 const loginToken = (0, signToken_1.signToken)({
                     username: changedUser.raw[0].username,
                     email: changedUser.raw[0].email,
@@ -340,7 +368,7 @@ let UserResolver = class UserResolver {
                     .createQueryBuilder("user")
                     .update(User_1.User, { token: loginToken })
                     .where("email = :email", { email: decodedToken === null || decodedToken === void 0 ? void 0 : decodedToken.resetEmail })
-                    .returning(["id", "username", "createdAt", "updatedAt", "email", "token"])
+                    .returning(["id", "username", "createdAt", "updatedAt", "email", "token", "themePref"])
                     .updateEntity(true)
                     .execute();
                 const cards = yield Card_1.Card.find({ where: { creatorId: changedUserToken.raw[0].id } });
@@ -396,7 +424,7 @@ let UserResolver = class UserResolver {
                     .createQueryBuilder("user")
                     .update(User_1.User, { token: "" })
                     .where("email = :email", { email: email })
-                    .returning(["id", "username", "createdAt", "updatedAt", "email"])
+                    .returning(["id", "username", "createdAt", "updatedAt", "email", "themePref"])
                     .updateEntity(true)
                     .execute();
                 if (!changedUser)
@@ -428,6 +456,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "me", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => ThemeChangeResponse),
+    __param(0, (0, type_graphql_1.Arg)("themePref", () => String)),
+    __param(1, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "setUserTheme", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('options', () => RegisterInput)),

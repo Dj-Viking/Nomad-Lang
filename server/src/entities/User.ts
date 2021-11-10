@@ -29,6 +29,10 @@ export class User extends BaseEntity {
   email!: string;
 
   @Field()
+  @Column({ nullable: true })
+  themePref!: string;
+
+  @Field()
   @Column()
   token?: string;
 

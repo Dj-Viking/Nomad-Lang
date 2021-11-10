@@ -17,7 +17,12 @@ import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
 import SideBar from "./components/SideBar.vue";
 import store from "./store";
-import { ModalState, OpenNotificationPayload, RootCommitType } from "./types";
+import {
+  ModalState,
+  OpenNotificationPayload,
+  RootCommitType,
+  SidebarState,
+} from "./types";
 export default defineComponent({
   name: "App",
   components: {
@@ -25,6 +30,8 @@ export default defineComponent({
     SideBar,
   },
   computed: {
+    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
+      store.state.sidebar.sidebar.isOpen,
     activeClass: (): ModalState["modal"]["activeClass"] =>
       store.state.modal.modal.activeClass,
   },
@@ -79,6 +86,31 @@ export default defineComponent({
       );
     },
   },
+  mounted() {
+    const theme = window.localStorage.getItem("theme");
+    if (!theme) {
+      document.body.classList.add("body-light");
+    } else {
+      switch (true) {
+        case theme === "light":
+          {
+            document.body.classList.remove("body-dark");
+            document.body.classList.add("body-light");
+            // eslint-disable-next-line
+            document.querySelector("html")!.style.backgroundColor = "white";
+          }
+          break;
+        case theme === "dark":
+          {
+            document.body.classList.remove("body-light");
+            document.body.classList.add("body-dark");
+            // eslint-disable-next-line
+            document.querySelector("html")!.style.backgroundColor = "#222222";
+          }
+          break;
+      }
+    }
+  },
 });
 </script>
 
@@ -112,5 +144,12 @@ export default defineComponent({
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.show-me {
+  display: block;
+}
+.hide-me {
+  display: none;
 }
 </style>

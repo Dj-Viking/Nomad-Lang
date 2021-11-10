@@ -7,6 +7,7 @@ export function createMeQuery(): string {
           username
           email
           token
+          themePref
         }
         errors {
           field

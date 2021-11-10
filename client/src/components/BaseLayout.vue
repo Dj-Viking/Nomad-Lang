@@ -3,14 +3,21 @@
     :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }"
   >
     <nav style="margin: 0">
-      <Transition type="transition" name="fade">
+      <Transition type="transition" name="fade" mode="out-in">
         <div v-if="!isHome">
-          <router-link style="text-decoration: none" class="link" :to="'/'"
-            >Home</router-link
-          >
+          <div class="nav-buttons">
+            <div class="nav-animate-in">
+              <router-link
+                style="text-decoration: none"
+                class="button is-success"
+                :to="'/'"
+                >Home</router-link
+              >
+            </div>
+          </div>
         </div>
         <div v-else>
-          <Transition type="transition" name="fade">
+          <Transition type="transition" name="fade" mode="out-in">
             <div v-if="isLoggedIn" class="nav-buttons">
               <a
                 style="cursor: pointer"
@@ -163,6 +170,14 @@ export default defineComponent({
             root: true,
           }
         );
+
+        store.commit(
+          "theme/SET_THEME" as RootCommitType,
+          newValue.me.user.themePref,
+          {
+            root: true,
+          }
+        );
       }
     },
   },
@@ -207,7 +222,7 @@ export default defineComponent({
 
 .nav-animate-in {
   animation-name: animatein;
-  animation-duration: 4s;
+  animation-duration: 2s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 </style>
