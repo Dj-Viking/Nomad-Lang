@@ -2,7 +2,6 @@ import { SidebarState } from "@/types";
 
 const state = {
   sidebar: {
-    searchTerm: "",
     isOpen: false,
   },
 };
