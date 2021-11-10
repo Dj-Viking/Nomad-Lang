@@ -171,12 +171,6 @@ export default defineComponent({
           }
         );
 
-        console.log(
-          "what is theme in local storage here",
-          window.localStorage.getItem("theme")
-        );
-
-        if (window.localStorage.getItem("theme") !== null) return;
         store.commit(
           "theme/SET_THEME" as RootCommitType,
           newValue.me.user.themePref,

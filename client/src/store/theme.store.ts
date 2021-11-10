@@ -7,6 +7,32 @@ const mutations = {
     if (typeof theme !== "string")
       return console.error("set theme commit payload must be a string!");
     state.theme = theme;
+    switch (true) {
+      case theme === "dark":
+        {
+          window.localStorage.setItem("theme", "dark");
+
+          // eslint-disable-next-line
+          document.querySelector("html")!.style.transition = "0.5s";
+          // eslint-disable-next-line
+          document.querySelector("html")!.style.backgroundColor = "#222222";
+          document.body.classList.remove("body-light");
+          document.body.classList.add("body-dark");
+        }
+        break;
+      case theme === "light":
+        {
+          window.localStorage.setItem("theme", "light");
+
+          // eslint-disable-next-line
+            document.querySelector("html")!.style.transition = "0.5s";
+          // eslint-disable-next-line
+          document.querySelector("html")!.style.backgroundColor = "white";
+          document.body.classList.remove("body-dark");
+          document.body.classList.add("body-light");
+        }
+        break;
+    }
   },
   TOGGLE_THEME(state: ThemeState): void {
     switch (true) {
