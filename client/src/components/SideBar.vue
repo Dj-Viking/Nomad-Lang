@@ -182,10 +182,6 @@ export default defineComponent({
         html.split("strong>")[1] &&
         html.split("strong>")[1].replace("</", "").length
       ) {
-        console.log(
-          "got something here??",
-          html.split("strong>")[1].replace("</", "")
-        );
         let matchedCards: Array<ICard> = [];
         for (const card of this.allCards) {
           if (content === (card.frontSideText as string)) {
