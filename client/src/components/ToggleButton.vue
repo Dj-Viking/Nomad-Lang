@@ -174,12 +174,12 @@ export default defineComponent({
   border: none;
   height: 40px;
   width: 40px;
-  position: absolute;
+  position: absolute !important;
   cursor: pointer;
   top: 8px;
   left: 69.5px;
   z-index: 10000;
-  border-radius: 50%;
+  border-radius: 50% !important;
 }
 
 @keyframes toggle-light {
@@ -202,11 +202,11 @@ export default defineComponent({
   border: none;
   height: 40px;
   width: 40px;
-  position: absolute;
+  position: absolute !important;
   cursor: pointer;
   top: 8px;
   left: 8px;
   z-index: 10000;
-  border-radius: 50%;
+  border-radius: 50% !important;
 }
 </style>
