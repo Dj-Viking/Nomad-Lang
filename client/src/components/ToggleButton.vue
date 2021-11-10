@@ -168,6 +168,7 @@ export default defineComponent({
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
   padding: 0;
+  background-color: white;
   margin: 0;
   border: none;
   height: 40px;
@@ -191,6 +192,7 @@ export default defineComponent({
 .my-toggle-light {
   font-size: 20px;
   color: rgb(255, 172, 49);
+  background-color: white;
   animation: toggle-light;
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
