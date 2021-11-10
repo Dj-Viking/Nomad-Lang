@@ -1,6 +1,6 @@
 <template>
   <Transition type="transition" name="fade" mode="out-in">
-    <div v-if="cards.length > 0" style="width: 100px">
+    <div v-if="sidebarOpen || cards.length > 0" style="width: 100px">
       <div
         :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
         @click.prevent="
@@ -35,6 +35,7 @@ import { defineComponent, ref } from "@vue/runtime-core";
 import {
   CardsState,
   RootCommitType,
+  SidebarState,
   ThemePrefChangeResponse,
   UserState,
 } from "@/types";
@@ -47,6 +48,8 @@ import { useToast } from "vue-toastification";
 export default defineComponent({
   name: "ToggleButton",
   computed: {
+    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
+      store.state.sidebar.sidebar.isOpen,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
