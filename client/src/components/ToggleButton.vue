@@ -91,8 +91,8 @@ export default defineComponent({
     };
   },
   methods: {
-    toggleTheme(event: any): void {
-      console.log("toggle event", event.target);
+    // eslint-disable-next-line
+    toggleTheme(_event: any): void {
       store.commit("theme/TOGGLE_THEME" as RootCommitType, {}, { root: true });
       setTimeout(() => {
         if (this.isLoggedIn) {
