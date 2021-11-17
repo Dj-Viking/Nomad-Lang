@@ -43,7 +43,8 @@
           style="color: white; margin-left: 0.5em"
           @click.prevent="resetDisplayCards($event)"
         >
-          Reset Cards
+          <span v-if="!aCategoryIsActive">Reset Cards</span>
+          <span v-else>Reset Category</span>
         </button>
       </div>
     </div>
@@ -87,7 +88,13 @@
 </template>
 
 <script lang="ts">
-import { RootCommitType, CardsState, UserState, LoadingState } from "../types";
+import {
+  RootCommitType,
+  CardsState,
+  UserState,
+  LoadingState,
+  MyGetters,
+} from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
 import Card from "../components/Card.vue";
@@ -109,6 +116,12 @@ export default defineComponent({
     };
   },
   computed: {
+    aCategoryIsActive: () =>
+      store.getters["sidebarCategories/aCategoryIsActive" as MyGetters],
+    currentActiveCategoryCards: () =>
+      store.getters[
+        "sidebarCategories/currentActiveCategoryCards" as MyGetters
+      ],
     isLight: () => store.state.theme.theme === "light",
     isDark: () => store.state.theme.theme === "dark",
     allCards: (): CardsState["allCards"] => store.state.cards.allCards,
@@ -122,11 +135,19 @@ export default defineComponent({
     // eslint-disable-next-line
     resetDisplayCards(_event: any) {
       if (this.cards.length !== this.allCards.length) {
-        store.commit(
-          "cards/SET_DISPLAY_CARDS" as RootCommitType,
-          { cards: this.allCards },
-          { root: true }
-        );
+        if (this.aCategoryIsActive) {
+          store.commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: this.currentActiveCategoryCards },
+            { root: true }
+          );
+        } else {
+          store.commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: this.allCards },
+            { root: true }
+          );
+        }
       }
     },
     // eslint-disable-next-line
