@@ -23,17 +23,28 @@
       >
         clear cards
       </button>
-      <div>
-        <div class="control">
-          <button
-            @click.prevent="openAddModal($event)"
-            class="button is-info"
-            type="submit"
-            style="color: rgb(255, 255, 255); margin-left: 0.5em"
-          >
-            Add New Card
-          </button>
-        </div>
+      <div class="control">
+        <button
+          @click.prevent="openAddModal($event)"
+          class="button is-info"
+          type="button"
+          style="
+            color: rgb(255, 255, 255);
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+          "
+        >
+          Add New Card
+        </button>
+      </div>
+      <div class="control">
+        <button
+          class="button is-info"
+          style="color: white; margin-left: 0.5em"
+          @click.prevent="resetDisplayCards($event)"
+        >
+          Reset Cards
+        </button>
       </div>
     </div>
     <Transition type="transition" name="fade" mode="out-in">
@@ -100,6 +111,7 @@ export default defineComponent({
   computed: {
     isLight: () => store.state.theme.theme === "light",
     isDark: () => store.state.theme.theme === "dark",
+    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
@@ -107,6 +119,16 @@ export default defineComponent({
       store.state.loading.loading.isLoading,
   },
   methods: {
+    // eslint-disable-next-line
+    resetDisplayCards(_event: any) {
+      if (this.cards.length !== this.allCards.length) {
+        store.commit(
+          "cards/SET_DISPLAY_CARDS" as RootCommitType,
+          { cards: this.allCards },
+          { root: true }
+        );
+      }
+    },
     // eslint-disable-next-line
     readInputEvent(_event: Event) {
       //do nothing
