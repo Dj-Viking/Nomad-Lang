@@ -133,7 +133,7 @@ export default defineComponent({
   },
   methods: {
     // eslint-disable-next-line
-    resetDisplayCards(_event: any) {
+    resetDisplayCards(_event: any): void {
       if (this.cards.length !== this.allCards.length) {
         if (this.aCategoryIsActive) {
           store.commit(
