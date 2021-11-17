@@ -241,6 +241,10 @@ export interface AddCardResponse {
   };
 }
 
+export type MyGetters =
+  | "sidebarCategories/aCategoryIsActive"
+  | "sidebarCategories/currentActiveCategoryCards";
+
 export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"

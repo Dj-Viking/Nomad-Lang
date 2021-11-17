@@ -1,4 +1,5 @@
 import {
+  ICard,
   MyRootState,
   RootCommitType,
   SidebarCategorizedCardsState,
@@ -135,7 +136,24 @@ const actions = {
     }
   },
 };
-const getters = {};
+const getters = {
+  aCategoryIsActive(state: SidebarCategorizedCardsState): boolean {
+    let activeAmount = 0;
+    for (const key in state.categories) {
+      if (state.categories[key].isActive) activeAmount++;
+    }
+    if (activeAmount > 0) return true;
+    return false;
+  },
+  currentActiveCategoryCards(
+    state: SidebarCategorizedCardsState
+  ): ICard[] | void {
+    for (const key in state.categories) {
+      if (state.categories[key].isActive) return state.categories[key].cards;
+    }
+    return void 0;
+  },
+};
 
 export default {
   namespaced: true,

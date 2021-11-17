@@ -23,17 +23,29 @@
       >
         clear cards
       </button>
-      <div>
-        <div class="control">
-          <button
-            @click.prevent="openAddModal($event)"
-            class="button is-info"
-            type="submit"
-            style="color: rgb(255, 255, 255); margin-left: 0.5em"
-          >
-            Add New Card
-          </button>
-        </div>
+      <div class="control">
+        <button
+          @click.prevent="openAddModal($event)"
+          class="button is-info"
+          type="button"
+          style="
+            color: rgb(255, 255, 255);
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+          "
+        >
+          Add New Card
+        </button>
+      </div>
+      <div class="control">
+        <button
+          class="button is-info"
+          style="color: white; margin-left: 0.5em"
+          @click.prevent="resetDisplayCards($event)"
+        >
+          <span v-if="!aCategoryIsActive">Reset Cards</span>
+          <span v-else>Reset Category</span>
+        </button>
       </div>
     </div>
     <Transition type="transition" name="fade" mode="out-in">
@@ -76,7 +88,13 @@
 </template>
 
 <script lang="ts">
-import { RootCommitType, CardsState, UserState, LoadingState } from "../types";
+import {
+  RootCommitType,
+  CardsState,
+  UserState,
+  LoadingState,
+  MyGetters,
+} from "../types";
 import { ref, defineComponent } from "vue";
 import store from "../store";
 import Card from "../components/Card.vue";
@@ -98,8 +116,15 @@ export default defineComponent({
     };
   },
   computed: {
+    aCategoryIsActive: () =>
+      store.getters["sidebarCategories/aCategoryIsActive" as MyGetters],
+    currentActiveCategoryCards: () =>
+      store.getters[
+        "sidebarCategories/currentActiveCategoryCards" as MyGetters
+      ],
     isLight: () => store.state.theme.theme === "light",
     isDark: () => store.state.theme.theme === "dark",
+    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
     cards: (): CardsState["cards"] => store.state.cards.cards,
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
@@ -107,6 +132,24 @@ export default defineComponent({
       store.state.loading.loading.isLoading,
   },
   methods: {
+    // eslint-disable-next-line
+    resetDisplayCards(_event: any): void {
+      if (this.cards.length !== this.allCards.length) {
+        if (this.aCategoryIsActive) {
+          store.commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: this.currentActiveCategoryCards },
+            { root: true }
+          );
+        } else {
+          store.commit(
+            "cards/SET_DISPLAY_CARDS" as RootCommitType,
+            { cards: this.allCards },
+            { root: true }
+          );
+        }
+      }
+    },
     // eslint-disable-next-line
     readInputEvent(_event: Event) {
       //do nothing
