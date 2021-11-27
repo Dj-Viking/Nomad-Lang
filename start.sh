@@ -1,5 +1,3 @@
-#! usr/bin/env bash
-
 echo 'checking javascript'
 cd server;
 PWD=$(pwd)
