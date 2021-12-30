@@ -51,6 +51,9 @@ describe("visits home page", () => {
 describe("checks all CRUD operations of interactions with cards as not logged in", () => {
   it("clears todos on the screen", () => {
     cy.get("button.is-info").contains("clear cards").click();
+    //click yes on the clear cards modal when it appears
+    cy.wait(1000);
+    cy.get("button.button.is-info").contains("Yes").click();
   });
   it("while not logged in open the add card modal", () => {
     // eslint-disable-next-line
@@ -94,31 +97,26 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     cy.get("div.notification.is-light").should("have.length", 1);
 
     cy.get("p.title.is-4").then((element) => {
-      const textEntered = element.text().split(":")[1].trim();
+      const textEntered = element.text();
       console.log(textEntered);
       expect(textEntered).to.be.equal(
         EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText
       );
     });
-
-    //make an edit modal first to have input elements to select and type in...cant seem to find a use to test the window prompt in cypress
-    it("checks that the edit button exists", () => {
-      // clicks edit button
-      cy.get("div.some-unique-class")
-        .children()
-        .eq(1)
-        .children()
-        .eq(2)
-        .children()
-        .eq(2);
-    });
+  });
+  //make an edit modal first to have input elements to select and type in...cant seem to find a use to test the window prompt in cypress
+  it("checks that the edit button exists", () => {
+    // clicks edit button
+    cy.get("button.button.is-primary.ml-6")
+      .contains("Edit")
+      .should("have.length", 1);
   });
 
   it("checks we can delete a card", () => {
     //deletes and asserts that the card with the edited text is gone
 
     //delete button click
-    cy.get("button.button.is-danger.mx-2").click(); // cy.get("div.some-unique-class").children().eq(1).children();
+    cy.get("i.fa.fa-trash").click();
   });
 
   it("adds a couple more cards and then hits clear button", () => {
@@ -146,7 +144,8 @@ describe("checks all CRUD operations of interactions with cards as not logged in
   });
   it("checks that the cards are gone after clear button click", () => {
     cy.get("button.is-info").contains("clear cards").click();
-    cy.get("div.some-unique-class").children().should("have.length", 2);
+    cy.wait(300);
+    cy.get("button.button.is-info").contains("Yes").click();
   });
 });
 
@@ -154,7 +153,7 @@ describe("registers a new user that will crud the cards", () => {
   //sign in as new user
   //check that the cards are empty for a newly signed in user comes to home page
   it("clicks signup link ", () => {
-    cy.get("a.link").contains("Signup").click();
+    cy.get("a.button.is-success").contains("Signup").click();
   });
   it("types in username", () => {
     unique_username = `${REGISTER_USERNAME}-${Date.now()}`;
@@ -233,17 +232,19 @@ describe("registers a new user that will crud the cards", () => {
 
     //wait a bit for it to appear in the DOM
     cy.wait(400);
-    cy.get("div.some-unique-class")
-      .children()
-      .eq(2)
-      .children()
-      .eq(1)
-      .children();
+    cy.get("div.some-unique-class").children().eq(2).children();
 
     //edit standalone operations
 
     //click the edit card button on a card
-    cy.get("button.button.is-primary.mx-2").click();
+    cy.get("button.button.is-primary.ml-6").contains("Edit").click();
+    //clear everything
+    cy.get("input[name=modalEditFsText]").clear();
+    cy.get("input[name=modalEditFsTextLanguage]").clear();
+    cy.get("input[name=modalEditFsTextPicture]").clear();
+    cy.get("input[name=modalEditBsText]").clear();
+    cy.get("input[name=modalEditBsTextLanguage]").clear();
+    cy.get("input[name=modalEditBsTextPicture]").clear();
 
     cy.get("input[name=modalEditFsText]").type(
       EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
@@ -269,20 +270,20 @@ describe("registers a new user that will crud the cards", () => {
 
     // just check that we got the card with the edited text on it
     cy.get("p.title.is-4").then((element) => {
-      const textEntered = element.text().split(":")[1].trim();
+      const textEntered = element.text();
       console.log(textEntered);
       expect(textEntered).to.be.equal(
         EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
       );
     });
     //   //delete button click
-    cy.get("button.button.is-danger.mx-2").click();
+    cy.get("i.fa.fa-trash").click();
     //checks it was deleted
     cy.get("div.some-unique-class")
       .children()
       .eq(1)
       .children()
-      .should("have.length", 1);
+      .should("have.length", 3);
 
     //add a card start
     //open the modal
@@ -290,6 +291,14 @@ describe("registers a new user that will crud the cards", () => {
 
     //add card start
     //select input fields and type
+    //clear everything
+    cy.get("input[name=modalAddFsText]").clear();
+    cy.get("input[name=modalAddFsTextLanguage]").clear();
+    cy.get("input[name=modalAddFsTextPicture]").clear();
+    cy.get("input[name=modalAddBsText]").clear();
+    cy.get("input[name=modalAddBsTextLanguage]").clear();
+    cy.get("input[name=modalAddBsTextPicture]").clear();
+
     cy.get("input[name=modalAddFsText]").type(
       EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
     );
@@ -315,16 +324,25 @@ describe("registers a new user that will crud the cards", () => {
     //check that the card can be deleted
     //   //delete button click
     cy.wait(500);
-    cy.get("button.button.is-danger.mx-2").click();
+    cy.get("i.fa.fa-trash").click();
     //checks it was deleted
     cy.get("div.some-unique-class")
       .children()
       .eq(1)
       .children()
-      .should("have.length", 1);
+      .should("have.length", 3);
 
     //add card start
     cy.get("button").contains("Add New Card").click();
+
+    //clear everything
+    cy.get("input[name=modalAddFsText]").clear();
+    cy.get("input[name=modalAddFsTextLanguage]").clear();
+    cy.get("input[name=modalAddFsTextPicture]").clear();
+    cy.get("input[name=modalAddBsText]").clear();
+    cy.get("input[name=modalAddBsTextLanguage]").clear();
+    cy.get("input[name=modalAddBsTextPicture]").clear();
+
     //select input fields and type
     cy.get("input[name=modalAddFsText]").type(
       EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
@@ -350,12 +368,13 @@ describe("registers a new user that will crud the cards", () => {
 
     //clear cards as logged in user
     cy.get("button.is-info").contains("clear cards").click();
+    cy.get("button.button.is-info").contains("Yes").click();
     cy.wait(500);
     cy.get("div.some-unique-class")
       .children()
       .eq(1)
       .children()
-      .should("have.length", 1);
+      .should("have.length", 3);
   });
 });
 
@@ -363,17 +382,19 @@ describe("registers a new user that will crud the cards", () => {
 // this error will happen if i try to add in a new it() test function block,
 // then cypress will trash local storage unless i save local storage
 
-// describe("checks local storage", () => {
-//   it("checks window local storage here ", () => {
-//     cy.restoreLocalStorage();
-//     cy.window().then((window: Cypress.AUTWindow) => {
-//       expect(window.localStorage.getItem("id_token")).to.equal(token);
-//     });
-//   });
-// });
+describe("checks local storage", () => {
+  it("checks window local storage here ", () => {
+    // eslint-disable-next-line
+  // @ts-ignore //this is ignored because I didn't make the type yet
+    cy.restoreLocalStorage();
+    cy.window().then((window: Cypress.AUTWindow) => {
+      expect(window.localStorage.getItem("id_token")).to.equal(token);
+    });
+  });
+});
 
 describe("logs out", () => {
   it("clicks logout", () => {
-    cy.get("a.link").contains("Logout").click();
+    cy.get("a.button.is-danger").contains("Logout").click();
   });
 });

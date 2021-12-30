@@ -58,7 +58,7 @@
                     <p v-html="card?.frontSideText"></p>
                   </div>
                   <div v-else>
-                    {{ card?.frontSideText }}
+                    <p class="title is-4">{{ card?.frontSideText }}</p>
                   </div>
                   <form
                     :id="id"

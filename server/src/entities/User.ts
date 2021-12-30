@@ -30,7 +30,7 @@ export class User extends BaseEntity {
 
   @Field()
   @Column({ nullable: true })
-  themePref!: string;
+  themePref?: string;
 
   @Field()
   @Column()

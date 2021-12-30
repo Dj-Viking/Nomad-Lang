@@ -113,6 +113,7 @@ import {
   CardsState,
   CategorizedCardsObject,
   ICard,
+  ModalState,
   RootCommitType,
   RootDispatchType,
   SidebarState,
@@ -147,6 +148,8 @@ export default defineComponent({
       store.state.cards.categorized as CategorizedCardsObject,
     sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
       store.state.sidebar.sidebar.isOpen,
+    modalActive: (): ModalState["modal"]["activeClass"] =>
+      store.state.modal.modal.activeClass,
   },
   methods: {
     search(event: any): void {
@@ -291,13 +294,14 @@ export default defineComponent({
         case event.key === "c" || event.key === "C":
           {
             // eslint-disable-next-line
-            if (!!this.searchTerm) return;
+            if (!!this.searchTerm || this.modalActive) return;
 
             this.toggleSideBarWithC();
           }
           break;
         case event.key === "1":
           {
+            if (this.modalActive) return;
             let categoryName = document.querySelector(`div#cards-container`)
               ?.children[0].children[0].id as string;
 
@@ -312,7 +316,7 @@ export default defineComponent({
               return;
             }
 
-            this.toggleCategoryWithOneKey(categoryName);
+            this.toggleCategoryWithOneKey(categoryName as string);
           }
           break;
         default:

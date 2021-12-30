@@ -9,7 +9,7 @@ const state: ModalState = {
       card: {},
     },
     activeClass: false, //inactive by default
-    title: "initiall title",
+    title: "initial title",
   },
 };
 const mutations = {

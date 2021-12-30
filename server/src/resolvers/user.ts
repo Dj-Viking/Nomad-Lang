@@ -264,7 +264,8 @@ export class UserResolver {
           username: options.username,
           email: options.email,
           password: hashedPassword,
-          token: token
+          token: token,
+          themePref: "light"
         }
       )
       .returning(["themePref", "username", "token", "email"])
