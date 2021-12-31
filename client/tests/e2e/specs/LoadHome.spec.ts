@@ -5,6 +5,19 @@ import {
   ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
   ACTUALS_LOADHOMESPEC_PATH,
 } from "../../constants";
+
+beforeEach(() => {
+  // eslint-disable-next-line
+  // @ts-ignore //this is ignored because I didn't make the type yet
+  cy.restoreLocalStorage();
+});
+
+afterEach(() => {
+  // eslint-disable-next-line
+  // @ts-ignore //this is ignored because I didn't make the type yet
+  cy.saveLocalStorage();
+});
+
 describe("deletes-screenshots", () => {
   it("deletes any actuals for this test before we enter the page", () => {
     console.log("checking cypress browser running", Cypress.browser);
@@ -28,25 +41,34 @@ describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("checks the login link", () => {
-    cy.get("a.link").contains("Login").should("have.length", 1);
+    cy.get("a.button.is-success").contains("Login").should("have.length", 1);
   });
   it("checks the signup link", () => {
-    cy.get("a.link").contains("Signup").should("have.length", 1);
+    cy.get("a.button.is-success").contains("Signup").should("have.length", 1);
   });
 });
 
 describe("unit-test-home-link", () => {
   it("can click login and then click the home link to come backt to home page", () => {
-    cy.get("a.link").contains("Login").click();
-    cy.get("a.link").contains("Home").should("have.length", 1).click();
-    cy.get("a.link").contains("Signup").should("have.length", 1).click();
-    cy.get("a.link").contains("Home").should("have.length", 1).click();
+    cy.get("a.button.is-success").contains("Login").click();
+    cy.get("a.button.is-success")
+      .contains("Home")
+      .should("have.length", 1)
+      .click();
+    cy.get("a.button.is-success")
+      .contains("Signup")
+      .should("have.length", 1)
+      .click();
+    cy.get("a.button.is-success")
+      .contains("Home")
+      .should("have.length", 1)
+      .click();
   });
 });
 
 describe("logs in to check if the logout link appears when logged in then logs out", () => {
   it("logs in", () => {
-    cy.get("a.link").contains("Login").click();
+    cy.get("a.button.is-success").contains("Login").click();
   });
   it("types in email", () => {
     cy.get("input[name=email-or-username]")
@@ -76,6 +98,6 @@ describe("logs in to check if the logout link appears when logged in then logs o
 
   it("see logout link and clicks it", () => {
     cy.wait(1000);
-    cy.get("a.link").contains("Logout").click();
+    cy.get("a.button.is-danger").contains("Logout").click();
   });
 });
