@@ -1,11 +1,26 @@
 import { LOCALHOST_URL, EMAIL, PASSWORD, USERNAME } from "tests/constants";
 
+beforeEach(() => {
+  // eslint-disable-next-line
+  // @ts-ignore //this is ignored because I didn't make the type yet
+  cy.restoreLocalStorage();
+});
+
+afterEach(() => {
+  // eslint-disable-next-line
+  // @ts-ignore //this is ignored because I didn't make the type yet
+  cy.saveLocalStorage();
+});
+
 describe("login-unit-test, tests login functionality", () => {
   it("visits the site login page", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("clicks login router link to navigate to the login page", () => {
-    cy.get("a.link").contains("Login").should("have.length", 1).click();
+    cy.get("a.button.is-success")
+      .contains("Login")
+      .should("have.length", 1)
+      .click();
   });
 });
 
@@ -60,7 +75,7 @@ describe("tests the login with correct credentials works, has success message, a
     });
 
     it("logs out", () => {
-      cy.get("a.link").contains("Logout").click();
+      cy.get("a.button.is-danger").contains("Logout").click();
     });
   });
 
@@ -69,7 +84,10 @@ describe("tests the login with correct credentials works, has success message, a
       cy.visit(LOCALHOST_URL);
     });
     it("clicks login router link to navigate to the login page", () => {
-      cy.get("a.link").contains("Login").should("have.length", 1).click();
+      cy.get("a.button.is-success")
+        .contains("Login")
+        .should("have.length", 1)
+        .click();
     });
 
     it("logs in using only email", () => {
@@ -99,7 +117,7 @@ describe("tests the login with correct credentials works, has success message, a
     });
 
     it("logs out", () => {
-      cy.get("a.link").contains("Logout").click();
+      cy.get("a.button.is-danger").contains("Logout").click();
     });
   });
 });
