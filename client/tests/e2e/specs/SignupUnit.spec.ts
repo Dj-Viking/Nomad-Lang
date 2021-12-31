@@ -50,7 +50,10 @@ describe("signup-unit-test, tests signup functionality", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("clicks signup router link to navigate to the signup page", () => {
-    cy.get("a.link").contains("Signup").should("have.length", 1).click();
+    cy.get("a.button.is-success")
+      .contains("Signup")
+      .should("have.length", 1)
+      .click();
   });
 });
 
@@ -240,6 +243,6 @@ describe("should be able to login with those credentials that we just registered
 
   it("logs out", () => {
     cy.wait(1000);
-    cy.get("a.link").contains("Logout").click();
+    cy.get("a.button.is-danger").contains("Logout").click();
   });
 });
