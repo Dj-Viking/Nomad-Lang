@@ -50,7 +50,10 @@ describe("login-page-regression", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("clicks login router link to navigate to the login page", () => {
-    cy.get("a.link").contains("Login").should("have.length", 1).click();
+    cy.get("a.button.is-success")
+      .contains("Login")
+      .should("have.length", 1)
+      .click();
   });
   it("screenshots-the-login-page", () => {
     cy.get("html").screenshot({ capture: "viewport" });
