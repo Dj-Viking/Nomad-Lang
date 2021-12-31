@@ -50,7 +50,10 @@ describe("signup-page-regression", () => {
     cy.visit(LOCALHOST_URL);
   });
   it("clicks Signup router link to navigate to the Signup page", () => {
-    cy.get("a.link").contains("Signup").should("have.length", 1).click();
+    cy.get("a.button.is-success")
+      .contains("Signup")
+      .should("have.length", 1)
+      .click();
   });
   it("screenshots-the-signup-page", () => {
     cy.get("html").screenshot({ capture: "viewport" });
