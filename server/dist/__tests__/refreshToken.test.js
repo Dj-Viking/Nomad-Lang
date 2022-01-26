@@ -17,6 +17,8 @@ const connectDb_1 = require("./utils/connectDb");
 const constants_2 = require("../../src/constants");
 const helpers_1 = require("../__tests__/utils/helpers");
 const decodeToken_1 = require("../utils/decodeToken");
+const readEnv_1 = require("../utils/readEnv");
+(0, readEnv_1.readEnv)();
 let connection;
 const logger = helpers_1.ColorLog;
 let newToken = "";

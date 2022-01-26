@@ -12,30 +12,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendEmail = void 0;
-require('dotenv').config();
-const nodemailer_1 = __importDefault(require("nodemailer"));
-const readEnv_1 = require("./readEnv");
-(0, readEnv_1.readEnv)();
-function sendEmail(args) {
+exports.TestServer = void 0;
+const express_1 = __importDefault(require("express"));
+const apollo_server_express_1 = require("apollo-server-express");
+const type_graphql_1 = require("type-graphql");
+const user_1 = require("../resolvers/user");
+const card_1 = require("../resolvers/card");
+const authMiddleWare_1 = require("../utils/authMiddleWare");
+function TestServer() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { mailTo, mailHtml, fromHeader, subject } = args;
-        let transporter = nodemailer_1.default.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.NODEMAILER_AUTH_EMAIL,
-                pass: process.env.NODEMAILER_AUTH_PASS,
-            },
+        const app = (0, express_1.default)();
+        app.use(express_1.default.json());
+        const MyGraphQLSchema = yield (0, type_graphql_1.buildSchema)({
+            resolvers: [user_1.UserResolver, card_1.CardResolver],
+            validate: false
         });
-        yield transporter.sendMail({
-            from: `${fromHeader} <${process.env.NODEMAILER_AUTH_EMAIL}>`,
-            to: mailTo,
-            subject: subject,
-            html: mailHtml
+        const apolloServer = new apollo_server_express_1.ApolloServer({
+            schema: MyGraphQLSchema,
+            context: authMiddleWare_1.authMiddleware
         });
+        apolloServer.applyMiddleware({
+            app,
+        });
+        return app;
     });
 }
-exports.sendEmail = sendEmail;
-//# sourceMappingURL=sendEmail.js.map
+exports.TestServer = TestServer;
+//# sourceMappingURL=TestServer.js.map

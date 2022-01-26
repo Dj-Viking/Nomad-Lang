@@ -10,7 +10,8 @@ import {
 } from "../constants";
 import { RegisterResponse, GetUserCardsResponse, AddCardResponse, ICard, ClearUserCardsResponse, EditCardByIdResponse, EditCardPayload, AddCardPayload } from "../types";
 import { ColorLog, logJson, createAddCardMutation, createClearUserCardsMutation, createEditCardMutation, createGetUserCardsQuery } from "./utils/helpers";
-
+import { readEnv } from "../utils/readEnv";
+readEnv();
 const { 
   EXPIRED_TOKEN, 
   // NOT_MY_EMAIL,

@@ -1,6 +1,8 @@
 import { MyJwtData, MyContext } from "../types";
 import jwt from "jsonwebtoken";
 require('dotenv').config();
+import { readEnv } from "./readEnv";
+readEnv();
 
 const {
   SECRET,

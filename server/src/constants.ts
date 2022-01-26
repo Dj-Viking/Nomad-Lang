@@ -1,5 +1,6 @@
 require("dotenv").config();
-
+import { readEnv } from "./utils/readEnv";
+readEnv();
 const {
   TEST_EMAIL,
   TEST_HOST,

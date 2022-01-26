@@ -15,6 +15,8 @@ const User_1 = require("../entities/User");
 const connectDb_1 = require("./utils/connectDb");
 const constants_1 = require("../constants");
 const helpers_1 = require("./utils/helpers");
+const readEnv_1 = require("../utils/readEnv");
+(0, readEnv_1.readEnv)();
 const { EXPIRED_TOKEN, } = process.env;
 const logger = helpers_1.ColorLog;
 let newToken = "";

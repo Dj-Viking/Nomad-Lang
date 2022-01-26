@@ -10,6 +10,8 @@ import {
 import { MeQueryResponse, RegisterResponse } from "../types";
 import { ColorLog, logJson, createMeQuery } from "../__tests__/utils/helpers";
 import { decodeToken } from "../utils/decodeToken";
+import { readEnv } from "../utils/readEnv";
+readEnv();
 
 let connection;
 const logger = ColorLog;

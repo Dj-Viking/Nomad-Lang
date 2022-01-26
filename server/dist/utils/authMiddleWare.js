@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require('dotenv').config();
+const readEnv_1 = require("./readEnv");
+(0, readEnv_1.readEnv)();
 const { SECRET, EXPIRATION } = process.env;
 function authMiddleware(context) {
     var _a, _b;

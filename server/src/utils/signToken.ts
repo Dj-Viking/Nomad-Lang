@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { SignLoginRegisterMeTokenArgs, SignResetPasswordTokenArgs } from "../types";
 require("dotenv").config();
+import { readEnv } from "./readEnv";
+readEnv();
 
 const {
   SECRET,

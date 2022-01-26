@@ -2,6 +2,10 @@ import type { Config } from "@jest/types";
 
 export default async (): Promise<Config.InitialOptions> => {
   return {
+    collectCoverageFrom: [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+    ],
     transform: {
       "^.+\\.tsx?$": "ts-jest"
     },

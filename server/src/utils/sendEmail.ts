@@ -1,6 +1,8 @@
 require('dotenv').config();
 import nodemailer from "nodemailer";
 import { MySendEmailOptions } from "../types";
+import { readEnv } from "./readEnv";
+readEnv();
 
 export async function sendEmail(args: MySendEmailOptions): Promise<void> {
   const { mailTo, mailHtml, fromHeader, subject } = args;

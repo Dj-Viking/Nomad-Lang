@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyAsync = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const readEnv_1 = require("./readEnv");
+(0, readEnv_1.readEnv)();
 const { EXPIRATION, SECRET } = process.env;
 function verifyAsync(token) {
     return __awaiter(this, void 0, void 0, function* () {

@@ -6,7 +6,7 @@
     "install": "cd server && npm i && cd ../client && npm i",
     "tscheck": "cd client; npm run tscheck",
     "client": "cd client; npm run serve",
-    "test": "cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test",
+    "test": "ENV_TXT=$(cat env.txt) cd client; SPECNAME='*' npm run cy:run; cd ../server; npm run test",
     "server:compile": "cd server; npm run tsc",
     "server:dev": "cd server; npm run dev",
     "heroku-postbuild": "cd client && npm run build",

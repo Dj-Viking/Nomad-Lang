@@ -9,26 +9,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectDb = void 0;
-require("dotenv").config();
-const User_1 = require("../../entities/User");
+exports.createDbConnection = void 0;
 const typeorm_1 = require("typeorm");
-const Card_1 = require("../../entities/Card");
-const readEnv_1 = require("../../utils/readEnv");
+const readEnv_1 = require("../utils/readEnv");
+const constants_1 = require("../constants");
+const User_1 = require("../entities/User");
+const Card_1 = require("../entities/Card");
 (0, readEnv_1.readEnv)();
-const { DB_NAME, DB_USER, DB_PASSWORD, } = process.env;
-function connectDb() {
+const { DB_NAME, DB_USER, DB_PASSWORD, DATABASE_URL, } = process.env;
+function createDbConnection() {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield (0, typeorm_1.createConnection)({
+        return (0, typeorm_1.createConnection)({
             type: "postgres",
-            database: DB_NAME,
-            username: DB_USER,
-            password: DB_PASSWORD,
-            logging: false,
+            url: constants_1.IS_PROD ? DATABASE_URL : undefined,
+            database: !constants_1.IS_PROD ? DB_NAME : undefined,
+            password: !constants_1.IS_PROD ? DB_PASSWORD : undefined,
+            username: !constants_1.IS_PROD ? DB_USER : undefined,
+            logging: !constants_1.IS_PROD,
             synchronize: true,
+            ssl: constants_1.IS_PROD,
+            extra: constants_1.IS_PROD && {
+                ssl: {
+                    rejectUnauthorized: false,
+                },
+            },
             entities: [User_1.User, Card_1.Card]
         });
     });
 }
-exports.connectDb = connectDb;
-//# sourceMappingURL=connectDb.js.map
+exports.createDbConnection = createDbConnection;
+//# sourceMappingURL=connection.js.map

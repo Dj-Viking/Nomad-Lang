@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.signToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 require("dotenv").config();
+const readEnv_1 = require("./readEnv");
+(0, readEnv_1.readEnv)();
 const { SECRET, EXPIRATION } = process.env;
 function signToken(args) {
     const { username, uuid: someUuid, email } = args;

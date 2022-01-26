@@ -2,6 +2,8 @@ require("dotenv").config();
 import { User } from "../../entities/User";
 import { Connection, createConnection } from "typeorm";
 import { Card } from "../../entities/Card";
+import { readEnv } from "../../utils/readEnv";
+readEnv();
 const {
   DB_NAME,
   DB_USER,

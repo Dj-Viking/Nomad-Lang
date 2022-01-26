@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.REGISTER_MUTATION = exports.ME_QUERY = exports.UPDATED_CARD_TEXT = exports.UPDATED_USERNAME = exports.REGISTER_PASSWORD = exports.REGISTER_USERNAME = exports.REGISTER_EMAIL = exports.HOST = exports.FORGET_PASS_PREFIX = exports.APP_DOMAIN_PREFIX = exports.IS_PROD = exports.COOKIE_NAME = void 0;
 require("dotenv").config();
+const readEnv_1 = require("./utils/readEnv");
+(0, readEnv_1.readEnv)();
 const { TEST_EMAIL, TEST_HOST, TEST_PASS, TEST_USERNAME } = process.env;
 exports.COOKIE_NAME = "sid";
 exports.IS_PROD = process.env.NODE_ENV === "production";

@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import { MyJwtData } from "../types";
+import { readEnv } from "./readEnv";
+readEnv();
 
 const {
   EXPIRATION,
