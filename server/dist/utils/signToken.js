@@ -10,23 +10,24 @@ const readEnv_1 = require("./readEnv");
 (0, readEnv_1.readEnv)();
 const { SECRET, EXPIRATION } = process.env;
 function signToken(args) {
-    const { username, uuid: someUuid, email } = args;
+    const { username, uuid: someUuid, email, } = args;
     const { resetEmail, uuid, exp } = args;
     switch (true) {
         case Boolean(username && someUuid && email): {
             return jsonwebtoken_1.default.sign({
                 username,
                 uuid,
-                email
+                email,
             }, SECRET, { expiresIn: EXPIRATION });
         }
         case Boolean(uuid && exp && resetEmail): {
             return jsonwebtoken_1.default.sign({
                 resetEmail,
-                uuid
+                uuid,
             }, SECRET, { expiresIn: exp });
         }
-        default: return "can't sign a valid token";
+        default:
+            return "can't sign a valid token";
     }
 }
 exports.signToken = signToken;

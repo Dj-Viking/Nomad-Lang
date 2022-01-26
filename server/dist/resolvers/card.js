@@ -193,7 +193,7 @@ let CardResolver = class CardResolver {
                 const cards = yield Card_1.Card.find({ where: { creatorId: foundUserByEmail.id } });
                 console.log("checking cards given the creatorId", cards);
                 return {
-                    cards: cards
+                    cards: cards,
                 };
             }
             catch (error) {
@@ -203,7 +203,7 @@ let CardResolver = class CardResolver {
     }
     editCardById(options, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id, frontSideText, backSideLanguage, backSideText, frontSideLanguage, frontSidePicture } = options;
+            const { id, frontSideText, backSideLanguage, backSideText, frontSideLanguage, frontSidePicture, } = options;
             if (!req.user) {
                 return new ErrorResponse_1.ErrorResponse("unauthenticated", "401 Unauthenticated");
             }
@@ -219,22 +219,33 @@ let CardResolver = class CardResolver {
                 const changedCard = yield (0, typeorm_1.getConnection)()
                     .getRepository(Card_1.Card)
                     .createQueryBuilder("card")
-                    .update(Card_1.Card, { frontSideText,
+                    .update(Card_1.Card, {
+                    frontSideText,
                     frontSidePicture,
                     frontSideLanguage,
                     backSideText,
                     backSideLanguage,
-                    backSidePicture: frontSidePicture, })
+                    backSidePicture: frontSidePicture,
+                })
                     .where("id = :id", { id })
-                    .returning(["frontSideText", "frontSidePicture", "frontSideLanguage", "backsideText", "id", "creatorId", "createdAt", "updatedAt"])
+                    .returning([
+                    "frontSideText",
+                    "frontSidePicture",
+                    "frontSideLanguage",
+                    "backsideText",
+                    "id",
+                    "creatorId",
+                    "createdAt",
+                    "updatedAt",
+                ])
                     .updateEntity(true)
                     .execute();
                 if (!changedCard.raw[0])
                     return new ErrorResponse_1.ErrorResponse("card", "404 Card Not Found");
                 const cards = yield Card_1.Card.find({ where: { creatorId: foundUserByEmail.id } });
-                console.log('cards of the person editing a card', cards);
+                console.log("cards of the person editing a card", cards);
                 return {
-                    cards: cards
+                    cards: cards,
                 };
             }
             catch (error) {
@@ -253,7 +264,7 @@ let CardResolver = class CardResolver {
                 const user = yield User_1.User.findOne({ where: { email: req.user.email } });
                 const cards = yield Card_1.Card.find({ where: { creatorId: user === null || user === void 0 ? void 0 : user.id } });
                 return {
-                    cards: cards
+                    cards: cards,
                 };
             }
             catch (error) {
@@ -279,7 +290,7 @@ let CardResolver = class CardResolver {
                 }));
                 yield Promise.all(deletePromises);
                 return {
-                    done: true
+                    done: true,
                 };
             }
             catch (error) {
@@ -294,7 +305,9 @@ let CardResolver = class CardResolver {
             if (!req.user) {
                 return new ErrorResponse_1.ErrorResponse("unauthenticated", "401 user not authenticated");
             }
-            const foundUserByEmail = yield User_1.User.findOne({ where: { email: req.user.email } });
+            const foundUserByEmail = yield User_1.User.findOne({
+                where: { email: req.user.email },
+            });
             if (!foundUserByEmail)
                 return new ErrorResponse_1.ErrorResponse("not found", "404 Not Found");
             if (foundUserByEmail.email !== req.user.email)
@@ -304,20 +317,31 @@ let CardResolver = class CardResolver {
                     .createQueryBuilder()
                     .insert()
                     .into(Card_1.Card)
-                    .values({ frontSideText,
+                    .values({
+                    frontSideText,
                     frontSideLanguage,
                     frontSidePicture,
                     backSideText,
                     backSideLanguage,
                     backSidePicture: frontSidePicture,
-                    creatorId: foundUserByEmail === null || foundUserByEmail === void 0 ? void 0 : foundUserByEmail.id })
-                    .returning(["frontSideText", "frontSidePicture", "frontSideLanguage", "backsideText", "id", "creatorId", "createdAt", "updatedAt"])
+                    creatorId: foundUserByEmail === null || foundUserByEmail === void 0 ? void 0 : foundUserByEmail.id,
+                })
+                    .returning([
+                    "frontSideText",
+                    "frontSidePicture",
+                    "frontSideLanguage",
+                    "backsideText",
+                    "id",
+                    "creatorId",
+                    "createdAt",
+                    "updatedAt",
+                ])
                     .execute();
                 const cards = yield Card_1.Card.find({ where: { creatorId: foundUserByEmail === null || foundUserByEmail === void 0 ? void 0 : foundUserByEmail.id } });
                 console.log(`${types_1.ANSI_ESCAPES.success}`, `Someone added a card!`, `${types_1.ANSI_ESCAPES.reset}`);
                 console.log("heres new set of flashcards", cards);
                 return {
-                    cards: cards
+                    cards: cards,
                 };
             }
             catch (error) {

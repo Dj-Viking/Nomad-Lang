@@ -3,12 +3,7 @@ import { signToken } from "../utils/signToken";
 import { Field, InputType, Resolver, Arg, Mutation, Ctx, ObjectType, Query } from "type-graphql";
 import { getConnection } from "typeorm";
 import argon2 from "argon2";
-import {
-  /*CategorizedCardMapClass,*/ CategorizedCardMap,
-  MyContext,
-  MyJwtData,
-  MySendEmailOptions /*CategorizedCardMapClassScalar*/,
-} from "../types";
+import { CategorizedCardMap, MyContext, MyJwtData, MySendEmailOptions } from "../types";
 
 import { User } from "../entities/User";
 import { Card } from "../entities/Card";
@@ -17,7 +12,7 @@ import { verifyRegisterArgs } from "../utils/verifyRegisterArgs";
 import { sendEmail } from "../utils/sendEmail";
 import { APP_DOMAIN_PREFIX } from "../constants";
 import { decodeToken } from "../utils/decodeToken";
-import { verifyAsync } from "../utils/verifyAsync";
+import { verifyTokenAsync } from "../utils/verifyTokenAsync";
 const uuid = require("uuid");
 @InputType()
 class RegisterInput {
@@ -282,10 +277,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UserResponse)
-  async login(
-    @Arg("options", () => LoginInput) options: LoginInput,
-    @Ctx() _context: MyContext
-  ): Promise<UserResponse> {
+  async login(@Arg("options", () => LoginInput) options: LoginInput): Promise<UserResponse> {
     let user;
     user = await User.findOne({ where: { email: options.email } });
     if (!user) {
@@ -333,13 +325,12 @@ export class UserResolver {
   async changePassword(
     @Arg("password") password: string,
     //remove after testing
-    @Arg("token") token: string,
-    @Ctx() _context: MyContext
+    @Arg("token") token: string
   ): Promise<ChangePasswordResponse | ErrorResponse> {
     try {
       //check if token is expired if so return an error response
       let verified: MyJwtData | null | any = "something";
-      verified = await verifyAsync(token);
+      verified = await verifyTokenAsync(token);
       //create the error response if verifying the token creates an error
       if (verified instanceof Error && verified.message.includes("expired"))
         return new ErrorResponse("invalid", "reset token expired");
@@ -398,10 +389,7 @@ export class UserResolver {
   }
 
   @Mutation(() => ForgotPassResponse)
-  async forgotPassword(
-    @Arg("email") email: string,
-    @Ctx() _context: MyContext
-  ): Promise<ForgotPassResponse | ErrorResponse> {
+  async forgotPassword(@Arg("email") email: string): Promise<ForgotPassResponse | ErrorResponse> {
     try {
       // TODO: once deployed apply the production domain URL
       // to supply a link to the page where the user will change

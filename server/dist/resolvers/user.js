@@ -36,7 +36,7 @@ const verifyRegisterArgs_1 = require("../utils/verifyRegisterArgs");
 const sendEmail_1 = require("../utils/sendEmail");
 const constants_1 = require("../constants");
 const decodeToken_1 = require("../utils/decodeToken");
-const verifyAsync_1 = require("../utils/verifyAsync");
+const verifyTokenAsync_1 = require("../utils/verifyTokenAsync");
 const uuid = require("uuid");
 let RegisterInput = class RegisterInput {
 };
@@ -215,7 +215,7 @@ let UserResolver = class UserResolver {
                 const newToken = (0, signToken_1.signToken)({
                     username: req.user.username,
                     email: req.user.email,
-                    uuid: uuid.v4()
+                    uuid: uuid.v4(),
                 });
                 const changedUser = yield (0, typeorm_1.getConnection)()
                     .getRepository(User_1.User)
@@ -251,7 +251,7 @@ let UserResolver = class UserResolver {
                     .updateEntity(true)
                     .execute();
                 return {
-                    themePref: changedUser.raw[0].themePref
+                    themePref: changedUser.raw[0].themePref,
                 };
             }
             catch (error) {
@@ -270,16 +270,20 @@ let UserResolver = class UserResolver {
                 let tempUser = {
                     username: options.username,
                     email: options.email,
-                    uuid: uuid.v4()
+                    uuid: uuid.v4(),
                 };
                 const token = (0, signToken_1.signToken)(tempUser);
                 let user;
-                const result = yield (0, typeorm_1.getConnection)().createQueryBuilder().insert().into(User_1.User).values({
+                const result = yield (0, typeorm_1.getConnection)()
+                    .createQueryBuilder()
+                    .insert()
+                    .into(User_1.User)
+                    .values({
                     username: options.username,
                     email: options.email,
                     password: hashedPassword,
                     token: token,
-                    themePref: "light"
+                    themePref: "light",
                 })
                     .returning(["themePref", "username", "token", "email"])
                     .execute();
@@ -287,24 +291,24 @@ let UserResolver = class UserResolver {
                 req.user = user;
                 return {
                     token,
-                    user
+                    user,
                 };
             }
             catch (error) {
-                if (error.code === '23505' || error.detail && error.detail.includes('already exists')) {
-                    const field = 'User';
+                if (error.code === "23505" || (error.detail && error.detail.includes("already exists"))) {
+                    const field = "User";
                     const message = "name and/or email is already taken!";
                     return new ErrorResponse_1.ErrorResponse(field, message);
                 }
                 else {
-                    const field = 'Error';
+                    const field = "Error";
                     const message = error;
                     return new ErrorResponse_1.ErrorResponse(field, message);
                 }
             }
         });
     }
-    login(options, _context) {
+    login(options) {
         return __awaiter(this, void 0, void 0, function* () {
             let user;
             user = yield User_1.User.findOne({ where: { email: options.email } });
@@ -312,7 +316,7 @@ let UserResolver = class UserResolver {
                 user = yield User_1.User.findOne({ where: { username: options.username } });
             }
             if (!user) {
-                return new ErrorResponse_1.ErrorResponse('Credentials', 'Incorrect Credentials');
+                return new ErrorResponse_1.ErrorResponse("Credentials", "Incorrect Credentials");
             }
             const valid = yield argon2_1.default.verify(user.password, options.password);
             if (!valid) {
@@ -321,7 +325,7 @@ let UserResolver = class UserResolver {
             const token = (0, signToken_1.signToken)({
                 username: user.username,
                 email: user.email,
-                uuid: uuid.v4()
+                uuid: uuid.v4(),
             });
             const changedUser = yield (0, typeorm_1.getConnection)()
                 .getRepository(User_1.User)
@@ -335,19 +339,19 @@ let UserResolver = class UserResolver {
             return {
                 token: token,
                 user: changedUser.raw[0],
-                cards: cards
+                cards: cards,
             };
         });
     }
-    changePassword(password, token, _context) {
+    changePassword(password, token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let verified = "something";
-                verified = yield (0, verifyAsync_1.verifyAsync)(token);
+                verified = yield (0, verifyTokenAsync_1.verifyTokenAsync)(token);
                 if (verified instanceof Error && verified.message.includes("expired"))
                     return new ErrorResponse_1.ErrorResponse("invalid", "reset token expired");
-                else if (verified instanceof Error && (verified.message.includes("malformed") ||
-                    verified.message.includes("invalid")))
+                else if (verified instanceof Error &&
+                    (verified.message.includes("malformed") || verified.message.includes("invalid")))
                     return new ErrorResponse_1.ErrorResponse("invalid", "invalid token");
                 const decodedToken = (0, decodeToken_1.decodeToken)(token);
                 const hashedPassword = yield argon2_1.default.hash(password);
@@ -362,7 +366,7 @@ let UserResolver = class UserResolver {
                 const loginToken = (0, signToken_1.signToken)({
                     username: changedUser.raw[0].username,
                     email: changedUser.raw[0].email,
-                    uuid: uuid.v4()
+                    uuid: uuid.v4(),
                 });
                 const changedUserToken = yield (0, typeorm_1.getConnection)()
                     .getRepository(User_1.User)
@@ -376,7 +380,7 @@ let UserResolver = class UserResolver {
                 return {
                     done: true,
                     token: loginToken,
-                    cards
+                    cards,
                 };
             }
             catch (error) {
@@ -384,14 +388,14 @@ let UserResolver = class UserResolver {
             }
         });
     }
-    forgotPassword(email, _context) {
+    forgotPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const resetToken = uuid.v4();
                 const token = (0, signToken_1.signToken)({
                     uuid: resetToken,
                     resetEmail: email,
-                    exp: "5m"
+                    exp: "5m",
                 });
                 const forgotPasswordEmailOptions = {
                     fromHeader: "Password Reset",
@@ -402,11 +406,11 @@ let UserResolver = class UserResolver {
           <p>If this wasn't you. Then please disregard this email. Thank you!</p>
           <h2>This Request will expire after 5 minutes.</h2>
           <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>   
-        `
+        `,
                 };
                 yield (0, sendEmail_1.sendEmail)(forgotPasswordEmailOptions);
                 return {
-                    done: true
+                    done: true,
                 };
             }
             catch (error) {
@@ -432,7 +436,7 @@ let UserResolver = class UserResolver {
                     return new ErrorResponse_1.ErrorResponse("user", "user not found");
                 context.req.user = null;
                 return {
-                    done: true
+                    done: true,
                 };
             }
             catch (error) {
@@ -467,7 +471,7 @@ __decorate([
 ], UserResolver.prototype, "setUserTheme", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
-    __param(0, (0, type_graphql_1.Arg)('options', () => RegisterInput)),
+    __param(0, (0, type_graphql_1.Arg)("options", () => RegisterInput)),
     __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [RegisterInput, Object]),
@@ -475,27 +479,24 @@ __decorate([
 ], UserResolver.prototype, "register", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
-    __param(0, (0, type_graphql_1.Arg)('options', () => LoginInput)),
-    __param(1, (0, type_graphql_1.Ctx)()),
+    __param(0, (0, type_graphql_1.Arg)("options", () => LoginInput)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [LoginInput, Object]),
+    __metadata("design:paramtypes", [LoginInput]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => ChangePasswordResponse),
     __param(0, (0, type_graphql_1.Arg)("password")),
     __param(1, (0, type_graphql_1.Arg)("token")),
-    __param(2, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "changePassword", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => ForgotPassResponse),
-    __param(0, (0, type_graphql_1.Arg)('email')),
-    __param(1, (0, type_graphql_1.Ctx)()),
+    __param(0, (0, type_graphql_1.Arg)("email")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "forgotPassword", null);
 __decorate([

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyRegisterArgs = void 0;
 const ErrorResponse_1 = require("../utils/ErrorResponse");
-;
 function verifyRegisterArgs(args) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(args.email) === false) {

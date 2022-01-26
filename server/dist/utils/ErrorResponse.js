@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorResponse = void 0;
 class ErrorResponse {
     constructor(field, message) {
-        this.errors = [{
+        this.errors = [
+            {
                 field,
-                message
-            }];
+                message,
+            },
+        ];
     }
-    ;
 }
 exports.ErrorResponse = ErrorResponse;
-;
 //# sourceMappingURL=ErrorResponse.js.map

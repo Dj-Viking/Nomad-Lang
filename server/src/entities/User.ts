@@ -1,5 +1,4 @@
-  
-import { 
+import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -7,15 +6,14 @@ import {
   UpdateDateColumn,
   BaseEntity,
   OneToMany,
-} from 'typeorm';
-import { ObjectType, Field, Int } from 'type-graphql';
-import { Card } from './Card';
+} from "typeorm";
+import { ObjectType, Field, Int } from "type-graphql";
+import { Card } from "./Card";
 
 //this is now both an object type and an entity
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
-
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
@@ -50,5 +48,4 @@ export class User extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
-
 }

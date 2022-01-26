@@ -1,6 +1,14 @@
 import { Express } from "../types";
 import { Response } from "express";
 export const UserController = {
+  me: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+    try {
+      return res.status(200).json({ message: "found login route" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  },
   login: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
       return res.status(200).json({ message: "found login route" });
@@ -35,7 +43,7 @@ export const UserController = {
   },
   clearCards: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found getusercards route" });
+      return res.status(200).json({ message: "found clear cards route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
@@ -43,7 +51,7 @@ export const UserController = {
   },
   editCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found getusercards route" });
+      return res.status(200).json({ message: "found editcard route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
@@ -51,7 +59,23 @@ export const UserController = {
   },
   deleteOneCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found getusercards route" });
+      return res.status(200).json({ message: "found delete one card route" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  },
+  forgotPassword: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+    try {
+      return res.status(200).json({ message: "found forgot password route" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: error.message });
+    }
+  },
+  changePassword: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+    try {
+      return res.status(200).json({ message: "found changePassword route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });

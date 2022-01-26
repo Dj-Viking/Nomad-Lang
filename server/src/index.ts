@@ -5,7 +5,7 @@ import { IS_PROD } from "./constants";
 import cors from "cors";
 import { ColorLog } from "./__tests__/utils/helpers";
 import path from "path";
-import { createDbConnection } from "./db/connection";
+import connection from "./db/connection";
 import { readEnv } from "./utils/readEnv";
 readEnv();
 
@@ -20,7 +20,6 @@ const {
 
 (async function (): Promise<void> {
   console.log("hello world");
-  await createDbConnection();
   new logger("green", "postgres connection success").genLog();
 
   const app = express();
@@ -69,8 +68,10 @@ const {
   });
 
   //SERVER LISTEN
-  app.listen(PORT, () => {
-    new logger("green", `server started on ${PORT}`).genLog();
+  connection.then(() => {
+    app.listen(PORT, () => {
+      new logger("green", `server started on ${PORT}`).genLog();
+    });
   });
 })().catch((e: Error) => {
   return console.error(e);
