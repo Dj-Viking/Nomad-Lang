@@ -1,14 +1,8 @@
-require('dotenv').config();
+require("dotenv").config();
 import "reflect-metadata";
 import express from "express";
 import { IS_PROD } from "./constants";
 import cors from "cors";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
-import { UserResolver } from './resolvers/user';
-import { CardResolver } from "./resolvers/card"
-import { GraphQLSchema } from "graphql";
-import { authMiddleware } from "./utils/authMiddleWare";
 import { ColorLog } from "./__tests__/utils/helpers";
 import path from "path";
 import { createDbConnection } from "./db/connection";
@@ -24,19 +18,12 @@ const {
   // NODEMAILER_EMAIL_TO
 } = process.env;
 
-(async function(): Promise<void> {
+(async function (): Promise<void> {
   console.log("hello world");
   await createDbConnection();
   new logger("green", "postgres connection success").genLog();
-  
+
   const app = express();
-  let MyGraphQLSchema: GraphQLSchema;
-  MyGraphQLSchema = await buildSchema({
-    resolvers: [UserResolver, CardResolver],
-    // scalarsMap: [{ type: CategorizedCardMapClass, scalar: CategorizedCardMapClassScalar }],
-    validate: false
-  });
-  new logger("purple", "graphql schema build success").genLog();
 
   const corsRegExp = ((): RegExp => {
     if (IS_PROD) {
@@ -44,36 +31,24 @@ const {
     }
     return new RegExp(CORS_ALLOWED_DEV as string);
   })();
-  app.use(cors({
-    origin: corsRegExp,
-    credentials: true
-  }));
 
-  const apolloServer = new ApolloServer({
-    schema: MyGraphQLSchema,
-    context: authMiddleware
-  });
-  //apollo server middleware
-  apolloServer.applyMiddleware({
-    app,
-    cors: {
+  app.use(
+    cors({
       origin: corsRegExp,
-      credentials: true
-    }
-  });
-  
-  //express middleware
-  app.use(express.urlencoded({
-    extended: false
-  }));
+      credentials: true,
+    })
+  );
+  app.use(
+    express.urlencoded({
+      extended: false,
+    })
+  );
   app.use(express.json());
 
   //IF-ENV IN PRODUCTION
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     //STATIC ASSETS FROM VUE BUILD FOLDER
-    app.use(express.static(
-      path.join(__dirname, '../../client/dist')
-    ));
+    app.use(express.static(path.join(__dirname, "../../client/dist")));
     // IF TRAVELS ANY ROUTE OUTSIDE VUE'S CURRENT PAGE REDIRECT TO ROOT
     // app.get('*', (_req, res, next) => {
     //   res.sendFile(path.join(
@@ -83,24 +58,20 @@ const {
     // });
     //REDIRECT HTTP TRAFFIC TO HTTPS
     app.use((req, res, next) => {
-      if (req.header('x-forwarded-proto') !== 'https') res.redirect(`https://${req.header('host')}${req.url}`);
+      if (req.header("x-forwarded-proto") !== "https")
+        res.redirect(`https://${req.header("host")}${req.url}`);
       next();
     });
   }
 
-  app.use('/', async (_, res) => {
-    res.status(404).send("client path eventually")
+  app.use("/", async (_, res) => {
+    res.status(404).send("client path eventually");
   });
 
-  
   //SERVER LISTEN
   app.listen(PORT, () => {
     new logger("green", `server started on ${PORT}`).genLog();
-    new logger("purple", `graphql server started? ${apolloServer.graphqlPath}`).genLog();
   });
-
-
-
 })().catch((e: Error) => {
   return console.error(e);
 });

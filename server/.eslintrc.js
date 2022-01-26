@@ -17,8 +17,8 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: [".eslintrc.js", "babel.config.js", "jest.config.ts"],
   rules: {
+    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-namespace": "off",
     "prefer-const": "off",

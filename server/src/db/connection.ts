@@ -4,14 +4,9 @@ import { IS_PROD } from "../constants";
 import { User } from "../entities/User";
 import { Card } from "../entities/Card";
 readEnv();
-const {
-  DB_NAME,
-  DB_USER,
-  DB_PASSWORD,
-  DATABASE_URL,
-} = process.env;
+const { DB_NAME, DB_USER, DB_PASSWORD, DATABASE_URL } = process.env;
 
-export async function createDbConnection (): Promise<Connection> {
+export async function createDbConnection(): Promise<Connection> {
   return createConnection({
     type: "postgres",
     url: IS_PROD ? DATABASE_URL : undefined,
@@ -26,6 +21,6 @@ export async function createDbConnection (): Promise<Connection> {
         rejectUnauthorized: false,
       },
     },
-    entities: [User, Card]
+    entities: [User, Card],
   });
 }

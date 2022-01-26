@@ -3,10 +3,7 @@ import { MyJwtData } from "../types";
 import { readEnv } from "./readEnv";
 readEnv();
 
-const {
-  EXPIRATION,
-  SECRET
-} = process.env;
+const { EXPIRATION, SECRET } = process.env;
 
 export async function verifyAsync(token: string): Promise<MyJwtData | null | Error> {
   return new Promise((resolve) => {
@@ -20,8 +17,8 @@ export async function verifyAsync(token: string): Promise<MyJwtData | null | Err
         if (error?.message.includes("expired")) returnMe = error;
         if (error?.message.includes("invalid")) returnMe = error;
         if (decoded) returnMe = decoded;
-      } 
+      }
     );
     resolve(returnMe);
-  })
+  });
 }

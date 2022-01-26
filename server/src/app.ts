@@ -1,7 +1,12 @@
 import express from "express";
-export async function TestServer(): Promise<Express.Application> {
+import router from "./router";
+
+function createServer() {
   const app = express();
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(router);
   return app;
 }
+
+export default createServer;
