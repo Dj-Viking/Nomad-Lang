@@ -139,6 +139,9 @@ export interface ICreateUserResponse extends Object {
   };
 }
 
+export interface ILoginError {
+  error: string;
+}
 export interface ILoginResponse {
   user: {
     username: string;

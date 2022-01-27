@@ -28,7 +28,6 @@ const { CORS_ALLOWED_PROD, CORS_ALLOWED_DEV, } = process.env;
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("hello world");
-        new logger("green", "postgres connection success").genLog();
         const app = (0, express_1.default)();
         const corsRegExp = (() => {
             if (constants_1.IS_PROD) {

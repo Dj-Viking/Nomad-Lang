@@ -5,6 +5,11 @@ export default async (): Promise<Config.InitialOptions> => {
     collectCoverageFrom: [
       "src/**/*.{ts,tsx}",
       "!src/**/*.d.ts",
+      "!src/db/connection.ts",
+      "!src/__tests__/*.ts",
+      "!src/__tests__/**/*.ts",
+      "!src/resolvers/*.ts",
+      "!src/entities/*.ts",
     ],
     transform: {
       "^.+\\.tsx?$": "ts-jest"

@@ -1,29 +1,80 @@
-import { Express } from "../types";
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Express, MyJwtData } from "../types";
 import { Response } from "express";
+import { User } from "../models";
+import { signToken } from "../utils/signToken";
+const uuid = require("uuid");
 export const UserController = {
   me: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found login route" });
+      return res.status(200).json({ message: "found me route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
     }
   },
-  login: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  login: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      return res.status(200).json({ message: "found login route" });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: error.message });
-    }
+      const { email, password } = req.body as MyJwtData;
+      const user = await User.findOne({ email });
+      if (user === null) return res.status(400).json({ error: "Incorrect Credentials" });
+      const verifyPass = await user.isCorrectPassword(password);
+      if (!verifyPass) return res.status(400).json({ error: "Incorrect Credentials" });
+      const token = signToken({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        uuid: uuid.v4(),
+      });
+      const updated = await User.findOneAndUpdate(
+        { _id: user._id },
+        { token },
+        { new: true }
+      ).select("-__v");
+      return res.status(200).json({
+        user: {
+          username: updated!.username,
+          _id: updated!._id,
+          token,
+          cards: updated!.cards,
+          email: updated!.email,
+        },
+      });
+    } catch (error) {}
   },
-  signup: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  signup: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      return res.status(200).json({ message: "found signup route" });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: error.message });
-    }
+      const { username, email, password } = req.body;
+      const user = await User.create({
+        username,
+        email,
+        password,
+      });
+      const token = signToken({
+        username,
+        email,
+        _id: user._id,
+        uuid: uuid.v4(),
+      });
+      const updated = await User.findOneAndUpdate(
+        {
+          _id: user._id,
+        },
+        { token },
+        { new: true }
+      )
+        .select("-password")
+        .select("-__v");
+      return res.status(201).json({
+        user: {
+          _id: updated!._id,
+          username: updated!.username,
+          email: updated!.email,
+          token,
+          cards: updated!.cards,
+        },
+      });
+    } catch (error) {}
   },
   getUserCards: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {

@@ -20,7 +20,6 @@ const {
 
 (async function (): Promise<void> {
   console.log("hello world");
-  new logger("green", "postgres connection success").genLog();
 
   const app = express();
 

@@ -34,50 +34,46 @@ describe("CRUD user tests", () => {
             email: "test@email.com",
             password: "test",
         });
-        expect(signup.status).toBe(400);
+        expect(signup.status).toBe(201);
         const parsed = JSON.parse(signup.text);
-        expect(parsed).toBe("dkfjdkj");
         expect(typeof parsed.user._id).toBe("string");
         newUserId = parsed.user._id;
         expect(typeof parsed.user.token).toBe("string");
+        expect(parsed.user.cards).toStrictEqual([]);
         newUserToken = parsed.user.token;
+        expect(typeof newUserToken).toBe("string");
     }));
     test("POST /user/login hits login route", () => __awaiter(void 0, void 0, void 0, function* () {
         const login = yield (0, supertest_1.default)(app).post("/user/login").send({
             email: "test@email.com",
             password: "test",
         });
+        expect(login.status).toBe(200);
+        const parsed = JSON.parse(login.text);
+        expect(typeof parsed.user._id).toBe("string");
+        expect(typeof parsed.user.token).toBe("string");
+        newUserToken = parsed.user.token;
+        expect(typeof newUserToken).toBe("string");
+    }));
+    test("POST /user/login with bad credentials no email", () => __awaiter(void 0, void 0, void 0, function* () {
+        const login = yield (0, supertest_1.default)(app)
+            .post("/user/login")
+            .send({
+            email: void 0,
+            password: "test",
+        });
         expect(login.status).toBe(400);
         const parsed = JSON.parse(login.text);
-        expect(parsed).toBe("dkfjdkj");
+        expect(parsed.error).toBe("Incorrect Credentials");
     }));
-    test("POST /me get me query", () => __awaiter(void 0, void 0, void 0, function* () {
-        const me = yield (0, supertest_1.default)(app)
-            .get("/user/me")
-            .set({
-            authorization: `Bearer ${newUserToken}`,
-        });
-        expect(me.status).toBe(400);
-    }));
-    test("POST /user/forgotPassword hits forgotPassword route", () => __awaiter(void 0, void 0, void 0, function* () {
-        const forgotPassword = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
-            username: "test user",
+    test("POST /user/login with bad credentials no bad password", () => __awaiter(void 0, void 0, void 0, function* () {
+        const login = yield (0, supertest_1.default)(app).post("/user/login").send({
             email: "test@email.com",
-            password: "test",
+            password: "testsdfd",
         });
-        expect(forgotPassword.status).toBe(400);
-        const parsed = JSON.parse(forgotPassword.text);
-        expect(parsed).toBe("dkfjdkj");
-    }));
-    test("POST /user/changePassword hits changePassword route", () => __awaiter(void 0, void 0, void 0, function* () {
-        const changePassword = yield (0, supertest_1.default)(app).post("/user/changePassword").send({
-            username: "test user",
-            email: "test@email.com",
-            password: "test",
-        });
-        expect(changePassword.status).toBe(400);
-        const parsed = JSON.parse(changePassword.text);
-        expect(parsed).toBe("dkfjdkj");
+        expect(login.status).toBe(400);
+        const parsed = JSON.parse(login.text);
+        expect(parsed.error).toBe("Incorrect Credentials");
     }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });

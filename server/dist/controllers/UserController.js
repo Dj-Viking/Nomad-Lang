@@ -10,11 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
+const models_1 = require("../models");
+const signToken_1 = require("../utils/signToken");
+const uuid = require("uuid");
 exports.UserController = {
     me: function (_req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found login route" });
+                return res.status(200).json({ message: "found me route" });
             }
             catch (error) {
                 console.error(error);
@@ -22,26 +25,67 @@ exports.UserController = {
             }
         });
     },
-    login: function (_req, res) {
+    login: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found login route" });
+                const { email, password } = req.body;
+                const user = yield models_1.User.findOne({ email });
+                if (user === null)
+                    return res.status(400).json({ error: "Incorrect Credentials" });
+                const verifyPass = yield user.isCorrectPassword(password);
+                if (!verifyPass)
+                    return res.status(400).json({ error: "Incorrect Credentials" });
+                const token = (0, signToken_1.signToken)({
+                    _id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    uuid: uuid.v4(),
+                });
+                const updated = yield models_1.User.findOneAndUpdate({ _id: user._id }, { token }, { new: true }).select("-__v");
+                return res.status(200).json({
+                    user: {
+                        username: updated.username,
+                        _id: updated._id,
+                        token,
+                        cards: updated.cards,
+                        email: updated.email,
+                    },
+                });
             }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
+            catch (error) { }
         });
     },
-    signup: function (_req, res) {
+    signup: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found signup route" });
+                const { username, email, password } = req.body;
+                const user = yield models_1.User.create({
+                    username,
+                    email,
+                    password,
+                });
+                const token = (0, signToken_1.signToken)({
+                    username,
+                    email,
+                    _id: user._id,
+                    uuid: uuid.v4(),
+                });
+                const updated = yield models_1.User.findOneAndUpdate({
+                    _id: user._id,
+                }, { token }, { new: true })
+                    .select("-password")
+                    .select("-__v");
+                return res.status(201).json({
+                    user: {
+                        _id: updated._id,
+                        username: updated.username,
+                        email: updated.email,
+                        token,
+                        cards: updated.cards,
+                    },
+                });
             }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
+            catch (error) { }
         });
     },
     getUserCards: function (_req, res) {

@@ -6,7 +6,7 @@
     "install": "cd server && npm i && cd ../client && npm i",
     "tscheck": "cd client; npm run tscheck",
     "client": "cd client; npm run serve",
-    "test:ci": "",
+    "test:ci": "sh test:ci.sh",
     "test": "sh test.sh",
     "cover": "npm run cover:all",
     "cover:all": "npm run test:server; npm run test:client; npx codecov",
