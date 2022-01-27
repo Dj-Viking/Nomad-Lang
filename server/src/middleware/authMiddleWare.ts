@@ -7,6 +7,11 @@ export async function authMiddleware(
   res: Response,
   next: NextFunction
 ): Promise<Response | void> {
+  if (!!req.headers) {
+    if (!req.headers.authorization) {
+      return res.status(401).json({ error: "not authenticated" });
+    }
+  }
   // @ts-expect-error the header should be defined
   const token = req.headers.authorization.split(" ")[1] || null;
   if (!token) return res.status(401).json({ error: "not authenticated" });

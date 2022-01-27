@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Express, MyJwtData } from "../types";
+import { Express, ICard, MyJwtData } from "../types";
 import { Response } from "express";
 import { User } from "../models";
 import { signToken } from "../utils/signToken";
 const uuid = require("uuid");
 export const UserController = {
-  me: async function (req: Express.MyRequest, res: Response): Promise<Response> {
+  me: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const user = await User.findOne({ email: req!.user!.email }).select("-password");
       const token = signToken({
@@ -27,10 +27,7 @@ export const UserController = {
           cards: updated!.cards,
         },
       });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: error.message });
-    }
+    } catch (error) {}
   },
   login: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
@@ -96,9 +93,9 @@ export const UserController = {
       });
     } catch (error) {}
   },
-  getUserCards: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  getAllCards: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found getusercards route" });
+      return res.status(200).json({ message: "found getAllCards route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
@@ -106,7 +103,7 @@ export const UserController = {
   },
   getCategorizedCards: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found getusercards route" });
+      return res.status(200).json({ message: "found get categorized cards route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
@@ -128,9 +125,9 @@ export const UserController = {
       return res.status(500).json({ error: error.message });
     }
   },
-  deleteOneCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  deleteCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found delete one card route" });
+      return res.status(200).json({ message: "found delete card route" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
@@ -151,5 +148,22 @@ export const UserController = {
       console.error(error);
       return res.status(500).json({ error: error.message });
     }
+  },
+  addCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
+    try {
+      const user = await User.findOneAndUpdate(
+        { email: req!.user!.email },
+        {
+          $push: {
+            cards: { ...req.body, creator: req!.user!.username } as ICard,
+          },
+        },
+        { new: true }
+      )
+        .select("-password")
+        .select("-__v");
+
+      return res.status(200).json({ cards: user!.cards });
+    } catch (error) {}
   },
 };

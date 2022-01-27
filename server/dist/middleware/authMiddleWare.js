@@ -13,6 +13,11 @@ exports.authMiddleware = void 0;
 const verifyTokenAsync_1 = require("../utils/verifyTokenAsync");
 function authMiddleware(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!!req.headers) {
+            if (!req.headers.authorization) {
+                return res.status(401).json({ error: "not authenticated" });
+            }
+        }
         const token = req.headers.authorization.split(" ")[1] || null;
         if (!token)
             return res.status(401).json({ error: "not authenticated" });

@@ -96,10 +96,13 @@ export interface IJwtData extends jwt.JwtPayload {
   exp?: number;
 }
 
-export interface ICreateUser {
+export interface ICreateUserPayload {
   username: string;
   email: string;
   password: string;
+}
+export interface IUserCreateCardResponse {
+  cards: Array<ICard>;
 }
 
 export interface SignLoginRegisterMeTokenArgs {
@@ -167,7 +170,7 @@ export interface ILoginResponse {
 }
 
 export interface ICard {
-  _id: string | mongoose.Types.ObjectId;
+  _id?: string | mongoose.Types.ObjectId;
   frontsideText?: string;
   frontsideLanguage?: string;
   frontsidePicture?: string;
@@ -193,6 +196,7 @@ export interface IUser {
 export interface IUpdateUser {
   username?: string;
   email?: string;
+  cards: Array<ICard>;
   _id: string;
   role?: string;
 }
@@ -205,6 +209,7 @@ export interface IUpdateUserResponse {
   username: string;
   email: string;
   _id: string;
+  cards: ICard[];
   createdAt?: Date;
   updatedAt?: Date;
 }

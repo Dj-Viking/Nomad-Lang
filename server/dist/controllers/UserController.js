@@ -37,10 +37,7 @@ exports.UserController = {
                     },
                 });
             }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
+            catch (error) { }
         });
     },
     login: function (req, res) {
@@ -107,10 +104,10 @@ exports.UserController = {
             catch (error) { }
         });
     },
-    getUserCards: function (_req, res) {
+    getAllCards: function (_req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found getusercards route" });
+                return res.status(200).json({ message: "found getAllCards route" });
             }
             catch (error) {
                 console.error(error);
@@ -121,7 +118,7 @@ exports.UserController = {
     getCategorizedCards: function (_req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found getusercards route" });
+                return res.status(200).json({ message: "found get categorized cards route" });
             }
             catch (error) {
                 console.error(error);
@@ -151,10 +148,10 @@ exports.UserController = {
             }
         });
     },
-    deleteOneCard: function (_req, res) {
+    deleteCard: function (_req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found delete one card route" });
+                return res.status(200).json({ message: "found delete card route" });
             }
             catch (error) {
                 console.error(error);
@@ -182,6 +179,21 @@ exports.UserController = {
                 console.error(error);
                 return res.status(500).json({ error: error.message });
             }
+        });
+    },
+    addCard: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                    $push: {
+                        cards: Object.assign(Object.assign({}, req.body), { creator: req.user.username }),
+                    },
+                }, { new: true })
+                    .select("-password")
+                    .select("-__v");
+                return res.status(200).json({ cards: user.cards });
+            }
+            catch (error) { }
         });
     },
 };

@@ -16,6 +16,7 @@ const supertest_1 = __importDefault(require("supertest"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const models_1 = require("../../models");
 const app_1 = __importDefault(require("../../app"));
+const constants_1 = require("../../constants");
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield mongoose_1.default.connect("mongodb://localhost/rest-cats-test", {});
 }));
@@ -29,7 +30,26 @@ let newUserId = null;
 let newUserToken = null;
 let newestUserToken = null;
 describe("CRUD user tests", () => {
-    test("POST /user/signup hits signup route", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("POST /user/signup tries to create user without input args", () => __awaiter(void 0, void 0, void 0, function* () {
+        const missing1 = yield (0, supertest_1.default)(app).post("/user/signup").send({
+            username: "kdjfkdkjf",
+        });
+        expect(missing1.status).toBe(400);
+        const missing2 = yield (0, supertest_1.default)(app).post("/user/signup").send({
+            email: "kdjfkdkjf@dkjfkd.com",
+        });
+        expect(missing2.status).toBe(400);
+        const missing3 = yield (0, supertest_1.default)(app).post("/user/signup").send({
+            password: "kdjfkdkjf@dkjfkd.com",
+        });
+        expect(missing3.status).toBe(400);
+        const missing4 = yield (0, supertest_1.default)(app).post("/user/signup").send({
+            username: "kdjfkdkjf@dkjfkd.com",
+            email: "kdjfkdkjf@dkjfkd.com",
+        });
+        expect(missing4.status).toBe(400);
+    }));
+    test("POST /user/signup creates a user", () => __awaiter(void 0, void 0, void 0, function* () {
         const signup = yield (0, supertest_1.default)(app).post("/user/signup").send({
             username: "test user",
             email: "test@email.com",
@@ -88,6 +108,26 @@ describe("CRUD user tests", () => {
         newestUserToken = parsed.user.token;
         expect(typeof newestUserToken).toBe("string");
         expect(newestUserToken).not.toBe(newUserToken);
+    }));
+    test("POST /user/addCard tries to add card without token", () => __awaiter(void 0, void 0, void 0, function* () {
+        const noToken = yield (0, supertest_1.default)(app)
+            .post("/user/addCard")
+            .send(constants_1.MOCK_ADD_CARD);
+        expect(noToken.status).toBe(401);
+    }));
+    test("POST /user/addCard hits add card route", () => __awaiter(void 0, void 0, void 0, function* () {
+        const addCard = yield (0, supertest_1.default)(app)
+            .post("/user/addCard")
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        })
+            .send(constants_1.MOCK_ADD_CARD);
+        expect(addCard.status).toBe(200);
+        const parsed = JSON.parse(addCard.text);
+        expect(parsed.cards).toHaveLength(1);
+        expect(parsed.cards[0].creator).toBe("test user");
+        expect(typeof parsed.cards[0].createdAt).toBe("string");
+        expect(typeof parsed.cards[0].updatedAt).toBe("string");
     }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });
