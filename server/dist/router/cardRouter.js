@@ -8,8 +8,8 @@ const { getAllUserCards, getOneCard, getCategorizedCards, editCard, deleteOneCar
 const cardRouter = (0, express_1.Router)();
 exports.cardRouter = cardRouter;
 cardRouter.get("/getAllUserCards", authMiddleWare_1.authMiddleware, getAllUserCards);
-cardRouter.get("/getOneCard/:id", getOneCard);
-cardRouter.get("/getCategorizedCards/:category", getCategorizedCards);
+cardRouter.get("/getOneCard/:id", authMiddleWare_1.authMiddleware, getOneCard);
+cardRouter.get("/getCategorizedCards/:category", authMiddleWare_1.authMiddleware, getCategorizedCards);
 cardRouter.get("/editCard/:id", authMiddleWare_1.authMiddleware, editCard);
 cardRouter.get("/deleteOneCard/:id", authMiddleWare_1.authMiddleware, deleteOneCard);
 //# sourceMappingURL=cardRouter.js.map
