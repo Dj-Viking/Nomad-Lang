@@ -69,6 +69,10 @@ UserClass = __decorate([
     (0, typegoose_1.modelOptions)({
         schemaOptions: {
             collection: "users",
+            timestamps: {
+                createdAt: "createdAt",
+                updatedAt: "updatedAt",
+            },
         },
     }),
     (0, typegoose_1.pre)("save", function (next) {

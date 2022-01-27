@@ -27,6 +27,7 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
 const app = (0, app_1.default)();
 let newUserId = null;
 let newUserToken = null;
+let newestUserToken = null;
 describe("CRUD user tests", () => {
     test("POST /user/signup hits signup route", () => __awaiter(void 0, void 0, void 0, function* () {
         const signup = yield (0, supertest_1.default)(app).post("/user/signup").send({
@@ -74,6 +75,19 @@ describe("CRUD user tests", () => {
         expect(login.status).toBe(400);
         const parsed = JSON.parse(login.text);
         expect(parsed.error).toBe("Incorrect Credentials");
+    }));
+    test("GET /me get me query", () => __awaiter(void 0, void 0, void 0, function* () {
+        const me = yield (0, supertest_1.default)(app)
+            .get("/user/me")
+            .set({
+            authorization: `Bearer ${newUserToken}`,
+        });
+        expect(me.status).toBe(200);
+        const parsed = JSON.parse(me.text);
+        expect(typeof parsed.user.token).toBe("string");
+        newestUserToken = parsed.user.token;
+        expect(typeof newestUserToken).toBe("string");
+        expect(newestUserToken).not.toBe(newUserToken);
     }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });

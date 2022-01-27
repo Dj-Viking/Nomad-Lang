@@ -6,6 +6,10 @@ import mongooseUniqueValidator from "mongoose-unique-validator";
 @modelOptions({
   schemaOptions: {
     collection: "users",
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   },
 })
 @pre<UserClass>("save", async function (next) {

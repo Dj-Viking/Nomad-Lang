@@ -9,7 +9,7 @@ const { SECRET, EXPIRATION } = process.env;
 export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPasswordTokenArgs): string {
   const {
     username,
-    uuid: someUuid, //i think im aliasing here
+    uuid: someUuid, //aliasing the uuid to another name to store the value of uuid into
     email,
   } = args as SignLoginRegisterMeTokenArgs;
 

@@ -126,12 +126,23 @@ export interface ICreateCardPayload extends Object {
   backsideLanguage: string;
   backsidePicture: string;
 }
+
+export interface IMeResponse {
+  user: {
+    username: string;
+    email: string;
+    _id: string;
+    role?: string;
+    cards?: [];
+    token?: string;
+  };
+}
 export interface ICreateUserResponse extends Object {
   user: {
     username: string;
     email: string;
     _id: string;
-    role: string;
+    role?: string;
     cards?: [];
     token?: string;
     createdAt?: Date;

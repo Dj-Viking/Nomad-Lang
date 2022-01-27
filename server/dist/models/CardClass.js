@@ -53,6 +53,10 @@ CardClass = __decorate([
     (0, typegoose_1.modelOptions)({
         schemaOptions: {
             collection: "cards",
+            timestamps: {
+                createdAt: "createdAt",
+                updatedAt: "updatedAt",
+            },
         },
     })
 ], CardClass);

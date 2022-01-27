@@ -14,10 +14,28 @@ const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
 const uuid = require("uuid");
 exports.UserController = {
-    me: function (_req, res) {
+    me: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found me route" });
+                const user = yield models_1.User.findOne({ email: req.user.email }).select("-password");
+                const token = (0, signToken_1.signToken)({
+                    username: user.username,
+                    email: user.email,
+                    _id: user._id,
+                    uuid: uuid.v4(),
+                });
+                const updated = yield models_1.User.findOneAndUpdate({ email: user.email }, { token }, { new: true })
+                    .select("-password")
+                    .select("-__v");
+                return res.status(200).json({
+                    user: {
+                        username: updated.username,
+                        email: updated.email,
+                        _id: updated._id,
+                        token,
+                        cards: updated.cards,
+                    },
+                });
             }
             catch (error) {
                 console.error(error);
@@ -36,7 +54,6 @@ exports.UserController = {
                 if (!verifyPass)
                     return res.status(400).json({ error: "Incorrect Credentials" });
                 const token = (0, signToken_1.signToken)({
-                    _id: user._id,
                     username: user.username,
                     email: user.email,
                     uuid: uuid.v4(),
@@ -59,6 +76,9 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { username, email, password } = req.body;
+                if (!username || !email || !password) {
+                    return res.status(400).json({ error: "missing username email or password input!" });
+                }
                 const user = yield models_1.User.create({
                     username,
                     email,
@@ -67,7 +87,6 @@ exports.UserController = {
                 const token = (0, signToken_1.signToken)({
                     username,
                     email,
-                    _id: user._id,
                     uuid: uuid.v4(),
                 });
                 const updated = yield models_1.User.findOneAndUpdate({

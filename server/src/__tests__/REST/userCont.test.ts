@@ -2,7 +2,7 @@ import request from "supertest";
 import mongoose from "mongoose";
 import { User } from "../../models";
 import createServer from "../../app";
-import { ICreateUserResponse, ILoginError, ILoginResponse } from "types";
+import { ICreateUserResponse, ILoginError, ILoginResponse, IMeResponse } from "types";
 
 beforeAll(async () => {
   await mongoose.connect("mongodb://localhost/rest-cats-test", {});
@@ -17,6 +17,7 @@ afterAll(async () => {
 const app = createServer();
 let newUserId: string | null = null;
 let newUserToken: string | null = null;
+let newestUserToken: string | null = null;
 
 describe("CRUD user tests", () => {
   test("POST /user/signup hits signup route", async () => {
@@ -66,14 +67,19 @@ describe("CRUD user tests", () => {
     const parsed = JSON.parse(login.text) as ILoginError;
     expect(parsed.error).toBe("Incorrect Credentials");
   });
-  // test("POST /me get me query", async () => {
-  //   const me = await request(app)
-  //     .get("/user/me")
-  //     .set({
-  //       authorization: `Bearer ${newUserToken}`,
-  //     });
-  //   expect(me.status).toBe(400);
-  // });
+  test("GET /me get me query", async () => {
+    const me = await request(app)
+      .get("/user/me")
+      .set({
+        authorization: `Bearer ${newUserToken}`,
+      });
+    expect(me.status).toBe(200);
+    const parsed = JSON.parse(me.text) as IMeResponse;
+    expect(typeof parsed.user.token).toBe("string");
+    newestUserToken = parsed.user.token as string;
+    expect(typeof newestUserToken).toBe("string");
+    expect(newestUserToken).not.toBe(newUserToken);
+  });
   // test("POST /user/forgotPassword hits forgotPassword route", async () => {
   //   const forgotPassword = await request(app).post("/user/forgotPassword").send({
   //     username: "test user",

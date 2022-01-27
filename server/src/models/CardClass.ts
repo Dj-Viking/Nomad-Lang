@@ -3,6 +3,10 @@ import { prop, modelOptions } from "@typegoose/typegoose";
 @modelOptions({
   schemaOptions: {
     collection: "cards",
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
   },
 })
 export class CardClass {
@@ -25,7 +29,7 @@ export class CardClass {
   public backsidePicture?: string;
 
   @prop()
-  public creator?: string; // This is a single Reference
+  public creator?: string;
 
   @prop({ default: Date.now() })
   public createdAt: Date;
