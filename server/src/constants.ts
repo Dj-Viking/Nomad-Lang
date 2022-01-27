@@ -17,7 +17,7 @@ export const MOCK_ADD_CARD = {
   backsidePicture: "kjdfkjdjk",
 } as ICard;
 export const MOCK_EDIT_CARD = {
-  frontsideLanguage: "edited",
+  frontsideLanguage: "edited language",
   frontsideText: "kdfjdkjf",
   frontsidePicture: "kdjfkdj",
   backsideText: "fjkdjkfdk",

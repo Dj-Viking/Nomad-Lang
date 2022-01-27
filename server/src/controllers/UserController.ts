@@ -117,9 +117,15 @@ export const UserController = {
       return res.status(500).json({ error: error.message });
     }
   },
-  editCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  editCard: async function (req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found editcard route" });
+      const user = await User.findOne({ email: req!.user!.email });
+      //@ts-ignore can't non null assert after the [0] what the heck babel...
+      user!.cards[0]! = {
+        ...user!.cards[0],
+        ...req.body,
+      } as ICard;
+      return res.status(200).json({ cards: user!.cards });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });

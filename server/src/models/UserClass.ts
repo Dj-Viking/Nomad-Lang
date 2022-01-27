@@ -31,7 +31,7 @@ export class UserClass {
   public token?: string;
 
   @prop({ type: () => CardClass })
-  public cards?: CardClass[]; // This is a typed Array
+  public cards!: CardClass[]; // This is a typed Array
 
   @prop()
   public themePref?: string;

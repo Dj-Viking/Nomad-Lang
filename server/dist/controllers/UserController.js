@@ -137,10 +137,12 @@ exports.UserController = {
             }
         });
     },
-    editCard: function (_req, res) {
+    editCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found editcard route" });
+                const user = yield models_1.User.findOne({ email: req.user.email });
+                user.cards[0] = Object.assign(Object.assign({}, user.cards[0]), req.body);
+                return res.status(200).json({ cards: user.cards });
             }
             catch (error) {
                 console.error(error);

@@ -9,8 +9,9 @@ import {
   ILoginResponse,
   IMeResponse,
   IUserCreateCardResponse,
+  IUserEditCardResponse,
 } from "../../types";
-import { MOCK_ADD_CARD } from "../../constants";
+import { MOCK_ADD_CARD, MOCK_EDIT_CARD } from "../../constants";
 
 beforeAll(async () => {
   await mongoose.connect("mongodb://localhost/rest-cats-test", {});
@@ -23,6 +24,7 @@ afterAll(async () => {
   // mongoose.connection.close(() => done());
 });
 const app = createServer();
+let newCardId: string | null = null;
 let newUserId: string | null = null;
 let newUserToken: string | null = null;
 let newestUserToken: string | null = null;
@@ -123,9 +125,24 @@ describe("CRUD user tests", () => {
     expect(addCard.status).toBe(200);
     const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
     expect(parsed.cards).toHaveLength(1);
+    expect(typeof parsed.cards[0]._id).toBe("string");
+    newCardId = parsed.cards[0]._id as string;
     expect(parsed.cards[0].creator).toBe("test user");
     expect(typeof parsed.cards[0].createdAt).toBe("string");
     expect(typeof parsed.cards[0].updatedAt).toBe("string");
+  });
+
+  test("PUT /user/editCard test a user can edit their cards by id", async () => {
+    const editCard = await request(app)
+      .put(`/user/editCard/${newCardId}`)
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      })
+      .send(MOCK_EDIT_CARD);
+    expect(editCard.status).toBe(200);
+    const parsed = JSON.parse(editCard.text) as IUserEditCardResponse;
+    expect(parsed.cards).toHaveLength(1);
+    expect(parsed.cards[0].frontsideLanguage).toBe(MOCK_EDIT_CARD.frontsideLanguage); //"edited language"
   });
   // test("POST /user/forgotPassword hits forgotPassword route", async () => {
   //   const forgotPassword = await request(app).post("/user/forgotPassword").send({

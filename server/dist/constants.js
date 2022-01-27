@@ -12,7 +12,7 @@ exports.MOCK_ADD_CARD = {
     backsidePicture: "kjdfkjdjk",
 };
 exports.MOCK_EDIT_CARD = {
-    frontsideLanguage: "edited",
+    frontsideLanguage: "edited language",
     frontsideText: "kdfjdkjf",
     frontsidePicture: "kdjfkdj",
     backsideText: "fjkdjkfdk",
