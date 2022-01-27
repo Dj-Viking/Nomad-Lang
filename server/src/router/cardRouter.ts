@@ -1,4 +1,4 @@
-import { CardController } from "../controllers/CardController";
+import { CardController } from "../controllers";
 import { Router } from "express";
 import { authMiddleware } from "../middleware/authMiddleWare";
 
