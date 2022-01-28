@@ -1,4 +1,4 @@
-import { prop, modelOptions } from "@typegoose/typegoose";
+import { prop, modelOptions, mongoose } from "@typegoose/typegoose";
 
 @modelOptions({
   schemaOptions: {
@@ -10,6 +10,8 @@ import { prop, modelOptions } from "@typegoose/typegoose";
   },
 })
 export class CardClass {
+  public _id: mongoose.Types.ObjectId;
+
   @prop()
   public frontsideText?: string;
 

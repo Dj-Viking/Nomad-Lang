@@ -140,14 +140,26 @@ exports.UserController = {
     editCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield models_1.User.findOne({ email: req.user.email });
-                user.cards[0] = Object.assign(Object.assign({}, user.cards[0]), req.body);
-                return res.status(200).json({ cards: user.cards });
+                const { id } = req.params;
+                let tempCard = {};
+                let fieldCount = 0;
+                for (let i = 0; i < Object.keys(req.body).length; i++)
+                    fieldCount++;
+                if (fieldCount === 0)
+                    return res.status(400).json({
+                        error: "Need to provide fields to the json body that match a card's schema properties",
+                    });
+                else
+                    void 0;
+                for (const key in req.body) {
+                    tempCard = Object.assign(Object.assign({}, tempCard), { [`cards.$.${key}`]: req.body[key] });
+                }
+                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
+                    $set: Object.assign({}, tempCard),
+                }, { new: true });
+                return res.status(200).json({ cards: updatedUser.cards });
             }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
+            catch (error) { }
         });
     },
     deleteCard: function (_req, res) {
@@ -186,14 +198,14 @@ exports.UserController = {
     addCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
                     $push: {
-                        cards: Object.assign(Object.assign({}, req.body), { creator: req.user.username }),
+                        cards: req.body,
                     },
                 }, { new: true })
                     .select("-password")
                     .select("-__v");
-                return res.status(200).json({ cards: user.cards });
+                return res.status(200).json({ cards: updatedUser.cards });
             }
             catch (error) { }
         });

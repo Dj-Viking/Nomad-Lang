@@ -7,13 +7,13 @@ exports.MOCK_ADD_CARD = {
     frontsideText: "kdfjdkjf",
     frontsidePicture: "kdjfkdj",
     backsideText: "fjkdjkfdk",
-    creator: "test",
+    creator: "test user",
     backsideLanguage: "dkjfkjd",
     backsidePicture: "kjdfkjdjk",
 };
 exports.MOCK_EDIT_CARD = {
     frontsideLanguage: "edited language",
-    frontsideText: "kdfjdkjf",
+    frontsideText: "edited frontsideText",
     frontsidePicture: "kdjfkdj",
     backsideText: "fjkdjkfdk",
     backsideLanguage: "dkjfkjd",

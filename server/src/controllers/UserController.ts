@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Express, ICard, MyJwtData } from "../types";
+import { Express, MyJwtData } from "../types";
 import { Response } from "express";
-import { User } from "../models";
+import { CardClass, User } from "../models";
 import { signToken } from "../utils/signToken";
 const uuid = require("uuid");
 export const UserController = {
@@ -117,19 +117,33 @@ export const UserController = {
       return res.status(500).json({ error: error.message });
     }
   },
-  editCard: async function (req: Express.MyRequest, res: Response): Promise<Response> {
+  editCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      const user = await User.findOne({ email: req!.user!.email });
-      //@ts-ignore can't non null assert after the [0] what the heck babel...
-      user!.cards[0]! = {
-        ...user!.cards[0],
-        ...req.body,
-      } as ICard;
-      return res.status(200).json({ cards: user!.cards });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: error.message });
-    }
+      const { id } = req.params;
+      let tempCard = {} as CardClass;
+      let fieldCount = 0;
+      for (let i = 0; i < Object.keys(req.body).length; i++) fieldCount++;
+      if (fieldCount === 0)
+        return res.status(400).json({
+          error: "Need to provide fields to the json body that match a card's schema properties",
+        });
+      else void 0;
+      // set up the tempCard object that will update the subdocument card of the user's cards subdoc array
+      for (const key in req.body) {
+        tempCard = {
+          ...tempCard,
+          [`cards.$.${key}`]: req.body[key],
+        };
+      }
+      const updatedUser = await User.findOneAndUpdate(
+        { email: req!.user!.email, "cards._id": id }, //find user's card subdocument by it's id from req.params
+        {
+          $set: { ...tempCard }, //update that card in the subdoc array that we found in the cards._id filter
+        },
+        { new: true }
+      );
+      return res.status(200).json({ cards: updatedUser!.cards });
+    } catch (error) {}
   },
   deleteCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
     try {
@@ -157,11 +171,12 @@ export const UserController = {
   },
   addCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      const user = await User.findOneAndUpdate(
+      // const user = await User.findOne({ email: req!.user!.email });
+      const updatedUser = await User.findOneAndUpdate(
         { email: req!.user!.email },
         {
           $push: {
-            cards: { ...req.body, creator: req!.user!.username } as ICard,
+            cards: req.body,
           },
         },
         { new: true }
@@ -169,7 +184,7 @@ export const UserController = {
         .select("-password")
         .select("-__v");
 
-      return res.status(200).json({ cards: user!.cards });
+      return res.status(200).json({ cards: updatedUser!.cards });
     } catch (error) {}
   },
 };

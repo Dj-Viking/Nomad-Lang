@@ -132,6 +132,21 @@ describe("CRUD user tests", () => {
         expect(typeof parsed.cards[0].createdAt).toBe("string");
         expect(typeof parsed.cards[0].updatedAt).toBe("string");
     }));
+    test("POST /user/addCard hits add card route adds another card to see if theres two", () => __awaiter(void 0, void 0, void 0, function* () {
+        const addCard = yield (0, supertest_1.default)(app)
+            .post("/user/addCard")
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        })
+            .send(constants_1.MOCK_ADD_CARD);
+        expect(addCard.status).toBe(200);
+        const parsed = JSON.parse(addCard.text);
+        expect(parsed.cards).toHaveLength(2);
+        expect(typeof parsed.cards[0]._id).toBe("string");
+        expect(parsed.cards[0].creator).toBe("test user");
+        expect(typeof parsed.cards[0].createdAt).toBe("string");
+        expect(typeof parsed.cards[0].updatedAt).toBe("string");
+    }));
     test("PUT /user/editCard test a user can edit their cards by id", () => __awaiter(void 0, void 0, void 0, function* () {
         const editCard = yield (0, supertest_1.default)(app)
             .put(`/user/editCard/${newCardId}`)
@@ -141,8 +156,17 @@ describe("CRUD user tests", () => {
             .send(constants_1.MOCK_EDIT_CARD);
         expect(editCard.status).toBe(200);
         const parsed = JSON.parse(editCard.text);
-        expect(parsed.cards).toHaveLength(1);
+        expect(parsed.cards).toHaveLength(2);
         expect(parsed.cards[0].frontsideLanguage).toBe(constants_1.MOCK_EDIT_CARD.frontsideLanguage);
+    }));
+    test("PUT /user/editCard try to edit card with empty body", () => __awaiter(void 0, void 0, void 0, function* () {
+        const editCard = yield (0, supertest_1.default)(app)
+            .put(`/user/editCard/${newCardId}`)
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        });
+        expect(editCard.status).toBe(400);
+        expect(JSON.parse(editCard.text).error).toBe("Need to provide fields to the json body that match a card's schema properties");
     }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });

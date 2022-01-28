@@ -132,6 +132,22 @@ describe("CRUD user tests", () => {
     expect(typeof parsed.cards[0].updatedAt).toBe("string");
   });
 
+  test("POST /user/addCard hits add card route adds another card to see if theres two", async () => {
+    const addCard = await request(app)
+      .post("/user/addCard")
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      })
+      .send(MOCK_ADD_CARD as ICard);
+    expect(addCard.status).toBe(200);
+    const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
+    expect(parsed.cards).toHaveLength(2);
+    expect(typeof parsed.cards[0]._id).toBe("string");
+    expect(parsed.cards[0].creator).toBe("test user");
+    expect(typeof parsed.cards[0].createdAt).toBe("string");
+    expect(typeof parsed.cards[0].updatedAt).toBe("string");
+  });
+
   test("PUT /user/editCard test a user can edit their cards by id", async () => {
     const editCard = await request(app)
       .put(`/user/editCard/${newCardId}`)
@@ -141,8 +157,19 @@ describe("CRUD user tests", () => {
       .send(MOCK_EDIT_CARD);
     expect(editCard.status).toBe(200);
     const parsed = JSON.parse(editCard.text) as IUserEditCardResponse;
-    expect(parsed.cards).toHaveLength(1);
+    expect(parsed.cards).toHaveLength(2);
     expect(parsed.cards[0].frontsideLanguage).toBe(MOCK_EDIT_CARD.frontsideLanguage); //"edited language"
+  });
+  test("PUT /user/editCard try to edit card with empty body", async () => {
+    const editCard = await request(app)
+      .put(`/user/editCard/${newCardId}`)
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      });
+    expect(editCard.status).toBe(400);
+    expect(JSON.parse(editCard.text).error).toBe(
+      "Need to provide fields to the json body that match a card's schema properties"
+    );
   });
   // test("POST /user/forgotPassword hits forgotPassword route", async () => {
   //   const forgotPassword = await request(app).post("/user/forgotPassword").send({

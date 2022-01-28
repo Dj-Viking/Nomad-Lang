@@ -12,13 +12,13 @@ export const MOCK_ADD_CARD = {
   frontsideText: "kdfjdkjf",
   frontsidePicture: "kdjfkdj",
   backsideText: "fjkdjkfdk",
-  creator: "test",
+  creator: "test user",
   backsideLanguage: "dkjfkjd",
   backsidePicture: "kjdfkjdjk",
 } as ICard;
 export const MOCK_EDIT_CARD = {
   frontsideLanguage: "edited language",
-  frontsideText: "kdfjdkjf",
+  frontsideText: "edited frontsideText",
   frontsidePicture: "kdjfkdj",
   backsideText: "fjkdjkfdk",
   backsideLanguage: "dkjfkjd",
