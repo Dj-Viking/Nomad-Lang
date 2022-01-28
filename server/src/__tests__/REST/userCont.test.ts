@@ -10,6 +10,7 @@ import {
   IMeResponse,
   IUserCreateCardResponse,
   IUserEditCardResponse,
+  IUserDeleteCardResponse,
 } from "../../types";
 import { MOCK_ADD_CARD, MOCK_EDIT_CARD } from "../../constants";
 
@@ -170,6 +171,16 @@ describe("CRUD user tests", () => {
     expect(JSON.parse(editCard.text).error).toBe(
       "Need to provide fields to the json body that match a card's schema properties"
     );
+  });
+  test("DELETE /user/deleteCard user can delete a card", async () => {
+    const deleted = await request(app)
+      .delete(`/user/deleteCard/${newCardId}`)
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      });
+    expect(deleted.status).toBe(200);
+    const parsed = JSON.parse(deleted.text) as IUserDeleteCardResponse;
+    expect(parsed.cards).toHaveLength(1);
   });
   // test("POST /user/forgotPassword hits forgotPassword route", async () => {
   //   const forgotPassword = await request(app).post("/user/forgotPassword").send({

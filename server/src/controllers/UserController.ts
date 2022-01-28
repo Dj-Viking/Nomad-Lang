@@ -145,9 +145,22 @@ export const UserController = {
       return res.status(200).json({ cards: updatedUser!.cards });
     } catch (error) {}
   },
-  deleteCard: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  deleteCard: async function (req: Express.MyRequest, res: Response): Promise<Response> {
     try {
-      return res.status(200).json({ message: "found delete card route" });
+      const { id } = req.params;
+      const updatedUser = await User.findOneAndUpdate(
+        { "cards._id": id },
+        {
+          $pull: {
+            cards: { _id: id },
+          },
+        },
+        { new: true }
+      );
+      console.log("user", updatedUser);
+      if (updatedUser === null)
+        return res.status(400).json({ error: "Could not delete a card at this time" });
+      return res.status(200).json({ cards: updatedUser!.cards });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });

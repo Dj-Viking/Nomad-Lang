@@ -168,6 +168,16 @@ describe("CRUD user tests", () => {
         expect(editCard.status).toBe(400);
         expect(JSON.parse(editCard.text).error).toBe("Need to provide fields to the json body that match a card's schema properties");
     }));
+    test("DELETE /user/deleteCard user can delete a card", () => __awaiter(void 0, void 0, void 0, function* () {
+        const deleted = yield (0, supertest_1.default)(app)
+            .delete(`/user/deleteCard/${newCardId}`)
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        });
+        expect(deleted.status).toBe(200);
+        const parsed = JSON.parse(deleted.text);
+        expect(parsed.cards).toHaveLength(1);
+    }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });
     }));

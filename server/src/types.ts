@@ -107,6 +107,9 @@ export interface IUserCreateCardResponse {
 export interface IUserEditCardResponse {
   cards: Array<ICard>;
 }
+export interface IUserDeleteCardResponse {
+  cards: Array<ICard>;
+}
 
 export interface SignLoginRegisterMeTokenArgs {
   _id?: string;

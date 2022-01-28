@@ -15,3 +15,16 @@ const wordsUpdate = await User.findOneAndUpdate(
 );
 //wordsUpdate === { _id: "user ID here", words: [{ word: "something", _id: ... }]}
 ```
+
+* <a href="https://stackoverflow.com/questions/48385869/mongoose-remove-subdocument-from-array" rel="noopener noreferrer">Remove subdocument from model's array</a>
+```js
+    // Get the user from database
+    const user = await User.findById(req.user._id);
+
+    // Use the function filter to remove every user
+    // matching the date in weightInstance
+    user.weights = user.weights.filter(x => x.date !== weightInstance.date);
+
+    // Save the modified user
+    await user.save();
+```

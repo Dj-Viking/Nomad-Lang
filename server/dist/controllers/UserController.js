@@ -162,10 +162,19 @@ exports.UserController = {
             catch (error) { }
         });
     },
-    deleteCard: function (_req, res) {
+    deleteCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found delete card route" });
+                const { id } = req.params;
+                const updatedUser = yield models_1.User.findOneAndUpdate({ "cards._id": id }, {
+                    $pull: {
+                        cards: { _id: id },
+                    },
+                }, { new: true });
+                console.log("user", updatedUser);
+                if (updatedUser === null)
+                    return res.status(400).json({ error: "Could not delete a card at this time" });
+                return res.status(200).json({ cards: updatedUser.cards });
             }
             catch (error) {
                 console.error(error);
