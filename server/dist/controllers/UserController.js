@@ -108,37 +108,19 @@ exports.UserController = {
             catch (error) { }
         });
     },
-    getAllCards: function (_req, res) {
+    clearCards: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found getAllCards route" });
+                const user = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                    $set: {
+                        cards: [],
+                    },
+                }, { new: true })
+                    .select("-password")
+                    .select("-__v");
+                return res.status(200).json({ user });
             }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
-        });
-    },
-    getCategorizedCards: function (_req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return res.status(200).json({ message: "found get categorized cards route" });
-            }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
-        });
-    },
-    clearCards: function (_req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return res.status(200).json({ message: "found clear cards route" });
-            }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
+            catch (error) { }
         });
     },
     editCard: function (req, res) {
@@ -180,7 +162,6 @@ exports.UserController = {
                         cards: { _id: id },
                     },
                 }, { new: true });
-                console.log("user", updatedUser);
                 if (updatedUser === null)
                     return res.status(400).json({ error: "Could not delete a card at this time" });
                 return res.status(200).json({ cards: updatedUser.cards });

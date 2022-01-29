@@ -4,8 +4,6 @@ import { authMiddleware } from "../middleware/authMiddleWare";
 const {
   login,
   signup,
-  getCategorizedCards,
-  getAllCards,
   forgotPassword,
   changePassword,
   clearCards,
@@ -27,8 +25,6 @@ userRouter.put("/clearCards", authMiddleware, clearCards);
 userRouter.post("/addCard", authMiddleware, addCard);
 userRouter.put("/editCard/:id", authMiddleware, editCard);
 userRouter.delete("/deleteCard/:id", authMiddleware, deleteCard);
-userRouter.get("/getCategorizedCards", authMiddleware, getCategorizedCards);
-userRouter.get("/getAllCards", authMiddleware, getAllCards);
 userRouter.put("/changePassword", authMiddleware, changePassword);
 
 export { userRouter };

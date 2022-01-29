@@ -196,6 +196,16 @@ describe("CRUD user tests", () => {
         expect(badId.status).toBe(400);
         expect(JSON.parse(badId.text).error).toBe("Could not delete a card at this time");
     }));
+    test("PUT /user/clearCards update user cards clearing them", () => __awaiter(void 0, void 0, void 0, function* () {
+        const cleared = yield (0, supertest_1.default)(app)
+            .put("/user/clearCards")
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        });
+        expect(cleared.status).toBe(200);
+        const parsed = JSON.parse(cleared.text);
+        expect(parsed.user.cards).toHaveLength(0);
+    }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });
     }));

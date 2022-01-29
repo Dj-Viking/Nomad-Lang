@@ -202,6 +202,16 @@ describe("CRUD user tests", () => {
     expect(badId.status).toBe(400);
     expect(JSON.parse(badId.text).error).toBe("Could not delete a card at this time");
   });
+  test("PUT /user/clearCards update user cards clearing them", async () => {
+    const cleared = await request(app)
+      .put("/user/clearCards")
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      });
+    expect(cleared.status).toBe(200);
+    const parsed = JSON.parse(cleared.text);
+    expect(parsed.user.cards).toHaveLength(0);
+  });
   // test("POST /user/forgotPassword hits forgotPassword route", async () => {
   //   const forgotPassword = await request(app).post("/user/forgotPassword").send({
   //     username: "test user",
