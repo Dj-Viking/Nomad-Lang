@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable arrow-body-style */
 // https://docs.cypress.io/guides/guides/plugins-guide.html
 
@@ -26,6 +27,7 @@ const { deleteActuals } = require("../../utils/deleteActuals");
 const { writeDiff } = require("../../utils/writeDiff");
 // eslint-disable-next-line
 const { deleteDiff } = require("../../utils/deleteDiff");
+import * as coverage from "@cypress/code-coverage/task";
 
 module.exports = (on, config) => {
   on("before:browser:launch", (browser, launchOptions) => {
@@ -81,6 +83,10 @@ module.exports = (on, config) => {
       return result;
     },
   });
+  //@ts-ignore
+  // eslint-disable-next-line
+  coverage(on, config); //hmm not sure hwo to do this yet
+  // prob switch to jest with vue testing
 
   return Object.assign({}, config, {
     fixturesFolder: "tests/e2e/fixtures",

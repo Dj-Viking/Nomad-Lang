@@ -1,0 +1,1 @@
+[![codecov](https://codecov.io/gh/Dj-Viking/Nomad-Lang/branch/main/graph/badge.svg?token=X4CXPYZE2O)](https://codecov.io/gh/Dj-Viking/Nomad-Lang)

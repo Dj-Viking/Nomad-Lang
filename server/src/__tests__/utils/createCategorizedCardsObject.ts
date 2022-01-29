@@ -6,9 +6,7 @@ export interface CategorizedCardsObject {
   };
 }
 
-export function createCategorizedCardsObject(
-  cards: Array<ICard>
-): CategorizedCardsObject {
+export function createCategorizedCardsObject(cards: Array<ICard>): CategorizedCardsObject {
   let categorizedCardMap = {} as CategorizedCardsObject;
   let iterator = 0;
   while (iterator < cards.length) {
@@ -17,14 +15,14 @@ export function createCategorizedCardsObject(
       // inside this for loop right now
       ...categorizedCardMap,
       [`${
-        !categorizedCardMap[cards[iterator].frontSideLanguage]
-          ? cards[iterator].frontSideLanguage
-          : cards[iterator].frontSideLanguage
+        !categorizedCardMap[cards[iterator].frontsideLanguage as string]
+          ? cards[iterator].frontsideLanguage
+          : cards[iterator].frontsideLanguage
       }`]: {
         // spread the items we already have on that key symbol string of the front side language
-        cards: categorizedCardMap[cards[iterator].frontSideLanguage]
+        cards: categorizedCardMap[cards[iterator].frontsideLanguage as string]
           ? [
-              ...categorizedCardMap[cards[iterator].frontSideLanguage].cards,
+              ...categorizedCardMap[cards[iterator].frontsideLanguage as string].cards,
               cards[iterator],
             ]
           : // and add any new ones that we dont have yet on that category
@@ -38,4 +36,3 @@ export function createCategorizedCardsObject(
   // console.log("some obj entries now", Object.entries(categorizedCardMap));
   return categorizedCardMap;
 }
-

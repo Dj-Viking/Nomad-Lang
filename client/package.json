@@ -5,6 +5,7 @@
   "scripts": {
     "tscheck": "vue-ts-checker",
     "dev": "npm run tscheck; npm run serve",
+    "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",

@@ -56,7 +56,7 @@ __decorate([
     __metadata("design:type", String)
 ], Card.prototype, "backSidePicture", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.cards, { onDelete: "CASCADE" }),
+    (0, typeorm_1.ManyToOne)(() => User_1.User, (user) => user.cards, { onDelete: "CASCADE" }),
     __metadata("design:type", User_1.User)
 ], Card.prototype, "creator", void 0);
 __decorate([
