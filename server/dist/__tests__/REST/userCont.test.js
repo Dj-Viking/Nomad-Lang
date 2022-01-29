@@ -147,7 +147,7 @@ describe("CRUD user tests", () => {
         expect(typeof parsed.cards[0].createdAt).toBe("string");
         expect(typeof parsed.cards[0].updatedAt).toBe("string");
     }));
-    test("PUT /user/editCard test a user can edit their cards by id", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("PUT /user/editCard/:id test a user can edit their cards by id", () => __awaiter(void 0, void 0, void 0, function* () {
         const editCard = yield (0, supertest_1.default)(app)
             .put(`/user/editCard/${newCardId}`)
             .set({
@@ -159,7 +159,7 @@ describe("CRUD user tests", () => {
         expect(parsed.cards).toHaveLength(2);
         expect(parsed.cards[0].frontsideLanguage).toBe(constants_1.MOCK_EDIT_CARD.frontsideLanguage);
     }));
-    test("PUT /user/editCard try to edit card with empty body", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("PUT /user/editCard/:id try to edit card with empty body", () => __awaiter(void 0, void 0, void 0, function* () {
         const editCard = yield (0, supertest_1.default)(app)
             .put(`/user/editCard/${newCardId}`)
             .set({
@@ -168,7 +168,16 @@ describe("CRUD user tests", () => {
         expect(editCard.status).toBe(400);
         expect(JSON.parse(editCard.text).error).toBe("Need to provide fields to the json body that match a card's schema properties");
     }));
-    test("DELETE /user/deleteCard user can delete a card", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("PUT /user/editCard/:id try to edit card badId", () => __awaiter(void 0, void 0, void 0, function* () {
+        const badId = yield (0, supertest_1.default)(app)
+            .put(`/user/editCard/dkfjkdfjkdjkf`)
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        });
+        expect(badId.status).toBe(400);
+        expect(JSON.parse(badId.text).error).toBe("Bad request, id parameter was not a valid id format");
+    }));
+    test("DELETE /user/deleteCard/:id user can delete a card", () => __awaiter(void 0, void 0, void 0, function* () {
         const deleted = yield (0, supertest_1.default)(app)
             .delete(`/user/deleteCard/${newCardId}`)
             .set({
@@ -177,6 +186,15 @@ describe("CRUD user tests", () => {
         expect(deleted.status).toBe(200);
         const parsed = JSON.parse(deleted.text);
         expect(parsed.cards).toHaveLength(1);
+    }));
+    test("DELETE /user/deleteCard/:id with bogus id param", () => __awaiter(void 0, void 0, void 0, function* () {
+        const badId = yield (0, supertest_1.default)(app)
+            .delete("/user/deleteCard/ksdjfkjdsfjk")
+            .set({
+            authorization: `Bearer ${newestUserToken}`,
+        });
+        expect(badId.status).toBe(400);
+        expect(JSON.parse(badId.text).error).toBe("Could not delete a card at this time");
     }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });

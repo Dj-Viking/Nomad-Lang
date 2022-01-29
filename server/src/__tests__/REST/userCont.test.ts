@@ -149,7 +149,7 @@ describe("CRUD user tests", () => {
     expect(typeof parsed.cards[0].updatedAt).toBe("string");
   });
 
-  test("PUT /user/editCard test a user can edit their cards by id", async () => {
+  test("PUT /user/editCard/:id test a user can edit their cards by id", async () => {
     const editCard = await request(app)
       .put(`/user/editCard/${newCardId}`)
       .set({
@@ -161,7 +161,7 @@ describe("CRUD user tests", () => {
     expect(parsed.cards).toHaveLength(2);
     expect(parsed.cards[0].frontsideLanguage).toBe(MOCK_EDIT_CARD.frontsideLanguage); //"edited language"
   });
-  test("PUT /user/editCard try to edit card with empty body", async () => {
+  test("PUT /user/editCard/:id try to edit card with empty body", async () => {
     const editCard = await request(app)
       .put(`/user/editCard/${newCardId}`)
       .set({
@@ -172,7 +172,18 @@ describe("CRUD user tests", () => {
       "Need to provide fields to the json body that match a card's schema properties"
     );
   });
-  test("DELETE /user/deleteCard user can delete a card", async () => {
+  test("PUT /user/editCard/:id try to edit card badId", async () => {
+    const badId = await request(app)
+      .put(`/user/editCard/dkfjkdfjkdjkf`)
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      });
+    expect(badId.status).toBe(400);
+    expect(JSON.parse(badId.text).error).toBe(
+      "Bad request, id parameter was not a valid id format"
+    );
+  });
+  test("DELETE /user/deleteCard/:id user can delete a card", async () => {
     const deleted = await request(app)
       .delete(`/user/deleteCard/${newCardId}`)
       .set({
@@ -181,6 +192,15 @@ describe("CRUD user tests", () => {
     expect(deleted.status).toBe(200);
     const parsed = JSON.parse(deleted.text) as IUserDeleteCardResponse;
     expect(parsed.cards).toHaveLength(1);
+  });
+  test("DELETE /user/deleteCard/:id with bogus id param", async () => {
+    const badId = await request(app)
+      .delete("/user/deleteCard/ksdjfkjdsfjk")
+      .set({
+        authorization: `Bearer ${newestUserToken}`,
+      });
+    expect(badId.status).toBe(400);
+    expect(JSON.parse(badId.text).error).toBe("Could not delete a card at this time");
   });
   // test("POST /user/forgotPassword hits forgotPassword route", async () => {
   //   const forgotPassword = await request(app).post("/user/forgotPassword").send({

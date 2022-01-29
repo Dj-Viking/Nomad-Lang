@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
+const mongoose_1 = __importDefault(require("mongoose"));
 const uuid = require("uuid");
 exports.UserController = {
     me: function (req, res) {
@@ -141,6 +145,11 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
+                const validId = mongoose_1.default.Types.ObjectId.isValid(id);
+                if (!validId)
+                    return res
+                        .status(400)
+                        .json({ error: "Bad request, id parameter was not a valid id format" });
                 let tempCard = {};
                 let fieldCount = 0;
                 for (let i = 0; i < Object.keys(req.body).length; i++)
@@ -166,7 +175,7 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const updatedUser = yield models_1.User.findOneAndUpdate({ "cards._id": id }, {
+                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
                     $pull: {
                         cards: { _id: id },
                     },
@@ -176,10 +185,7 @@ exports.UserController = {
                     return res.status(400).json({ error: "Could not delete a card at this time" });
                 return res.status(200).json({ cards: updatedUser.cards });
             }
-            catch (error) {
-                console.error(error);
-                return res.status(500).json({ error: error.message });
-            }
+            catch (error) { }
         });
     },
     forgotPassword: function (_req, res) {
