@@ -11,7 +11,7 @@ export function createCategorizedCardsObject(cards: Array<ICard>): CategorizedCa
   let iterator = 0;
   while (iterator < cards.length) {
     categorizedCardMap = {
-      //does current categorizedCardMap hae a key already with the current language category exposed
+      //does current categorizedCardMap have a key already with the current language category exposed
       // inside this for loop right now
       ...categorizedCardMap,
       [`${

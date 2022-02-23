@@ -159,7 +159,6 @@ import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { createDeleteCardMutation } from "@/graphql/mutations/myMutations";
 import store from "../store";
-// import Skeleton from "../components/Skeleton.vue";
 import Spinner from "../components/Spinner.vue";
 import {
   DeleteCardResponse,

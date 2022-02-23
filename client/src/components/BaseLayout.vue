@@ -57,9 +57,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useQuery } from "@vue/apollo-composable";
-import gql from "graphql-tag";
-import { mapState } from "vuex";
 import {
   ICard,
   MeQueryResponse,
@@ -68,26 +65,13 @@ import {
   SidebarState,
   UserState,
 } from "../types";
-import { createMeQuery } from "../graphql/queries/myQueries";
 import auth from "../utils/AuthService";
 import store from "../store";
-
+import { keyGen } from "@/utils/keyGen";
 export default defineComponent({
   name: "BaseLayout",
   props: ["isHome"],
-  setup() {
-    //graphql me query for checking if the token is expired.
-    //basically if the backend returns a token whenever the route changes. the user gets a new token. otherwise if user is idle on the page, the token would expire after about an hour...for now
-    const { result: meResult, refetch } = useQuery(
-      gql`
-        ${createMeQuery()}
-      `
-    );
-
-    return { meResult, refetch };
-  },
   computed: {
-    ...mapState(["user"]),
     //if i need to change this read only state i need to dispatch an action or commit some mutation
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
       store.state.user.user.loggedIn,
@@ -99,15 +83,15 @@ export default defineComponent({
     readEvent(_event: Event): void {
       //do nothing
     },
-    async logout() {
-      auth.setToken("");
+    logout() {
+      auth.clearToken();
       store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
         root: true,
       });
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
       // this.refetch();
-      await store.commit(
+      store.commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: [] },
         {
@@ -119,7 +103,8 @@ export default defineComponent({
   watch: {
     //callback to refresh user token to execute whenever the application router changes
     $route: async function () {
-      await this.refetch();
+      // TODO: refactor to use REST api service
+      // await this.refetch();
     },
     meResult: async function (newValue: MeQueryResponse) {
       if (newValue.me.errors?.length) {
@@ -136,7 +121,7 @@ export default defineComponent({
                 backSideText: "sign in to see and add your own cards!!!",
                 backSideLanguage: "sign in to see and add your own cards!!!",
                 backSidePicture: "sign in to see and add your own cards!!!",
-                id: 0,
+                _id: keyGen(),
                 createdAt: "right now",
                 updatedAt: "just now",
                 creatorId: 0,

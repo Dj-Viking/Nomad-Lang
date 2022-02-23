@@ -17,12 +17,7 @@ import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
 import SideBar from "./components/SideBar.vue";
 import store from "./store";
-import {
-  ModalState,
-  OpenNotificationPayload,
-  RootCommitType,
-  SidebarState,
-} from "./types";
+import { ModalState, RootCommitType, SidebarState } from "./types";
 export default defineComponent({
   name: "App",
   components: {
@@ -43,47 +38,6 @@ export default defineComponent({
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
-    },
-    openError(): void {
-      store.commit(
-        "notification/OPEN_NOTIFICATION" as RootCommitType,
-        {
-          notification: {
-            type: "error",
-            message: "heres an error message",
-            toastDown: true,
-            toastUp: false,
-          },
-        } as OpenNotificationPayload,
-        { root: true }
-      );
-      setTimeout(() => {
-        this.closeNotification();
-      }, 3000);
-    },
-    openSuccess(): void {
-      store.commit(
-        "notification/OPEN_NOTIFICATION" as RootCommitType,
-        {
-          notification: {
-            type: "success",
-            message: "heres an success message",
-            toastDown: true,
-            toastUp: false,
-          },
-        } as OpenNotificationPayload,
-        { root: true }
-      );
-      setTimeout(() => {
-        this.closeNotification();
-      }, 3000);
-    },
-    closeNotification(): void {
-      store.commit(
-        "notification/CLOSE_NOTIFICATION" as RootCommitType,
-        {},
-        { root: true }
-      );
     },
   },
   mounted() {

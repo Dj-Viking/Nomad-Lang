@@ -1,8 +1,6 @@
 export interface ICard {
-  __typename?: "Card";
   // eslint-disable-next-line
-  id?: number;
-  cardId?: number | string;
+  _id: string;
   creatorId?: number | string;
   frontSideText?: string;
   frontSideLanguage?: string;
@@ -149,7 +147,6 @@ export interface UserState {
     token?: string | null | undefined;
     cards: ICard[];
     loggedIn: boolean;
-    __typename?: string;
     id?: number;
     createdAt?: number;
     updatedAt?: number;
@@ -169,8 +166,7 @@ export interface SetUserCommitPayload {
 }
 
 export interface UserEntityBase {
-  __typename?: string;
-  id?: number;
+  _id: string;
   username: string;
   themePref: string;
   email: string;

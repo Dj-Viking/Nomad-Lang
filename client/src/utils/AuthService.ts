@@ -20,7 +20,7 @@ class AuthService {
     return;
   }
 
-  public async clearToken(): Promise<void | Error> {
+  public clearToken(): void | Error {
     const token = this.getToken();
     if (token) {
       localStorage.removeItem("id_token");
