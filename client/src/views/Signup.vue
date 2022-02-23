@@ -68,7 +68,6 @@ import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { useMutation } from "@vue/apollo-composable";
 import { gql } from "graphql-tag";
-import { createRegisterMutation } from "../graphql/mutations/myMutations";
 import { RegisterResponse, RootCommitType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
@@ -86,61 +85,9 @@ export default defineComponent({
     const email = ref("");
     const username = ref("");
     const password = ref("");
-    const registerResponse = ref();
     const submitted = ref(false);
     const isLoading = ref(false);
 
-    const { mutate: submitRegister, onDone: onRegisterDone } = useMutation(
-      gql`
-        ${createRegisterMutation()}
-      `,
-      {
-        variables: {
-          options: {
-            email: email.value,
-            username: username.value,
-            password: password.value,
-          },
-        },
-      }
-    );
-
-    onRegisterDone(
-      (
-        result: FetchResult<
-          RegisterResponse,
-          Record<string, unknown>, //extensions
-          Record<string, unknown> //context ..not sure what these are for yet
-        >
-      ) => {
-        submitted.value = true;
-        if (result?.data?.register.errors) {
-          auth.clearToken();
-          store.commit("user/CLEAR_USER_TOKEN" as RootCommitType, null, {
-            root: true,
-          });
-          toast.error(`Error: ${result.data.register.errors[0].message}`, {
-            timeout: 3000,
-          });
-        } else {
-          toast.success("Good luck, have fun!", { timeout: 2000 });
-          isLoading.value = true;
-          store.commit(
-            "user/SET_USER" as RootCommitType,
-            result.data?.register.user,
-            { root: true }
-          );
-          auth;
-          registerResponse.value = result?.data as RegisterResponse;
-          submitted.value = false;
-          auth.setToken(result?.data?.register.token as string);
-          setTimeout(() => {
-            router.push("/");
-            isLoading.value = false;
-          }, 2000);
-        }
-      }
-    );
     function initFields(): void {
       submitted.value = false;
       email.value = "";
@@ -153,8 +100,8 @@ export default defineComponent({
     });
 
     return {
-      submitRegister,
       email,
+      toast,
       username,
       password,
       isLoading,
