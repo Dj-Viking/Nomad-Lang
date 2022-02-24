@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 // import { GraphQLScalarType, Kind } from 'graphql';
 import jwt from "jsonwebtoken";
-import { Card } from "./entities/Card";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -40,7 +39,7 @@ export interface MySendEmailOptions {
 }
 export interface CategorizedCardMap {
   categorized: {
-    [key: string]: Array<Card>;
+    [key: string]: Array<ICard>;
   };
 }
 /**

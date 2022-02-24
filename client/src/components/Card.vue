@@ -21,9 +21,9 @@
                     deleteCard($event, card?.id);
                     //only delete user's cards if they are logged in
                     if (isLoggedIn) {
-                      submitDeleteCard({
-                        id: card?.id,
-                      });
+                      // submitDeleteCard({
+                      //   id: card?.id,
+                      // });
                     }
                   }
                 "
@@ -154,14 +154,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
-import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
-import { createDeleteCardMutation } from "@/graphql/mutations/myMutations";
+import { defineComponent } from "@vue/runtime-core";
 import store from "../store";
 import Spinner from "../components/Spinner.vue";
 import {
-  DeleteCardResponse,
   ICard,
   LoadingState,
   ModalState,
@@ -170,7 +166,6 @@ import {
   UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
-import { FetchResult } from "@apollo/client/core";
 export default defineComponent({
   name: "Card",
   props: ["cards", "card", "id"],
@@ -183,41 +178,8 @@ export default defineComponent({
     // const { card } = toRef(props, "card");
     // console.log("what is card here", card);
     const toast = useToast();
-    const inputId = ref(0);
-    const { mutate: submitDeleteCard, onDone: onDeleteDone } = useMutation(
-      gql`
-        ${createDeleteCardMutation()}
-      `,
-      {
-        variables: {
-          //using a ref as a type definition of the input that will happen later
-          id: inputId.value,
-        },
-      }
-    );
-
-    onDeleteDone(
-      (
-        result: FetchResult<
-          DeleteCardResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): void => {
-        if (result.data?.deleteCard.errors?.length) {
-          toast.error("There was a problem deleting a card", {
-            timeout: 3000,
-          });
-        } else {
-          //set the cards again
-          //, which will also reset the categorized object
-          // use the async dispatch set cards
-        }
-      }
-    );
 
     return {
-      submitDeleteCard,
       toast,
     };
   },

@@ -1,9 +1,14 @@
-import { ICard, UserEntityBase } from "@/types";
-// let headers = {} as Record<string, string>;
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { ICard, LoginResponse, UserEntityBase } from "@/types";
+import { API_URL } from "@/constants";
 export interface IApiService {
   headers: Record<string, string>;
   me: (token?: string) => Promise<UserEntityBase | void>;
-  login: (email: string, password: string) => Promise<UserEntityBase | void>;
+  login: (args: {
+    email?: string;
+    username?: string;
+    password: string;
+  }) => Promise<LoginResponse>;
   signup: (
     username: string,
     email: string,
@@ -31,29 +36,42 @@ class ApiService implements IApiService {
     this.setInitialHeaders();
     this.setAuthHeader(token as string);
     try {
-      return void 0;
+      const res = await fetch(API_URL + "/user/me", {
+        method: "GET",
+        headers: this.headers,
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(`${data.error}`);
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.log(error);
+      // throw error;
     }
   }
-  public async login(
-    email: string,
-    password: string
-  ): Promise<void | UserEntityBase> {
+  public async login(args: {
+    email?: string;
+    username?: string;
+    password: string;
+  }): Promise<LoginResponse> {
+    const { username, email, password } = args;
     this.clearHeaders();
     this.setInitialHeaders();
     try {
-      return void 0;
+      const res = await fetch(API_URL + "/user/login", {
+        method: "POST",
+        body: JSON.stringify({ username, email, password }),
+        headers: this.headers,
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
   public async signup(
-    username: string,
-    email: string,
-    password: string
+    _username: string,
+    _email: string,
+    _password: string
   ): Promise<void | UserEntityBase> {
     this.clearHeaders();
     this.setInitialHeaders();
@@ -98,7 +116,7 @@ class ApiService implements IApiService {
     }
   }
   public async forgotPassword(
-    email: string
+    _email: string
   ): Promise<boolean | void | { message: string }> {
     this.clearHeaders();
     this.setInitialHeaders();
@@ -110,8 +128,8 @@ class ApiService implements IApiService {
     }
   }
   public async changePassword(
-    resetToken: string,
-    newPassword: string
+    _resetToken: string,
+    _newPassword: string
   ): Promise<boolean | void | { message: string }> {
     this.clearHeaders();
     this.setInitialHeaders();
@@ -140,4 +158,4 @@ class ApiService implements IApiService {
   }
 }
 
-export const API = new ApiService();
+export const api = new ApiService();

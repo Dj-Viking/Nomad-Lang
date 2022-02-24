@@ -7,13 +7,13 @@
         ($event) => {
           let event = $event;
           readEvent(event);
-          submitRegister({
-            options: {
-              email,
-              username,
-              password,
-            },
-          });
+          // submitRegister({
+          //   options: {
+          //     email,
+          //     username,
+          //     password,
+          //   },
+          // });
         }
       "
     >
@@ -66,13 +66,10 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
-import { useMutation } from "@vue/apollo-composable";
-import { gql } from "graphql-tag";
-import { RegisterResponse, RootCommitType } from "../types";
-import auth from "../utils/AuthService";
-import router from "../router";
-import { FetchResult } from "@apollo/client/core";
-import store from "../store";
+// import { RegisterResponse, RootCommitType } from "../types";
+// import auth from "../utils/AuthService";
+// import router from "../router";
+// import store from "../store";
 import { useToast } from "vue-toastification";
 // for some reason the value property is not on the default Event type
 export default defineComponent({

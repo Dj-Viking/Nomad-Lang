@@ -33,18 +33,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "@vue/runtime-core";
-import {
-  CardsState,
-  RootCommitType,
-  SidebarState,
-  ThemePrefChangeResponse,
-  UserState,
-} from "@/types";
+import { CardsState, RootCommitType, SidebarState, UserState } from "@/types";
 import store from "../store";
-import { useMutation } from "@vue/apollo-composable";
-import { gql } from "graphql-tag";
-import { createSetUserThemeMutation } from "@/graphql/mutations/myMutations";
-import { FetchResult } from "@apollo/client/core";
 import { useToast } from "vue-toastification";
 export default defineComponent({
   name: "ToggleButton",
@@ -60,38 +50,10 @@ export default defineComponent({
   setup() {
     const toast = useToast();
     const themePrefRef = ref("");
-    const { mutate: submitThemePrefChange, onDone: onThemePrefChangeDone } =
-      useMutation(
-        gql`
-          ${createSetUserThemeMutation()}
-        `,
-        {
-          variables: {
-            themePref: themePrefRef.value,
-          },
-        }
-      );
 
-    onThemePrefChangeDone(
-      async (
-        result: FetchResult<
-          ThemePrefChangeResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): Promise<void> => {
-        if (result.data?.setUserTheme.errors?.length) {
-          toast.error(
-            "We're sorry, There was a problem updating your preferred theme.",
-            {
-              timeout: 3000,
-            }
-          );
-        }
-      }
-    );
     return {
-      submitThemePrefChange,
+      themePrefRef,
+      toast,
     };
   },
   methods: {
@@ -100,9 +62,9 @@ export default defineComponent({
       store.commit("theme/TOGGLE_THEME" as RootCommitType, {}, { root: true });
       setTimeout(() => {
         if (this.isLoggedIn) {
-          this.submitThemePrefChange({
-            themePref: this.isLight ? "light" : "dark",
-          });
+          // this.submitThemePrefChange({
+          //   themePref: this.isLight ? "light" : "dark",
+          // });
         }
       }, 300);
     },

@@ -100,12 +100,8 @@ export interface MyDOMInputEvent extends Event {
     value: number | string;
   };
 }
-export interface MeQueryResponse extends Object {
-  me: {
-    user: UserEntityBase;
-    errors: MyErrorResponse;
-    cards: ICard[];
-  };
+export interface MeQueryResponse {
+  userOrError: UserEntityBase | Error;
 }
 export interface GetUserCardsResponse {
   getUserCards: {
@@ -171,6 +167,7 @@ export interface UserEntityBase {
   themePref: string;
   email: string;
   token: string | null;
+  cards: Array<ICard>;
   createdAt: number;
   updatedAt: number;
 }
@@ -298,11 +295,9 @@ export interface RegisterResponse {
   };
 }
 export interface LoginResponse {
-  login: {
-    cards: ICard[];
-    errors: MyErrorResponse;
-    token: string | null;
-    user: UserEntityBase | null;
+  userOrError: {
+    user: UserEntityBase;
+    error: string;
   };
 }
 

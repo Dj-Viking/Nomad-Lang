@@ -7,9 +7,9 @@
         ($event) => {
           readEvent($event);
           isLoading = true;
-          submitForgotPassword({
-            email: emailInput,
-          });
+          // submitForgotPassword({
+          //   email: emailInput,
+          // });
         }
       "
     >
@@ -49,12 +49,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "@vue/runtime-core";
-import { FetchResult } from "@apollo/client/core";
-import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
-import router from "../router";
-import { createForgotPasswordMutation } from "@/graphql/mutations/myMutations";
-import { ForgotPassResponse } from "@/types";
+// import router from "../router";
 import { useToast } from "vue-toastification";
 export default defineComponent({
   name: "Forgot",
@@ -63,53 +58,14 @@ export default defineComponent({
     const toast = useToast();
     const emailInput = ref("");
 
-    const { mutate: submitForgotPassword, onDone } = useMutation(
-      gql`
-        ${createForgotPasswordMutation()}
-      `,
-      {
-        variables: {
-          email: emailInput.value,
-        },
-      }
-    );
-
     onMounted(() => {
       document.title = "Forgot Password";
     });
 
-    onDone(
-      (
-        result: FetchResult<
-          ForgotPassResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): void => {
-        if (result.data?.forgotPassword.errors?.length) {
-          isLoading.value = false;
-          //set some error toast saying something went wrong with the request
-          toast.error("something went wrong with this request", {
-            timeout: 3000,
-          });
-        } else {
-          isLoading.value = false;
-          //set some toast message saying if an account has that email then the email was sent with a password reset link
-          toast.success(
-            "A password reset link was sent to the given email address",
-            {
-              timeout: 3000,
-            }
-          );
-          router.push("/");
-        }
-      }
-    );
-
     return {
       isLoading,
       emailInput,
-      submitForgotPassword,
+      toast,
     };
   },
   methods: {

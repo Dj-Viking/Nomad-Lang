@@ -41,14 +41,26 @@ exports.UserController = {
                     },
                 });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: error.message });
+            }
         });
     },
     login: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { email, password } = req.body;
-                const user = yield models_1.User.findOne({ email });
+                const { username, email, password } = req.body;
+                console.log("args", req.body);
+                let user = null;
+                if (username) {
+                    user = yield models_1.User.findOne({ username });
+                    console.log("user by username", user);
+                }
+                if (email) {
+                    user = yield models_1.User.findOne({ email });
+                }
+                console.log("user", user);
                 if (user === null)
                     return res.status(400).json({ error: "Incorrect Credentials" });
                 const verifyPass = yield user.isCorrectPassword(password);

@@ -58,16 +58,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import {
-  ICard,
   MeQueryResponse,
   RootCommitType,
-  RootDispatchType,
   SidebarState,
   UserState,
 } from "../types";
 import auth from "../utils/AuthService";
 import store from "../store";
-import { keyGen } from "@/utils/keyGen";
+// import { keyGen } from "@/utils/keyGen";
+import { api } from "@/utils/ApiService";
 export default defineComponent({
   name: "BaseLayout",
   props: ["isHome"],
@@ -104,66 +103,65 @@ export default defineComponent({
     //callback to refresh user token to execute whenever the application router changes
     $route: async function () {
       // TODO: refactor to use REST api service
+      const me = await api.me(auth.getToken() as string);
+      console.log("me data", me);
       // await this.refetch();
     },
-    meResult: async function (newValue: MeQueryResponse) {
-      if (newValue.me.errors?.length) {
-        auth.clearToken();
-        await store.dispatch("user/setUser", null, { root: true });
-        store.commit(
-          "cards/SET_DISPLAY_CARDS" as RootCommitType,
-          {
-            cards: [
-              {
-                frontSideText: "sign in to see and add your own cards!!!",
-                frontSideLanguage: "sign in to see and add your own cards!!!",
-                frontSidePicture: "sign in to see and add your own cards!!!",
-                backSideText: "sign in to see and add your own cards!!!",
-                backSideLanguage: "sign in to see and add your own cards!!!",
-                backSidePicture: "sign in to see and add your own cards!!!",
-                _id: keyGen(),
-                createdAt: "right now",
-                updatedAt: "just now",
-                creatorId: 0,
-              } as ICard,
-            ],
-          },
-          { root: true }
-        );
-        store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
-          root: true,
-        });
-      } else {
-        //set new token in storage
-        auth.setToken(newValue.me.user.token as string);
-        store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
-          root: true,
-        });
-
-        await store.dispatch(
-          "cards/setCards" as RootDispatchType,
-          { cards: newValue.me.cards },
-          { root: true }
-        );
-
-        // console.log("response of dispatch of set cat cards", res);
-        //set user vuex state with cards
-        await store.dispatch(
-          "user/setUser" as RootDispatchType,
-          { ...newValue.me.user },
-          {
-            root: true,
-          }
-        );
-
-        store.commit(
-          "theme/SET_THEME" as RootCommitType,
-          newValue.me.user.themePref,
-          {
-            root: true,
-          }
-        );
-      }
+    meResult: async function (_res: MeQueryResponse) {
+      // if (res.userOrError instanceof Error) {
+      //   auth.clearToken();
+      //   await store.dispatch("user/setUser", null, { root: true });
+      //   store.commit(
+      //     "cards/SET_DISPLAY_CARDS" as RootCommitType,
+      //     {
+      //       cards: [
+      //         {
+      //           frontSideText: "sign in to see and add your own cards!!!",
+      //           frontSideLanguage: "sign in to see and add your own cards!!!",
+      //           frontSidePicture: "sign in to see and add your own cards!!!",
+      //           backSideText: "sign in to see and add your own cards!!!",
+      //           backSideLanguage: "sign in to see and add your own cards!!!",
+      //           backSidePicture: "sign in to see and add your own cards!!!",
+      //           _id: keyGen(),
+      //           createdAt: "right now",
+      //           updatedAt: "just now",
+      //           creatorId: 0,
+      //         } as ICard,
+      //       ],
+      //     },
+      //     { root: true }
+      //   );
+      //   store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+      //     root: true,
+      //   });
+      // } else {
+      //   //set new token in storage
+      //   auth.setToken(res.userOrError.token as string);
+      //   store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+      //     root: true,
+      //   });
+      //   await store.dispatch(
+      //     "cards/setCards" as RootDispatchType,
+      //     { cards: res.userOrError.cards },
+      //     { root: true }
+      //   );
+      //   // console.log("response of dispatch of set cat cards", res);
+      //   //set user vuex state with cards
+      //   await store.dispatch(
+      //     "user/setUser" as RootDispatchType,
+      //     { ...res.userOrError },
+      //     {
+      //       root: true,
+      //     }
+      //   );
+      //   store.commit(
+      //     "theme/SET_THEME" as RootCommitType,
+      //     res.userOrError.themePref,
+      //     {
+      //       root: true,
+      //     }
+      //   );
+      // }
     },
   },
 });

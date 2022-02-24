@@ -9,11 +9,9 @@
           let event = $event;
           readEvent(event);
           submitLogin({
-            options: {
-              email: /@/g.test(loginInput) ? loginInput : '',
-              username: /@/g.test(loginInput) ? '' : loginInput,
-              password,
-            },
+            email: /@/g.test(loginInput) ? loginInput : '',
+            username: /@/g.test(loginInput) ? '' : loginInput,
+            password,
           });
         }
       "
@@ -67,21 +65,18 @@
   </base-layout>
 </template>
 <script lang="ts">
-import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
 import { defineComponent, ref, onMounted } from "vue";
 import { useStore } from "vuex";
-import { createLoginMutation } from "../graphql/mutations/myMutations";
 import {
   LoadingState,
   LoginResponse,
   RootCommitType,
-  RootDispatchType,
+  // RootDispatchType,
 } from "../types";
-import auth from "../utils/AuthService";
-import router from "../router";
+// import auth from "../utils/AuthService";
+// import router from "../router";
+import { api } from "@/utils/ApiService";
 import store from "../store";
-import { FetchResult } from "@apollo/client/core";
 import { useToast } from "vue-toastification";
 
 export default defineComponent({
@@ -95,73 +90,25 @@ export default defineComponent({
     const store = useStore();
     const loginInput = ref("");
     const password = ref("");
-    const successMsg = ref("");
-    const showSuccess = ref(false);
-    const {
-      mutate: submitLogin,
-      loading: loginIsLoading,
-      error: loginError,
-      onDone: onLoginDone,
-    } = useMutation(
-      gql`
-        ${createLoginMutation()}
-      `,
-      {
-        variables: {
-          options: {
-            email: loginInput.value,
-            username: loginInput.value,
-            password: password.value,
-          },
-        },
-      }
-    );
 
-    onLoginDone(
-      async (
-        result: FetchResult<
-          LoginResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ) => {
-        if (result?.data?.login.errors) {
-          toast.error(`Error: ${result.data.login.errors[0].message}`, {
-            timeout: 3000,
-          });
-          store.commit("loading/SET_LOADING" as RootCommitType, false, {
-            root: true,
-          });
-        } else {
-          toast.success("Logged in", {
-            timeout: 2000,
-          });
-          store.commit("loading/SET_LOADING" as RootCommitType, false, {
-            root: true,
-          });
-          showSuccess.value = false;
-          successMsg.value = "";
-          const payload = {
-            user: result.data?.login.user,
-            loggedIn: true,
-          };
-          store.commit("user/SET_USER" as RootCommitType, payload, {
-            root: true,
-          });
-          await store
-            .dispatch(
-              "cards/setCards" as RootDispatchType,
-              { cards: result.data?.login.cards },
-              { root: true }
-            )
-            .catch((e) =>
-              console.error("error when setting cards after logging in", e)
-            );
-          auth.setToken(result?.data?.login.token as string);
-          router.push("/");
-        }
+    const submitLogin = async (args: {
+      username?: string;
+      email?: string;
+      password: string;
+    }): Promise<void> => {
+      try {
+        const userOrError = (await api.login(args)) as LoginResponse;
+        console.log("user or error", userOrError);
+        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          root: true,
+        });
+      } catch (error) {
+        console.error("error during login", error);
+        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          root: true,
+        });
       }
-    );
+    };
 
     onMounted(() => {
       store.commit("loading/SET_LOADING", false, { root: true });
@@ -169,12 +116,11 @@ export default defineComponent({
     });
 
     return {
+      toast,
+      submitLogin,
       loginInput,
       password,
-      submitLogin,
       store,
-      loginIsLoading,
-      loginError,
     };
   },
   methods: {
