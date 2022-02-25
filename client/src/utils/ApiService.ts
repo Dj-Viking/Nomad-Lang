@@ -1,19 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ICard, LoginResponse, UserEntityBase } from "@/types";
+import {
+  ICard,
+  LoginResponse,
+  RegisterResponse,
+  UserEntityBase,
+} from "@/types";
 import { API_URL } from "@/constants";
 export interface IApiService {
   headers: Record<string, string>;
-  me: (token?: string) => Promise<UserEntityBase | void>;
+  me: (token?: string) => Promise<UserEntityBase | Error>;
   login: (args: {
     email?: string;
     username?: string;
     password: string;
   }) => Promise<LoginResponse>;
-  signup: (
-    username: string,
-    email: string,
-    password: string
-  ) => Promise<UserEntityBase | void>;
+  signup: (args: {
+    username: string;
+    email: string;
+    password: string;
+  }) => Promise<RegisterResponse | void>;
   clearCards: (token: string) => Promise<UserEntityBase | void>;
   editCard: (token: string) => Promise<Array<ICard> | void>;
   deleteCard: (token: string) => Promise<Array<ICard> | void>;
@@ -31,7 +36,7 @@ class ApiService implements IApiService {
   constructor() {
     this.headers = {};
   }
-  public async me(token?: string): Promise<UserEntityBase | void> {
+  public async me(token?: string): Promise<UserEntityBase | Error> {
     this.clearHeaders();
     this.setInitialHeaders();
     this.setAuthHeader(token as string);
@@ -41,10 +46,12 @@ class ApiService implements IApiService {
         headers: this.headers,
       });
       const data = await res.json();
-      if (data.error) throw new Error(`${data.error}`);
+      if (data.error) throw data;
+      else return data;
     } catch (error) {
-      console.log(error);
-      // throw error;
+      const err = error as Error;
+      console.log(err);
+      return err;
     }
   }
   public async login(args: {
@@ -68,18 +75,24 @@ class ApiService implements IApiService {
       throw error;
     }
   }
-  public async signup(
-    _username: string,
-    _email: string,
-    _password: string
-  ): Promise<void | UserEntityBase> {
+  public async signup(args: {
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<RegisterResponse | void> {
     this.clearHeaders();
     this.setInitialHeaders();
     try {
-      return void 0;
+      const { username, email, password } = args;
+      const res = await fetch(API_URL + "/user/signup", {
+        method: "POST",
+        body: JSON.stringify({ username, email, password }),
+        headers: this.headers,
+      });
+      const data = (await res.json()) as RegisterResponse;
+      return data;
     } catch (error) {
       console.error(error);
-      throw error;
     }
   }
   public async clearCards(token: string): Promise<void | UserEntityBase> {

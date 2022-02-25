@@ -9,6 +9,7 @@
 
   - [ ] login in login.vue
     - cant figure out what the f*** is happening moving on to signup for now
+    - could be that the async functions are called inside setup(){} which maybe doesn't work well
   - [ ] register in signup.vue
   - [ ] forgotPassword in forgotpassword.vue
   - [ ] changePassword in changePassword.vue

@@ -36,16 +36,13 @@ export const UserController = {
   login: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const { username, email, password } = req.body as MyJwtData;
-      console.log("args", req.body);
       let user = null;
       if (username) {
         user = await User.findOne({ username });
-        console.log("user by username", user);
       }
       if (email) {
         user = await User.findOne({ email });
       }
-      console.log("user", user);
       if (user === null) return res.status(400).json({ error: "Incorrect Credentials" });
       const verifyPass = await user!.isCorrectPassword(password);
       if (!verifyPass) return res.status(400).json({ error: "Incorrect Credentials" });

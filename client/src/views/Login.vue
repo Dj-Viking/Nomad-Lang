@@ -4,11 +4,11 @@
       class="field box"
       style="margin: 0 20%"
       @submit.prevent="
-        ($event) => {
+        async ($event) => {
           store.commit('loading/SET_LOADING', true, { root: true });
           let event = $event;
           readEvent(event);
-          submitLogin({
+          await submitLogin({
             email: /@/g.test(loginInput) ? loginInput : '',
             username: /@/g.test(loginInput) ? '' : loginInput,
             password,
@@ -91,25 +91,6 @@ export default defineComponent({
     const loginInput = ref("");
     const password = ref("");
 
-    const submitLogin = async (args: {
-      username?: string;
-      email?: string;
-      password: string;
-    }): Promise<void> => {
-      try {
-        const userOrError = (await api.login(args)) as LoginResponse;
-        console.log("user or error", userOrError);
-        store.commit("loading/SET_LOADING" as RootCommitType, false, {
-          root: true,
-        });
-      } catch (error) {
-        console.error("error during login", error);
-        store.commit("loading/SET_LOADING" as RootCommitType, false, {
-          root: true,
-        });
-      }
-    };
-
     onMounted(() => {
       store.commit("loading/SET_LOADING", false, { root: true });
       document.title = "Login";
@@ -117,7 +98,6 @@ export default defineComponent({
 
     return {
       toast,
-      submitLogin,
       loginInput,
       password,
       store,
@@ -128,6 +108,24 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       //do nothing
+    },
+    async submitLogin(args: {
+      username?: string;
+      email?: string;
+      password: string;
+    }): Promise<void> {
+      try {
+        const userOrError = (await api.login(args)) as LoginResponse;
+        console.log("user or errorasdadsfsadfads", userOrError);
+        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          root: true,
+        });
+      } catch (error) {
+        console.error("error during login", error);
+        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          root: true,
+        });
+      }
     },
   },
 });

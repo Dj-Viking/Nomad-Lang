@@ -51,16 +51,13 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { username, email, password } = req.body;
-                console.log("args", req.body);
                 let user = null;
                 if (username) {
                     user = yield models_1.User.findOne({ username });
-                    console.log("user by username", user);
                 }
                 if (email) {
                     user = yield models_1.User.findOne({ email });
                 }
-                console.log("user", user);
                 if (user === null)
                     return res.status(400).json({ error: "Incorrect Credentials" });
                 const verifyPass = yield user.isCorrectPassword(password);

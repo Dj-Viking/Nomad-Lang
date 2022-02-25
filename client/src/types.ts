@@ -288,18 +288,15 @@ export interface CustomError {
 export type MyErrorResponse = CustomError[] | null;
 
 export interface RegisterResponse {
-  register: {
-    errors: MyErrorResponse;
-    token: string | null;
-    user: UserEntityBase | null;
-  };
+  user: UserEntityBase;
 }
-export interface LoginResponse {
-  userOrError: {
-    user: UserEntityBase;
-    error: string;
-  };
-}
+
+export type LoginResponse = { 
+  user: UserEntityBase 
+} & { 
+  error: string | undefined 
+};
+
 
 export interface NotificationState {
   notification: {

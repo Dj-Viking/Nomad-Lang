@@ -1,22 +1,6 @@
 <template>
   <base-layout :isHome="false">
-    <form
-      class="field box"
-      style="margin: 0 20%"
-      @submit.prevent="
-        ($event) => {
-          let event = $event;
-          readEvent(event);
-          // submitRegister({
-          //   options: {
-          //     email,
-          //     username,
-          //     password,
-          //   },
-          // });
-        }
-      "
-    >
+    <form class="field box" style="margin: 0 20%">
       <label class="mt-0 label">Username</label>
       <input
         class="mt-4 input"
@@ -50,6 +34,19 @@
         :disabled="!username || !email || !password"
         v-if="!isLoading"
         class="button is-success mt-5"
+        type="submit"
+        @click.prevent="
+          ($event) => {
+            submitted = true;
+            isLoading = true;
+            readEvent($event);
+            submitRegister({
+              username,
+              email,
+              password,
+            });
+          }
+        "
       >
         Sign Up!
       </button>
@@ -58,7 +55,7 @@
         is-loading
         class="button is-loading is-success mt-5"
       >
-        Login
+        spinner
       </button>
     </form>
   </base-layout>
@@ -67,10 +64,12 @@
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 // import { RegisterResponse, RootCommitType } from "../types";
-// import auth from "../utils/AuthService";
-// import router from "../router";
+import auth from "../utils/AuthService";
+import router from "../router";
 // import store from "../store";
 import { useToast } from "vue-toastification";
+import { api } from "@/utils/ApiService";
+import { RegisterResponse } from "@/types";
 // for some reason the value property is not on the default Event type
 export default defineComponent({
   name: "Signup",
@@ -97,6 +96,7 @@ export default defineComponent({
     });
 
     return {
+      submitted,
       email,
       toast,
       username,
@@ -109,9 +109,25 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       // do nothing
+      // console.log("submitted", this.submitted);
     },
-    // eslint-disable-next-line
-    // 
+    async submitRegister(args: {
+      username: string;
+      email: string;
+      password: string;
+    }): Promise<void> {
+      const { user } = (await api.signup(args)) as RegisterResponse;
+      auth.setToken(user.token as string);
+      console.log("signup data", user);
+      setTimeout(() => {
+        this.submitted = false;
+        this.isLoading = false;
+        this.toast.success("Good luck have fun!", {
+          timeout: 2000,
+        });
+        router.push("/");
+      }, 3000);
+    },
   },
 });
 </script>

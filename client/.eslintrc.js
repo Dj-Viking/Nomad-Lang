@@ -14,6 +14,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    "vue/multi-word-component-names": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "no-extra-boolean-cast": "off",
     "no-prototype-builtins": "off",

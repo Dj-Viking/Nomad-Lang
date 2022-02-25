@@ -107,6 +107,7 @@ export default defineComponent({
       console.log("me data", me);
       // await this.refetch();
     },
+    // eslint-disable-next-line
     meResult: async function (_res: MeQueryResponse) {
       // if (res.userOrError instanceof Error) {
       //   auth.clearToken();
