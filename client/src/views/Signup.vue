@@ -40,11 +40,13 @@
             submitted = true;
             isLoading = true;
             readEvent($event);
-            submitRegister({
-              username,
-              email,
-              password,
-            });
+            (async () => {
+              await submitRegister({
+                username,
+                email,
+                password,
+              });
+            })();
           }
         "
       >
@@ -61,15 +63,15 @@
   </base-layout>
 </template>
 <script lang="ts">
+/* eslint-disable no-unreachable */
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
-// import { RegisterResponse, RootCommitType } from "../types";
+import { RegisterResponse, RootDispatchType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
-// import store from "../store";
+import store from "../store";
 import { useToast } from "vue-toastification";
 import { api } from "@/utils/ApiService";
-import { RegisterResponse } from "@/types";
 // for some reason the value property is not on the default Event type
 export default defineComponent({
   name: "Signup",
@@ -116,17 +118,46 @@ export default defineComponent({
       email: string;
       password: string;
     }): Promise<void> {
-      const { user } = (await api.signup(args)) as RegisterResponse;
-      auth.setToken(user.token as string);
-      console.log("signup data", user);
-      setTimeout(() => {
+      try {
+        const { user, error } = (await api.signup(args)) as RegisterResponse;
+        if (!!error && typeof user === "undefined") {
+          throw error;
+        }
+        //user is defined
+        auth.setToken(user!.token as string);
+        // throw "unreachable";
+        // eslint-disable-next-line
+        // @ts-ignore unreachable?
+
+        // set the user
+        store.dispatch(
+          "user/setUser" as RootDispatchType,
+          { ...user },
+          {
+            root: true,
+          }
+        );
+        // set the cards
+        store.dispatch("cards/setCards" as RootDispatchType, user?.cards, {
+          root: true,
+        });
+        setTimeout(() => {
+          this.submitted = false;
+          this.isLoading = false;
+          this.toast.success("Good luck have fun!", {
+            timeout: 2000,
+          });
+          router.push("/");
+        }, 3000);
+      } catch (error) {
+        const err = error as Error;
+        console.error("error during the signup", err);
         this.submitted = false;
         this.isLoading = false;
-        this.toast.success("Good luck have fun!", {
-          timeout: 2000,
+        this.toast.error(`Oops! error happened during signup ${err.message}`, {
+          timeout: 3000,
         });
-        router.push("/");
-      }, 3000);
+      }
     },
   },
 });

@@ -2,13 +2,14 @@
 import {
   ICard,
   LoginResponse,
+  MeQueryResponse,
   RegisterResponse,
   UserEntityBase,
 } from "@/types";
 import { API_URL } from "@/constants";
 export interface IApiService {
   headers: Record<string, string>;
-  me: (token?: string) => Promise<UserEntityBase | Error>;
+  me: (token?: string) => Promise<MeQueryResponse>;
   login: (args: {
     email?: string;
     username?: string;
@@ -36,7 +37,7 @@ class ApiService implements IApiService {
   constructor() {
     this.headers = {};
   }
-  public async me(token?: string): Promise<UserEntityBase | Error> {
+  public async me(token?: string): Promise<MeQueryResponse> {
     this.clearHeaders();
     this.setInitialHeaders();
     this.setAuthHeader(token as string);
@@ -46,12 +47,12 @@ class ApiService implements IApiService {
         headers: this.headers,
       });
       const data = await res.json();
-      if (data.error) throw data;
+      if (data.error) return data;
       else return data;
     } catch (error) {
       const err = error as Error;
       console.log(err);
-      return err;
+      return { user: void 0, error: err.message };
     }
   }
   public async login(args: {
@@ -68,7 +69,7 @@ class ApiService implements IApiService {
         body: JSON.stringify({ username, email, password }),
         headers: this.headers,
       });
-      const data = await res.json();
+      const data = (await res.json()) as LoginResponse;
       return data;
     } catch (error) {
       console.error(error);

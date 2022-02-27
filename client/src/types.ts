@@ -17,25 +17,22 @@ export interface ICard {
   color?: string | "blue"; //TODO remove
 }
 
-export interface ThemePrefChangeResponse {
-  setUserTheme: {
-    themePref: string;
-    errors: MyErrorResponse;
-  };
-}
-export interface DeleteCardResponse {
-  deleteCard: {
-    errors: MyErrorResponse;
-    cards: ICard[];
-  };
-}
+export type ThemePrefChangeResponse = {
+  themePref: string;
+} & {
+  error: string;
+};
+export type DeleteCardResponse = {
+  cards: ICard[];
+} & {
+  error: string;
+};
 
-export interface EditCardResponse {
-  editCardById: {
-    errors: MyErrorResponse;
-    cards?: null | ICard[];
-  };
-}
+export type EditCardResponse = {
+  cards: ICard[];
+} & {
+  error: string;
+};
 export interface Modal {
   context: {
     card: ICard | Record<string, never>;
@@ -100,15 +97,16 @@ export interface MyDOMInputEvent extends Event {
     value: number | string;
   };
 }
-export interface MeQueryResponse {
-  userOrError: UserEntityBase | Error;
-}
-export interface GetUserCardsResponse {
-  getUserCards: {
-    cards: ICard[];
-    errors: MyErrorResponse;
-  };
-}
+export type MeQueryResponse = {
+  user?: UserEntityBase;
+} & {
+  error?: string;
+};
+export type GetUserCardsResponse = {
+  cards: ICard[];
+} & {
+  error: string;
+};
 
 export interface LoadingState {
   loading: {
@@ -134,7 +132,6 @@ export interface MyRootState {
   sidebar: SidebarState;
   cards: CardsState;
   modal: ModalState;
-  notification: NotificationState;
 }
 export interface UserState {
   user: {
@@ -155,7 +152,6 @@ export interface SetUserCommitPayload {
   token?: string | null | undefined;
   cards: ICard[];
   loggedIn: boolean;
-  __typename?: string;
   id?: number;
   createdAt?: number;
   updatedAt?: number;
@@ -218,21 +214,18 @@ export type RootDispatchType =
   | "cards/setCategorizedCards";
 
 export interface AddCardPayload {
-  options: {
-    frontSideText: string | undefined;
-    frontSideLanguage: string | undefined;
-    frontSidePicture: string | undefined;
-    backSideText: string | undefined;
-    backSideLanguage: string | undefined;
-    backSidePicture: string | undefined;
-  };
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
 }
-export interface AddCardResponse {
-  addCard: {
-    cards: ICard[];
-    errors: MyErrorResponse;
-  };
-}
+export type AddCardResponse = {
+  cards: ICard[];
+} & {
+  error: string;
+};
 
 export type MyGetters =
   | "sidebarCategories/aCategoryIsActive"
@@ -281,53 +274,28 @@ export interface CardFrontPayload {
   isBackSide: false;
 }
 
-export interface CustomError {
-  field: string;
-  message: string;
-}
-export type MyErrorResponse = CustomError[] | null;
-
-export interface RegisterResponse {
-  user: UserEntityBase;
-}
-
-export type LoginResponse = { 
-  user: UserEntityBase 
-} & { 
-  error: string | undefined 
+export type RegisterResponse = {
+  user?: UserEntityBase;
+} & {
+  error?: unknown | undefined;
 };
 
+export type LoginResponse = {
+  user?: UserEntityBase;
+} & {
+  error?: unknown | undefined;
+};
 
-export interface NotificationState {
-  notification: {
-    type: "error" | "success" | "";
-    message: string;
-    toastDown: boolean;
-    toastUp: boolean;
-  };
-}
+export type ForgotPassResponse = {
+  forgotPassword?: boolean;
+} & {
+  error?: string;
+};
 
-export interface OpenNotificationPayload {
-  notification: {
-    type: "error" | "success";
-    message: string;
-    toastDown: true;
-    toastUp: false;
-  };
-}
-
-export interface ForgotPassResponse {
-  forgotPassword: {
-    done: boolean | null;
-    errors?: MyErrorResponse | null;
-  };
-}
-
-export interface ChangePasswordResponse {
-  changePassword: {
-    done: boolean | null;
-    token: string | null;
-    cards: ICard[];
-    errors?: MyErrorResponse | null;
-  };
-}
+export type ChangePasswordResponse = {
+  done?: boolean;
+  token?: string;
+  cards?: ICard[];
+} & {
+  error: string;
+};

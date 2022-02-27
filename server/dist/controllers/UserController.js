@@ -54,6 +54,7 @@ exports.UserController = {
                 let user = null;
                 if (username) {
                     user = yield models_1.User.findOne({ username });
+                    console.log("user found by username", user);
                 }
                 if (email) {
                     user = yield models_1.User.findOne({ email });
@@ -68,12 +69,13 @@ exports.UserController = {
                     email: user.email,
                     uuid: uuid.v4(),
                 });
+                console.log("token made", token);
                 const updated = yield models_1.User.findOneAndUpdate({ _id: user._id }, { token }, { new: true }).select("-__v");
                 return res.status(200).json({
                     user: {
                         username: updated.username,
                         _id: updated._id,
-                        token,
+                        token: updated.token,
                         cards: updated.cards,
                         email: updated.email,
                     },

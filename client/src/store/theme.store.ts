@@ -55,7 +55,7 @@ const mutations = {
           state.theme = "light";
 
           // eslint-disable-next-line
-            document.querySelector("html")!.style.transition = "0.5s";
+          document.querySelector("html")!.style.transition = "0.5s";
           // eslint-disable-next-line
           document.querySelector("html")!.style.backgroundColor = "white";
           document.body.classList.remove("body-dark");

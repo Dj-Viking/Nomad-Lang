@@ -22,12 +22,12 @@ const mutations = {
   SET_USER(state: UserState, payload: SetUserCommitPayload): void {
     // eslint-disable-next-line
     if (payload && payload.hasOwnProperty("token")) {
-      delete payload.__typename;
       delete payload.token;
     }
 
     if (typeof payload !== "object")
       return console.error("payload was was not an object!");
+
     state.user = {
       ...state.user,
       ...payload,
@@ -66,7 +66,11 @@ const actions = {
     { commit }: ActionContext<UserState, MyRootState>,
     payload: UserState
   ): Promise<void> {
-    commit("user/SET_USER" as RootCommitType, payload, { root: true });
+    try {
+      commit("user/SET_USER" as RootCommitType, payload, { root: true });
+    } catch (error) {
+      console.error(error);
+    }
   },
   async getUserCards(
     { dispatch }: ActionContext<UserState, MyRootState>,

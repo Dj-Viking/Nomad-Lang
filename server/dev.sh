@@ -1,4 +1,4 @@
-#! bin/bash
+#! /bin/bash
 if [ -d "dist" ]; then
   echo "✨🛠 found dist directory, starting server in dev mode... 🛠✨"
   npm run concurrently

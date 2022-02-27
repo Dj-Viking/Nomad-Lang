@@ -60,6 +60,7 @@ import { defineComponent } from "vue";
 import {
   MeQueryResponse,
   RootCommitType,
+  RootDispatchType,
   SidebarState,
   UserState,
 } from "../types";
@@ -102,10 +103,32 @@ export default defineComponent({
   watch: {
     //callback to refresh user token to execute whenever the application router changes
     $route: async function () {
-      // TODO: refactor to use REST api service
-      const me = await api.me(auth.getToken() as string);
-      console.log("me data", me);
-      // await this.refetch();
+      try {
+        const { user, error } = (await api.me(
+          auth.getToken() as string
+        )) as MeQueryResponse;
+        if (error) {
+          console.error("me error in component", error);
+          auth.clearToken();
+        }
+        auth.setToken(user?.token as string);
+        /// set user
+        store.dispatch(
+          "user/setUser" as RootDispatchType,
+          { ...user },
+          {
+            root: true,
+          }
+        );
+        if (user!.cards?.length > 0) {
+          store.dispatch("cards/setCards" as RootDispatchType, user?.cards, {
+            root: true,
+          });
+        }
+      } catch (error) {
+        auth.clearToken();
+        console.error("error in $route navigation", error);
+      }
     },
     // eslint-disable-next-line
     meResult: async function (_res: MeQueryResponse) {

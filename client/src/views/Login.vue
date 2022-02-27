@@ -4,15 +4,10 @@
       class="field box"
       style="margin: 0 20%"
       @submit.prevent="
-        async ($event) => {
+        ($event) => {
           store.commit('loading/SET_LOADING', true, { root: true });
           let event = $event;
           readEvent(event);
-          await submitLogin({
-            email: /@/g.test(loginInput) ? loginInput : '',
-            username: /@/g.test(loginInput) ? '' : loginInput,
-            password,
-          });
         }
       "
     >
@@ -48,9 +43,21 @@
         <router-link :to="'/forgot'" class="link">Forgot Password?</router-link>
       </div>
       <button
+        type="submit"
         :disabled="!loginInput || !password"
         v-if="!isLoading"
         class="button is-success mt-5"
+        @click.prevent="
+          () => {
+            (async () => {
+              await submitLogin({
+                email: /@/g.test(loginInput) ? loginInput : '',
+                username: /@/g.test(loginInput) ? '' : loginInput,
+                password,
+              });
+            })();
+          }
+        "
       >
         Login
       </button>
@@ -71,10 +78,11 @@ import {
   LoadingState,
   LoginResponse,
   RootCommitType,
+  RootDispatchType,
   // RootDispatchType,
 } from "../types";
-// import auth from "../utils/AuthService";
-// import router from "../router";
+import auth from "../utils/AuthService";
+import router from "../router";
 import { api } from "@/utils/ApiService";
 import store from "../store";
 import { useToast } from "vue-toastification";
@@ -115,15 +123,44 @@ export default defineComponent({
       password: string;
     }): Promise<void> {
       try {
-        const userOrError = (await api.login(args)) as LoginResponse;
-        console.log("user or errorasdadsfsadfads", userOrError);
+        store.commit("loading/SET_LOADING" as RootCommitType, true, {
+          root: true,
+        });
+        const { user, error } = (await api.login(args)) as LoginResponse;
+        if (!!error && typeof user === "undefined") {
+          // auth.clearToken();
+          store.commit("loading/SET_LOADING" as RootCommitType, false, {
+            root: true,
+          });
+          // throw error;
+        } else {
+          auth.setToken(user!.token as string);
+          //set user
+          store.dispatch("user/setUser" as RootDispatchType, user, {
+            root: true,
+          });
+          // set cards
+          store.commit("cards/SET_ALL_CARDS" as RootCommitType, user, {
+            root: true,
+          });
+          setTimeout(() => {
+            this.toast.success("Good luck have fun!", {
+              timeout: 3000,
+            });
+            store.commit("loading/SET_LOADING" as RootCommitType, false, {
+              root: true,
+            });
+            router.push("/");
+          }, 3000);
+        }
+      } catch (error) {
+        console.error("error during login", error);
+        auth.clearToken();
         store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
-      } catch (error) {
-        console.error("error during login", error);
-        store.commit("loading/SET_LOADING" as RootCommitType, false, {
-          root: true,
+        this.toast.error("Oops! There was a problem with login", {
+          timeout: 3000,
         });
       }
     },
