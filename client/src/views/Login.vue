@@ -135,18 +135,30 @@ export default defineComponent({
           // throw error;
         } else {
           auth.setToken(user!.token as string);
-          //set user
-          store.dispatch("user/setUser" as RootDispatchType, user, {
-            root: true,
+          this.toast.success("Good luck have fun!", {
+            timeout: 3000,
           });
+          // log in the user
+          store.commit(
+            "user/SET_LOGGED_IN" as RootCommitType,
+            { ...user },
+            {
+              root: true,
+            }
+          );
+          //set user
+          store.dispatch(
+            "user/setUser" as RootDispatchType,
+            { ...user },
+            {
+              root: true,
+            }
+          );
           // set cards
           store.commit("cards/SET_ALL_CARDS" as RootCommitType, user, {
             root: true,
           });
           setTimeout(() => {
-            this.toast.success("Good luck have fun!", {
-              timeout: 3000,
-            });
             store.commit("loading/SET_LOADING" as RootCommitType, false, {
               root: true,
             });

@@ -66,7 +66,7 @@
 /* eslint-disable no-unreachable */
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
-import { RegisterResponse, RootDispatchType } from "../types";
+import { RegisterResponse, RootCommitType, RootDispatchType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
 import store from "../store";
@@ -142,6 +142,10 @@ export default defineComponent({
           root: true,
         });
         setTimeout(() => {
+          // set login state true
+          store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+            root: true,
+          });
           this.submitted = false;
           this.isLoading = false;
           this.toast.success("Good luck have fun!", {

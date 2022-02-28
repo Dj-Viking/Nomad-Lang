@@ -130,63 +130,6 @@ export default defineComponent({
         console.error("error in $route navigation", error);
       }
     },
-    // eslint-disable-next-line
-    meResult: async function (_res: MeQueryResponse) {
-      // if (res.userOrError instanceof Error) {
-      //   auth.clearToken();
-      //   await store.dispatch("user/setUser", null, { root: true });
-      //   store.commit(
-      //     "cards/SET_DISPLAY_CARDS" as RootCommitType,
-      //     {
-      //       cards: [
-      //         {
-      //           frontSideText: "sign in to see and add your own cards!!!",
-      //           frontSideLanguage: "sign in to see and add your own cards!!!",
-      //           frontSidePicture: "sign in to see and add your own cards!!!",
-      //           backSideText: "sign in to see and add your own cards!!!",
-      //           backSideLanguage: "sign in to see and add your own cards!!!",
-      //           backSidePicture: "sign in to see and add your own cards!!!",
-      //           _id: keyGen(),
-      //           createdAt: "right now",
-      //           updatedAt: "just now",
-      //           creatorId: 0,
-      //         } as ICard,
-      //       ],
-      //     },
-      //     { root: true }
-      //   );
-      //   store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
-      //     root: true,
-      //   });
-      // } else {
-      //   //set new token in storage
-      //   auth.setToken(res.userOrError.token as string);
-      //   store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
-      //     root: true,
-      //   });
-      //   await store.dispatch(
-      //     "cards/setCards" as RootDispatchType,
-      //     { cards: res.userOrError.cards },
-      //     { root: true }
-      //   );
-      //   // console.log("response of dispatch of set cat cards", res);
-      //   //set user vuex state with cards
-      //   await store.dispatch(
-      //     "user/setUser" as RootDispatchType,
-      //     { ...res.userOrError },
-      //     {
-      //       root: true,
-      //     }
-      //   );
-      //   store.commit(
-      //     "theme/SET_THEME" as RootCommitType,
-      //     res.userOrError.themePref,
-      //     {
-      //       root: true,
-      //     }
-      //   );
-      // }
-    },
   },
 });
 </script>

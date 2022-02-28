@@ -69,7 +69,6 @@ exports.UserController = {
                     email: user.email,
                     uuid: uuid.v4(),
                 });
-                console.log("token made", token);
                 const updated = yield models_1.User.findOneAndUpdate({ _id: user._id }, { token }, { new: true }).select("-__v");
                 return res.status(200).json({
                     user: {
