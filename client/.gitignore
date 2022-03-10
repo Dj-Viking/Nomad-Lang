@@ -5,3 +5,5 @@ cypress.env.json
 .nyc_output
 coverage
 tests/e2e/videos
+cypress/downloads
+cypress/e2e/videos
