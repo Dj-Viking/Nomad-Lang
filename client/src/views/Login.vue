@@ -139,13 +139,9 @@ export default defineComponent({
             timeout: 3000,
           });
           // log in the user
-          store.commit(
-            "user/SET_LOGGED_IN" as RootCommitType,
-            { ...user },
-            {
-              root: true,
-            }
-          );
+          store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+            root: true,
+          });
           //set user
           store.dispatch(
             "user/setUser" as RootDispatchType,

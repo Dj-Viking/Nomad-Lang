@@ -217,50 +217,7 @@
         </form>
       </div>
       <div v-if="/Add/g.test(title)">
-        <form
-          @submit.prevent="
-            ($event) => {
-              //update local state with the extra propertiesa 'front' and 'back' sides
-              // also if not logged in create an ID as Date.now()
-
-              if (isLoggedIn) {
-                //graphql mutation pass data to the modal for it to use.
-                // const card = {
-                //   options: {
-                //     frontSideText: frontSideTextInput || '',
-                //     frontSideLanguage: frontSideLanguageInput || '',
-                //     frontSidePicture: frontSidePictureInput || '',
-                //     backSideText: backSideTextInput || '',
-                //     backSideLanguage: backSideLanguageInput || '',
-                //     backSidePicture: backSidePictureInput || '',
-                //   },
-                // };
-                // submitAddCard(card);
-                // addLocalCard($event, card.options);
-                clearCardInputFields();
-                closeModal();
-              } else {
-                const offlineCard = {
-                  _id: keyGen(), //ids must be unique
-                  frontSideText: frontSideTextInput,
-                  frontSideLanguage: frontSideLanguageInput,
-                  frontSidePicture: frontSidePictureInput,
-                  backSideText: backSideTextInput,
-                  backSideLanguage: backSideLanguageInput,
-                  backSidePicture: backSidePictureInput,
-                  creatorId: 0,
-                  isFrontSide: true,
-                  isBackSide: false,
-                  createdAt: Date.now(),
-                  updatedAt: Date.now(),
-                };
-                addLocalCard($event, offlineCard);
-                clearCardInputFields();
-                closeModal();
-              }
-            }
-          "
-        >
+        <form>
           <div class="field">
             <label for="inputText" style="color: white" class="label"
               >{{ title }}
@@ -366,7 +323,52 @@
           </div>
           <div class="field">
             <div class="control">
-              <button name="submitAddCard" type="submit" class="button is-info">
+              <button
+                @click.prevent="
+                  ($event) => {
+                    //update local state with the extra propertiesa 'front' and 'back' sides
+                    // also if not logged in create an ID as Date.now()
+
+                    if (isLoggedIn) {
+                      const cardInput = {
+                        frontSideText: frontSideTextInput || '',
+                        frontSideLanguage: frontSideLanguageInput || '',
+                        frontSidePicture: frontSidePictureInput || '',
+                        backSideText: backSideTextInput || '',
+                        backSideLanguage: backSideLanguageInput || '',
+                        backSidePicture: backSidePictureInput || '',
+                      };
+                      (async () => {
+                        await submitAddCard(cardInput);
+                      })();
+                      // addLocalCard($event, card.options);
+                      clearCardInputFields();
+                      closeModal();
+                    } else {
+                      const offlineCard = {
+                        _id: keyGen(), //ids must be unique
+                        frontSideText: frontSideTextInput,
+                        frontSideLanguage: frontSideLanguageInput,
+                        frontSidePicture: frontSidePictureInput,
+                        backSideText: backSideTextInput,
+                        backSideLanguage: backSideLanguageInput,
+                        backSidePicture: backSidePictureInput,
+                        creatorId: 0,
+                        isFrontSide: true,
+                        isBackSide: false,
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                      };
+                      addLocalCard($event, offlineCard);
+                      clearCardInputFields();
+                      closeModal();
+                    }
+                  }
+                "
+                name="submitAddCard"
+                type="submit"
+                class="button is-info"
+              >
                 SUBMIT ADD CARD
               </button>
               <span v-if="showErrMsg" class="has-text-danger"
@@ -387,6 +389,7 @@
 
 <script lang="ts">
 import {
+  AddCardInput,
   ModalState,
   RootCommitType,
   UserState,
@@ -397,6 +400,8 @@ import {
 } from "@/types";
 import { defineComponent, ref } from "@vue/runtime-core";
 import { useStore } from "vuex";
+import { api } from "@/utils/ApiService";
+import auth from "@/utils/AuthService";
 import { keyGen } from "@/utils/keyGen";
 import { useToast } from "vue-toastification";
 import store from "../store";
@@ -449,6 +454,32 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
+    async submitAddCard(cardInput: AddCardInput): Promise<void> {
+      const { cards, error } = await api.addCard(
+        cardInput,
+        auth.getToken() as string
+      );
+      console.log("returned from api", cards, error);
+      if (error) {
+        this.toast.error(
+          `There was an error during submit add card modal ${error}`,
+          {
+            timeout: 3000,
+          }
+        );
+        throw {
+          error: `There was an error during submit add card modal ${error}`,
+        };
+      }
+      // set new cards state
+      // await store.dispatch(
+      //   "cards/setCards" as RootDispatchType,
+      //   { cards },
+      //   {
+      //     root: true,
+      //   }
+      // );
+    },
     // eslint-disable-next-line
     async confirmClearButtonEvent(_event: any): Promise<void> {
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {

@@ -222,9 +222,9 @@ export interface AddCardPayload {
   backSidePicture?: string;
 }
 export type AddCardResponse = {
-  cards: ICard[];
+  cards?: ICard[];
 } & {
-  error: string;
+  error?: string;
 };
 
 export type MyGetters =
@@ -299,3 +299,11 @@ export type ChangePasswordResponse = {
 } & {
   error: string;
 };
+export interface AddCardInput {
+  frontSideText: string | "";
+  frontSideLanguage: string | "";
+  frontSidePicture: string | "";
+  backSideText: string | "";
+  backSideLanguage: string | "";
+  backSidePicture: string | "";
+}

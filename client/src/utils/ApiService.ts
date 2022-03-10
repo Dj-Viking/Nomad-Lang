@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  AddCardInput,
+  AddCardResponse,
   ICard,
   LoginResponse,
   MeQueryResponse,
@@ -20,6 +22,7 @@ export interface IApiService {
     email: string;
     password: string;
   }) => Promise<RegisterResponse | void>;
+  addCard: (card: AddCardInput, token: string) => Promise<AddCardResponse>;
   clearCards: (token: string) => Promise<UserEntityBase | void>;
   editCard: (token: string) => Promise<Array<ICard> | void>;
   deleteCard: (token: string) => Promise<Array<ICard> | void>;
@@ -105,6 +108,29 @@ class ApiService implements IApiService {
     } catch (error) {
       console.error(error);
       throw error;
+    }
+  }
+  public async addCard(
+    card: AddCardInput,
+    token: string
+  ): Promise<AddCardResponse> {
+    this.clearHeaders();
+    this.setInitialHeaders();
+    this.setAuthHeader(token);
+    try {
+      const res = await fetch(API_URL + "/user/addCard", {
+        method: "POST",
+        body: JSON.stringify(card),
+        headers: this.headers,
+      });
+      const data = (await res.json()) as AddCardResponse;
+      console.log("data from add card post", data);
+      if (data.error) throw new Error(`${data.error}`);
+      return data;
+    } catch (error) {
+      const err = error as Error;
+      console.error("error in add card api service", error);
+      return { error: err.message, cards: void 0 };
     }
   }
   public async editCard(token: string): Promise<void | ICard[]> {

@@ -79,6 +79,42 @@ export default defineComponent({
       store.state.sidebar.sidebar.isOpen,
   },
   methods: {
+    getMe: async function () {
+      try {
+        const { user, error } = (await api.me(
+          auth.getToken() as string
+        )) as MeQueryResponse;
+        if (error) {
+          console.error("me error in component", error);
+          auth.clearToken();
+          return;
+        }
+        auth.setToken(user?.token as string);
+        /// set user
+        store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+          root: true,
+        });
+        await store.dispatch(
+          "user/setUser" as RootDispatchType,
+          { ...user },
+          {
+            root: true,
+          }
+        );
+        if (user!.cards?.length > 0) {
+          await store.dispatch(
+            "cards/setCards" as RootDispatchType,
+            user?.cards,
+            {
+              root: true,
+            }
+          );
+        }
+      } catch (error) {
+        auth.clearToken();
+        console.error("error in $route navigation", error);
+      }
+    },
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       //do nothing
@@ -90,7 +126,9 @@ export default defineComponent({
       });
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
-      // this.refetch();
+      (async () => {
+        await store.dispatch("" as RootDispatchType, {}, { root: true });
+      })();
       store.commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: [] },
@@ -102,34 +140,16 @@ export default defineComponent({
   },
   watch: {
     //callback to refresh user token to execute whenever the application router changes
-    $route: async function () {
-      try {
-        const { user, error } = (await api.me(
-          auth.getToken() as string
-        )) as MeQueryResponse;
-        if (error) {
-          console.error("me error in component", error);
-          auth.clearToken();
-        }
-        auth.setToken(user?.token as string);
-        /// set user
-        store.dispatch(
-          "user/setUser" as RootDispatchType,
-          { ...user },
-          {
-            root: true,
-          }
-        );
-        if (user!.cards?.length > 0) {
-          store.dispatch("cards/setCards" as RootDispatchType, user?.cards, {
-            root: true,
-          });
-        }
-      } catch (error) {
-        auth.clearToken();
-        console.error("error in $route navigation", error);
-      }
+    $route: function () {
+      (async () => {
+        await this.getMe();
+      })();
     },
+  },
+  mounted: function () {
+    (async () => {
+      this.getMe();
+    })();
   },
 });
 </script>

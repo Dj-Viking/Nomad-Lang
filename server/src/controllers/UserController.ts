@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Express, MyJwtData } from "../types";
+import { Express, ICard, MyJwtData } from "../types";
 import { Response } from "express";
 import { CardClass, User } from "../models";
 import { signToken } from "../utils/signToken";
@@ -39,7 +39,6 @@ export const UserController = {
       let user = null;
       if (username) {
         user = await User.findOne({ username });
-        console.log("user found by username", user);
       }
       if (email) {
         user = await User.findOne({ email });
@@ -191,12 +190,15 @@ export const UserController = {
   },
   addCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      // const user = await User.findOne({ email: req!.user!.email });
+      const card = {
+        ...req.body,
+        creator: req.user?.username,
+      } as CardClass;
       const updatedUser = await User.findOneAndUpdate(
         { email: req!.user!.email },
         {
           $push: {
-            cards: req.body,
+            cards: card,
           },
         },
         { new: true }

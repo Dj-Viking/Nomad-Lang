@@ -54,7 +54,6 @@ exports.UserController = {
                 let user = null;
                 if (username) {
                     user = yield models_1.User.findOne({ username });
-                    console.log("user found by username", user);
                 }
                 if (email) {
                     user = yield models_1.User.findOne({ email });
@@ -202,11 +201,13 @@ exports.UserController = {
         });
     },
     addCard: function (req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const card = Object.assign(Object.assign({}, req.body), { creator: (_a = req.user) === null || _a === void 0 ? void 0 : _a.username });
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
                     $push: {
-                        cards: req.body,
+                        cards: card,
                     },
                 }, { new: true })
                     .select("-password")

@@ -1,0 +1,30 @@
+{
+  "project": {
+    "id": "",
+    "name": "nomad-lang",
+    "path": "tests",
+    "source": "src",
+    "output": "out",
+    "images": "images",
+    "cache": "cache",
+    "schemas": "schemas",
+    "reports": "reports"
+  },
+  "environments": {
+    "dev": {
+      "name": "dev",
+      "defaultDomain": "http://localhost:8080"
+    },
+    "prod": {
+      "name": "prod",
+      "defaultDomain": "http://localhost:8080"
+    }
+  },
+  "suites": {
+    "smoke": {
+      "id": "",
+      "name": "smoke",
+      "tags": []
+    }
+  }
+}

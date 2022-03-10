@@ -177,7 +177,9 @@ const actions = {
     payload: CardsState
   ): Promise<void | boolean> {
     const { cards } = payload;
+    console.log("cards passed to setCards", cards);
 
+    if (typeof cards === "undefined") return;
     const disconnectedCards = [...cards];
 
     const shuffledCards = shuffleArray(disconnectedCards);
