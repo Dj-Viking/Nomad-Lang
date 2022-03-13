@@ -54,7 +54,6 @@ exports.UserController = {
                 let user = null;
                 if (username) {
                     user = yield models_1.User.findOne({ username });
-                    console.log("user found by username", user);
                 }
                 if (email) {
                     user = yield models_1.User.findOne({ email });

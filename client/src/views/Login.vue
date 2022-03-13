@@ -171,7 +171,7 @@ export default defineComponent({
         store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
-        this.toast.error("Oops! There was a problem with login", {
+        this.toast.error(`Oops! There was a problem with login ${error}`, {
           timeout: 3000,
         });
       }

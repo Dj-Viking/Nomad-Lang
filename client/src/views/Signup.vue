@@ -138,9 +138,13 @@ export default defineComponent({
           }
         );
         // set the cards
-        store.dispatch("cards/setCards" as RootDispatchType, user?.cards, {
-          root: true,
-        });
+        store.dispatch(
+          "cards/setCards" as RootDispatchType,
+          { cards: user?.cards },
+          {
+            root: true,
+          }
+        );
         setTimeout(() => {
           // set login state true
           store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {

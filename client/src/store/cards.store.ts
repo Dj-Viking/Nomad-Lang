@@ -177,10 +177,14 @@ const actions = {
     payload: CardsState
   ): Promise<void | boolean> {
     const { cards } = payload;
+    if (!Array.isArray(cards)) {
+      throw {
+        error: `cards was not an iteritable type! but was ${cards} as typeof ${typeof cards}`,
+      };
+    }
+    const cardsRef = [...cards];
 
-    const disconnectedCards = [...cards];
-
-    const shuffledCards = shuffleArray(disconnectedCards);
+    const shuffledCards = shuffleArray(cardsRef);
 
     try {
       commit(
