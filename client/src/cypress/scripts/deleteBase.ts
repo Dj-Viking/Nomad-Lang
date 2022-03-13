@@ -1,6 +1,6 @@
 import fs from "fs";
-import { ANSI_ESCAPES } from "../types";
-import { ColorLog } from "../../../server/src/__tests__/utils/helpers";
+import { ANSI_ESCAPES } from "@/types";
+import { ColorLog } from "../../../../server/src/__tests__/utils/helpers";
 import { SCREENSHOTS_BASE_PATH, SCREENSHOTS_ACTUALS_PATH } from "../constants";
 const testName = process.env.SPECNAME;
 

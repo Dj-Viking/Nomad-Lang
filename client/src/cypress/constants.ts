@@ -1,11 +1,12 @@
 import { ICard } from "@/types";
 import { keyGen } from "@/utils/keyGen";
+/// <reference types="cypress" />
 import {
   TextColor,
   BackgroundColor,
   LightBackGroundName,
   LightTextName,
-} from "./types";
+} from "../../tests/types";
 
 let EMAIL: string,
   PASSWORD: string,

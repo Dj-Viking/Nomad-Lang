@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ColorLog } from "../../../server/src/__tests__/utils/helpers";
+import { ColorLog } from "../../../../server/src/__tests__/utils/helpers";
 import { ACTUALS_LOADHOMESPEC_PATH } from "../constants";
 
 const logger = ColorLog;
