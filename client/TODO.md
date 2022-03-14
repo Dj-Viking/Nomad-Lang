@@ -8,7 +8,7 @@
   
   - [x] delete card in card.vue
   
-  - [ ] edit card in editmmodal component
+  - [x] edit card in editmmodal component
 
   - [x] clear cards in modal.vue
 

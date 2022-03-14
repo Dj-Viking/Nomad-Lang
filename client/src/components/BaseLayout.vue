@@ -114,12 +114,14 @@ export default defineComponent({
       { ...user },
       { root: true }
     );
-    // set cards
-    await store.dispatch(
-      "cards/setCards" as RootDispatchType,
-      { cards: user!.cards },
-      { root: true }
-    );
+    // set cards if any
+    if (user!.cards.length > 0) {
+      await store.dispatch(
+        "cards/setCards" as RootDispatchType,
+        { cards: user!.cards },
+        { root: true }
+      );
+    }
     if (!!error) {
       console.error("error during me query on mount!", error);
       auth.clearToken();
@@ -136,9 +138,7 @@ export default defineComponent({
           const { user, error } = (await api.me(
             auth.getToken() as string
           )) as MeQueryResponse;
-          console.log("did we get user at me query on home page????", user);
           if (!!error) {
-            console.error("me error in component", error);
             auth.clearToken();
           }
           auth.setToken(user?.token as string);

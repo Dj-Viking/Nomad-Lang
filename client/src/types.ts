@@ -18,20 +18,20 @@ export interface ICard {
 }
 
 export type ThemePrefChangeResponse = {
-  themePref: string;
+  themePref?: string;
 } & {
-  error: string;
+  error?: unknown;
 };
 export type DeleteCardResponse = {
-  cards: ICard[];
+  cards?: ICard[];
 } & {
-  error: string;
+  error?: unknown;
 };
 
 export type EditCardResponse = {
-  cards: ICard[];
+  cards?: ICard[];
 } & {
-  error: string;
+  error?: unknown;
 };
 export interface Modal {
   context: {
@@ -312,3 +312,12 @@ export type ClearCardsResponse = {
 } & {
   error?: unknown;
 };
+export interface IEditCardPayload {
+  id: string;
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
+}

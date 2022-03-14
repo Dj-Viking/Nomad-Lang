@@ -176,10 +176,6 @@ export default defineComponent({
     Spinner,
   },
   setup() {
-    // console.log("what are props", props);
-
-    // const { card } = toRef(props, "card");
-    // console.log("what is card here", card);
     const toast = useToast();
 
     return {

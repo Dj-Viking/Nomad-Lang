@@ -18,8 +18,7 @@ const state: CardsState = {
   categorized: {},
 };
 const mutations = {
-  TOGGLE_CARD_SIDE(state: CardsState, payload: { id: string }): void {
-    const { id } = payload;
+  TOGGLE_CARD_SIDE(state: CardsState, id: string): void {
     state.cards = state.cards.map((card) => {
       if (id === card._id) {
         if (card.isFrontSide) {

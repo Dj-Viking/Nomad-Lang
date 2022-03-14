@@ -4,7 +4,9 @@ import {
   AddCardResponse,
   ClearCardsResponse,
   DeleteCardResponse,
+  EditCardResponse,
   ICard,
+  IEditCardPayload,
   LoginResponse,
   MeQueryResponse,
   RegisterResponse,
@@ -28,7 +30,10 @@ export interface IApiService {
     card: AddCardPayload
   ) => Promise<AddCardResponse | never>;
   clearCards: (token: string) => Promise<ClearCardsResponse>;
-  editCard: (token: string) => Promise<Array<ICard> | void>;
+  editCard: (
+    token: string,
+    card: IEditCardPayload
+  ) => Promise<EditCardResponse>;
   deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
   forgotPassword: (
     email: string
@@ -148,15 +153,28 @@ class ApiService implements IApiService {
       throw error;
     }
   }
-  public async editCard(token: string): Promise<void | ICard[]> {
+  public async editCard(
+    token: string,
+    card: IEditCardPayload
+  ): Promise<EditCardResponse> {
     this.clearHeaders();
     this.setInitialHeaders();
     this.setAuthHeader(token);
     try {
-      return void 0;
+      const res = await fetch(`${API_URL}` + `/user/editCard/${card.id}`, {
+        method: "PUT",
+        body: JSON.stringify(card),
+        headers: this.headers,
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
-      throw error;
+      const err = error as Error;
+      return {
+        cards: void 0,
+        error: err.message,
+      };
     }
   }
   public async deleteCard(
@@ -177,7 +195,11 @@ class ApiService implements IApiService {
       return data;
     } catch (error) {
       console.error(error);
-      throw error;
+      const err = error as Error;
+      return {
+        cards: void 0,
+        error: err.message as string,
+      };
     }
   }
   public async forgotPassword(

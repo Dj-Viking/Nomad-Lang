@@ -45,30 +45,30 @@
           @submit.prevent="
             ($event) => {
               if (isLoggedIn) {
-                //graphql mutation pass data to the modal for it to use.
-                // const payload = {
-                //   options: {
-                //     id: modalContext.card?._id,
-                //     frontSideText:
-                //       frontSideTextInput || modalContext.card?.frontSideText,
-                //     frontSideLanguage:
-                //       frontSideLanguageInput ||
-                //       modalContext.card?.frontSideLanguage,
-                //     frontSidePicture:
-                //       frontSidePictureInput ||
-                //       modalContext.card?.frontSidePicture,
-                //     backSideText:
-                //       backSideTextInput || modalContext.card?.backSideText,
-                //     backSideLanguage:
-                //       backSideLanguageInput ||
-                //       modalContext.card?.backSideLanguage,
-                //     backSidePicture:
-                //       backSidePictureInput ||
-                //       modalContext.card?.backSidePicture,
-                //   },
-                // };
-                // submitEditCard(payload);
-                // editLocalCard($event, payload.options);
+                const card = {
+                  id: modalContext.card?._id,
+                  frontSideText:
+                    frontSideTextInput || modalContext.card?.frontSideText,
+                  frontSideLanguage:
+                    frontSideLanguageInput ||
+                    modalContext.card?.frontSideLanguage,
+                  frontSidePicture:
+                    frontSidePictureInput ||
+                    modalContext.card?.frontSidePicture,
+                  backSideText:
+                    backSideTextInput || modalContext.card?.backSideText,
+                  backSideLanguage:
+                    backSideLanguageInput ||
+                    modalContext.card?.backSideLanguage,
+                  backSidePicture:
+                    backSidePictureInput || modalContext.card?.backSidePicture,
+                };
+                if (isLoggedIn) {
+                  (async () => {
+                    submitEditCard(card);
+                  })();
+                }
+                editLocalCard($event, card);
                 clearCardInputFields();
                 closeModal();
               } else {
@@ -398,6 +398,7 @@ import {
   MyRootState,
   AddCardPayload,
   AddCardResponse,
+  IEditCardPayload,
 } from "@/types";
 import { defineComponent, ref } from "@vue/runtime-core";
 import { useStore } from "vuex";
@@ -455,6 +456,25 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
+    editLocalCard(_event: Event, card: EditCardCommitPayload): void {
+      store.commit("cards/EDIT_CARD" as RootCommitType, card, {
+        root: true,
+      });
+      this.clearCardInputFields();
+    },
+    async submitEditCard(card: IEditCardPayload): Promise<void> {
+      console.log("card in edit", card);
+      try {
+        const { cards, error } = await api.editCard(
+          auth.getToken() as string,
+          card
+        );
+        if (!!error) throw error;
+        console.log("edit cards please", cards);
+      } catch (error) {
+        this.toast.error(`error when editing a card: ${error}`);
+      }
+    },
     async submitClearUserCards() {
       try {
         const { user, error } = await api.clearCards(auth.getToken() as string);
@@ -517,12 +537,6 @@ export default defineComponent({
     // eslint-disable-next-line
     closeModal(_event?: Event): void {
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
-        root: true,
-      });
-    },
-    //
-    editLocalCard(_event: Event, card: EditCardCommitPayload): void {
-      store.commit("cards/EDIT_CARD" as RootCommitType, card, {
         root: true,
       });
     },
