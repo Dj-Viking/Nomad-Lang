@@ -3,6 +3,7 @@ import {
   AddCardPayload,
   AddCardResponse,
   ClearCardsResponse,
+  DeleteCardResponse,
   ICard,
   LoginResponse,
   MeQueryResponse,
@@ -28,7 +29,7 @@ export interface IApiService {
   ) => Promise<AddCardResponse | never>;
   clearCards: (token: string) => Promise<ClearCardsResponse>;
   editCard: (token: string) => Promise<Array<ICard> | void>;
-  deleteCard: (token: string) => Promise<Array<ICard> | void>;
+  deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
   forgotPassword: (
     email: string
   ) => Promise<boolean | { message: string } | void>;
@@ -158,12 +159,22 @@ class ApiService implements IApiService {
       throw error;
     }
   }
-  public async deleteCard(token: string): Promise<void | ICard[]> {
+  public async deleteCard(
+    token: string,
+    id: string
+  ): Promise<DeleteCardResponse> {
     this.clearHeaders();
     this.setInitialHeaders();
     this.setAuthHeader(token);
     try {
-      return void 0;
+      const res = await fetch(`${API_URL}` + `/user/deleteCard/${id}`, {
+        method: "DELETE",
+        headers: this.headers,
+      });
+      console.log("res for delete card", res);
+      const data = await res.json();
+      console.log("data for delete card", data);
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

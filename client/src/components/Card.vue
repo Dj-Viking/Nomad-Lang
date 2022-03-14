@@ -18,12 +18,10 @@
                 @click.prevent="
                   ($event) => {
                     //update vuex cards that are displayed
-                    deleteCard($event, card?.id);
+                    deleteCard($event, id);
                     //only delete user's cards if they are logged in
                     if (isLoggedIn) {
-                      // submitDeleteCard({
-                      //   id: card?.id,
-                      // });
+                      submitDeleteCard($event, id);
                     }
                   }
                 "
@@ -169,6 +167,8 @@ import {
   UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
+import { api } from "@/utils/ApiService";
+import auth from "@/utils/AuthService";
 export default defineComponent({
   name: "Card",
   props: ["cards", "card", "id"],
@@ -195,10 +195,26 @@ export default defineComponent({
       store.state.modal.modal.activeClass,
   },
   methods: {
-    async deleteCard(_event: Event, id: number): Promise<void> {
+    async deleteCard(_event: Event, id: string): Promise<void> {
       await store.dispatch("cards/deleteCard" as RootDispatchType, id, {
         root: true,
       });
+    },
+    async submitDeleteCard(event: any, id: string): Promise<void> {
+      console.log("getting event and id to delete card", id, event);
+      try {
+        const { cards, error } = await api.deleteCard(
+          auth.getToken() as string,
+          id
+        );
+        if (!!error) throw error;
+        console.log("cards returned from api after deleting", cards);
+      } catch (error) {
+        this.toast.error(`error during submitting delete card: ${error}`, {
+          timeout: 3000,
+        });
+        console.error(error);
+      }
     },
     submitCardFlipCheck(event: any): void {
       const id = event.target.id;
@@ -206,7 +222,7 @@ export default defineComponent({
       store.commit(
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
         //send as number because target.id is a string and all cards db assigned id's are numbers
-        { id },
+        id,
         {
           root: true,
         }

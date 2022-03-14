@@ -6,7 +6,7 @@
   - [x] add card in add modal component
     - [x] can flip and shift to next card
   
-  - [ ] delete card in card.vue
+  - [x] delete card in card.vue
   
   - [ ] edit card in editmmodal component
 

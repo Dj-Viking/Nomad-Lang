@@ -223,9 +223,11 @@ const actions = {
   },
   async deleteCard(
     { state, commit, dispatch }: ActionContext<CardsState, MyRootState>,
-    id: number
+    id: string
   ): Promise<void | boolean> {
     try {
+      console.log("getting id in delete action", id);
+
       // this returns new cards arrays for display and the total amount of user's cards
       commit("cards/DELETE_CARD" as RootCommitType, id, { root: true });
 
