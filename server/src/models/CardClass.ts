@@ -13,22 +13,22 @@ export class CardClass {
   public _id: mongoose.Types.ObjectId;
 
   @prop()
-  public frontsideText?: string;
+  public frontSideText?: string;
 
   @prop()
-  public frontsideLanguage?: string;
+  public frontSideLanguage?: string;
 
   @prop()
-  public frontsidePicture?: string;
+  public frontSidePicture?: string;
 
   @prop()
-  public backsideText?: string;
+  public backSideText?: string;
 
   @prop()
-  public backsideLanguage?: string;
+  public backSideLanguage?: string;
 
   @prop()
-  public backsidePicture?: string;
+  public backSidePicture?: string;
 
   @prop()
   public creator?: string;

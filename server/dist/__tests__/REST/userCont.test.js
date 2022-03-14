@@ -127,6 +127,8 @@ describe("CRUD user tests", () => {
         const parsed = JSON.parse(addCard.text);
         expect(parsed.cards).toHaveLength(1);
         expect(typeof parsed.cards[0]._id).toBe("string");
+        expect(typeof parsed.cards[0].frontSideLanguage).toBe("string");
+        expect(parsed.cards[0].frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
         newCardId = parsed.cards[0]._id;
         expect(parsed.cards[0].creator).toBe("test user");
         expect(typeof parsed.cards[0].createdAt).toBe("string");
@@ -157,7 +159,7 @@ describe("CRUD user tests", () => {
         expect(editCard.status).toBe(200);
         const parsed = JSON.parse(editCard.text);
         expect(parsed.cards).toHaveLength(2);
-        expect(parsed.cards[0].frontsideLanguage).toBe(constants_1.MOCK_EDIT_CARD.frontsideLanguage);
+        expect(parsed.cards[0].frontSideLanguage).toBe(constants_1.MOCK_EDIT_CARD.frontSideLanguage);
     }));
     test("PUT /user/editCard/:id try to edit card with empty body", () => __awaiter(void 0, void 0, void 0, function* () {
         const editCard = yield (0, supertest_1.default)(app)

@@ -117,24 +117,31 @@ export const UserController = {
         .select("-password")
         .select("-__v");
       return res.status(200).json({ user });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   },
   editCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const { id } = req.params;
       const validId = mongoose.Types.ObjectId.isValid(id);
+
       if (!validId)
         return res
           .status(400)
           .json({ error: "Bad request, id parameter was not a valid id format" });
+
       let tempCard = {} as CardClass;
       let fieldCount = 0;
+
       for (let i = 0; i < Object.keys(req.body).length; i++) fieldCount++;
+
       if (fieldCount === 0)
         return res.status(400).json({
           error: "Need to provide fields to the json body that match a card's schema properties",
         });
       else void 0;
+
       // set up the tempCard object that will update the subdocument card of the user's cards subdoc array
       for (const key in req.body) {
         tempCard = {
@@ -142,6 +149,7 @@ export const UserController = {
           [`cards.$.${key}`]: req.body[key],
         };
       }
+
       const updatedUser = await User.findOneAndUpdate(
         { email: req!.user!.email, "cards._id": id }, //find user's card subdocument by it's id from req.params
         {
@@ -149,6 +157,7 @@ export const UserController = {
         },
         { new: true }
       );
+
       return res.status(200).json({ cards: updatedUser!.cards });
     } catch (error) {}
   },
@@ -190,12 +199,11 @@ export const UserController = {
   },
   addCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      // const user = await User.findOne({ email: req!.user!.email });
       const updatedUser = await User.findOneAndUpdate(
         { email: req!.user!.email },
         {
           $push: {
-            cards: req.body,
+            cards: { ...req.body },
           },
         },
         { new: true }
@@ -204,6 +212,8 @@ export const UserController = {
         .select("-__v");
 
       return res.status(200).json({ cards: updatedUser!.cards });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   },
 };

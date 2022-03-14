@@ -20,7 +20,7 @@
             ($event) => {
               confirmClearButtonEvent($event);
               if (isLoggedIn) {
-                // submitClearUserCards();
+                submitClearUserCards();
               }
             }
           "
@@ -225,18 +225,21 @@
 
               if (isLoggedIn) {
                 //graphql mutation pass data to the modal for it to use.
-                // const card = {
-                //   options: {
-                //     frontSideText: frontSideTextInput || '',
-                //     frontSideLanguage: frontSideLanguageInput || '',
-                //     frontSidePicture: frontSidePictureInput || '',
-                //     backSideText: backSideTextInput || '',
-                //     backSideLanguage: backSideLanguageInput || '',
-                //     backSidePicture: backSidePictureInput || '',
-                //   },
-                // };
-                // submitAddCard(card);
-                // addLocalCard($event, card.options);
+                const card = {
+                  frontSideText: frontSideTextInput || '',
+                  frontSideLanguage: frontSideLanguageInput || '',
+                  frontSidePicture: frontSidePictureInput || '',
+                  backSideText: backSideTextInput || '',
+                  backSideLanguage: backSideLanguageInput || '',
+                  backSidePicture: backSidePictureInput || '',
+                };
+                if (isLoggedIn) {
+                  (async () => {
+                    await submitAddCard($event, card);
+                  })();
+                } else {
+                  addLocalCard($event, card);
+                }
                 clearCardInputFields();
                 closeModal();
               } else {
@@ -390,16 +393,19 @@ import {
   ModalState,
   RootCommitType,
   UserState,
-  ICard,
   EditCardCommitPayload,
   RootDispatchType,
   MyRootState,
+  AddCardPayload,
+  AddCardResponse,
 } from "@/types";
 import { defineComponent, ref } from "@vue/runtime-core";
 import { useStore } from "vuex";
 import { keyGen } from "@/utils/keyGen";
 import { useToast } from "vue-toastification";
 import store from "../store";
+import { api } from "@/utils/ApiService";
+import auth from "@/utils/AuthService";
 export default defineComponent({
   name: "Modal",
   setup() {
@@ -449,6 +455,36 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
+    async submitClearUserCards() {
+      try {
+        const { user, error } = await api.clearCards(auth.getToken() as string);
+        console.log("res from clear cards", user);
+        console.log("error from clear cards", error);
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    },
+    async submitAddCard(_event: any, card: AddCardPayload): Promise<void> {
+      try {
+        console.log("got card", card, "event of submitting the card", _event);
+        const { cards, error } = (await api.addCard(
+          auth.getToken() as string,
+          card
+        )) as AddCardResponse;
+        if (!!error) {
+          console.error(error);
+        }
+        this.clearCardInputFields();
+
+        console.log("add card response hopefully cards", cards);
+      } catch (error) {
+        console.error("error when submitting card", error);
+        this.toast.error(`error when submitting card ${error}`, {
+          timeout: 3000,
+        });
+      }
+    },
     // eslint-disable-next-line
     async confirmClearButtonEvent(_event: any): Promise<void> {
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
@@ -467,7 +503,7 @@ export default defineComponent({
       });
     },
     // eslint-disable-next-line
-    addLocalCard(_event: Event, card: ICard): void {
+    addLocalCard(_event: Event, card: AddCardPayload): void {
       store.commit("cards/ADD_CARD" as RootCommitType, card, { root: true });
     },
     clearCardInputFields(): void {

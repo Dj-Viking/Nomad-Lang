@@ -100,30 +100,65 @@ export default defineComponent({
       );
     },
   },
+  async mounted() {
+    if (!auth.getToken()) return;
+    const { user, error } = await api.me(auth.getToken() as string);
+    console.log("should get a user on mount", user);
+    //set logged in
+    store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+      root: true,
+    });
+    // set user
+    store.commit(
+      "user/SET_USER" as RootCommitType,
+      { ...user },
+      { root: true }
+    );
+    // set cards
+    await store.dispatch(
+      "cards/setCards" as RootDispatchType,
+      { cards: user!.cards },
+      { root: true }
+    );
+    if (!!error) {
+      console.error("error during me query on mount!", error);
+      auth.clearToken();
+      store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+        root: true,
+      });
+    }
+  },
   watch: {
     //callback to refresh user token to execute whenever the application router changes
     $route: async function () {
       try {
-        const { user, error } = (await api.me(
-          auth.getToken() as string
-        )) as MeQueryResponse;
-        if (error) {
-          console.error("me error in component", error);
-          auth.clearToken();
-        }
-        auth.setToken(user?.token as string);
-        /// set user
-        store.dispatch(
-          "user/setUser" as RootDispatchType,
-          { ...user },
-          {
-            root: true,
+        if (this.isLoggedIn) {
+          const { user, error } = (await api.me(
+            auth.getToken() as string
+          )) as MeQueryResponse;
+          console.log("did we get user at me query on home page????", user);
+          if (!!error) {
+            console.error("me error in component", error);
+            auth.clearToken();
           }
-        );
-        if (user!.cards?.length > 0) {
-          store.dispatch("cards/setCards" as RootDispatchType, user?.cards, {
-            root: true,
-          });
+          auth.setToken(user?.token as string);
+          /// set user
+          store.dispatch(
+            "user/setUser" as RootDispatchType,
+            { ...user },
+            {
+              root: true,
+            }
+          );
+          if (user!.cards!.length > 0) {
+            store.dispatch(
+              "cards/setCards" as RootDispatchType,
+              { cards: user?.cards },
+              {
+                root: true,
+              }
+            );
+          }
         }
       } catch (error) {
         auth.clearToken();

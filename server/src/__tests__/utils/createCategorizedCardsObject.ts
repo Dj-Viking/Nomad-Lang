@@ -15,14 +15,14 @@ export function createCategorizedCardsObject(cards: Array<ICard>): CategorizedCa
       // inside this for loop right now
       ...categorizedCardMap,
       [`${
-        !categorizedCardMap[cards[iterator].frontsideLanguage as string]
-          ? cards[iterator].frontsideLanguage
-          : cards[iterator].frontsideLanguage
+        !categorizedCardMap[cards[iterator].frontSideLanguage as string]
+          ? cards[iterator].frontSideLanguage
+          : cards[iterator].frontSideLanguage
       }`]: {
         // spread the items we already have on that key symbol string of the front side language
-        cards: categorizedCardMap[cards[iterator].frontsideLanguage as string]
+        cards: categorizedCardMap[cards[iterator].frontSideLanguage as string]
           ? [
-              ...categorizedCardMap[cards[iterator].frontsideLanguage as string].cards,
+              ...categorizedCardMap[cards[iterator].frontSideLanguage as string].cards,
               cards[iterator],
             ]
           : // and add any new ones that we dont have yet on that category

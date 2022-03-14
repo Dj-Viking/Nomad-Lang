@@ -222,9 +222,9 @@ export interface AddCardPayload {
   backSidePicture?: string;
 }
 export type AddCardResponse = {
-  cards: ICard[];
+  cards?: ICard[];
 } & {
-  error: string;
+  error?: unknown;
 };
 
 export type MyGetters =
@@ -235,7 +235,6 @@ export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
-  | "user/SET_USER_CARDS"
   /** */
   | "theme/TOGGLE_THEME"
   | "theme/SET_THEME"
@@ -298,4 +297,18 @@ export type ChangePasswordResponse = {
   cards?: ICard[];
 } & {
   error: string;
+};
+
+export interface IAddCardPayload {
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
+}
+export type ClearCardsResponse = {
+  user?: UserEntityBase;
+} & {
+  error?: unknown;
 };

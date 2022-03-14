@@ -176,12 +176,12 @@ export interface ILoginResponse {
 
 export interface ICard {
   _id?: string | mongoose.Types.ObjectId;
-  frontsideText?: string;
-  frontsideLanguage?: string;
-  frontsidePicture?: string;
-  backsideText?: string;
-  backsideLanguage?: string;
-  backsidePicture?: string;
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
   creator?: string;
   createdAt?: Date;
   updatedAt?: Date;

@@ -8,21 +8,21 @@ import { ICard } from "types";
 // export const COOKIE_NAME = "sid";
 export const IS_PROD: boolean | undefined = process.env.NODE_ENV === "production";
 export const MOCK_ADD_CARD = {
-  frontsideLanguage: "dkfkdjf",
-  frontsideText: "kdfjdkjf",
-  frontsidePicture: "kdjfkdj",
-  backsideText: "fjkdjkfdk",
+  frontSideLanguage: "dkfkdjf",
+  frontSideText: "kdfjdkjf",
+  frontSidePicture: "kdjfkdj",
+  backSideText: "fjkdjkfdk",
+  backSideLanguage: "dkjfkjd",
+  backSidePicture: "kjdfkjdjk",
   creator: "test user",
-  backsideLanguage: "dkjfkjd",
-  backsidePicture: "kjdfkjdjk",
 } as ICard;
 export const MOCK_EDIT_CARD = {
-  frontsideLanguage: "edited language",
-  frontsideText: "edited frontsideText",
-  frontsidePicture: "kdjfkdj",
-  backsideText: "fjkdjkfdk",
-  backsideLanguage: "dkjfkjd",
-  backsidePicture: "kjdfkjdjk",
+  frontSideLanguage: "edited language",
+  frontSideText: "edited frontsideText",
+  frontSidePicture: "kdjfkdj",
+  backSideText: "fjkdjkfdk",
+  backSideLanguage: "dkjfkjd",
+  backSidePicture: "kjdfkjdjk",
 };
 
 export const APP_DOMAIN_PREFIX: string | undefined = IS_PROD

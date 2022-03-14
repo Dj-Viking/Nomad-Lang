@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.default = mongoose_1.default
-    .connect(process.env.MONGODB_URI || "mongodb://localhost/rest-cats", {
+    .connect(process.env.MONGODB_URI || "mongodb://localhost/app-lang", {
     autoIndex: true,
 })
     .catch((e) => console.log("error on connection", e));

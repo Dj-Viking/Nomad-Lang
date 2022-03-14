@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  AddCardPayload,
+  AddCardResponse,
+  ClearCardsResponse,
   ICard,
   LoginResponse,
   MeQueryResponse,
   RegisterResponse,
-  UserEntityBase,
 } from "@/types";
 import { API_URL } from "@/constants";
 export interface IApiService {
@@ -20,7 +22,11 @@ export interface IApiService {
     email: string;
     password: string;
   }) => Promise<RegisterResponse | void>;
-  clearCards: (token: string) => Promise<UserEntityBase | void>;
+  addCard: (
+    token: string,
+    card: AddCardPayload
+  ) => Promise<AddCardResponse | never>;
+  clearCards: (token: string) => Promise<ClearCardsResponse>;
   editCard: (token: string) => Promise<Array<ICard> | void>;
   deleteCard: (token: string) => Promise<Array<ICard> | void>;
   forgotPassword: (
@@ -51,7 +57,6 @@ class ApiService implements IApiService {
       else return data;
     } catch (error) {
       const err = error as Error;
-      console.log(err);
       return { user: void 0, error: err.message };
     }
   }
@@ -96,12 +101,47 @@ class ApiService implements IApiService {
       console.error(error);
     }
   }
-  public async clearCards(token: string): Promise<void | UserEntityBase> {
+  public async addCard(
+    token: string,
+    card: AddCardPayload
+  ): Promise<AddCardResponse | never> {
     this.clearHeaders();
     this.setInitialHeaders();
     this.setAuthHeader(token);
     try {
-      return void 0;
+      console.log("card sending", card);
+
+      const res = await fetch(`${API_URL}` + "/user/addCard", {
+        method: "POST",
+        body: JSON.stringify(card),
+        headers: this.headers,
+      });
+      if (res.status !== 200) {
+        throw new Error("[ERROR]: UNEXPECTED STATUS" + res.status);
+      }
+      const data = (await res.json()) as ICard[];
+      console.log("data from add card api service fetch", data);
+      return {
+        cards: data,
+      };
+    } catch (error) {
+      throw {
+        error: `error during api service add card ${error}`,
+      };
+    }
+  }
+  public async clearCards(token: string): Promise<ClearCardsResponse> {
+    this.clearHeaders();
+    this.setInitialHeaders();
+    this.setAuthHeader(token);
+    try {
+      const res = await fetch(`${API_URL}` + "/user/clearCards", {
+        method: "PUT",
+        headers: this.headers,
+      });
+      const data = await res.json();
+      console.log("data from clear cards", data);
+      return data;
     } catch (error) {
       console.error(error);
       throw error;

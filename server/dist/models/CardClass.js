@@ -16,27 +16,27 @@ let CardClass = class CardClass {
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
-], CardClass.prototype, "frontsideText", void 0);
+], CardClass.prototype, "frontSideText", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
-], CardClass.prototype, "frontsideLanguage", void 0);
+], CardClass.prototype, "frontSideLanguage", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
-], CardClass.prototype, "frontsidePicture", void 0);
+], CardClass.prototype, "frontSidePicture", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
-], CardClass.prototype, "backsideText", void 0);
+], CardClass.prototype, "backSideText", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
-], CardClass.prototype, "backsideLanguage", void 0);
+], CardClass.prototype, "backSideLanguage", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
-], CardClass.prototype, "backsidePicture", void 0);
+], CardClass.prototype, "backSidePicture", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)

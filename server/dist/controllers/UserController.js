@@ -129,7 +129,9 @@ exports.UserController = {
                     .select("-__v");
                 return res.status(200).json({ user });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+            }
         });
     },
     editCard: function (req, res) {
@@ -205,14 +207,16 @@ exports.UserController = {
             try {
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
                     $push: {
-                        cards: req.body,
+                        cards: Object.assign({}, req.body),
                     },
                 }, { new: true })
                     .select("-password")
                     .select("-__v");
                 return res.status(200).json({ cards: updatedUser.cards });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+            }
         });
     },
 };

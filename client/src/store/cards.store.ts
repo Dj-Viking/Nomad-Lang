@@ -211,7 +211,7 @@ const actions = {
   },
   async shiftCardNext(
     { commit }: ActionContext<CardsState, MyRootState>,
-    id: number
+    id: string
   ): Promise<void> {
     try {
       commit("cards/SHIFT_CARD_NEXT" as RootCommitType, id, { root: true });

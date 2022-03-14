@@ -83,11 +83,14 @@
                     </button>
                   </form>
                   <button
-                    :id="card && card?.id"
+                    :id="id"
+                    type="submit"
                     class="button is-warning"
                     @click.prevent="
                       ($event) => {
-                        shiftCardNext($event);
+                        (async () => {
+                          shiftCardNext($event);
+                        })();
                       }
                     "
                   >
@@ -198,23 +201,23 @@ export default defineComponent({
       });
     },
     submitCardFlipCheck(event: any): void {
-      // const id = event.target.id;
+      const id = event.target.id;
       //set the class on for the flip animation on the card object itself.
       store.commit(
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
         //send as number because target.id is a string and all cards db assigned id's are numbers
-        { id: Number(event.target.id) },
+        { id },
         {
           root: true,
         }
       );
     },
-    shiftCardNext(event: any): void {
+    async shiftCardNext(event: any): Promise<void> {
       //update display cards array state
       // to shift a card out of the stack after done using it
-      store.dispatch(
+      await store.dispatch(
         "cards/shiftCardNext" as RootDispatchType,
-        Number(event.target.id),
+        event.target.id,
         {
           root: true,
         }

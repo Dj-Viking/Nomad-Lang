@@ -1,14 +1,16 @@
 * [ ] api service
 
   - [x] me query in baselayout.vue
-    - set user and cards 
+    - [x] set user and cards on load
 
-  - [ ] add card in add modal component
-
+  - [x] add card in add modal component
+    - [x] can flip and shift to next card
+  
   - [ ] delete card in card.vue
   
   - [ ] edit card in editmmodal component
-  - [ ] clear cards in modal.vue
+
+  - [x] clear cards in modal.vue
 
   - [ ] login in login.vue
     * [x] set user on login
