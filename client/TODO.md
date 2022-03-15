@@ -12,13 +12,13 @@
 
   - [x] clear cards in modal.vue
 
-  - [ ] login in login.vue
+  - [x] login in login.vue
     * [x] set user on login
-    * [ ] set cards on login // finish add/get/delete card first
+    * [x] set cards on login // finish add/get/delete card first
 
-  - [ ] register in signup.vue
+  - [x] register in signup.vue
     * [x] set user and log them in on signup
-    * [ ] set cards on signup // finish add/get/delete card first
+    * [x] set cards on signup // finish add/get/delete card first starts off as empty array on signup
 
   - [ ] forgotPassword in forgotpassword.vue
     * [ ] check if error occurred

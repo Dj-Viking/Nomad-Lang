@@ -103,6 +103,13 @@ export default defineComponent({
   async mounted() {
     if (!auth.getToken()) return;
     const { user, error } = await api.me(auth.getToken() as string);
+    if (!!error) {
+      console.error("error during me query on mount!", error);
+      auth.clearToken();
+      store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+        root: true,
+      });
+    }
     console.log("should get a user on mount", user);
     //set logged in
     store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
@@ -121,13 +128,6 @@ export default defineComponent({
         { cards: user!.cards },
         { root: true }
       );
-    }
-    if (!!error) {
-      console.error("error during me query on mount!", error);
-      auth.clearToken();
-      store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
-        root: true,
-      });
     }
   },
   watch: {

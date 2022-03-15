@@ -155,9 +155,11 @@ export default defineComponent({
             }
           );
           // set cards
-          store.commit("cards/SET_ALL_CARDS" as RootCommitType, user, {
-            root: true,
-          });
+          await store.dispatch(
+            "cards/setCards" as RootDispatchType,
+            { cards: user!.cards },
+            { root: true }
+          );
           setTimeout(() => {
             store.commit("loading/SET_LOADING" as RootCommitType, false, {
               root: true,

@@ -138,6 +138,8 @@ export default defineComponent({
           }
         );
         // set the cards
+        console.log("TODO: test is empty array at signup", user!.cards);
+
         store.dispatch(
           "cards/setCards" as RootDispatchType,
           { cards: user?.cards },
