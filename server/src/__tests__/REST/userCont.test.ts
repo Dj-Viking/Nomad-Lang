@@ -214,16 +214,6 @@ describe("CRUD user tests", () => {
     const parsed = JSON.parse(cleared.text);
     expect(parsed.user.cards).toHaveLength(0);
   });
-  // test("POST /user/forgotPassword hits forgotPassword route", async () => {
-  //   const forgotPassword = await request(app).post("/user/forgotPassword").send({
-  //     username: "test user",
-  //     email: "test@email.com",
-  //     password: "test",
-  //   });
-  //   expect(forgotPassword.status).toBe(400);
-  //   const parsed = JSON.parse(forgotPassword.text) as ICreateUserResponse;
-  //   expect(parsed).toBe("dkfjdkj");
-  // });
   // test("POST /user/changePassword hits changePassword route", async () => {
   //   const changePassword = await request(app).post("/user/changePassword").send({
   //     username: "test user",

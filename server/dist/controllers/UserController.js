@@ -180,10 +180,15 @@ exports.UserController = {
             catch (error) { }
         });
     },
-    forgotPassword: function (_req, res) {
+    forgotPassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found forgot password route" });
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!req.body.email)
+                    return res.status(422).json({ error: "email missing from request!" });
+                if (!emailRegex.test(req.body.email))
+                    return res.status(200).json({ done: true });
+                return res.status(200).json({ done: true });
             }
             catch (error) {
                 console.error(error);

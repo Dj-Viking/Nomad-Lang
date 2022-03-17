@@ -218,3 +218,8 @@ export interface IUpdateUserResponse {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IForgotPassResponse {
+  done?: boolean;
+  error?: string;
+}

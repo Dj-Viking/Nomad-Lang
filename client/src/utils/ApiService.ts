@@ -5,6 +5,7 @@ import {
   ClearCardsResponse,
   DeleteCardResponse,
   EditCardResponse,
+  ForgotPassResponse,
   ICard,
   IEditCardPayload,
   LoginResponse,
@@ -35,9 +36,7 @@ export interface IApiService {
     card: IEditCardPayload
   ) => Promise<EditCardResponse>;
   deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
-  forgotPassword: (
-    email: string
-  ) => Promise<boolean | { message: string } | void>;
+  forgotPassword: (email: string) => Promise<ForgotPassResponse>;
   changePassword: (
     resetToken: string,
     newPassword: string
@@ -202,16 +201,27 @@ class ApiService implements IApiService {
       };
     }
   }
-  public async forgotPassword(
-    _email: string
-  ): Promise<boolean | void | { message: string }> {
+  public async forgotPassword(email: string): Promise<ForgotPassResponse> {
     this.clearHeaders();
     this.setInitialHeaders();
     try {
-      return void 0;
+      const res = await fetch(`${API_URL}` + "/user/forgotPassword", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: this.headers,
+      });
+      if (res.status !== 200) {
+        throw new Error("[ERROR]: UNEXPECTED STATUS" + res.status);
+      }
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
-      throw error;
+      const err = error as Error;
+      return {
+        done: void 0,
+        error: err.message,
+      };
     }
   }
   public async changePassword(

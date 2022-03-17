@@ -286,7 +286,7 @@ export type LoginResponse = {
 };
 
 export type ForgotPassResponse = {
-  forgotPassword?: boolean;
+  done?: boolean;
 } & {
   error?: string;
 };

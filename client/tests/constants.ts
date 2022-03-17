@@ -1,5 +1,5 @@
 import { ICard } from "@/types";
-import { keyGen } from "@/utils/keyGen";
+import { keyGen } from "./utils/keyGen";
 import {
   TextColor,
   BackgroundColor,

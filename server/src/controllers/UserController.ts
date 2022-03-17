@@ -178,12 +178,14 @@ export const UserController = {
       return res.status(200).json({ cards: updatedUser!.cards });
     } catch (error) {}
   },
-  forgotPassword: async function (
-    _req: Express.MyRequest,
-    res: Response
-  ): Promise<Response | void> {
+  forgotPassword: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      return res.status(200).json({ message: "found forgot password route" });
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      // if no email in body then error
+      if (!req.body.email) return res.status(422).json({ error: "email missing from request!" });
+      //send email if it's a valid email formatted string
+      if (!emailRegex.test(req.body.email)) return res.status(200).json({ done: true });
+      return res.status(200).json({ done: true });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });

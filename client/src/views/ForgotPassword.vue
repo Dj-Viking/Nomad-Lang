@@ -7,9 +7,9 @@
         ($event) => {
           readEvent($event);
           isLoading = true;
-          // submitForgotPassword({
-          //   email: emailInput,
-          // });
+          (async () => {
+            await submitForgotPassword(emailInput);
+          })();
         }
       "
     >
@@ -51,6 +51,9 @@
 import { ref, defineComponent, onMounted } from "@vue/runtime-core";
 // import router from "../router";
 import { useToast } from "vue-toastification";
+import { api } from "@/utils/ApiService";
+import { ForgotPassResponse, RootCommitType } from "@/types";
+import store from "@/store";
 export default defineComponent({
   name: "Forgot",
   setup(this: void) {
@@ -69,6 +72,41 @@ export default defineComponent({
     };
   },
   methods: {
+    async submitForgotPassword(email: string): Promise<void> {
+      store.commit("loading/SET_LOADING" as RootCommitType, true, {
+        root: true,
+      });
+      const { done, error } = (await api.forgotPassword(
+        email
+      )) as ForgotPassResponse;
+      if (!!error) {
+        this.isLoading = false;
+        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          root: true,
+        });
+        this.toast.error(
+          `Error happened during forgot password request ${error}`,
+          {
+            timeout: 3000,
+          }
+        );
+      }
+      if (done) {
+        setTimeout(() => {
+          this.isLoading = false;
+          store.commit("loading/SET_LOADING" as RootCommitType, false, {
+            root: true,
+          });
+          this.toast.success(
+            "If there is an account with that email, a password reset request email is being sent now!",
+            {
+              timeout: 3000,
+            }
+          );
+        }, 3000);
+        console.log("done", done);
+      }
+    },
     // eslint-disable-next-line
     readEvent(_event: Event) {
       // do nothing
