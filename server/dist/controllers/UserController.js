@@ -16,6 +16,8 @@ exports.UserController = void 0;
 const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
 const mongoose_1 = __importDefault(require("mongoose"));
+const sendEmail_1 = require("../utils/sendEmail");
+const constants_1 = require("../constants");
 const uuid = require("uuid");
 exports.UserController = {
     me: function (req, res) {
@@ -184,13 +186,32 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!req.body.email)
+                const { email } = req.body;
+                if (!email)
                     return res.status(422).json({ error: "email missing from request!" });
-                if (!emailRegex.test(req.body.email))
+                if (!emailRegex.test(email))
                     return res.status(200).json({ done: true });
-                const user = yield models_1.User.findOne({ email: req.body.email });
+                const user = yield models_1.User.findOne({ email });
                 if (user === null)
                     return res.status(200).json({ done: true });
+                const token = (0, signToken_1.signToken)({
+                    username: user.username,
+                    resetEmail: email,
+                    uuid: uuid.v4(),
+                    exp: "5m",
+                });
+                const sendEmailArgs = {
+                    fromHeader: "Password Reset",
+                    subject: "Password Reset Request",
+                    mailTo: email,
+                    mailHtml: `
+          <span>We were made aware that you request your password to be reset</span>
+          <p>If this wasn't you. Then please disregard this email. Thank you!</p>
+          <h2>This Request will expire after 5 minutes.</h2>
+          <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>   
+        `,
+                };
+                yield (0, sendEmail_1.sendEmail)(sendEmailArgs);
                 return res.status(200).json({ done: true });
             }
             catch (error) {

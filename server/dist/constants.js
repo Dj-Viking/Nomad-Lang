@@ -20,6 +20,6 @@ exports.MOCK_EDIT_CARD = {
     backSidePicture: "kjdfkjdjk",
 };
 exports.APP_DOMAIN_PREFIX = exports.IS_PROD
-    ? "https://not_made_yet"
+    ? "https://https://nomad-lang.herokuapp.com"
     : "http://localhost:8080";
 //# sourceMappingURL=constants.js.map

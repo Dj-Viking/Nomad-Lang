@@ -4,6 +4,8 @@ import { Response } from "express";
 import { CardClass, User } from "../models";
 import { signToken } from "../utils/signToken";
 import mongoose from "mongoose";
+import { sendEmail } from "../utils/sendEmail";
+import { APP_DOMAIN_PREFIX } from "../constants";
 const uuid = require("uuid");
 export const UserController = {
   me: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
@@ -181,15 +183,39 @@ export const UserController = {
   forgotPassword: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const { email } = req.body;
       // if no email in body then error
-      if (!req.body.email) return res.status(422).json({ error: "email missing from request!" });
+      if (!email) return res.status(422).json({ error: "email missing from request!" });
 
       //send email if it's a valid email formatted string
-      if (!emailRegex.test(req.body.email)) return res.status(200).json({ done: true });
+      if (!emailRegex.test(email)) return res.status(200).json({ done: true });
 
       //if email isn't found just return done: true anyways
-      const user = await User.findOne({ email: req.body.email });
+      const user = await User.findOne({ email });
       if (user === null) return res.status(200).json({ done: true });
+
+      //create a reset email token
+      const token = signToken({
+        username: user.username,
+        resetEmail: email,
+        uuid: uuid.v4(),
+        exp: "5m",
+      });
+
+      //if user is not null then send the email
+      const sendEmailArgs = {
+        fromHeader: "Password Reset",
+        subject: "Password Reset Request",
+        mailTo: email,
+        mailHtml: `
+          <span>We were made aware that you request your password to be reset</span>
+          <p>If this wasn't you. Then please disregard this email. Thank you!</p>
+          <h2>This Request will expire after 5 minutes.</h2>
+          <a href="${APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>   
+        `,
+      };
+
+      await sendEmail(sendEmailArgs);
 
       return res.status(200).json({ done: true });
     } catch (error) {

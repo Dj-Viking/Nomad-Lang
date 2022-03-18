@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const supertest_1 = __importDefault(require("supertest"));
 const app_1 = __importDefault(require("../../app"));
+jest.mock("../../utils/sendEmail.ts");
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     yield mongoose_1.default.connect("mongodb://localhost/rest-cats-test", {});
 }));
@@ -43,7 +44,7 @@ describe("test the reset email function", () => {
         newUserToken = parsed.user.token;
         expect(typeof newUserToken).toBe("string");
     }));
-    test("POST /user/forgotPassword hits forgotPassword route", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("POST /user/forgotPassword hits forgotPassword route without email arg", () => __awaiter(void 0, void 0, void 0, function* () {
         const forgotPassword = yield (0, supertest_1.default)(app)
             .post("/user/forgotPassword")
             .send({
@@ -53,6 +54,14 @@ describe("test the reset email function", () => {
         const parsed = JSON.parse(forgotPassword.text);
         expect(parsed.error).toBe("email missing from request!");
     }));
+    test("POST /user/forgotPassword hits forgotPassword route without correctly formatted email send 200 anyway", () => __awaiter(void 0, void 0, void 0, function* () {
+        const forgotPassword = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
+            email: "kdjfkdjfkdk",
+        });
+        expect(forgotPassword.status).toBe(200);
+        const parsed = JSON.parse(forgotPassword.text);
+        expect(parsed.done).toBe(true);
+    }));
     test("POST /user/forgotPassword even if email doesn't exist just return 200 obscurely", () => __awaiter(void 0, void 0, void 0, function* () {
         const forgotPassword = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
             email: "test1@email.com",
@@ -61,7 +70,7 @@ describe("test the reset email function", () => {
         const parsed = JSON.parse(forgotPassword.text);
         expect(parsed.done).toBe(true);
     }));
-    test("POST /user/forgotPassword hits forgotPassword route", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("POST /user/forgotPassword hits forgotPassword route with a correct email and a user", () => __awaiter(void 0, void 0, void 0, function* () {
         const forgotPassword = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
             email: "test@email.com",
         });
