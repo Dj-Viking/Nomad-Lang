@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { ANSI_ESCAPES } from "../types";
+import { ANSI_ESCAPES } from "tests/types";
 import {
   // FixtureCliArgs,
   IMissingArgs,
@@ -9,7 +9,7 @@ import {
   IkeyValueMappedObj,
   IPreJsonObj,
   PreJsonObjClass,
-} from "../types";
+} from "tests/types";
 
 import {
   createMissingArgsMessage,

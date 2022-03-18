@@ -6,7 +6,7 @@ import {
   ACTUALS_LOGINREGRESSIONSPEC_PATH,
   LOGIN_SCREENSHOT_FILE_NAME,
   ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS,
-} from "tests/constants";
+} from "../../constants";
 import { PNG, PNGWithMetadata } from "pngjs";
 import Pixelmatch from "pixelmatch";
 

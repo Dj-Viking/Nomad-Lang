@@ -1,4 +1,4 @@
-import { LOCALHOST_URL, EMAIL, PASSWORD, USERNAME } from "tests/constants";
+import { LOCALHOST_URL, EMAIL, PASSWORD, USERNAME } from "../../constants";
 
 beforeEach(() => {
   // eslint-disable-next-line

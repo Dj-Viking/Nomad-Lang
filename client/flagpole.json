@@ -25,6 +25,11 @@
       "id": "",
       "name": "smoke",
       "tags": []
+    },
+    "puppeteer": {
+      "id": "",
+      "name": "puppeteer",
+      "tags": []
     }
   }
 }

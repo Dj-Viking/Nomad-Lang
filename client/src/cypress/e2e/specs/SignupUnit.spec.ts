@@ -7,7 +7,7 @@ import {
   REGISTER_USERNAME,
   ACTUALS_SIGNUPUNITSPEC_PATH,
   ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS,
-} from "tests/constants";
+} from "../../constants";
 
 let unique_username = "";
 let unique_email = "";

@@ -6,14 +6,12 @@ suite
   .scenario("Homepage Loads", "html")
   .open("/")
   .next(async (_context) => {
-    const blah = "blasdfsdf";
-    console.log(blah);
+    console.log("lloading homepage");
   });
 
 suite
   .scenario("login page loads", "html")
   .open("/login")
-  .next(async (context) => {
-    const blah = "blasdfsdf";
-    console.log(blah);
+  .next(async (_context) => {
+    console.log("loading login page");
   });

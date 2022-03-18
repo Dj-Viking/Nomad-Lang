@@ -10,16 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const flagpole_1 = require("flagpole");
-const suite = (0, flagpole_1.default)("Basic Smoke Test of Site");
-suite
-    .scenario("Homepage Loads", "html")
-    .open("/")
-    .next((_context) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("lloading homepage");
-}));
-suite
-    .scenario("login page loads", "html")
-    .open("/login")
-    .next((_context) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("loading login page");
+(0, flagpole_1.default)("starting puppeteer", (suite) => __awaiter(void 0, void 0, void 0, function* () {
+    suite
+        .scenario("something", "browser")
+        .open("http://localhost:8080/")
+        .next((context) => __awaiter(void 0, void 0, void 0, function* () {
+        context.assert(yield context.find("h2.title.mb-0")).exists();
+        console.log("what is this keyword here", this);
+        context.assert(window.navigator).exists();
+    }));
 }));

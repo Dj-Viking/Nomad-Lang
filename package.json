@@ -36,5 +36,6 @@
   "dependencies": {
     "concurrently": "^7.0.0",
     "if-env": "^1.0.4"
-  }
+  },
+  "devDependencies": {}
 }

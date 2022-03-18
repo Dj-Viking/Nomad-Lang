@@ -1,5 +1,5 @@
-import { ConstantCliArgs } from "../types";
-import { ANSI_ESCAPES } from "../types";
+import { ConstantCliArgs } from "tests/types";
+import { ANSI_ESCAPES } from "@/types";
 import { deleteOldFile, writeNewFile } from "../utils/helpers";
 import path from "path";
 import fs from "fs";

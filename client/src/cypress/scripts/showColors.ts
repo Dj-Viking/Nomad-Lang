@@ -9,7 +9,7 @@ import {
   LightBackGroundName,
   LightTextName,
   TextColor,
-} from "../types";
+} from "tests/types";
 
 let styleName:
   | TextColor

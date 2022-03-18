@@ -2,13 +2,13 @@ import moment from "moment";
 import fs from "fs";
 import path from "path";
 
-import { ANSI_ESCAPES } from "../types";
+import { ANSI_ESCAPES } from "tests/types";
 import {
   ConstantCliArgs,
   /*FixtureCliArgs,*/ IkeyValueMappedObj,
   IMissingArgs,
   KeyValueMappedObj,
-} from "../types";
+} from "tests/types";
 /**
  * the date passed in is the generated object from the 3 string input select fields
  * @param date moment object passed in from the form inputs
