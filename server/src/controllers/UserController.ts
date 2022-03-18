@@ -183,8 +183,14 @@ export const UserController = {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       // if no email in body then error
       if (!req.body.email) return res.status(422).json({ error: "email missing from request!" });
+
       //send email if it's a valid email formatted string
       if (!emailRegex.test(req.body.email)) return res.status(200).json({ done: true });
+
+      //if email isn't found just return done: true anyways
+      const user = await User.findOne({ email: req.body.email });
+      if (user === null) return res.status(200).json({ done: true });
+
       return res.status(200).json({ done: true });
     } catch (error) {
       console.error(error);

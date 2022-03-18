@@ -37,10 +37,37 @@ describe("test the reset email function", () => {
         const parsed = JSON.parse(signup.text);
         expect(typeof parsed.user._id).toBe("string");
         newUserId = parsed.user._id;
+        expect(typeof newUserId).toBe("string");
         expect(typeof parsed.user.token).toBe("string");
         expect(parsed.user.cards).toStrictEqual([]);
         newUserToken = parsed.user.token;
         expect(typeof newUserToken).toBe("string");
+    }));
+    test("POST /user/forgotPassword hits forgotPassword route", () => __awaiter(void 0, void 0, void 0, function* () {
+        const forgotPassword = yield (0, supertest_1.default)(app)
+            .post("/user/forgotPassword")
+            .send({
+            email: void 0,
+        });
+        expect(forgotPassword.status).toBe(422);
+        const parsed = JSON.parse(forgotPassword.text);
+        expect(parsed.error).toBe("email missing from request!");
+    }));
+    test("POST /user/forgotPassword even if email doesn't exist just return 200 obscurely", () => __awaiter(void 0, void 0, void 0, function* () {
+        const forgotPassword = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
+            email: "test1@email.com",
+        });
+        expect(forgotPassword.status).toBe(200);
+        const parsed = JSON.parse(forgotPassword.text);
+        expect(parsed.done).toBe(true);
+    }));
+    test("POST /user/forgotPassword hits forgotPassword route", () => __awaiter(void 0, void 0, void 0, function* () {
+        const forgotPassword = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
+            email: "test@email.com",
+        });
+        expect(forgotPassword.status).toBe(200);
+        const parsed = JSON.parse(forgotPassword.text);
+        expect(parsed.done).toBe(true);
     }));
 });
 //# sourceMappingURL=resetEmail.test.js.map

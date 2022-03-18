@@ -188,6 +188,9 @@ exports.UserController = {
                     return res.status(422).json({ error: "email missing from request!" });
                 if (!emailRegex.test(req.body.email))
                     return res.status(200).json({ done: true });
+                const user = yield models_1.User.findOne({ email: req.body.email });
+                if (user === null)
+                    return res.status(200).json({ done: true });
                 return res.status(200).json({ done: true });
             }
             catch (error) {
