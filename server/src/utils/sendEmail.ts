@@ -19,7 +19,7 @@ export async function sendEmail(args: MySendEmailOptions): Promise<void> {
     //If port 587 is blocked, port 2525 makes a good alternative.
     auth: {
       user: process.env.NODEMAILER_AUTH_EMAIL, // ethereal doesn't work anymore
-      pass: process.env.NODEMAILER_AUTH_PASS, // ethereal doesn't work anymore
+      pass: process.env.OTHER_NODEMAILER_AUTH_PASS, // ethereal doesn't work anymore
     },
   });
   // console.log("creating transporter", transporter);

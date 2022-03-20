@@ -147,6 +147,9 @@ export default defineComponent({
             root: true,
           }
         );
+        this.toast.success("Good luck have fun!", {
+          timeout: 2000,
+        });
         setTimeout(() => {
           // set login state true
           store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
@@ -154,9 +157,6 @@ export default defineComponent({
           });
           this.submitted = false;
           this.isLoading = false;
-          this.toast.success("Good luck have fun!", {
-            timeout: 2000,
-          });
           router.push("/");
         }, 3000);
       } catch (error) {

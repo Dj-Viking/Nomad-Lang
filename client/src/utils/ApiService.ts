@@ -48,10 +48,26 @@ class ApiService implements IApiService {
   constructor() {
     this.headers = {};
   }
+
+  private _clearHeaders(): void {
+    this.headers = {};
+  }
+  private _setInitialHeaders(): void {
+    this.headers = {
+      ...this.headers,
+      "Content-Type": "application/json",
+    };
+  }
+  private _setAuthHeader(token: string): void {
+    this.headers = {
+      ...this.headers,
+      authorization: `Bearer ${token}`,
+    };
+  }
   public async me(token?: string): Promise<MeQueryResponse> {
-    this.clearHeaders();
-    this.setInitialHeaders();
-    this.setAuthHeader(token as string);
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token as string);
     try {
       const res = await fetch(API_URL + "/user/me", {
         method: "GET",
@@ -71,8 +87,8 @@ class ApiService implements IApiService {
     password: string;
   }): Promise<LoginResponse> {
     const { username, email, password } = args;
-    this.clearHeaders();
-    this.setInitialHeaders();
+    this._clearHeaders();
+    this._setInitialHeaders();
     try {
       const res = await fetch(API_URL + "/user/login", {
         method: "POST",
@@ -91,8 +107,8 @@ class ApiService implements IApiService {
     email: string;
     password: string;
   }): Promise<RegisterResponse | void> {
-    this.clearHeaders();
-    this.setInitialHeaders();
+    this._clearHeaders();
+    this._setInitialHeaders();
     try {
       const { username, email, password } = args;
       const res = await fetch(API_URL + "/user/signup", {
@@ -110,9 +126,9 @@ class ApiService implements IApiService {
     token: string,
     card: AddCardPayload
   ): Promise<AddCardResponse | never> {
-    this.clearHeaders();
-    this.setInitialHeaders();
-    this.setAuthHeader(token);
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
     try {
       console.log("card sending", card);
 
@@ -136,9 +152,9 @@ class ApiService implements IApiService {
     }
   }
   public async clearCards(token: string): Promise<ClearCardsResponse> {
-    this.clearHeaders();
-    this.setInitialHeaders();
-    this.setAuthHeader(token);
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
     try {
       const res = await fetch(`${API_URL}` + "/user/clearCards", {
         method: "PUT",
@@ -156,9 +172,9 @@ class ApiService implements IApiService {
     token: string,
     card: IEditCardPayload
   ): Promise<EditCardResponse> {
-    this.clearHeaders();
-    this.setInitialHeaders();
-    this.setAuthHeader(token);
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
     try {
       const res = await fetch(`${API_URL}` + `/user/editCard/${card.id}`, {
         method: "PUT",
@@ -180,9 +196,9 @@ class ApiService implements IApiService {
     token: string,
     id: string
   ): Promise<DeleteCardResponse> {
-    this.clearHeaders();
-    this.setInitialHeaders();
-    this.setAuthHeader(token);
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
     try {
       const res = await fetch(`${API_URL}` + `/user/deleteCard/${id}`, {
         method: "DELETE",
@@ -202,8 +218,8 @@ class ApiService implements IApiService {
     }
   }
   public async forgotPassword(email: string): Promise<ForgotPassResponse> {
-    this.clearHeaders();
-    this.setInitialHeaders();
+    this._clearHeaders();
+    this._setInitialHeaders();
     try {
       const res = await fetch(`${API_URL}` + "/user/forgotPassword", {
         method: "POST",
@@ -228,30 +244,14 @@ class ApiService implements IApiService {
     _resetToken: string,
     _newPassword: string
   ): Promise<boolean | void | { message: string }> {
-    this.clearHeaders();
-    this.setInitialHeaders();
+    this._clearHeaders();
+    this._setInitialHeaders();
     try {
       return void 0;
     } catch (error) {
       console.error(error);
       throw error;
     }
-  }
-
-  private clearHeaders(): void {
-    this.headers = {};
-  }
-  private setInitialHeaders(): void {
-    this.headers = {
-      ...this.headers,
-      "Content-Type": "application/json",
-    };
-  }
-  private setAuthHeader(token: string): void {
-    this.headers = {
-      ...this.headers,
-      authorization: `Bearer ${token}`,
-    };
   }
 }
 

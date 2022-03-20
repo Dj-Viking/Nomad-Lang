@@ -189,10 +189,10 @@ exports.UserController = {
                 const { email } = req.body;
                 if (!email)
                     return res.status(422).json({ error: "email missing from request!" });
-                if (!emailRegex.test(email))
-                    return res.status(200).json({ done: true });
                 const user = yield models_1.User.findOne({ email });
                 if (user === null)
+                    return res.status(200).json({ done: true });
+                if (!emailRegex.test(email))
                     return res.status(200).json({ done: true });
                 const token = (0, signToken_1.signToken)({
                     username: user.username,
@@ -208,7 +208,7 @@ exports.UserController = {
           <span>We were made aware that you request your password to be reset</span>
           <p>If this wasn't you. Then please disregard this email. Thank you!</p>
           <h2>This Request will expire after 5 minutes.</h2>
-          <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>   
+          <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>
         `,
                 };
                 yield (0, sendEmail_1.sendEmail)(sendEmailArgs);
@@ -216,7 +216,9 @@ exports.UserController = {
             }
             catch (error) {
                 console.error(error);
-                return res.status(500).json({ error: error.message });
+                return res
+                    .status(500)
+                    .json({ error: "We're sorry there was a problem with this request :(" });
             }
         });
     },

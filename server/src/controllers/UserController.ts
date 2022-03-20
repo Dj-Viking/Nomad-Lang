@@ -187,12 +187,12 @@ export const UserController = {
       // if no email in body then error
       if (!email) return res.status(422).json({ error: "email missing from request!" });
 
-      //send email if it's a valid email formatted string
-      if (!emailRegex.test(email)) return res.status(200).json({ done: true });
-
       //if email isn't found just return done: true anyways
       const user = await User.findOne({ email });
       if (user === null) return res.status(200).json({ done: true });
+
+      //send email if it's a valid email formatted string
+      if (!emailRegex.test(email)) return res.status(200).json({ done: true });
 
       //create a reset email token
       const token = signToken({
@@ -211,7 +211,7 @@ export const UserController = {
           <span>We were made aware that you request your password to be reset</span>
           <p>If this wasn't you. Then please disregard this email. Thank you!</p>
           <h2>This Request will expire after 5 minutes.</h2>
-          <a href="${APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>   
+          <a href="${APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>
         `,
       };
 
@@ -220,7 +220,10 @@ export const UserController = {
       return res.status(200).json({ done: true });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: error.message });
+      return res
+        .status(500)
+        .json({ error: "We're sorry there was a problem with this request :(" });
+      // return res.status(500).json({ error: error.message });
     }
   },
   changePassword: async function (_req: Express.MyRequest, res: Response): Promise<Response> {

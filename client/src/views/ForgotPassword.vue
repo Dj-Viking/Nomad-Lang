@@ -54,6 +54,7 @@ import { useToast } from "vue-toastification";
 import { api } from "@/utils/ApiService";
 import { ForgotPassResponse, RootCommitType } from "@/types";
 import store from "@/store";
+import router from "@/router";
 export default defineComponent({
   name: "Forgot",
   setup(this: void) {
@@ -92,17 +93,18 @@ export default defineComponent({
         );
       }
       if (done) {
+        this.toast.success(
+          "If there is an account with that email, a password reset request email is being sent now!",
+          {
+            timeout: 3000,
+          }
+        );
         setTimeout(() => {
           this.isLoading = false;
           store.commit("loading/SET_LOADING" as RootCommitType, false, {
             root: true,
           });
-          this.toast.success(
-            "If there is an account with that email, a password reset request email is being sent now!",
-            {
-              timeout: 3000,
-            }
-          );
+          router.push("/login");
         }, 3000);
         console.log("done", done);
       }
