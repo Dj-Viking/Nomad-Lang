@@ -2,6 +2,7 @@
 import {
   AddCardPayload,
   AddCardResponse,
+  ChangePasswordResponse,
   ClearCardsResponse,
   DeleteCardResponse,
   EditCardResponse,
@@ -40,7 +41,7 @@ export interface IApiService {
   changePassword: (
     resetToken: string,
     newPassword: string
-  ) => Promise<boolean | { message: string } | void>;
+  ) => Promise<ChangePasswordResponse>;
 }
 
 class ApiService implements IApiService {
@@ -241,16 +242,26 @@ class ApiService implements IApiService {
     }
   }
   public async changePassword(
-    _resetToken: string,
-    _newPassword: string
-  ): Promise<boolean | void | { message: string }> {
+    resetToken: string,
+    newPassword: string
+  ): Promise<ChangePasswordResponse> {
     this._clearHeaders();
     this._setInitialHeaders();
+    this._setAuthHeader(resetToken);
     try {
-      return void 0;
+      const res = await fetch(`${API_URL}` + "/user/changePassword", {
+        method: "PUT",
+        body: JSON.stringify({ newPassword }),
+        headers: this.headers,
+      });
+      const data = await res.json();
+      return data;
     } catch (error) {
       console.error(error);
-      throw error;
+      const err = error as Error;
+      return {
+        error: `There was a problem with this change password request! ${err.message}`,
+      };
     }
   }
 }

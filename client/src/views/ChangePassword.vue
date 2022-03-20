@@ -9,10 +9,12 @@
           isLoading = true;
           const matched = verifyMatch(passwordInput, confirmInput);
           if (matched) {
-            // submitChangePassword({
-            //   password: passwordInput,
-            //   token: route.params.token || '',
-            // });
+            (async () => {
+              await submitChangePassword({
+                newPassword: passwordInput,
+                resetToken: route.params.token as string || '',
+              });
+            })();
           } else {
             isLoading = false;
             toast.error(
@@ -78,8 +80,11 @@ import { defineComponent, ref, onMounted } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
 // import { ChangePasswordResponse, RootCommitType } from "@/types";
 import { useToast } from "vue-toastification";
-// import auth from "../utils/AuthService";
-// import store from "../store";
+import auth from "@/utils/AuthService";
+import { api } from "@/utils/ApiService";
+import store from "@/store";
+import router from "@/router";
+import { RootCommitType, RootDispatchType } from "@/types";
 export default defineComponent({
   name: "ChangePass",
   components: {
@@ -114,6 +119,48 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       // do nothing
+    },
+    async submitChangePassword(args: {
+      newPassword: string;
+      resetToken: string;
+    }): Promise<void> {
+      try {
+        const { resetToken, newPassword } = args;
+        const { done, cards, token, error } = await api.changePassword(
+          resetToken,
+          newPassword
+        );
+
+        if (!!error || !done) throw error;
+
+        //log in the user
+        store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+          root: true,
+        });
+        auth.setToken(token as string);
+        // set the cards
+        await store.dispatch(
+          "cards/setCards" as RootDispatchType,
+          { cards },
+          { root: true }
+        );
+        // display success and route to home page
+        this.toast.success(
+          "Successfully changed password, good luck and have fun!",
+          { timeout: 3000 }
+        );
+        setTimeout(() => {
+          this.isLoading = false;
+          router.push("/");
+        }, 3000);
+      } catch (error) {
+        this.isLoading = false;
+        console.error(error);
+        const err = error as Error;
+        this.toast.error(err.message, {
+          timeout: 3000,
+        });
+      }
     },
   },
 });

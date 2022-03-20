@@ -16,6 +16,7 @@ exports.UserController = void 0;
 const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
 const mongoose_1 = __importDefault(require("mongoose"));
+const argon2_1 = require("argon2");
 const sendEmail_1 = require("../utils/sendEmail");
 const constants_1 = require("../constants");
 const uuid = require("uuid");
@@ -222,10 +223,30 @@ exports.UserController = {
             }
         });
     },
-    changePassword: function (_req, res) {
+    changePassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("email from token", req.user.resetEmail);
             try {
-                return res.status(200).json({ message: "found changePassword route" });
+                const { newPassword } = req.body;
+                if (!newPassword)
+                    return res.status(400).json({ error: "missing password input" });
+                const hashed = yield (0, argon2_1.hash)(newPassword);
+                const token = (0, signToken_1.signToken)({
+                    username: req.user.username,
+                    email: req.user.resetEmail,
+                    uuid: uuid.v4(),
+                });
+                const user = yield models_1.User.findOneAndUpdate({ email: req.user.resetEmail }, {
+                    $set: {
+                        password: hashed,
+                        token,
+                    },
+                }, { new: true });
+                return res.status(200).json({
+                    cards: user.cards,
+                    done: true,
+                    token: user.token,
+                });
             }
             catch (error) {
                 console.error(error);

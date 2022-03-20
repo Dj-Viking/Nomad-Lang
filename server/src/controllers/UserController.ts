@@ -4,6 +4,7 @@ import { Response } from "express";
 import { CardClass, User } from "../models";
 import { signToken } from "../utils/signToken";
 import mongoose from "mongoose";
+import { hash } from "argon2";
 import { sendEmail } from "../utils/sendEmail";
 import { APP_DOMAIN_PREFIX } from "../constants";
 const uuid = require("uuid");
@@ -226,9 +227,36 @@ export const UserController = {
       // return res.status(500).json({ error: error.message });
     }
   },
-  changePassword: async function (_req: Express.MyRequest, res: Response): Promise<Response> {
+  changePassword: async function (req: Express.MyRequest, res: Response): Promise<Response> {
+    console.log("email from token", req!.user!.resetEmail);
     try {
-      return res.status(200).json({ message: "found changePassword route" });
+      const { newPassword } = req.body;
+      if (!newPassword) return res.status(400).json({ error: "missing password input" });
+
+      const hashed = await hash(newPassword);
+
+      const token = signToken({
+        username: req!.user!.username,
+        email: req!.user!.resetEmail as string,
+        uuid: uuid.v4(),
+      });
+
+      const user = await User.findOneAndUpdate(
+        { email: req!.user!.resetEmail },
+        {
+          $set: {
+            password: hashed,
+            token,
+          },
+        },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        cards: user!.cards,
+        done: true,
+        token: user!.token,
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: error.message });
