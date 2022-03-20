@@ -19,7 +19,6 @@ function authMiddleware(req, res, next) {
             }
         }
         const token = req.headers.authorization.split(" ")[1] || null;
-        console.log("got a token?", token);
         if (!token)
             return res.status(401).json({ error: "not authenticated" });
         const decoded = yield (0, verifyTokenAsync_1.verifyTokenAsync)(token);
