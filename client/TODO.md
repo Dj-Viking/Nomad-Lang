@@ -1,4 +1,4 @@
-* [ ] api service
+* [x] api service
 
   - [x] me query in baselayout.vue
     - [x] set user and cards on load
@@ -26,5 +26,4 @@
   - [x] changePassword in changePassword.vue
     * [x] check if error occurred
 
-  - [ ] setusertheme in togglebutton.vue
-    * maybe just use localstorage
+  - [x] setusertheme in togglebutton.vue
