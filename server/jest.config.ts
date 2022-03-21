@@ -12,6 +12,7 @@ export default async (): Promise<Config.InitialOptions> => {
       "!src/types.ts",
       "!src/utils/sendEmail.ts",
       "!src/resolvers/*.ts",
+      "!src/constants.ts",
       "!src/entities/*.ts",
     ],
     transform: {
