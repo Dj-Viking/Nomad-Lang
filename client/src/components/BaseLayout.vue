@@ -129,6 +129,10 @@ export default defineComponent({
         { root: true }
       );
     }
+    // set theme
+    store.commit("theme/SET_THEME" as RootCommitType, user!.themePref, {
+      root: true,
+    });
   },
   watch: {
     //callback to refresh user token to execute whenever the application router changes

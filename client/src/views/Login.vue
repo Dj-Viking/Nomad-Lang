@@ -166,6 +166,10 @@ export default defineComponent({
             });
             router.push("/");
           }, 3000);
+          // set theme
+          store.commit("theme/SET_THEME" as RootCommitType, user!.themePref, {
+            root: true,
+          });
         }
       } catch (error) {
         console.error("error during login", error);

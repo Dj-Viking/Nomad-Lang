@@ -1,3 +1,4 @@
+ChangeThemePrefResponse,
 <template>
   <Transition type="transition" name="fade" mode="out-in">
     <div v-if="sidebarOpen || cards.length > 0" style="width: 100px">
@@ -5,7 +6,9 @@
         :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
         @click.prevent="
           ($event) => {
-            toggleTheme($event);
+            (async () => {
+              await toggleTheme($event);
+            })();
           }
         "
       >
@@ -16,7 +19,9 @@
         type="button"
         @click.prevent="
           ($event) => {
-            toggleTheme($event);
+            (async () => {
+              await toggleTheme($event);
+            })();
           }
         "
         class="button"
@@ -32,10 +37,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
-import { CardsState, RootCommitType, SidebarState, UserState } from "@/types";
+import { defineComponent } from "@vue/runtime-core";
+import {
+  CardsState,
+  ChangeThemePrefResponse,
+  RootCommitType,
+  SidebarState,
+  UserState,
+} from "@/types";
 import store from "../store";
 import { useToast } from "vue-toastification";
+import { api } from "@/utils/ApiService";
+import auth from "@/utils/AuthService";
 export default defineComponent({
   name: "ToggleButton",
   computed: {
@@ -49,24 +62,33 @@ export default defineComponent({
   },
   setup() {
     const toast = useToast();
-    const themePrefRef = ref("");
-
-    return {
-      themePrefRef,
-      toast,
-    };
+    return { toast };
   },
   methods: {
     // eslint-disable-next-line
-    toggleTheme(_event: any): void {
+    async toggleTheme(_event: any): Promise<void> {
       store.commit("theme/TOGGLE_THEME" as RootCommitType, {}, { root: true });
-      setTimeout(() => {
+      setTimeout(async () => {
         if (this.isLoggedIn) {
-          // this.submitThemePrefChange({
-          //   themePref: this.isLight ? "light" : "dark",
-          // });
+          await this.submitThemePrefChange(this.isLight ? "light" : "dark");
         }
       }, 300);
+    },
+    async submitThemePrefChange(theme_input: string): Promise<void> {
+      console.log("theme pref", theme_input);
+      try {
+        const { error } = (await api.changeThemePref(
+          auth.getToken() as string,
+          theme_input
+        )) as ChangeThemePrefResponse;
+        if (!!error) throw error;
+      } catch (error) {
+        console.error(error);
+        const err = error as Error;
+        this.toast.error(
+          `There was an error during changing the theme ${err.message}`
+        );
+      }
     },
   },
 });

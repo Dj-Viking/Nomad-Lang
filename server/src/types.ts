@@ -146,16 +146,7 @@ export interface IMeResponse {
   };
 }
 export interface ICreateUserResponse extends Object {
-  user: {
-    username: string;
-    email: string;
-    _id: string;
-    role?: string;
-    cards?: [];
-    token?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-  };
+  user: IUser;
 }
 
 export interface ILoginError {
@@ -193,6 +184,7 @@ export interface IUser {
   email: string;
   role?: string;
   updatedAt: Date;
+  themePref?: string;
   createdAt: Date;
   token: string;
   username: string;
@@ -222,4 +214,8 @@ export interface IUpdateUserResponse {
 export interface IForgotPassResponse {
   done?: boolean;
   error?: string;
+}
+
+export interface IChangeThemeResponse {
+  themePref: string;
 }

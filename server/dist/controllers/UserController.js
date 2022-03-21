@@ -41,6 +41,7 @@ exports.UserController = {
                         _id: updated._id,
                         token,
                         cards: updated.cards,
+                        themePref: updated.themePref,
                     },
                 });
             }
@@ -79,6 +80,7 @@ exports.UserController = {
                         token: updated.token,
                         cards: updated.cards,
                         email: updated.email,
+                        themePref: updated.themePref,
                     },
                 });
             }
@@ -96,6 +98,7 @@ exports.UserController = {
                     username,
                     email,
                     password,
+                    themePref: "light",
                 });
                 const token = (0, signToken_1.signToken)({
                     username,
@@ -113,6 +116,7 @@ exports.UserController = {
                         username: updated.username,
                         email: updated.email,
                         token,
+                        themePref: updated.themePref,
                         cards: updated.cards,
                     },
                 });
@@ -268,6 +272,27 @@ exports.UserController = {
             }
             catch (error) {
                 console.error(error);
+            }
+        });
+    },
+    changeThemePref: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { themePref } = req.body;
+                const updated = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                    $set: {
+                        themePref,
+                    },
+                }, { new: true });
+                if (updated === null)
+                    return res.status(404).json({ error: "user not found" });
+                return res.status(200).json({
+                    themePref: updated.themePref,
+                });
+            }
+            catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: "error while changing theme preference" });
             }
         });
     },

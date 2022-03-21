@@ -22,7 +22,6 @@ afterAll(async () => {
   mongoose.connection.db.dropDatabase(async () => {
     await mongoose.connection.close();
   });
-  // mongoose.connection.close(() => done());
 });
 const app = createServer();
 let newCardId: string | null = null;

@@ -321,3 +321,9 @@ export interface IEditCardPayload {
   backSideLanguage?: string;
   backSidePicture?: string;
 }
+
+export type ChangeThemePrefResponse = {
+  themePref?: string;
+} & {
+  error?: unknown;
+};

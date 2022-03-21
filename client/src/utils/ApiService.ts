@@ -7,6 +7,7 @@ import {
   DeleteCardResponse,
   EditCardResponse,
   ForgotPassResponse,
+  ChangeThemePrefResponse,
   ICard,
   IEditCardPayload,
   LoginResponse,
@@ -42,6 +43,10 @@ export interface IApiService {
     resetToken: string,
     newPassword: string
   ) => Promise<ChangePasswordResponse>;
+  changeThemePref: (
+    token: string,
+    themePref: string
+  ) => Promise<ChangeThemePrefResponse>;
 }
 
 class ApiService implements IApiService {
@@ -261,6 +266,31 @@ class ApiService implements IApiService {
       const err = error as Error;
       return {
         error: `There was a problem with this change password request! ${err.message}`,
+      };
+    }
+  }
+  public async changeThemePref(
+    token: string,
+    themePref: string
+  ): Promise<ChangeThemePrefResponse> {
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
+    try {
+      const res = await fetch(`${API_URL}` + "/user/changeThemePref", {
+        method: "PUT",
+        body: JSON.stringify({ themePref }),
+        headers: this.headers,
+      });
+      const data = await res.json();
+      return {
+        themePref: data.themePref,
+        error: void 0,
+      };
+    } catch (error) {
+      const err = error as Error;
+      return {
+        error: err.message,
       };
     }
   }
