@@ -5,7 +5,9 @@ const state = {
 const mutations = {
   SET_THEME(state: ThemeState, theme: string): void {
     if (typeof theme !== "string")
-      return console.error("set theme commit payload must be a string!");
+      return console.error(
+        `set theme commit payload must be a string! but it was ${theme}`
+      );
     state.theme = theme;
     switch (true) {
       case theme === "dark":
@@ -55,7 +57,7 @@ const mutations = {
           state.theme = "light";
 
           // eslint-disable-next-line
-            document.querySelector("html")!.style.transition = "0.5s";
+          document.querySelector("html")!.style.transition = "0.5s";
           // eslint-disable-next-line
           document.querySelector("html")!.style.backgroundColor = "white";
           document.body.classList.remove("body-dark");

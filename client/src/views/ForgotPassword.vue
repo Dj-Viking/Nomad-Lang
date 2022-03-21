@@ -7,9 +7,9 @@
         ($event) => {
           readEvent($event);
           isLoading = true;
-          submitForgotPassword({
-            email: emailInput,
-          });
+          (async () => {
+            await submitForgotPassword(emailInput);
+          })();
         }
       "
     >
@@ -49,13 +49,12 @@
 
 <script lang="ts">
 import { ref, defineComponent, onMounted } from "@vue/runtime-core";
-import { FetchResult } from "@apollo/client/core";
-import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
-import router from "../router";
-import { createForgotPasswordMutation } from "@/graphql/mutations/myMutations";
-import { ForgotPassResponse } from "@/types";
+// import router from "../router";
 import { useToast } from "vue-toastification";
+import { api } from "@/utils/ApiService";
+import { ForgotPassResponse, RootCommitType } from "@/types";
+import store from "@/store";
+import router from "@/router";
 export default defineComponent({
   name: "Forgot",
   setup(this: void) {
@@ -63,56 +62,53 @@ export default defineComponent({
     const toast = useToast();
     const emailInput = ref("");
 
-    const { mutate: submitForgotPassword, onDone } = useMutation(
-      gql`
-        ${createForgotPasswordMutation()}
-      `,
-      {
-        variables: {
-          email: emailInput.value,
-        },
-      }
-    );
-
     onMounted(() => {
       document.title = "Forgot Password";
     });
 
-    onDone(
-      (
-        result: FetchResult<
-          ForgotPassResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): void => {
-        if (result.data?.forgotPassword.errors?.length) {
-          isLoading.value = false;
-          //set some error toast saying something went wrong with the request
-          toast.error("something went wrong with this request", {
-            timeout: 3000,
-          });
-        } else {
-          isLoading.value = false;
-          //set some toast message saying if an account has that email then the email was sent with a password reset link
-          toast.success(
-            "A password reset link was sent to the given email address",
-            {
-              timeout: 3000,
-            }
-          );
-          router.push("/");
-        }
-      }
-    );
-
     return {
       isLoading,
       emailInput,
-      submitForgotPassword,
+      toast,
     };
   },
   methods: {
+    async submitForgotPassword(email: string): Promise<void> {
+      store.commit("loading/SET_LOADING" as RootCommitType, true, {
+        root: true,
+      });
+      const { done, error } = (await api.forgotPassword(
+        email
+      )) as ForgotPassResponse;
+      if (!!error) {
+        this.isLoading = false;
+        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          root: true,
+        });
+        this.toast.error(
+          `Error happened during forgot password request ${error}`,
+          {
+            timeout: 3000,
+          }
+        );
+      }
+      if (done) {
+        this.toast.success(
+          "If there is an account with that email, a password reset request email is being sent now!",
+          {
+            timeout: 3000,
+          }
+        );
+        setTimeout(() => {
+          this.isLoading = false;
+          store.commit("loading/SET_LOADING" as RootCommitType, false, {
+            root: true,
+          });
+          router.push("/login");
+        }, 3000);
+        console.log("done", done);
+      }
+    },
     // eslint-disable-next-line
     readEvent(_event: Event) {
       // do nothing

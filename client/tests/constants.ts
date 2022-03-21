@@ -1,4 +1,5 @@
 import { ICard } from "@/types";
+import { keyGen } from "./utils/keyGen";
 import {
   TextColor,
   BackgroundColor,
@@ -329,7 +330,7 @@ export const lightTextNames: Array<LightTextName> = [
 // export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";
 
 export const EXPECTED_ADD_LOCAL_CARD_OBJECT: ICard = {
-  id: 0,
+  _id: keyGen(),
   creatorId: 0,
   frontSideText: "front side text",
   frontSideLanguage: "front side text language",
@@ -352,8 +353,8 @@ export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: ICard = {
   createdAt: "right now",
   updatedAt: "right now",
   creatorId: 0,
-  categorized: { test: [{ id: 0 }] },
-  __typename: "Card",
+  _id: keyGen(),
+  categorized: { test: [{ _id: keyGen() }] },
 };
 EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture =
   EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture;

@@ -5,12 +5,12 @@ function createCategorizedCardsObject(cards) {
     let categorizedCardMap = {};
     let iterator = 0;
     while (iterator < cards.length) {
-        categorizedCardMap = Object.assign(Object.assign({}, categorizedCardMap), { [`${!categorizedCardMap[cards[iterator].frontsideLanguage]
-                ? cards[iterator].frontsideLanguage
-                : cards[iterator].frontsideLanguage}`]: {
-                cards: categorizedCardMap[cards[iterator].frontsideLanguage]
+        categorizedCardMap = Object.assign(Object.assign({}, categorizedCardMap), { [`${!categorizedCardMap[cards[iterator].frontSideLanguage]
+                ? cards[iterator].frontSideLanguage
+                : cards[iterator].frontSideLanguage}`]: {
+                cards: categorizedCardMap[cards[iterator].frontSideLanguage]
                     ? [
-                        ...categorizedCardMap[cards[iterator].frontsideLanguage].cards,
+                        ...categorizedCardMap[cards[iterator].frontSideLanguage].cards,
                         cards[iterator],
                     ]
                     :

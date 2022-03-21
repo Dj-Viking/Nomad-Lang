@@ -75,7 +75,7 @@
           :key="i"
         >
           <Card
-            :id="card.id"
+            :id="card._id"
             :cards="cards"
             :isFrontSide="true"
             :isBackSide="false"

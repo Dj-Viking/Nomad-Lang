@@ -45,35 +45,35 @@
           @submit.prevent="
             ($event) => {
               if (isLoggedIn) {
-                //graphql mutation pass data to the modal for it to use.
-                const payload = {
-                  options: {
-                    id: modalContext.card?.id,
-                    frontSideText:
-                      frontSideTextInput || modalContext.card?.frontSideText,
-                    frontSideLanguage:
-                      frontSideLanguageInput ||
-                      modalContext.card?.frontSideLanguage,
-                    frontSidePicture:
-                      frontSidePictureInput ||
-                      modalContext.card?.frontSidePicture,
-                    backSideText:
-                      backSideTextInput || modalContext.card?.backSideText,
-                    backSideLanguage:
-                      backSideLanguageInput ||
-                      modalContext.card?.backSideLanguage,
-                    backSidePicture:
-                      backSidePictureInput ||
-                      modalContext.card?.backSidePicture,
-                  },
+                const card = {
+                  id: modalContext.card?._id,
+                  frontSideText:
+                    frontSideTextInput || modalContext.card?.frontSideText,
+                  frontSideLanguage:
+                    frontSideLanguageInput ||
+                    modalContext.card?.frontSideLanguage,
+                  frontSidePicture:
+                    frontSidePictureInput ||
+                    modalContext.card?.frontSidePicture,
+                  backSideText:
+                    backSideTextInput || modalContext.card?.backSideText,
+                  backSideLanguage:
+                    backSideLanguageInput ||
+                    modalContext.card?.backSideLanguage,
+                  backSidePicture:
+                    backSidePictureInput || modalContext.card?.backSidePicture,
                 };
-                submitEditCard(payload);
-                // editLocalCard($event, payload.options);
+                if (isLoggedIn) {
+                  (async () => {
+                    submitEditCard(card);
+                  })();
+                }
+                editLocalCard($event, card);
                 clearCardInputFields();
                 closeModal();
               } else {
                 const card = {
-                  id: modalContext.card?.id,
+                  id: modalContext.card?._id,
                   frontSideText: frontSideTextInput,
                   frontSideLanguage: frontSideLanguageInput,
                   frontSidePicture: frontSidePictureInput,
@@ -226,22 +226,25 @@
               if (isLoggedIn) {
                 //graphql mutation pass data to the modal for it to use.
                 const card = {
-                  options: {
-                    frontSideText: frontSideTextInput || '',
-                    frontSideLanguage: frontSideLanguageInput || '',
-                    frontSidePicture: frontSidePictureInput || '',
-                    backSideText: backSideTextInput || '',
-                    backSideLanguage: backSideLanguageInput || '',
-                    backSidePicture: backSidePictureInput || '',
-                  },
+                  frontSideText: frontSideTextInput || '',
+                  frontSideLanguage: frontSideLanguageInput || '',
+                  frontSidePicture: frontSidePictureInput || '',
+                  backSideText: backSideTextInput || '',
+                  backSideLanguage: backSideLanguageInput || '',
+                  backSidePicture: backSidePictureInput || '',
                 };
-                submitAddCard(card);
-                // addLocalCard($event, card.options);
+                if (isLoggedIn) {
+                  (async () => {
+                    await submitAddCard($event, card);
+                  })();
+                } else {
+                  addLocalCard($event, card);
+                }
                 clearCardInputFields();
                 closeModal();
               } else {
                 const offlineCard = {
-                  id: Date.now(), //ids must be unique
+                  _id: keyGen(), //ids must be unique
                   frontSideText: frontSideTextInput,
                   frontSideLanguage: frontSideLanguageInput,
                   frontSidePicture: frontSidePictureInput,
@@ -387,28 +390,23 @@
 
 <script lang="ts">
 import {
-  createEditCardMutation,
-  createAddCardMutation,
-} from "@/graphql/mutations/myMutations";
-import {
   ModalState,
   RootCommitType,
   UserState,
-  EditCardResponse,
-  ICard,
-  AddCardResponse,
   EditCardCommitPayload,
   RootDispatchType,
   MyRootState,
+  AddCardPayload,
+  AddCardResponse,
+  IEditCardPayload,
 } from "@/types";
-import { createClearUserCardsMutation } from "@/graphql/mutations/myMutations";
-import { FetchResult } from "@apollo/client/core";
-import { useMutation } from "@vue/apollo-composable";
 import { defineComponent, ref } from "@vue/runtime-core";
 import { useStore } from "vuex";
-import { gql } from "graphql-tag";
+import { keyGen } from "@/utils/keyGen";
 import { useToast } from "vue-toastification";
 import store from "../store";
+import { api } from "@/utils/ApiService";
+import auth from "@/utils/AuthService";
 export default defineComponent({
   name: "Modal",
   setup() {
@@ -432,114 +430,19 @@ export default defineComponent({
     const backSidePictureInput = ref(
       store.state.modal.modal.context.card.backSidePicture as any
     );
-    // const addCardResult = ref();
-    const inputId = ref();
     const errMsg = ref("");
     const showErrMsg = ref(false);
-    const editResponse = ref();
-    const { mutate: submitAddCard, onDone: onAddCardDone } = useMutation(
-      gql`
-        ${createAddCardMutation()}
-      `,
-      {
-        variables: {
-          options: {
-            frontSideText: frontSideTextInput.value,
-            frontSideLanguage: frontSideLanguageInput.value,
-            frontSidePicture: frontSidePictureInput.value,
-            backSideText: backSideTextInput.value,
-            backSideLanguage: backSideLanguageInput.value,
-            backSidePicture: backSidePictureInput.value,
-          },
-        },
-      }
-    );
 
-    onAddCardDone(
-      async (
-        result: FetchResult<
-          AddCardResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): Promise<void> => {
-        if (result.data?.addCard.errors) {
-          toast.error(
-            `Error: there was an error adding a card - ${result.data?.addCard.errors[0].message}`,
-            {
-              timeout: 3000,
-            }
-          );
-        } else {
-          toast.success("Success: added a card to your list!", {
-            timeout: 3000,
-          });
-          //use the all in one cards setter, sets both displayed cards and all the cards and the categories in global state
-          await store.dispatch(
-            "cards/setCards" as RootDispatchType,
-            { cards: result.data?.addCard.cards },
-            { root: true }
-          );
-        }
-      }
-    );
-
-    const { mutate: submitEditCard, onDone: onEditCardDone } = useMutation(
-      gql`
-        ${createEditCardMutation()}
-      `,
-      {
-        variables: {
-          options: {
-            id: inputId.value,
-            frontSideText: frontSideTextInput.value,
-            frontSideLanguage: frontSideLanguageInput.value,
-            frontSidePicture: frontSidePictureInput.value,
-            backSideText: backSideTextInput.value,
-            backSideLanguage: backSideLanguageInput.value,
-            backSidePicture: backSidePictureInput.value,
-          },
-        },
-      }
-    );
-
-    onEditCardDone(
-      async (
-        result: FetchResult<
-          EditCardResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ) => {
-        if (result.data?.editCardById.errors) {
-          showErrMsg.value = true;
-          errMsg.value = result.data?.editCardById.errors[0].message;
-        } else {
-          editResponse.value = result.data;
-          await store.dispatch("cards/setCards" as RootDispatchType, {
-            cards: result.data?.editCardById.cards,
-          });
-        }
-      }
-    );
-
-    const { mutate: submitClearUserCards } = useMutation(
-      gql`
-        ${createClearUserCardsMutation()}
-      `
-    );
     return {
-      submitClearUserCards,
-      submitAddCard,
       frontSideTextInput,
       frontSideLanguageInput,
       frontSidePictureInput,
       backSideTextInput,
       backSideLanguageInput,
       backSidePictureInput,
-      submitEditCard,
+      keyGen,
       errMsg,
-      // addCardResult,
+      toast,
       showErrMsg,
     };
   },
@@ -553,6 +456,55 @@ export default defineComponent({
       store.state.modal.modal.context,
   },
   methods: {
+    editLocalCard(_event: Event, card: EditCardCommitPayload): void {
+      store.commit("cards/EDIT_CARD" as RootCommitType, card, {
+        root: true,
+      });
+      this.clearCardInputFields();
+    },
+    async submitEditCard(card: IEditCardPayload): Promise<void> {
+      console.log("card in edit", card);
+      try {
+        const { cards, error } = await api.editCard(
+          auth.getToken() as string,
+          card
+        );
+        if (!!error) throw error;
+        console.log("edit cards please", cards);
+      } catch (error) {
+        this.toast.error(`error when editing a card: ${error}`);
+      }
+    },
+    async submitClearUserCards() {
+      try {
+        const { user, error } = await api.clearCards(auth.getToken() as string);
+        console.log("res from clear cards", user);
+        console.log("error from clear cards", error);
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    },
+    async submitAddCard(_event: any, card: AddCardPayload): Promise<void> {
+      try {
+        console.log("got card", card, "event of submitting the card", _event);
+        const { cards, error } = (await api.addCard(
+          auth.getToken() as string,
+          card
+        )) as AddCardResponse;
+        if (!!error) {
+          console.error(error);
+        }
+        this.clearCardInputFields();
+
+        console.log("add card response hopefully cards", cards);
+      } catch (error) {
+        console.error("error when submitting card", error);
+        this.toast.error(`error when submitting card ${error}`, {
+          timeout: 3000,
+        });
+      }
+    },
     // eslint-disable-next-line
     async confirmClearButtonEvent(_event: any): Promise<void> {
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
@@ -571,7 +523,7 @@ export default defineComponent({
       });
     },
     // eslint-disable-next-line
-    addLocalCard(_event: Event, card: ICard): void {
+    addLocalCard(_event: Event, card: AddCardPayload): void {
       store.commit("cards/ADD_CARD" as RootCommitType, card, { root: true });
     },
     clearCardInputFields(): void {
@@ -585,12 +537,6 @@ export default defineComponent({
     // eslint-disable-next-line
     closeModal(_event?: Event): void {
       store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
-        root: true,
-      });
-    },
-    //
-    editLocalCard(_event: Event, card: EditCardCommitPayload): void {
-      store.commit("cards/EDIT_CARD" as RootCommitType, card, {
         root: true,
       });
     },

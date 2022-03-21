@@ -3,6 +3,7 @@ import "reflect-metadata";
 import express from "express";
 import { IS_PROD } from "./constants";
 import cors from "cors";
+import router from "./router";
 import { ColorLog } from "./__tests__/utils/helpers";
 import path from "path";
 import connection from "./db/connection";
@@ -42,6 +43,7 @@ const {
     })
   );
   app.use(express.json());
+  app.use(router);
 
   //IF-ENV IN PRODUCTION
   if (process.env.NODE_ENV === "production") {

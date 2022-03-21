@@ -6,7 +6,11 @@ class AuthService {
     const token = localStorage.getItem("id_token");
     if (!token) return null;
     //will be encrypted lets decrypt it
-    decrypted = Buffer.from(token as string, "base64").toString();
+    if (typeof window === "undefined" || typeof Buffer !== "undefined") {
+      decrypted = Buffer.from(token as string, "base64").toString();
+    } else {
+      decrypted = atob(token);
+    }
     if (decrypted) return decrypted;
     else return null;
   }
@@ -15,12 +19,17 @@ class AuthService {
     // Saves user token to localStorage
     let encrypted = "";
     //encrypt token before setting to storage
-    encrypted = Buffer.from(token).toString("base64");
-    localStorage.setItem("id_token", encrypted);
+    if (typeof window === "undefined" && typeof Buffer !== "undefined") {
+      encrypted = Buffer.from(token).toString("base64");
+      localStorage.setItem("id_token", encrypted);
+    } else {
+      encrypted = btoa(token);
+      localStorage.setItem("id_token", encrypted);
+    }
     return;
   }
 
-  public async clearToken(): Promise<void | Error> {
+  public clearToken(): void | Error {
     const token = this.getToken();
     if (token) {
       localStorage.removeItem("id_token");

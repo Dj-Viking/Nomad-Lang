@@ -16,6 +16,9 @@ exports.UserController = void 0;
 const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
 const mongoose_1 = __importDefault(require("mongoose"));
+const argon2_1 = require("argon2");
+const sendEmail_1 = require("../utils/sendEmail");
+const constants_1 = require("../constants");
 const uuid = require("uuid");
 exports.UserController = {
     me: function (req, res) {
@@ -38,17 +41,27 @@ exports.UserController = {
                         _id: updated._id,
                         token,
                         cards: updated.cards,
+                        themePref: updated.themePref,
                     },
                 });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: error.message });
+            }
         });
     },
     login: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { email, password } = req.body;
-                const user = yield models_1.User.findOne({ email });
+                const { username, email, password } = req.body;
+                let user = null;
+                if (username) {
+                    user = yield models_1.User.findOne({ username });
+                }
+                if (email) {
+                    user = yield models_1.User.findOne({ email });
+                }
                 if (user === null)
                     return res.status(400).json({ error: "Incorrect Credentials" });
                 const verifyPass = yield user.isCorrectPassword(password);
@@ -64,9 +77,10 @@ exports.UserController = {
                     user: {
                         username: updated.username,
                         _id: updated._id,
-                        token,
+                        token: updated.token,
                         cards: updated.cards,
                         email: updated.email,
+                        themePref: updated.themePref,
                     },
                 });
             }
@@ -84,6 +98,7 @@ exports.UserController = {
                     username,
                     email,
                     password,
+                    themePref: "light",
                 });
                 const token = (0, signToken_1.signToken)({
                     username,
@@ -101,6 +116,7 @@ exports.UserController = {
                         username: updated.username,
                         email: updated.email,
                         token,
+                        themePref: updated.themePref,
                         cards: updated.cards,
                     },
                 });
@@ -120,7 +136,9 @@ exports.UserController = {
                     .select("-__v");
                 return res.status(200).json({ user });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+            }
         });
     },
     editCard: function (req, res) {
@@ -169,21 +187,70 @@ exports.UserController = {
             catch (error) { }
         });
     },
-    forgotPassword: function (_req, res) {
+    forgotPassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return res.status(200).json({ message: "found forgot password route" });
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const { email } = req.body;
+                if (!email)
+                    return res.status(422).json({ error: "email missing from request!" });
+                const user = yield models_1.User.findOne({ email });
+                if (user === null)
+                    return res.status(200).json({ done: true });
+                if (!emailRegex.test(email))
+                    return res.status(200).json({ done: true });
+                const token = (0, signToken_1.signToken)({
+                    username: user.username,
+                    resetEmail: email,
+                    uuid: uuid.v4(),
+                    exp: "5m",
+                });
+                const sendEmailArgs = {
+                    fromHeader: "Password Reset",
+                    subject: "Password Reset Request",
+                    mailTo: email,
+                    mailHtml: `
+          <span>We were made aware that you request your password to be reset</span>
+          <p>If this wasn't you. Then please disregard this email. Thank you!</p>
+          <h2>This Request will expire after 5 minutes.</h2>
+          <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>
+        `,
+                };
+                yield (0, sendEmail_1.sendEmail)(sendEmailArgs);
+                return res.status(200).json({ done: true });
             }
             catch (error) {
                 console.error(error);
-                return res.status(500).json({ error: error.message });
+                return res
+                    .status(500)
+                    .json({ error: "We're sorry there was a problem with this request :(" });
             }
         });
     },
-    changePassword: function (_req, res) {
+    changePassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("email from token", req.user.resetEmail);
             try {
-                return res.status(200).json({ message: "found changePassword route" });
+                const { newPassword } = req.body;
+                if (!newPassword)
+                    return res.status(400).json({ error: "missing password input" });
+                const hashed = yield (0, argon2_1.hash)(newPassword);
+                const token = (0, signToken_1.signToken)({
+                    username: req.user.username,
+                    email: req.user.resetEmail,
+                    uuid: uuid.v4(),
+                });
+                const user = yield models_1.User.findOneAndUpdate({ email: req.user.resetEmail }, {
+                    $set: {
+                        password: hashed,
+                        token,
+                    },
+                }, { new: true });
+                return res.status(200).json({
+                    cards: user.cards,
+                    done: true,
+                    token: user.token,
+                });
             }
             catch (error) {
                 console.error(error);
@@ -196,14 +263,37 @@ exports.UserController = {
             try {
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
                     $push: {
-                        cards: req.body,
+                        cards: Object.assign({}, req.body),
                     },
                 }, { new: true })
                     .select("-password")
                     .select("-__v");
                 return res.status(200).json({ cards: updatedUser.cards });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+            }
+        });
+    },
+    changeThemePref: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { themePref } = req.body;
+                const updated = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                    $set: {
+                        themePref,
+                    },
+                }, { new: true });
+                if (updated === null)
+                    return res.status(404).json({ error: "user not found" });
+                return res.status(200).json({
+                    themePref: updated.themePref,
+                });
+            }
+            catch (error) {
+                console.error(error);
+                return res.status(500).json({ error: "error while changing theme preference" });
+            }
         });
     },
 };

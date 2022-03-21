@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 // import { GraphQLScalarType, Kind } from 'graphql';
 import jwt from "jsonwebtoken";
-import { Card } from "./entities/Card";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -40,7 +39,7 @@ export interface MySendEmailOptions {
 }
 export interface CategorizedCardMap {
   categorized: {
-    [key: string]: Array<Card>;
+    [key: string]: Array<ICard>;
   };
 }
 /**
@@ -147,16 +146,7 @@ export interface IMeResponse {
   };
 }
 export interface ICreateUserResponse extends Object {
-  user: {
-    username: string;
-    email: string;
-    _id: string;
-    role?: string;
-    cards?: [];
-    token?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-  };
+  user: IUser;
 }
 
 export interface ILoginError {
@@ -177,12 +167,12 @@ export interface ILoginResponse {
 
 export interface ICard {
   _id?: string | mongoose.Types.ObjectId;
-  frontsideText?: string;
-  frontsideLanguage?: string;
-  frontsidePicture?: string;
-  backsideText?: string;
-  backsideLanguage?: string;
-  backsidePicture?: string;
+  frontSideText?: string;
+  frontSideLanguage?: string;
+  frontSidePicture?: string;
+  backSideText?: string;
+  backSideLanguage?: string;
+  backSidePicture?: string;
   creator?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -194,6 +184,7 @@ export interface IUser {
   email: string;
   role?: string;
   updatedAt: Date;
+  themePref?: string;
   createdAt: Date;
   token: string;
   username: string;
@@ -218,4 +209,13 @@ export interface IUpdateUserResponse {
   cards: ICard[];
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface IForgotPassResponse {
+  done?: boolean;
+  error?: string;
+}
+
+export interface IChangeThemeResponse {
+  themePref: string;
 }

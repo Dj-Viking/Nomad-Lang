@@ -9,10 +9,12 @@
           isLoading = true;
           const matched = verifyMatch(passwordInput, confirmInput);
           if (matched) {
-            submitChangePassword({
-              password: passwordInput,
-              token: route.params.token || '',
-            });
+            (async () => {
+              await submitChangePassword({
+                newPassword: passwordInput,
+                resetToken: route.params.token as string || '',
+              });
+            })();
           } else {
             isLoading = false;
             toast.error(
@@ -76,14 +78,13 @@
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { defineComponent, ref, onMounted } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
-import { useMutation } from "@vue/apollo-composable";
-import { createChangePasswordMutation } from "../graphql/mutations/myMutations";
-import gql from "graphql-tag";
-import { ChangePasswordResponse, RootCommitType } from "@/types";
-import { FetchResult } from "@apollo/client/core";
+// import { ChangePasswordResponse, RootCommitType } from "@/types";
 import { useToast } from "vue-toastification";
-import auth from "../utils/AuthService";
-import store from "../store";
+import auth from "@/utils/AuthService";
+import { api } from "@/utils/ApiService";
+import store from "@/store";
+import router from "@/router";
+import { RootCommitType, RootDispatchType } from "@/types";
 export default defineComponent({
   name: "ChangePass",
   components: {
@@ -95,63 +96,11 @@ export default defineComponent({
     const route = useRoute();
     const passwordInput = ref("");
     const confirmInput = ref("");
-    const { mutate: submitChangePassword, onDone } = useMutation(
-      gql`
-        ${createChangePasswordMutation()}
-      `,
-      {
-        variables: {
-          password: passwordInput.value,
-          token: route.params.token,
-        },
-      }
-    );
 
     const verifyMatch = (pass: string, confirm: string): boolean => {
       if (pass === confirm) return true;
       else return false;
     };
-
-    onDone(
-      (
-        result: FetchResult<
-          ChangePasswordResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): void => {
-        if (result.data?.changePassword?.errors?.length) {
-          setTimeout(() => {
-            isLoading.value = false;
-          }, 1000);
-          toast.error(result.data?.changePassword.errors[0].message, {
-            timeout: 3000,
-          });
-        } else {
-          // set logged in state and set the auth token
-          auth.setToken(result.data?.changePassword?.token as string);
-          store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
-            root: true,
-          });
-          // set cards
-          store.commit(
-            "cards/SET_DISPLAY_CARDS" as RootCommitType,
-            { cards: result.data?.changePassword.cards },
-            { root: true }
-          );
-          setTimeout(() => {
-            isLoading.value = false;
-            //to remove the password page from recent browser history of the current tab
-          }, 2000);
-          setTimeout(() => {
-            window.location.replace("/");
-          }, 1000);
-          toast.success("Changed Password!", {
-            timeout: 2000,
-          });
-        }
-      }
-    );
 
     onMounted(() => {
       document.title = "Change Password";
@@ -164,13 +113,54 @@ export default defineComponent({
       passwordInput,
       isLoading,
       route,
-      submitChangePassword,
     };
   },
   methods: {
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       // do nothing
+    },
+    async submitChangePassword(args: {
+      newPassword: string;
+      resetToken: string;
+    }): Promise<void> {
+      try {
+        const { resetToken, newPassword } = args;
+        const { done, cards, token, error } = await api.changePassword(
+          resetToken,
+          newPassword
+        );
+
+        if (!!error || !done) throw error;
+
+        //log in the user
+        store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+          root: true,
+        });
+        auth.setToken(token as string);
+        // set the cards
+        await store.dispatch(
+          "cards/setCards" as RootDispatchType,
+          { cards },
+          { root: true }
+        );
+        // display success and route to home page
+        this.toast.success(
+          "Successfully changed password, good luck and have fun!",
+          { timeout: 3000 }
+        );
+        setTimeout(() => {
+          this.isLoading = false;
+          router.push("/");
+        }, 3000);
+      } catch (error) {
+        this.isLoading = false;
+        console.error(error);
+        const err = error as Error;
+        this.toast.error(err.message, {
+          timeout: 3000,
+        });
+      }
     },
   },
 });

@@ -18,12 +18,10 @@
                 @click.prevent="
                   ($event) => {
                     //update vuex cards that are displayed
-                    deleteCard($event, card?.id);
+                    deleteCard($event, id);
                     //only delete user's cards if they are logged in
                     if (isLoggedIn) {
-                      submitDeleteCard({
-                        id: card?.id,
-                      });
+                      submitDeleteCard($event, id);
                     }
                   }
                 "
@@ -83,11 +81,14 @@
                     </button>
                   </form>
                   <button
-                    :id="card && card?.id"
+                    :id="id"
+                    type="submit"
                     class="button is-warning"
                     @click.prevent="
                       ($event) => {
-                        shiftCardNext($event);
+                        (async () => {
+                          shiftCardNext($event);
+                        })();
                       }
                     "
                   >
@@ -154,15 +155,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
-import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
-import { createDeleteCardMutation } from "@/graphql/mutations/myMutations";
+import { defineComponent } from "@vue/runtime-core";
 import store from "../store";
-// import Skeleton from "../components/Skeleton.vue";
 import Spinner from "../components/Spinner.vue";
 import {
-  DeleteCardResponse,
   ICard,
   LoadingState,
   ModalState,
@@ -171,7 +167,8 @@ import {
   UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
-import { FetchResult } from "@apollo/client/core";
+import { api } from "@/utils/ApiService";
+import auth from "@/utils/AuthService";
 export default defineComponent({
   name: "Card",
   props: ["cards", "card", "id"],
@@ -179,46 +176,9 @@ export default defineComponent({
     Spinner,
   },
   setup() {
-    // console.log("what are props", props);
-
-    // const { card } = toRef(props, "card");
-    // console.log("what is card here", card);
     const toast = useToast();
-    const inputId = ref(0);
-    const { mutate: submitDeleteCard, onDone: onDeleteDone } = useMutation(
-      gql`
-        ${createDeleteCardMutation()}
-      `,
-      {
-        variables: {
-          //using a ref as a type definition of the input that will happen later
-          id: inputId.value,
-        },
-      }
-    );
-
-    onDeleteDone(
-      (
-        result: FetchResult<
-          DeleteCardResponse,
-          Record<string, unknown>,
-          Record<string, unknown>
-        >
-      ): void => {
-        if (result.data?.deleteCard.errors?.length) {
-          toast.error("There was a problem deleting a card", {
-            timeout: 3000,
-          });
-        } else {
-          //set the cards again
-          //, which will also reset the categorized object
-          // use the async dispatch set cards
-        }
-      }
-    );
 
     return {
-      submitDeleteCard,
       toast,
     };
   },
@@ -231,29 +191,45 @@ export default defineComponent({
       store.state.modal.modal.activeClass,
   },
   methods: {
-    async deleteCard(_event: Event, id: number): Promise<void> {
+    async deleteCard(_event: Event, id: string): Promise<void> {
       await store.dispatch("cards/deleteCard" as RootDispatchType, id, {
         root: true,
       });
     },
+    async submitDeleteCard(event: any, id: string): Promise<void> {
+      console.log("getting event and id to delete card", id, event);
+      try {
+        const { cards, error } = await api.deleteCard(
+          auth.getToken() as string,
+          id
+        );
+        if (!!error) throw error;
+        console.log("cards returned from api after deleting", cards);
+      } catch (error) {
+        this.toast.error(`error during submitting delete card: ${error}`, {
+          timeout: 3000,
+        });
+        console.error(error);
+      }
+    },
     submitCardFlipCheck(event: any): void {
-      // const id = event.target.id;
+      const id = event.target.id;
       //set the class on for the flip animation on the card object itself.
       store.commit(
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
         //send as number because target.id is a string and all cards db assigned id's are numbers
-        { id: Number(event.target.id) },
+        id,
         {
           root: true,
         }
       );
     },
-    shiftCardNext(event: any): void {
+    async shiftCardNext(event: any): Promise<void> {
       //update display cards array state
       // to shift a card out of the stack after done using it
-      store.dispatch(
+      await store.dispatch(
         "cards/shiftCardNext" as RootDispatchType,
-        Number(event.target.id),
+        event.target.id,
         {
           root: true,
         }

@@ -26,7 +26,7 @@ function sendEmail(args) {
             secure: false,
             auth: {
                 user: process.env.NODEMAILER_AUTH_EMAIL,
-                pass: process.env.NODEMAILER_AUTH_PASS,
+                pass: process.env.OTHER_NODEMAILER_AUTH_PASS,
             },
         });
         yield transporter.sendMail({

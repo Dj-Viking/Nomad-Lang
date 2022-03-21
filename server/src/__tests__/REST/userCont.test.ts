@@ -22,7 +22,6 @@ afterAll(async () => {
   mongoose.connection.db.dropDatabase(async () => {
     await mongoose.connection.close();
   });
-  // mongoose.connection.close(() => done());
 });
 const app = createServer();
 let newCardId: string | null = null;
@@ -127,6 +126,8 @@ describe("CRUD user tests", () => {
     const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
     expect(parsed.cards).toHaveLength(1);
     expect(typeof parsed.cards[0]._id).toBe("string");
+    expect(typeof parsed.cards[0].frontSideLanguage).toBe("string");
+    expect(parsed.cards[0].frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
     newCardId = parsed.cards[0]._id as string;
     expect(parsed.cards[0].creator).toBe("test user");
     expect(typeof parsed.cards[0].createdAt).toBe("string");
@@ -159,7 +160,7 @@ describe("CRUD user tests", () => {
     expect(editCard.status).toBe(200);
     const parsed = JSON.parse(editCard.text) as IUserEditCardResponse;
     expect(parsed.cards).toHaveLength(2);
-    expect(parsed.cards[0].frontsideLanguage).toBe(MOCK_EDIT_CARD.frontsideLanguage); //"edited language"
+    expect(parsed.cards[0].frontSideLanguage).toBe(MOCK_EDIT_CARD.frontSideLanguage); //"edited language"
   });
   test("PUT /user/editCard/:id try to edit card with empty body", async () => {
     const editCard = await request(app)
@@ -212,16 +213,6 @@ describe("CRUD user tests", () => {
     const parsed = JSON.parse(cleared.text);
     expect(parsed.user.cards).toHaveLength(0);
   });
-  // test("POST /user/forgotPassword hits forgotPassword route", async () => {
-  //   const forgotPassword = await request(app).post("/user/forgotPassword").send({
-  //     username: "test user",
-  //     email: "test@email.com",
-  //     password: "test",
-  //   });
-  //   expect(forgotPassword.status).toBe(400);
-  //   const parsed = JSON.parse(forgotPassword.text) as ICreateUserResponse;
-  //   expect(parsed).toBe("dkfjdkj");
-  // });
   // test("POST /user/changePassword hits changePassword route", async () => {
   //   const changePassword = await request(app).post("/user/changePassword").send({
   //     username: "test user",

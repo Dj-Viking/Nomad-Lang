@@ -10,6 +10,7 @@ export default async (): Promise<Config.InitialOptions> => {
       "!src/__tests__/**/*.ts",
       "!src/index.ts",
       "!src/types.ts",
+      "!src/utils/sendEmail.ts",
       "!src/resolvers/*.ts",
       "!src/entities/*.ts",
     ],

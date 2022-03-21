@@ -1,9 +1,7 @@
 import {
   MyRootState,
-  CardsState,
   UserState,
   ICard,
-  RootDispatchType,
   RootCommitType,
   SetUserCommitPayload,
 } from "@/types";
@@ -22,12 +20,12 @@ const mutations = {
   SET_USER(state: UserState, payload: SetUserCommitPayload): void {
     // eslint-disable-next-line
     if (payload && payload.hasOwnProperty("token")) {
-      delete payload.__typename;
       delete payload.token;
     }
 
     if (typeof payload !== "object")
       return console.error("payload was was not an object!");
+
     state.user = {
       ...state.user,
       ...payload,
@@ -51,41 +49,15 @@ const mutations = {
   },
 };
 const actions = {
-  async setUserCards(
-    { commit }: ActionContext<UserState, MyRootState>,
-    payload: ICard[]
-  ): Promise<void> {
-    try {
-      commit("user/SET_USER_CARDS" as RootCommitType, payload, { root: true });
-      Promise.resolve();
-    } catch (error) {
-      Promise.resolve(error);
-    }
-  },
   async setUser(
     { commit }: ActionContext<UserState, MyRootState>,
     payload: UserState
   ): Promise<void> {
-    commit("user/SET_USER" as RootCommitType, payload, { root: true });
-  },
-  async getUserCards(
-    { dispatch }: ActionContext<UserState, MyRootState>,
-    payload: CardsState
-  ): Promise<void> {
-    //some db call to get logged in user's account cards
-
-    //get the cards then set them on the cards state of the users login page
-
-    //type casting here provides the autocomplete for string union type of
-    // all possible rootstate actions accessed with the root: true option as 3rd argument
-    await dispatch("user/setUserCards" as RootDispatchType, payload, {
-      root: true,
-    });
-
-    //set the cards on the page
-    await dispatch("cards/setCards" as RootDispatchType, payload, {
-      root: true,
-    });
+    try {
+      commit("user/SET_USER" as RootCommitType, payload, { root: true });
+    } catch (error) {
+      console.error(error);
+    }
   },
 };
 const getters = {

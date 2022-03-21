@@ -2,7 +2,6 @@ import { createStore, ModuleTree, Store } from "vuex";
 
 import user from "./user.store";
 import modal from "./modal.store";
-import notification from "./notification.store";
 import cards from "./cards.store";
 import sidebarCategories from "./sidebarCategories.store";
 import sidebar from "./sidebar.store";
@@ -18,7 +17,6 @@ const store: Store<MyRootState> = createStore({
     sidebarCategories,
     loading,
     modal,
-    notification,
     user,
   } as ModuleTree<MyRootState>,
 });

@@ -17,6 +17,7 @@ require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
 const constants_1 = require("./constants");
 const cors_1 = __importDefault(require("cors"));
+const router_1 = __importDefault(require("./router"));
 const helpers_1 = require("./__tests__/utils/helpers");
 const path_1 = __importDefault(require("path"));
 const connection_1 = __importDefault(require("./db/connection"));
@@ -43,6 +44,7 @@ const { CORS_ALLOWED_PROD, CORS_ALLOWED_DEV, } = process.env;
             extended: false,
         }));
         app.use(express_1.default.json());
+        app.use(router_1.default);
         if (process.env.NODE_ENV === "production") {
             app.use(express_1.default.static(path_1.default.join(__dirname, "../../client/dist")));
             app.use((req, res, next) => {

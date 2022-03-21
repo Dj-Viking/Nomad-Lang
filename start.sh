@@ -1,3 +1,4 @@
+#! /bin/bash
 echo 'checking javascript'
 cd server;
 PWD=$(pwd)

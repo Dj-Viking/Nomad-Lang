@@ -18,10 +18,9 @@ const state: CardsState = {
   categorized: {},
 };
 const mutations = {
-  TOGGLE_CARD_SIDE(state: CardsState, payload: { id: number }): void {
-    const { id } = payload;
+  TOGGLE_CARD_SIDE(state: CardsState, id: string): void {
     state.cards = state.cards.map((card) => {
-      if (id === card.id) {
+      if (id === card._id) {
         if (card.isFrontSide) {
           return {
             ...card,
@@ -48,8 +47,8 @@ const mutations = {
     //just update the state asynchronously resolved from the action
     state.categorized = payload; //map should just absorb through the loop
   },
-  SHIFT_CARD_NEXT(state: CardsState, id: number): void {
-    state.cards = state.cards.filter((card) => card.id !== id);
+  SHIFT_CARD_NEXT(state: CardsState, id: string): void {
+    state.cards = state.cards.filter((card) => card._id !== id);
   },
   SET_ALL_CARDS(state: CardsState, payload: { cards: Array<ICard> }): void {
     const { cards } = payload;
@@ -96,15 +95,15 @@ const mutations = {
     state.cards.unshift(initCard);
     state.allCards.unshift(initCard);
   },
-  DELETE_CARD(state: CardsState, id: number): void {
-    if (typeof id !== "number" || id === null)
+  DELETE_CARD(state: CardsState, id: string): void {
+    if (typeof id !== "string" || id === null)
       return console.error("index argument must be a number but it was: ", id);
 
     //return a filtered array that doesn't have the id passed as an argument
-    state.cards = state.cards.filter((card) => card.id !== id);
+    state.cards = state.cards.filter((card) => card._id !== id);
 
     //create new all cards array to reference all user's cards
-    state.allCards = state.allCards.filter((card) => card.id !== id);
+    state.allCards = state.allCards.filter((card) => card._id !== id);
   },
   //only for local state
   // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
@@ -119,7 +118,7 @@ const mutations = {
       backSidePicture,
     } = payload;
     //find the index of the card we want to edit
-    const index = state.cards.findIndex((card) => card.id === id);
+    const index = state.cards.findIndex((card) => card._id === id);
     //if there are values for each key in the payload then edit those properties on the
     // card we found by the ID passed in from the modal context
     // if the keys dont have values then we wont edit that field on the
@@ -177,10 +176,14 @@ const actions = {
     payload: CardsState
   ): Promise<void | boolean> {
     const { cards } = payload;
+    if (!Array.isArray(cards)) {
+      throw {
+        error: `cards was not an iteritable type! but was ${cards} as typeof ${typeof cards}`,
+      };
+    }
+    const cardsRef = [...cards];
 
-    const disconnectedCards = [...cards];
-
-    const shuffledCards = shuffleArray(disconnectedCards);
+    const shuffledCards = shuffleArray(cardsRef);
 
     try {
       commit(
@@ -207,7 +210,7 @@ const actions = {
   },
   async shiftCardNext(
     { commit }: ActionContext<CardsState, MyRootState>,
-    id: number
+    id: string
   ): Promise<void> {
     try {
       commit("cards/SHIFT_CARD_NEXT" as RootCommitType, id, { root: true });
@@ -219,9 +222,11 @@ const actions = {
   },
   async deleteCard(
     { state, commit, dispatch }: ActionContext<CardsState, MyRootState>,
-    id: number
+    id: string
   ): Promise<void | boolean> {
     try {
+      console.log("getting id in delete action", id);
+
       // this returns new cards arrays for display and the total amount of user's cards
       commit("cards/DELETE_CARD" as RootCommitType, id, { root: true });
 

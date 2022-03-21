@@ -14,6 +14,7 @@ export async function authMiddleware(
   }
   // @ts-expect-error the header should be defined
   const token = req.headers.authorization.split(" ")[1] || null;
+
   if (!token) return res.status(401).json({ error: "not authenticated" });
   //verify token // TODO: compare old token to new token? for different secret signature?
   const decoded = await verifyTokenAsync(token);

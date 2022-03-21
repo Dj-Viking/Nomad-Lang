@@ -1,22 +1,6 @@
 <template>
   <base-layout :isHome="false">
-    <form
-      class="field box"
-      style="margin: 0 20%"
-      @submit.prevent="
-        ($event) => {
-          let event = $event;
-          readEvent(event);
-          submitRegister({
-            options: {
-              email,
-              username,
-              password,
-            },
-          });
-        }
-      "
-    >
+    <form class="field box" style="margin: 0 20%">
       <label class="mt-0 label">Username</label>
       <input
         class="mt-4 input"
@@ -50,6 +34,21 @@
         :disabled="!username || !email || !password"
         v-if="!isLoading"
         class="button is-success mt-5"
+        type="submit"
+        @click.prevent="
+          ($event) => {
+            submitted = true;
+            isLoading = true;
+            readEvent($event);
+            (async () => {
+              await submitRegister({
+                username,
+                email,
+                password,
+              });
+            })();
+          }
+        "
       >
         Sign Up!
       </button>
@@ -58,23 +57,21 @@
         is-loading
         class="button is-loading is-success mt-5"
       >
-        Login
+        spinner
       </button>
     </form>
   </base-layout>
 </template>
 <script lang="ts">
+/* eslint-disable no-unreachable */
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
-import { useMutation } from "@vue/apollo-composable";
-import { gql } from "graphql-tag";
-import { createRegisterMutation } from "../graphql/mutations/myMutations";
-import { RegisterResponse, RootCommitType } from "../types";
+import { RegisterResponse, RootCommitType, RootDispatchType } from "../types";
 import auth from "../utils/AuthService";
 import router from "../router";
-import { FetchResult } from "@apollo/client/core";
 import store from "../store";
 import { useToast } from "vue-toastification";
+import { api } from "@/utils/ApiService";
 // for some reason the value property is not on the default Event type
 export default defineComponent({
   name: "Signup",
@@ -86,61 +83,9 @@ export default defineComponent({
     const email = ref("");
     const username = ref("");
     const password = ref("");
-    const registerResponse = ref();
     const submitted = ref(false);
     const isLoading = ref(false);
 
-    const { mutate: submitRegister, onDone: onRegisterDone } = useMutation(
-      gql`
-        ${createRegisterMutation()}
-      `,
-      {
-        variables: {
-          options: {
-            email: email.value,
-            username: username.value,
-            password: password.value,
-          },
-        },
-      }
-    );
-
-    onRegisterDone(
-      (
-        result: FetchResult<
-          RegisterResponse,
-          Record<string, unknown>, //extensions
-          Record<string, unknown> //context ..not sure what these are for yet
-        >
-      ) => {
-        submitted.value = true;
-        if (result?.data?.register.errors) {
-          auth.clearToken();
-          store.commit("user/CLEAR_USER_TOKEN" as RootCommitType, null, {
-            root: true,
-          });
-          toast.error(`Error: ${result.data.register.errors[0].message}`, {
-            timeout: 3000,
-          });
-        } else {
-          toast.success("Good luck, have fun!", { timeout: 2000 });
-          isLoading.value = true;
-          store.commit(
-            "user/SET_USER" as RootCommitType,
-            result.data?.register.user,
-            { root: true }
-          );
-          auth;
-          registerResponse.value = result?.data as RegisterResponse;
-          submitted.value = false;
-          auth.setToken(result?.data?.register.token as string);
-          setTimeout(() => {
-            router.push("/");
-            isLoading.value = false;
-          }, 2000);
-        }
-      }
-    );
     function initFields(): void {
       submitted.value = false;
       email.value = "";
@@ -153,8 +98,9 @@ export default defineComponent({
     });
 
     return {
-      submitRegister,
+      submitted,
       email,
+      toast,
       username,
       password,
       isLoading,
@@ -165,9 +111,64 @@ export default defineComponent({
     // eslint-disable-next-line
     readEvent(_event: Event): void {
       // do nothing
+      // console.log("submitted", this.submitted);
     },
-    // eslint-disable-next-line
-    // 
+    async submitRegister(args: {
+      username: string;
+      email: string;
+      password: string;
+    }): Promise<void> {
+      try {
+        const { user, error } = (await api.signup(args)) as RegisterResponse;
+        if (!!error && typeof user === "undefined") {
+          throw error;
+        }
+        //user is defined
+        auth.setToken(user!.token as string);
+        // throw "unreachable";
+        // eslint-disable-next-line
+        // @ts-ignore unreachable?
+
+        // set the user
+        store.dispatch(
+          "user/setUser" as RootDispatchType,
+          { ...user },
+          {
+            root: true,
+          }
+        );
+        // set the cards
+        console.log("TODO: test is empty array at signup", user!.cards);
+
+        store.dispatch(
+          "cards/setCards" as RootDispatchType,
+          { cards: user?.cards },
+          {
+            root: true,
+          }
+        );
+        this.toast.success("Good luck have fun!", {
+          timeout: 2000,
+        });
+        setTimeout(() => {
+          // set login state true
+          store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+            root: true,
+          });
+          this.submitted = false;
+          this.isLoading = false;
+          router.push("/");
+        }, 3000);
+      } catch (error) {
+        const err = error as Error;
+        console.error("error during the signup", err);
+        this.submitted = false;
+        this.isLoading = false;
+        this.toast.error(`Oops! error happened during signup ${err.message}`, {
+          timeout: 3000,
+        });
+      }
+    },
   },
 });
 </script>
