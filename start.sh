@@ -2,8 +2,6 @@
 
 PROD="production"
 
-NODE_ENV="production"
-
 
 if [ "$NODE_ENV" = "$PROD" ]; then
   #check if theres a build folder and if not build the project

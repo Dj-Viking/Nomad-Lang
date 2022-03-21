@@ -2,8 +2,6 @@
 
 PROD="production"
 
-NODE_ENV="production"
-
 if [ "$NODE_ENV" = "$PROD" ]; then
   # check if dist folder exists run server 
   # if not run tsc; then node dist/index.js
