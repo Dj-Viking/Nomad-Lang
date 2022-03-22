@@ -44,18 +44,15 @@ const { CORS_ALLOWED_PROD, CORS_ALLOWED_DEV, } = process.env;
             extended: false,
         }));
         app.use(express_1.default.json());
+        app.use(express_1.default.static(path_1.default.join(__dirname, "../../client/dist")));
         app.use(router_1.default);
         if (process.env.NODE_ENV === "production") {
-            app.use(express_1.default.static(path_1.default.join(__dirname, "../../client/dist")));
             app.use((req, res, next) => {
                 if (req.header("x-forwarded-proto") !== "https")
                     res.redirect(`https://${req.header("host")}${req.url}`);
                 next();
             });
         }
-        app.use("/", (_, res) => __awaiter(this, void 0, void 0, function* () {
-            res.status(404).send("client path eventually");
-        }));
         connection_1.default.then(() => {
             app.listen(PORT, () => {
                 new logger("green", `server started on ${PORT}`).genLog();

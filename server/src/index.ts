@@ -43,19 +43,13 @@ const {
     })
   );
   app.use(express.json());
+  app.use(express.static(path.join(__dirname, "../../client/dist")));
   app.use(router);
 
   //IF-ENV IN PRODUCTION
   if (process.env.NODE_ENV === "production") {
     //STATIC ASSETS FROM VUE BUILD FOLDER
-    app.use(express.static(path.join(__dirname, "../../client/dist")));
     // IF TRAVELS ANY ROUTE OUTSIDE VUE'S CURRENT PAGE REDIRECT TO ROOT
-    // app.get('*', (_req, res, next) => {
-    //   res.sendFile(path.join(
-    //     __dirname, '../client/dist/index.html'
-    //   ));
-    //   next();
-    // });
     //REDIRECT HTTP TRAFFIC TO HTTPS
     app.use((req, res, next) => {
       if (req.header("x-forwarded-proto") !== "https")
@@ -63,10 +57,6 @@ const {
       next();
     });
   }
-
-  app.use("/", async (_, res) => {
-    res.status(404).send("client path eventually");
-  });
 
   //SERVER LISTEN
   connection.then(() => {
