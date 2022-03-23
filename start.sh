@@ -2,12 +2,11 @@
 
 PROD="production"
 
-
 if [ "$NODE_ENV" = "$PROD" ]; then
   #check if theres a build folder and if not build the project
   cd client;
   if ! [ -d "dist" ]; then
-    echo "no client dist folder yet yet so building"
+    echo "no client dist folder yet so building production version of app..."
     npm run build;
   fi
 
