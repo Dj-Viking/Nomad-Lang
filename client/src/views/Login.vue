@@ -80,11 +80,11 @@ import {
   RootCommitType,
   RootDispatchType,
   // RootDispatchType,
-} from "../types";
-import auth from "../utils/AuthService";
-import router from "../router";
+} from "@/types";
+import auth from "@/utils/AuthService";
+import router from "@/router";
 import { api } from "@/utils/ApiService";
-import store from "../store";
+import store from "@/store";
 import { useToast } from "vue-toastification";
 
 export default defineComponent({
@@ -172,7 +172,7 @@ export default defineComponent({
           });
         }
       } catch (error) {
-        console.error("error during login", error);
+        // console.error("error during login", error);
         auth.clearToken();
         store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,

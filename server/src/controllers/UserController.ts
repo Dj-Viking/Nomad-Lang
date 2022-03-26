@@ -232,7 +232,7 @@ export const UserController = {
     }
   },
   changePassword: async function (req: Express.MyRequest, res: Response): Promise<Response> {
-    console.log("email from token", req!.user!.resetEmail);
+    // console.log("email from token", req!.user!.resetEmail);
     try {
       const { newPassword } = req.body;
       if (!newPassword) return res.status(400).json({ error: "missing password input" });

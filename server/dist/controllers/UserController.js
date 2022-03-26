@@ -229,7 +229,6 @@ exports.UserController = {
     },
     changePassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("email from token", req.user.resetEmail);
             try {
                 const { newPassword } = req.body;
                 if (!newPassword)
