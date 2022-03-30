@@ -133,26 +133,28 @@ export default defineComponent({
 
         if (!!error || !done) throw error;
 
-        //log in the user
-        store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
-          root: true,
-        });
-        auth.setToken(token as string);
-        // set the cards
-        await store.dispatch(
-          "cards/setCards" as RootDispatchType,
-          { cards },
-          { root: true }
-        );
-        // display success and route to home page
-        this.toast.success(
-          "Successfully changed password, good luck and have fun!",
-          { timeout: 3000 }
-        );
-        setTimeout(() => {
-          this.isLoading = false;
-          router.push("/");
-        }, 3000);
+        if (done) {
+          //log in the user
+          store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+            root: true,
+          });
+          auth.setToken(token as string);
+          // set the cards
+          await store.dispatch(
+            "cards/setCards" as RootDispatchType,
+            { cards },
+            { root: true }
+          );
+          // display success and route to home page
+          this.toast.success(
+            "Successfully changed password, good luck and have fun!",
+            { timeout: 3000 }
+          );
+          setTimeout(() => {
+            this.isLoading = false;
+            router.push("/");
+          }, 3000);
+        }
       } catch (error) {
         this.isLoading = false;
         console.error(error);

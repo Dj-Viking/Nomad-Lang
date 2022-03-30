@@ -199,7 +199,7 @@ exports.UserController = {
                     return res.status(200).json({ done: true });
                 if (!emailRegex.test(email))
                     return res.status(200).json({ done: true });
-                const token = (0, signToken_1.signToken)({
+                const resetToken = (0, signToken_1.signToken)({
                     username: user.username,
                     resetEmail: email,
                     uuid: uuid.v4(),
@@ -213,7 +213,7 @@ exports.UserController = {
           <span>We were made aware that you request your password to be reset</span>
           <p>If this wasn't you. Then please disregard this email. Thank you!</p>
           <h2>This Request will expire after 5 minutes.</h2>
-          <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>
+          <a href="${constants_1.APP_DOMAIN_PREFIX}/changepass/${resetToken}">Reset your password</a>
         `,
                 };
                 yield (0, sendEmail_1.sendEmail)(sendEmailArgs);

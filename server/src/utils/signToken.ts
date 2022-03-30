@@ -27,9 +27,10 @@ export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPassword
         { expiresIn: EXPIRATION as string }
       );
     }
-    case Boolean(uuid && exp && resetEmail): {
+    case Boolean(username && uuid && exp && resetEmail): {
       return jwt.sign(
         {
+          username,
           resetEmail,
           uuid,
         },

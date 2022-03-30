@@ -20,8 +20,9 @@ function signToken(args) {
                 email,
             }, SECRET, { expiresIn: EXPIRATION });
         }
-        case Boolean(uuid && exp && resetEmail): {
+        case Boolean(username && uuid && exp && resetEmail): {
             return jsonwebtoken_1.default.sign({
+                username,
                 resetEmail,
                 uuid,
             }, SECRET, { expiresIn: exp });
