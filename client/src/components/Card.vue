@@ -196,8 +196,7 @@ export default defineComponent({
         root: true,
       });
     },
-    async submitDeleteCard(event: any, id: string): Promise<void> {
-      console.log("getting event and id to delete card", id, event);
+    async submitDeleteCard(_event: any, id: string): Promise<void> {
       try {
         const { cards, error } = await api.deleteCard(
           auth.getToken() as string,

@@ -465,12 +465,8 @@ export default defineComponent({
     async submitEditCard(card: IEditCardPayload): Promise<void> {
       console.log("card in edit", card);
       try {
-        const { cards, error } = await api.editCard(
-          auth.getToken() as string,
-          card
-        );
+        const { error } = await api.editCard(auth.getToken() as string, card);
         if (!!error) throw error;
-        console.log("edit cards please", cards);
       } catch (error) {
         this.toast.error(`error when editing a card: ${error}`);
       }
