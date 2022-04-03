@@ -73,16 +73,11 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "3.9.12",
-    "@types/cypress-image-snapshot": "3.1.5",
     "@types/he": "1.1.2",
     "@types/jsonwebtoken": "8.5.5",
     "@types/node": "15.12.4",
     "@types/pixelmatch": "5.2.3",
     "@types/pngjs": "6.0.0",
-    "cypress": "8.3.1",
-    "cypress-file-upload": "5.0.8",
-    "cypress-image-snapshot": "4.0.1",
     "istanbul-lib-coverage": "3.0.0",
     "ts-node": "10.2.1"
   }
