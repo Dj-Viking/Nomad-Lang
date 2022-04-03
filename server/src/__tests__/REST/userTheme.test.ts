@@ -26,14 +26,14 @@ describe("test the user theme api request changes user theme in their database",
     });
     expect(signup.status).toBe(201);
     const parsed = JSON.parse(signup.text) as ICreateUserResponse;
-    expect(typeof parsed.user._id).toBe("string");
-    newUserId = parsed.user._id;
+    expect(typeof parsed._id).toBe("string");
+    newUserId = parsed._id;
     expect(typeof newUserId).toBe("string");
-    expect(typeof parsed.user.token).toBe("string");
-    newUserToken = parsed.user.token as string;
+    expect(typeof parsed.token).toBe("string");
+    newUserToken = parsed.token as string;
     expect(typeof newUserToken).toBe("string");
-    expect(parsed.user.cards).toStrictEqual([]);
-    expect(parsed.user.themePref).toBe("light");
+    expect(parsed.cards).toStrictEqual([]);
+    expect(parsed.themePref).toBe("light");
   });
   // change their theme
   test("PUT /user/changeThemePref change the users theme from light to dark", async () => {
