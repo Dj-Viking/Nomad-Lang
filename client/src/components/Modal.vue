@@ -494,6 +494,12 @@ export default defineComponent({
         this.clearCardInputFields();
 
         console.log("add card response hopefully cards", cards);
+        // set cards
+        store.dispatch(
+          "cards/setCards" as RootDispatchType,
+          { cards },
+          { root: true }
+        );
       } catch (error) {
         console.error("error when submitting card", error);
         this.toast.error(`error when submitting card ${error}`, {

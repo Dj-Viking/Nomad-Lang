@@ -120,14 +120,12 @@ export default defineComponent({
     }): Promise<void> {
       try {
         const { user, error } = (await api.signup(args)) as RegisterResponse;
-        if (!!error && typeof user === "undefined") {
+        if (!!error) {
           throw error;
         }
         //user is defined
         auth.setToken(user!.token as string);
         // throw "unreachable";
-        // eslint-disable-next-line
-        // @ts-ignore unreachable?
 
         // set the user
         store.dispatch(
@@ -138,11 +136,9 @@ export default defineComponent({
           }
         );
         // set the cards
-        console.log("TODO: test is empty array at signup", user!.cards);
-
         store.dispatch(
           "cards/setCards" as RootDispatchType,
-          { cards: user?.cards },
+          { cards: [] },
           {
             root: true,
           }
@@ -160,11 +156,10 @@ export default defineComponent({
           router.push("/");
         }, 3000);
       } catch (error) {
-        const err = error as Error;
-        console.error("error during the signup", err);
+        console.error("error during the signup", error);
         this.submitted = false;
         this.isLoading = false;
-        this.toast.error(`Oops! error happened during signup ${err.message}`, {
+        this.toast.error(`Oops! error happened during signup ${error}`, {
           timeout: 3000,
         });
       }

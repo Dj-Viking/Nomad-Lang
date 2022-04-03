@@ -23,15 +23,15 @@ export type ThemePrefChangeResponse = {
   error?: unknown;
 };
 export type DeleteCardResponse = {
-  cards?: ICard[];
+  cards?: ICard[] | null;
 } & {
-  error?: unknown;
+  error?: unknown | null;
 };
 
 export type EditCardResponse = {
-  cards?: ICard[];
+  cards?: ICard[] | null;
 } & {
-  error?: unknown;
+  error?: unknown | null;
 };
 export interface Modal {
   context: {
@@ -274,27 +274,27 @@ export interface CardFrontPayload {
 }
 
 export type RegisterResponse = {
-  user?: UserEntityBase;
+  user?: UserEntityBase | null;
 } & {
   error?: unknown | undefined;
 };
 
 export type LoginResponse = {
-  user?: UserEntityBase;
+  user?: UserEntityBase | null;
 } & {
   error?: unknown | undefined;
 };
 
 export type ForgotPassResponse = {
-  done?: boolean;
+  done?: boolean | null;
 } & {
   error?: string;
 };
 
 export type ChangePasswordResponse = {
-  done?: boolean;
-  token?: string;
-  cards?: ICard[];
+  done?: boolean | null;
+  token?: string | null;
+  cards?: ICard[] | null;
 } & {
   error: string;
 };
@@ -308,9 +308,9 @@ export interface IAddCardPayload {
   backSidePicture?: string;
 }
 export type ClearCardsResponse = {
-  user?: UserEntityBase;
+  user?: UserEntityBase | null;
 } & {
-  error?: unknown;
+  error?: unknown | null;
 };
 export interface IEditCardPayload {
   id: string;
@@ -323,7 +323,7 @@ export interface IEditCardPayload {
 }
 
 export type ChangeThemePrefResponse = {
-  themePref?: string;
+  themePref?: string | null;
 } & {
-  error?: unknown;
+  error?: unknown | null;
 };
