@@ -30,10 +30,10 @@ export class UserClass {
   @prop()
   public token?: string;
 
-  @prop({ type: () => CardClass })
+  @prop({ type: () => CardClass, default: [] })
   public cards!: CardClass[]; // This is a typed Array
 
-  @prop()
+  @prop({ default: "light" })
   public themePref?: string;
 
   @prop({ default: Date.now() })

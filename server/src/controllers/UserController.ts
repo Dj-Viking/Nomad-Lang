@@ -52,6 +52,7 @@ export const UserController = {
       if (!verifyPass) return res.status(400).json({ error: "Incorrect Credentials" });
       const token = signToken({
         username: user!.username,
+        _id: user!._id.toHexString(),
         email: user!.email,
         uuid: uuid.v4(),
       });
@@ -61,34 +62,39 @@ export const UserController = {
         { new: true }
       ).select("-__v");
       return res.status(200).json({
-        user: {
-          username: updated!.username,
-          _id: updated!._id,
-          token: updated!.token,
-          cards: updated!.cards,
-          email: updated!.email,
-          themePref: updated!.themePref,
-        },
+        username: updated!.username,
+        _id: updated!._id,
+        token: updated!.token,
+        cards: updated!.cards,
+        email: updated!.email,
+        themePref: updated!.themePref,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      const err = error as Error;
+      return res.status(500).json({ error: err.message });
+    }
   },
   signup: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const { username, email, password } = req.body;
       if (!username || !email || !password) {
-        return res.status(400).json({ error: "missing username email or password input!" });
+        return res.status(400).json({ error: "missing username, email, and/or password input!" });
       }
+
       const user = await User.create({
         username,
         email,
         password,
-        themePref: "light",
       });
+
       const token = signToken({
         username,
         email,
+        _id: user!._id.toHexString(),
         uuid: uuid.v4(),
       });
+
       const updated = await User.findOneAndUpdate(
         {
           _id: user._id,
@@ -98,17 +104,20 @@ export const UserController = {
       )
         .select("-password")
         .select("-__v");
+
       return res.status(201).json({
-        user: {
-          _id: updated!._id,
-          username: updated!.username,
-          email: updated!.email,
-          token,
-          themePref: updated!.themePref,
-          cards: updated!.cards,
-        },
+        _id: updated!._id,
+        username: updated!.username,
+        email: updated!.email,
+        token: updated!.token,
+        themePref: updated!.themePref,
+        cards: updated!.cards,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      const err = error as Error;
+      return res.status(500).json({ message: err.message });
+    }
   },
   clearCards: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
@@ -200,7 +209,7 @@ export const UserController = {
       if (!emailRegex.test(email)) return res.status(200).json({ done: true });
 
       //create a reset email token
-      const token = signToken({
+      const resetToken = signToken({
         username: user.username,
         resetEmail: email,
         uuid: uuid.v4(),
@@ -216,7 +225,7 @@ export const UserController = {
           <span>We were made aware that you request your password to be reset</span>
           <p>If this wasn't you. Then please disregard this email. Thank you!</p>
           <h2>This Request will expire after 5 minutes.</h2>
-          <a href="${APP_DOMAIN_PREFIX}/changepass/${token}">Reset your password</a>
+          <a href="${APP_DOMAIN_PREFIX}/changepass/${resetToken}">Reset your password</a>
         `,
       };
 
@@ -232,7 +241,7 @@ export const UserController = {
     }
   },
   changePassword: async function (req: Express.MyRequest, res: Response): Promise<Response> {
-    console.log("email from token", req!.user!.resetEmail);
+    // console.log("email from token", req!.user!.resetEmail);
     try {
       const { newPassword } = req.body;
       if (!newPassword) return res.status(400).json({ error: "missing password input" });

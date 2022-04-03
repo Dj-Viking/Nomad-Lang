@@ -1,12 +1,11 @@
 class AuthService {
   public getToken(): string | null {
     let decrypted = "";
-
     // Retrieves the user token from localStorage
     const token = localStorage.getItem("id_token");
     if (!token) return null;
     //will be encrypted lets decrypt it
-    if (typeof window === "undefined" || typeof Buffer !== "undefined") {
+    if (typeof window === "undefined" && typeof Buffer !== "undefined") {
       decrypted = Buffer.from(token as string, "base64").toString();
     } else {
       decrypted = atob(token);

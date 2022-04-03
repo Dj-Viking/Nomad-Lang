@@ -26,12 +26,12 @@ describe("test the reset email function", () => {
     });
     expect(signup.status).toBe(201);
     const parsed = JSON.parse(signup.text) as ICreateUserResponse;
-    expect(typeof parsed.user._id).toBe("string");
-    newUserId = parsed.user._id;
+    expect(typeof parsed._id).toBe("string");
+    newUserId = parsed._id;
     expect(typeof newUserId).toBe("string");
-    expect(typeof parsed.user.token).toBe("string");
-    expect(parsed.user.cards).toStrictEqual([]);
-    newUserToken = parsed.user.token as string;
+    expect(typeof parsed.token).toBe("string");
+    expect(parsed.cards).toStrictEqual([]);
+    newUserToken = parsed.token as string;
     expect(typeof newUserToken).toBe("string");
   });
   //try to reset their email

@@ -75,7 +75,6 @@ export default defineComponent({
       }, 300);
     },
     async submitThemePrefChange(theme_input: string): Promise<void> {
-      console.log("theme pref", theme_input);
       try {
         const { error } = (await api.changeThemePref(
           auth.getToken() as string,

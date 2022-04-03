@@ -104,13 +104,13 @@ export default defineComponent({
     if (!auth.getToken()) return;
     const { user, error } = await api.me(auth.getToken() as string);
     if (!!error) {
-      console.error("error during me query on mount!", error);
+      // console.error("error during me query on mount!", error);
       auth.clearToken();
       store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
         root: true,
       });
+      return;
     }
-    console.log("should get a user on mount", user);
     //set logged in
     store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
       root: true,
@@ -144,6 +144,10 @@ export default defineComponent({
           )) as MeQueryResponse;
           if (!!error) {
             auth.clearToken();
+            store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+              root: true,
+            });
+            return;
           }
           auth.setToken(user?.token as string);
           /// set user
@@ -166,7 +170,10 @@ export default defineComponent({
         }
       } catch (error) {
         auth.clearToken();
-        console.error("error in $route navigation", error);
+        store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+          root: true,
+        });
+        // console.error("error in $route navigation", error);
       }
     },
   },

@@ -4,10 +4,7 @@ const state = {
 };
 const mutations = {
   SET_THEME(state: ThemeState, theme: string): void {
-    if (typeof theme !== "string")
-      return console.error(
-        `set theme commit payload must be a string! but it was ${theme}`
-      );
+    if (typeof theme !== "string") state.theme = "light";
     state.theme = theme;
     switch (true) {
       case theme === "dark":

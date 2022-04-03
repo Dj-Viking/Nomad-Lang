@@ -8,11 +8,11 @@ import {
   EditCardResponse,
   ForgotPassResponse,
   ChangeThemePrefResponse,
-  ICard,
   IEditCardPayload,
   LoginResponse,
   MeQueryResponse,
   RegisterResponse,
+  UserEntityBase,
 } from "@/types";
 import { API_URL } from "@/constants";
 export interface IApiService {
@@ -101,11 +101,18 @@ class ApiService implements IApiService {
         body: JSON.stringify({ username, email, password }),
         headers: this.headers,
       });
-      const data = (await res.json()) as LoginResponse;
-      return data;
+      const data = (await res.json()) as UserEntityBase;
+      return {
+        user: data,
+        error: null,
+      };
     } catch (error) {
       console.error(error);
-      throw error;
+      const err = error as Error;
+      return {
+        user: null,
+        error: err.message,
+      };
     }
   }
   public async signup(args: {
@@ -122,10 +129,18 @@ class ApiService implements IApiService {
         body: JSON.stringify({ username, email, password }),
         headers: this.headers,
       });
-      const data = (await res.json()) as RegisterResponse;
-      return data;
+      const data = (await res.json()) as UserEntityBase;
+      return {
+        user: data,
+        error: null,
+      };
     } catch (error) {
       console.error(error);
+      const err = error as Error;
+      return {
+        user: null,
+        error: err.message,
+      };
     }
   }
   public async addCard(
@@ -146,10 +161,10 @@ class ApiService implements IApiService {
       if (res.status !== 200) {
         throw new Error("[ERROR]: UNEXPECTED STATUS" + res.status);
       }
-      const data = (await res.json()) as ICard[];
+      const data = (await res.json()) as AddCardResponse;
       console.log("data from add card api service fetch", data);
       return {
-        cards: data,
+        cards: data.cards,
       };
     } catch (error) {
       throw {

@@ -465,12 +465,8 @@ export default defineComponent({
     async submitEditCard(card: IEditCardPayload): Promise<void> {
       console.log("card in edit", card);
       try {
-        const { cards, error } = await api.editCard(
-          auth.getToken() as string,
-          card
-        );
+        const { error } = await api.editCard(auth.getToken() as string, card);
         if (!!error) throw error;
-        console.log("edit cards please", cards);
       } catch (error) {
         this.toast.error(`error when editing a card: ${error}`);
       }
@@ -498,6 +494,12 @@ export default defineComponent({
         this.clearCardInputFields();
 
         console.log("add card response hopefully cards", cards);
+        // set cards
+        store.dispatch(
+          "cards/setCards" as RootDispatchType,
+          { cards },
+          { root: true }
+        );
       } catch (error) {
         console.error("error when submitting card", error);
         this.toast.error(`error when submitting card ${error}`, {

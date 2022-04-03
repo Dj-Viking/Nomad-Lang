@@ -9,6 +9,7 @@ const { SECRET, EXPIRATION } = process.env;
 export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPasswordTokenArgs): string {
   const {
     username,
+    _id,
     uuid: someUuid, //aliasing the uuid to another name to store the value of uuid into
     email,
   } = args as SignLoginRegisterMeTokenArgs;
@@ -16,20 +17,22 @@ export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPassword
   const { resetEmail, uuid, exp } = args as SignResetPasswordTokenArgs;
 
   switch (true) {
-    case Boolean(username && someUuid && email): {
+    case Boolean(username && someUuid && email && _id): {
       return jwt.sign(
         {
           username,
           uuid,
+          _id,
           email,
         },
         SECRET as string,
         { expiresIn: EXPIRATION as string }
       );
     }
-    case Boolean(uuid && exp && resetEmail): {
+    case Boolean(username && uuid && exp && resetEmail): {
       return jwt.sign(
         {
+          username,
           resetEmail,
           uuid,
         },

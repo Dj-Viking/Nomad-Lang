@@ -57,11 +57,11 @@ describe("CRUD user tests", () => {
     });
     expect(signup.status).toBe(201);
     const parsed = JSON.parse(signup.text) as ICreateUserResponse;
-    expect(typeof parsed.user._id).toBe("string");
-    newUserId = parsed.user._id;
-    expect(typeof parsed.user.token).toBe("string");
-    expect(parsed.user.cards).toStrictEqual([]);
-    newUserToken = parsed.user.token as string;
+    expect(typeof parsed._id).toBe("string");
+    newUserId = parsed._id;
+    expect(typeof parsed.token).toBe("string");
+    expect(parsed.cards).toStrictEqual([]);
+    newUserToken = parsed.token as string;
     expect(typeof newUserToken).toBe("string");
   });
   test("POST /user/login hits login route", async () => {
@@ -71,9 +71,9 @@ describe("CRUD user tests", () => {
     });
     expect(login.status).toBe(200);
     const parsed = JSON.parse(login.text) as ILoginResponse;
-    expect(typeof parsed.user._id).toBe("string");
-    expect(typeof parsed.user.token).toBe("string");
-    newUserToken = parsed.user.token as string;
+    expect(typeof parsed._id).toBe("string");
+    expect(typeof parsed.token).toBe("string");
+    newUserToken = parsed.token as string;
     expect(typeof newUserToken).toBe("string");
   });
   test("POST /user/login with bad credentials no email", async () => {

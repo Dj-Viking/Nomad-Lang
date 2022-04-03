@@ -145,24 +145,30 @@ export interface IMeResponse {
     token?: string;
   };
 }
-export interface ICreateUserResponse extends Object {
-  user: IUser;
+export interface ICreateUserResponse {
+  username: string;
+  email: string;
+  _id: string;
+  role: string;
+  cards: Array<ICard>;
+  themePref?: string;
+  token?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ILoginError {
   error: string;
 }
 export interface ILoginResponse {
-  user: {
-    username: string;
-    email: string;
-    _id: string;
-    role: string;
-    cards: Array<ICard>;
-    token?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-  };
+  username: string;
+  email: string;
+  _id: string;
+  role: string;
+  cards: Array<ICard>;
+  token?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface ICard {
