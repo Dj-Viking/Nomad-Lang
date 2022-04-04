@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   MyRootState,
   CardsState,
@@ -123,6 +124,7 @@ const mutations = {
     // card we found by the ID passed in from the modal context
     // if the keys dont have values then we wont edit that field on the
     Object.keys(payload).forEach((key): void => {
+      // @ts-ignore
       if (key !== "id" && !!payload[key]) {
         switch (key) {
           case "frontSideText":
@@ -283,7 +285,7 @@ const actions = {
       }
 
       //init before falling into the loop where it will change and return as the comit payload
-      let returnCategorized = createCategorizedCardsObject(
+      const returnCategorized = createCategorizedCardsObject(
         toCategorize as ICard[]
       );
 

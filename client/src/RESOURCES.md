@@ -13,3 +13,6 @@
       }
     }
     ```
+
+* starting to add jest tests to this vue app
+  - <a href="https://test-utils.vuejs.org/guide/#what-is-vue-test-utils" rel="noopener noreferrer">Vue test utils docs</a>

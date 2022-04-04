@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot matches snapshot matches 1`] = `
+<transition-stub>
+  <div>
+    <side-bar-stub />
+    <router-view />
+  </div>
+</transition-stub>
+`;
