@@ -15,11 +15,9 @@ const app = createApp({
 })
   .use(store)
   .use(router)
-  .use(Toast);
-// .use(BootstrapVue3);
-
-app.component("base-layout", BaseLayout);
-
-app.mount("#app");
-// router.isReady().then(() => {
-// });
+  .use(Toast)
+  .component("base-layout", BaseLayout);
+  
+router.isReady().then(() => {
+  app.mount("#app");
+});
