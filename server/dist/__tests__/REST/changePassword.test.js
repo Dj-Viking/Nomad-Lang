@@ -36,14 +36,15 @@ describe("test change password feature", () => {
         });
         expect(signup.status).toBe(201);
         const parsed = JSON.parse(signup.text);
-        expect(typeof parsed.user._id).toBe("string");
-        newUserId = parsed.user._id;
+        expect(typeof parsed._id).toBe("string");
+        newUserId = parsed._id;
         expect(typeof newUserId).toBe("string");
-        expect(typeof parsed.user.token).toBe("string");
-        expect(parsed.user.cards).toStrictEqual([]);
+        expect(typeof parsed.token).toBe("string");
+        expect(parsed.cards).toStrictEqual([]);
     }));
     test("PUT /user/changePassword test the password gets changed", () => __awaiter(void 0, void 0, void 0, function* () {
         const token = (0, signToken_1.signToken)({
+            username: "test user",
             resetEmail: "test@email.com",
             uuid: uuid.v4(),
             exp: "5m",
@@ -65,7 +66,7 @@ describe("test change password feature", () => {
         });
         expect(login.status).toBe(200);
         const parsed = JSON.parse(login.text);
-        expect(parsed.user.email).toBe("test@email.com");
+        expect(parsed.email).toBe("test@email.com");
     }));
 });
 //# sourceMappingURL=changePassword.test.js.map

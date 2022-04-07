@@ -9,6 +9,8 @@ const router = createRouterMock({
   initialLocation: "/"
 });
 
+// this is to help with any routes that may be navigated to
+// during the course of a mount during a test suite
 router.addRoute("/", {
   path: "/",
   component: Home
@@ -27,6 +29,8 @@ describe("app mounts", () => {
         components: {
           "base-layout": BaseLayout
         },
+        // adding this stub as a part of the mock router
+        // allows the Home view component html to be rendered inside the test wrapper.
         stubs: {
           RouterView: Home
         }

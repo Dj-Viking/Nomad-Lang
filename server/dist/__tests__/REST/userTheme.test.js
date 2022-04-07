@@ -35,14 +35,14 @@ describe("test the user theme api request changes user theme in their database",
         });
         expect(signup.status).toBe(201);
         const parsed = JSON.parse(signup.text);
-        expect(typeof parsed.user._id).toBe("string");
-        newUserId = parsed.user._id;
+        expect(typeof parsed._id).toBe("string");
+        newUserId = parsed._id;
         expect(typeof newUserId).toBe("string");
-        expect(typeof parsed.user.token).toBe("string");
-        newUserToken = parsed.user.token;
+        expect(typeof parsed.token).toBe("string");
+        newUserToken = parsed.token;
         expect(typeof newUserToken).toBe("string");
-        expect(parsed.user.cards).toStrictEqual([]);
-        expect(parsed.user.themePref).toBe("light");
+        expect(parsed.cards).toStrictEqual([]);
+        expect(parsed.themePref).toBe("light");
     }));
     test("PUT /user/changeThemePref change the users theme from light to dark", () => __awaiter(void 0, void 0, void 0, function* () {
         const update = yield (0, supertest_1.default)(app)
