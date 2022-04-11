@@ -2,25 +2,35 @@
 import { mount } from "@vue/test-utils";
 import SideBar from "../../components/SideBar.vue";
 import { createRouterMock, injectRouterMock } from "vue-router-mock";
+import App from "../../App.vue";
+import Home from "../../views/Home.vue";
+import BaseLayout from "../../components/BaseLayout.vue";
 
 const router = createRouterMock({
   initialLocation: "/"
 });
+// this is to help with any routes that may be navigated to
+// during the course of a mount during a test suite
+router.addRoute("/", {
+  path: "/",
+  component: Home
+});
+
 const searchTermElCbs = {} as Record<any, any>;
-const documentElCbs = {} as Record<any, any>;
+// const bodyElCbs = {} as Record<any, any>;
 
 const blurHandler = function (event: keyof GlobalEventHandlersEventMap, cb: () => void): void { 
   searchTermElCbs[event] = cb;
 };
-const keydownHandler = function (event: keyof GlobalEventHandlersEventMap, cb: () => void): void {
-  documentElCbs[event] = cb;
-};
+// const keydownHandler = function (event: keyof GlobalEventHandlersEventMap, cb: () => void): void {
+//   bodyElCbs[event] = cb;
+// };
 const searchTermElMock = { 
   addEventListener: jest.fn(blurHandler)
 };
-const iconElMock = {
-  addEventListener: jest.fn(keydownHandler)
-};
+// const bodyElMock = {
+//   addEventListener: jest.fn(keydownHandler)
+// };
 
 jest.useFakeTimers();
 jest.spyOn(global, "setTimeout");
@@ -30,8 +40,10 @@ jest.spyOn(global, "setTimeout");
 
 const querySelectorSpy = jest.spyOn(document, 'querySelector');
 //@ts-ignore
-querySelectorSpy.mockImplementationOnce(() => searchTermElMock);
-
+querySelectorSpy
+// .mockImplementationOnce(() => bodyElMock)
+//@ts-ignore
+                .mockImplementationOnce(() => searchTermElMock);
 describe("opens sidebar", () => {
 
   beforeEach(() => {
@@ -57,9 +69,8 @@ describe("opens sidebar", () => {
     // sidebar becomes open during this test block
     const wrapper = mount(SideBar, {});
 
-    // keydown does work, I just have to use several event directives on the element
-    // need to probably add multiple events onto an element some way that vue allows this to happen
-    wrapper.find("i.fa").trigger("keydown", { key: "c" });
+    // keydown does work, several event directives doesn't work with
+    // object syntax for some reason `v-on="{'click': handler, 'keydown': otherHandler }" won't work
 
     expect(wrapper.find("div.side-bar").classes()).toContain("open");
 
@@ -70,4 +81,21 @@ describe("opens sidebar", () => {
 
 
   // TODO: if going to test the search term inside the sidebar, should add a card first
+  it("adds a card so that we can search in the sidebar", () => {
+    const wrapper = mount(App, {
+      global: {
+        components: {
+          "base-layout": BaseLayout
+        },
+        stubs: {
+          RouterView: Home
+        }
+      },
+    });
+    expect(wrapper.html()).toContain("No Cards Yet");
+    expect(wrapper.find('h2.title').text()).toBe("No Cards Yet");
+
+    // something wrong with store injection might have to mock the vuex store I think....
+    wrapper.find("button#add-button").trigger("click");
+  });
 });

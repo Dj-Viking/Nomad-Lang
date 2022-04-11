@@ -15,7 +15,7 @@
               <ToggleButton />
             </div>
             <i
-              v-on="{ 'click':  toggleSideBar }"
+              v-on="{ click: toggleSideBar }"
               style="
                 cursor: pointer;
                 margin-top: 0.5em;
@@ -78,8 +78,9 @@
             <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
               <ToggleButton />
             </div>
+           
             <i
-              v-on="{'click':  toggleSideBar }"
+              v-on="{ click: toggleSideBar }"
               style="
                 cursor: pointer;
                 margin-top: 0.5em;

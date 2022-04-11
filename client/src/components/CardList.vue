@@ -25,6 +25,7 @@
       </button>
       <div class="control">
         <button
+          id="add-button"
           @click.prevent="openAddModal($event)"
           class="button is-info"
           type="button"
