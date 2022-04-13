@@ -318,6 +318,13 @@ export default defineComponent({
       );
     },
   },
+  mounted() {
+    //arrow function because i need "this" keyword to be in context of vue component
+    document.addEventListener("keyup", this.listenOnKeyDown);
+  },
+  unmounted() {
+    document.removeEventListener("keyup", this.listenOnKeyDown);
+  }
 });
 </script>
 

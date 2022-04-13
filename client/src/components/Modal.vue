@@ -45,7 +45,7 @@
           @submit.prevent="
             ($event) => {
               if (isLoggedIn) {
-                const card = {
+                const _card = {
                   id: modalContext.card?._id,
                   frontSideText:
                     frontSideTextInput || modalContext.card?.frontSideText,
@@ -65,10 +65,13 @@
                 };
                 if (isLoggedIn) {
                   (async () => {
-                    submitEditCard(card);
+                    //@ts-ignore
+                    //@ts-ignore
+                    submitEditCard(_card);
                   })();
                 }
-                editLocalCard($event, card);
+                //@ts-ignore
+                editLocalCard($event, _card);
                 clearCardInputFields();
                 closeModal();
               } else {
@@ -84,6 +87,7 @@
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 };
+                //@ts-ignore
                 editLocalCard($event, card);
                 clearCardInputFields();
                 closeModal();
@@ -216,8 +220,9 @@
           </div>
         </form>
       </div>
-      <div v-if="/Add/g.test(title)">
+      <div id="add-form-container" v-if="/Add/g.test(title)">
         <form
+          id="add-card-form"
           @submit.prevent="
             ($event) => {
               //update local state with the extra propertiesa 'front' and 'back' sides
@@ -233,13 +238,10 @@
                   backSideLanguage: backSideLanguageInput || '',
                   backSidePicture: backSidePictureInput || '',
                 };
-                if (isLoggedIn) {
                   (async () => {
+                    //@ts-ignore something is wrong with vue language server...this card is in scope....
                     await submitAddCard($event, card);
                   })();
-                } else {
-                  addLocalCard($event, card);
-                }
                 clearCardInputFields();
                 closeModal();
               } else {
@@ -257,7 +259,10 @@
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 };
-                addLocalCard($event, offlineCard);
+                (async () => {
+                  //@ts-ignore
+                  await addLocalCard($event, offlineCard);
+                })()
                 clearCardInputFields();
                 closeModal();
               }
@@ -275,6 +280,7 @@
             </label>
             <div class="control">
               <input
+                id="fs-text-input"
                 autocomplete="off"
                 name="modalAddFsText"
                 type="text"
@@ -293,6 +299,7 @@
             </label>
             <div class="control">
               <input
+                id="fs-language-input"
                 autocomplete="off"
                 name="modalAddFsTextLanguage"
                 type="text"
@@ -311,6 +318,7 @@
             >
             <div class="control">
               <input
+                id="fs-picture-input"
                 autocomplete="off"
                 name="modalAddFsTextPicture"
                 type="text"
@@ -325,6 +333,7 @@
             </label>
             <div class="control">
               <input
+                id="bs-text-input"
                 autocomplete="off"
                 name="modalAddBsText"
                 type="text"
@@ -342,6 +351,7 @@
             >
             <div class="control">
               <input
+                id="bs-language-input"
                 autocomplete="off"
                 name="modalAddBsTextLanguage"
                 type="text"
@@ -359,6 +369,7 @@
             >
             <div class="control">
               <input
+                id="bs-picture-input"
                 autocomplete="off"
                 name="modalAddBsTextPicture"
                 type="text"
@@ -369,7 +380,7 @@
           </div>
           <div class="field">
             <div class="control">
-              <button name="submitAddCard" type="submit" class="button is-info">
+              <button id="add-card-submit" name="submitAddCard" type="submit" class="button is-info">
                 SUBMIT ADD CARD
               </button>
               <span v-if="showErrMsg" class="has-text-danger"
@@ -399,6 +410,7 @@ import {
   AddCardPayload,
   AddCardResponse,
   IEditCardPayload,
+  CardsState,
 } from "@/types";
 import { defineComponent, ref } from "@vue/runtime-core";
 import { useStore } from "vuex";
@@ -447,6 +459,7 @@ export default defineComponent({
     };
   },
   computed: {
+    cards: (): CardsState["allCards"] => store.state.cards.allCards,
     title: (): ModalState["modal"]["title"] => store.state.modal.modal.title,
     activeClass: (): ModalState["modal"]["activeClass"] =>
       store.state.modal.modal.activeClass,
@@ -525,8 +538,10 @@ export default defineComponent({
       });
     },
     // eslint-disable-next-line
-    addLocalCard(_event: Event, card: AddCardPayload): void {
-      store.commit("cards/ADD_CARD" as RootCommitType, card, { root: true });
+    async addLocalCard(_event: Event, card: AddCardPayload): Promise<void> {
+      await store.dispatch("cards/setCards" as RootDispatchType, 
+      { cards: [...this.cards, card] }, 
+      { root: true });
     },
     clearCardInputFields(): void {
       this.frontSideTextInput = "";
@@ -548,7 +563,7 @@ export default defineComponent({
       });
     },
   },
-  created: function (): void {
+  mounted: function (): void {
     document.addEventListener("keyup", (event) => {
       if (event.key === "Escape") {
         this.closeModalViaEsc();

@@ -167,6 +167,7 @@ export default defineComponent({
     },
     // eslint-disable-next-line
     openAddModal(_event: MouseEvent): void {
+      _event.preventDefault();
       //set modal title
       store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
         root: true,
