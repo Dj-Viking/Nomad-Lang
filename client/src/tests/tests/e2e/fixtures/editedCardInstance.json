@@ -1,0 +1,13 @@
+ {
+  "id": 206,
+  "creatorId": 1242,
+  "createdAt": "1633040031821",
+  "updatedAt": "1633040031821",
+  "frontSideText": "some edited texts",
+  "frontSidePicture": "jds;fl",
+  "frontSideLanguage": ";lk",
+  "backSidePicture": "jds;fl",
+  "backSideLanguage": "kjf;",
+  "backSideText": "kjsd;fl",
+  "__typename": "Card"
+}
