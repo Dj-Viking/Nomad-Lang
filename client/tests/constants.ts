@@ -178,6 +178,19 @@ export const ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS =
   "./tests/e2e/fixtures/screenshots/actuals/LoginRegression.spec.ts";
 
 /**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_LOGINUNITSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/LoginUnit.spec.ts";
+
+/**
+ * path to the spec folder while running headless electron cypress
+ */
+export const ACTUALS_LOGINUNITSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/LoginUnit.spec.ts";
+
+/**
  * path the the base home link screenshot fixture
  */
 export const BASE_HOMELINK_VIEW_FIXTURE =

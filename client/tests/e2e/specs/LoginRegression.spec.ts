@@ -46,6 +46,7 @@ describe("login-page-regression", () => {
       );
     }
   });
+
   it("visits the site home page", () => {
     cy.visit(LOCALHOST_URL);
   });
