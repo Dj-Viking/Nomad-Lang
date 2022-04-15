@@ -75,7 +75,7 @@ module.exports = (on, config) => {
     },
   });
   //@ts-ignore
-  coverage(on, config); //hmm not sure how to do this yet
+  coverage(on, config);
 
   return Object.assign({}, config, {
     fixturesFolder: "tests/e2e/fixtures",
