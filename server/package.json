@@ -15,7 +15,7 @@
     "ts:run": "ts-node src/index.ts",
     "ts:watch": "nodemon src/index.ts",
     "dev": "sh dev.sh",
-    "concurrently": "NODE_ENV=development ENV_TXT=$(cat env.txt) concurrently \"npm run tsw\" \"npm run watch\"",
+    "concurrently": "ENV_TXT=$(cat env.txt) concurrently \"npm run tsw\" \"npm run watch\"",
     "gen": "graphql-codegen --config codegen.yml"
   },
   "keywords": [],

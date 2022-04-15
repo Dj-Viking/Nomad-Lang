@@ -16,14 +16,25 @@ if [ "$NODE_ENV" = "$PROD" ]; then
   echo "==============================="
   echo "🔮✨ starting app in production mode 🚀"
   echo "==============================="
-
   npm run start:prod;
+  
 elif ! [ "$NODE_ENV" = "$PROD" ]; then
-
-  echo "==============================="
-  echo "🔮✨ starting app in dev mode 🛠"
-  echo "==============================="
   
   # TODO: delete build folder during dev script
-  npm run concurrently;
+  
+  # if first arg after npm start was 'test' then let istanbul 
+  # instrument the app in dev mode to 
+  # set up for the cypress e2e tests
+  if [ "$1" = "test" ]; then 
+    echo "==============================="
+    echo "🛠 starting app in test mode 🔍"
+    echo "==============================="
+    npm run test:concurrently;
+  else
+    echo "==============================="
+    echo "🔮✨ starting app in dev mode 🛠"
+    echo "==============================="
+    npm run concurrently;
+  fi
+
 fi

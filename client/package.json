@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@types/he": "^1.1.2",
+    "babel-plugin-istanbul": "^6.1.1",
     "bulma": "^0.9.3",
     "core-js": "^3.8.3",
     "he": "^1.2.0",
