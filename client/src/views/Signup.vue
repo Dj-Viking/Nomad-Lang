@@ -1,3 +1,4 @@
+
 <template>
   <base-layout :isHome="false">
     <form class="field box" style="margin: 0 20%">
@@ -64,6 +65,7 @@
 </template>
 <script lang="ts">
 /* eslint-disable no-unreachable */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { RegisterResponse, RootCommitType, RootDispatchType } from "../types";
@@ -120,8 +122,9 @@ export default defineComponent({
     }): Promise<void> {
       try {
         const { user, error } = (await api.signup(args)) as RegisterResponse;
+        console.log("what is user here", user, error);
         if (!!error) {
-          throw error;
+          throw new Error(`${error}`);
         }
         //user is defined
         auth.setToken(user!.token as string);
@@ -159,7 +162,8 @@ export default defineComponent({
         console.error("error during the signup", error);
         this.submitted = false;
         this.isLoading = false;
-        this.toast.error(`Oops! error happened during signup ${error}`, {
+        // @ts-ignore FIX ME provide better error message and standardize the error handling on front end
+        this.toast.error(`Oops! error happened during signup ${error.error}`, {
           timeout: 3000,
         });
       }

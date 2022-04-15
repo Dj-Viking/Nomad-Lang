@@ -77,9 +77,15 @@ export const UserController = {
   },
   signup: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const { username, email, password } = req.body;
+      console.log("sign up args", req.body);
       if (!username || !email || !password) {
         return res.status(400).json({ error: "missing username, email, and/or password input!" });
+      }
+
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Email was not correct format" });
       }
 
       const user = await User.create({
@@ -87,6 +93,7 @@ export const UserController = {
         email,
         password,
       });
+      console.log("user made", user);
 
       const token = signToken({
         username,
@@ -94,16 +101,19 @@ export const UserController = {
         _id: user!._id.toHexString(),
         uuid: uuid.v4(),
       });
+      console.log("made token", token);
 
       const updated = await User.findOneAndUpdate(
         {
-          _id: user._id,
+          _id: user._id.toHexString(),
         },
         { token },
         { new: true }
       )
         .select("-password")
         .select("-__v");
+
+      console.log("found user", updated);
 
       return res.status(201).json({
         _id: updated!._id,
@@ -116,7 +126,7 @@ export const UserController = {
     } catch (error) {
       console.error(error);
       const err = error as Error;
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ error: err.message });
     }
   },
   clearCards: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {

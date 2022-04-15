@@ -240,7 +240,6 @@ export default defineComponent({
 
     listenOnKeyDown(event: any): void {
       event.preventDefault();
-      console.log("on key hopefully", event);
       switch (true) {
         case event.key === "c" || event.key === "C":
           {

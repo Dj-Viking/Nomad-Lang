@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   AddCardPayload,
@@ -109,7 +110,7 @@ class ApiService implements IApiService {
     } catch (error) {
       console.error(error);
       const err = error as Error;
-      return {
+      throw {
         user: null,
         error: err.message,
       };
@@ -129,15 +130,18 @@ class ApiService implements IApiService {
         body: JSON.stringify({ username, email, password }),
         headers: this.headers,
       });
-      const data = (await res.json()) as UserEntityBase;
+      const data = (await res.json()) as UserEntityBase & { error: string };
+      // FIXME: this is stupid but works for now
+      if (!!data.error) throw new Error(`${data.error}`);
       return {
         user: data,
         error: null,
       };
     } catch (error) {
-      console.error(error);
+      // @ts-ignore
+      console.error("what is error here", error.message);
       const err = error as Error;
-      return {
+      throw {
         user: null,
         error: err.message,
       };
