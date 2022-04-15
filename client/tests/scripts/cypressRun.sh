@@ -14,7 +14,7 @@ echo ' if SPECNAME was not provided will run all specs as "*": '
 echo "$SPECNAME"
 
 if [ "$SPECNAME" = "*" ]; then
-  CY_SPEC_PATH="./tests/e2e/specs/$SPECNAME.spec.ts"
+  CY_SPEC_PATH="./tests/e2e/specs/$SPECNAME"
   $(npm bin)/cypress run --headless --spec "$CY_SPEC_PATH"
 else
   CY_SPEC_PATH="./tests/e2e/specs/$SPECNAME.spec.ts"
