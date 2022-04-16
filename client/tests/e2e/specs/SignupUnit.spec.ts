@@ -42,6 +42,18 @@ describe("deletes-screenshots", () => {
       );
     }
   });
+  it("visits the home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("clicks signup router link to navigate to the signup page", () => {
+    cy.get("a.button.is-success")
+      .contains("Signup")
+      .should("have.length", 1)
+      .click();
+  });
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "runner" });
+  });
 });
 
 describe("signup-unit-test, tests signup functionality", () => {

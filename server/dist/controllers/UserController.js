@@ -95,7 +95,6 @@ exports.UserController = {
             try {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const { username, email, password } = req.body;
-                console.log("sign up args", req.body);
                 if (!username || !email || !password) {
                     return res.status(400).json({ error: "missing username, email, and/or password input!" });
                 }
@@ -107,20 +106,17 @@ exports.UserController = {
                     email,
                     password,
                 });
-                console.log("user made", user);
                 const token = (0, signToken_1.signToken)({
                     username,
                     email,
                     _id: user._id.toHexString(),
                     uuid: uuid.v4(),
                 });
-                console.log("made token", token);
                 const updated = yield models_1.User.findOneAndUpdate({
                     _id: user._id.toHexString(),
                 }, { token }, { new: true })
                     .select("-password")
                     .select("-__v");
-                console.log("found user", updated);
                 return res.status(201).json({
                     _id: updated._id,
                     username: updated.username,

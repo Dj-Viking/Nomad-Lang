@@ -79,7 +79,6 @@ export const UserController = {
     try {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const { username, email, password } = req.body;
-      console.log("sign up args", req.body);
       if (!username || !email || !password) {
         return res.status(400).json({ error: "missing username, email, and/or password input!" });
       }
@@ -93,7 +92,6 @@ export const UserController = {
         email,
         password,
       });
-      console.log("user made", user);
 
       const token = signToken({
         username,
@@ -101,7 +99,6 @@ export const UserController = {
         _id: user!._id.toHexString(),
         uuid: uuid.v4(),
       });
-      console.log("made token", token);
 
       const updated = await User.findOneAndUpdate(
         {
@@ -112,8 +109,6 @@ export const UserController = {
       )
         .select("-password")
         .select("-__v");
-
-      console.log("found user", updated);
 
       return res.status(201).json({
         _id: updated!._id,
@@ -251,7 +246,6 @@ export const UserController = {
     }
   },
   changePassword: async function (req: Express.MyRequest, res: Response): Promise<Response> {
-    // console.log("email from token", req!.user!.resetEmail);
     try {
       const { newPassword } = req.body;
       if (!newPassword) return res.status(400).json({ error: "missing password input" });

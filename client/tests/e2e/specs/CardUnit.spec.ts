@@ -40,6 +40,12 @@ describe("deletes-screenshots", () => {
       });
     }
   });
+  it("visits the home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "runner" });
+  });
 });
 
 describe("visits home page", () => {

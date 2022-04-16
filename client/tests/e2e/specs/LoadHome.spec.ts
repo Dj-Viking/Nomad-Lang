@@ -34,6 +34,12 @@ describe("deletes-screenshots", () => {
       });
     }
   });
+  it("visit's home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "runner" });
+  });
 });
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
