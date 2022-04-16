@@ -20,7 +20,6 @@
     "server:dev": "cd server; npm run dev",
     "heroku-postbuild": "cd client && npm run build",
     "start": "sh start.sh",
-    "test:concurrently": " NODE_ENV=development concurrently \"cd server; npm start\" \"cd client; npm start\"",
     "concurrently": "NODE_ENV=development concurrently \"cd server; npm start\" \"cd client; npm start\"",
     "start:prod": "cd server; npm start"
   },

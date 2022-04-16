@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   LOCALHOST_URL,
   EMAIL,
@@ -7,13 +8,11 @@ import {
 } from "../../constants";
 
 beforeEach(() => {
-  // eslint-disable-next-line
   // @ts-ignore //this is ignored because I didn't make the type yet
   cy.restoreLocalStorage();
 });
 
 afterEach(() => {
-  // eslint-disable-next-line
   // @ts-ignore //this is ignored because I didn't make the type yet
   cy.saveLocalStorage();
 });

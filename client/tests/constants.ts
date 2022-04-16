@@ -94,6 +94,18 @@ export const ACTUALS_LOADHOMESPEC_PATH =
  */
 export const ACTUALS_LOADHOMESPEC_PATH_HEADLESS =
   "./tests/e2e/fixtures/screenshots/actuals/LoadHome.spec.ts";
+
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_SIDEBARUNITSPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/SideBarUnit.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/SideBarUnit.spec.ts";
 /**
  * screenshots base directory
  */

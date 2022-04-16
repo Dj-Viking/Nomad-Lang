@@ -41,10 +41,14 @@ jobs:
           npm i
           fi
       # Runs a set of commands using the runners shell
-      - name: Run automated tests
-        run: echo Running automated tests; npm run test:ci;
+      - name: Run server automated tests
+        run: echo Running server automated tests; npm run test:ci;
         env: 
           ENV_TXT: ${{ secrets.ENV_TXT }}
+      # getting cypress set up in the CI
+      - name: Cypress run, client tests
+        uses: cypress-io/github-action@v2
+        run: echo "Running client cypress tests"; NODE_ENV=development npm start test
       # Upload code coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
