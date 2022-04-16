@@ -46,9 +46,9 @@ jobs:
         env: 
           ENV_TXT: ${{ secrets.ENV_TXT }}
       # getting cypress set up in the CI
-      - name: Cypress run, client tests
-        uses: cypress-io/github-action@v2
-        run: echo "Running client cypress tests"; NODE_ENV=development npm start test
+      # - name: Cypress run, client tests
+      #   uses: cypress-io/github-action@v2
+      #   run: echo "Running client cypress tests"; NODE_ENV=development npm start test
       # Upload code coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
