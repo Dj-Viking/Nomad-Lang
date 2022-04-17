@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,23 +34,25 @@ jobs:
       - name: install all packages with version from project's own package-lock.json
         run: |
           if [ -e yarn.lock ]; then
-          yarn install --frozen-lockfile
+            yarn install --frozen-lockfile
           elif [ -e package-lock.json ]; then
-          npm ci
+            npm ci
           else
-          npm i
+            npm i
           fi
       # Runs a set of commands using the runners shell
       - name: Run server automated tests
         run: echo Running server automated tests; npm run test:ci;
-        env: 
+        env:
           ENV_TXT: ${{ secrets.ENV_TXT }}
       # getting cypress set up in the CI
-      # - name: Cypress run, client tests
-      #   uses: cypress-io/github-action@v2
-      #   run: echo "Running client cypress tests"; NODE_ENV=development npm start test
-      # Upload code coverage
+      - name: Cypress run with env
+        uses: cypress-io/github-actions@v2
+        with:
+          env: ${{ secrets.ENV_TXT }}
+          browser: chrome
+          headless: true
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
-            token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
