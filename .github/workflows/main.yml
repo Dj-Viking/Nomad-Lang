@@ -47,11 +47,7 @@ jobs:
           ENV_TXT: ${{ secrets.ENV_TXT }}
       # getting cypress set up in the CI
       - name: Cypress run with env
-        uses: cypress-io/github-action@v3.0.3
-        with:
-          env: ${{ secrets.ENV_TXT }}
-          browser: chrome
-          headless: true
+        run: echo "starting concurrently script to test app"; npm start test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

@@ -16,6 +16,7 @@
     "showActuals": "ts-node ./tests/scripts/showActuals.ts",
     "showColors": "ts-node ./tests/scripts/showColors.ts",
     "start": "vue-cli-service serve",
+    "start:test": "concurrently \"vue-cli-service serve\" \"npm run cy:run\"",
     "build": "vue-cli-service build",
     "test": "vue-cli-service test:unit --verbose --watchAll --coverage --updateSnapshot --detectOpenHandles",
     "lint": "vue-cli-service lint"
