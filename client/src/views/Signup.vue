@@ -3,40 +3,17 @@
   <base-layout :isHome="false">
     <form class="field box" style="margin: 0 20%">
       <label class="mt-0 label">Username</label>
-      <input
-        class="mt-4 input"
-        type="text"
-        name="username"
-        autocomplete="off"
-        v-model="username"
-        placeholder="Username"
-      />
+      <input class="mt-4 input" type="text" name="username" autocomplete="off" v-model="username"
+        placeholder="Username" />
       <label class="mt-4 label">Email</label>
-      <input
-        class="mt-4 input"
-        type="text"
-        name="email"
-        autocomplete="off"
-        v-model="email"
-        placeholder="example@mail.com"
-        required
-      />
+      <input class="mt-4 input" type="text" name="email" autocomplete="off" v-model="email"
+        placeholder="example@mail.com" required />
       <label class="mt-4 label">Password</label>
-      <input
-        class="mt-4 input"
-        type="password"
-        name="password"
-        v-model="password"
-        placeholder="***************"
-        required
-      />
+      <input class="mt-4 input" type="password" name="password" v-model="password" placeholder="***************"
+        required />
       <PasswordStrengthMeter :input="password" />
-      <button
-        :disabled="!username || !email || !password"
-        v-if="!isLoading"
-        class="button is-success mt-5"
-        type="submit"
-        @click.prevent="
+      <button :disabled="!username || !email || !password" v-if="!isLoading" class="button is-success mt-5"
+        type="submit" @click.prevent="
           ($event) => {
             submitted = true;
             isLoading = true;
@@ -49,15 +26,10 @@
               });
             })();
           }
-        "
-      >
+        ">
         Sign Up!
       </button>
-      <button
-        v-if="isLoading"
-        is-loading
-        class="button is-loading is-success mt-5"
-      >
+      <button v-if="isLoading" is-loading class="button is-loading is-success mt-5">
         spinner
       </button>
     </form>
@@ -122,7 +94,6 @@ export default defineComponent({
     }): Promise<void> {
       try {
         const { user, error } = (await api.signup(args)) as RegisterResponse;
-        console.log("what is user here", user, error);
         if (!!error) {
           throw new Error(`${error}`);
         }

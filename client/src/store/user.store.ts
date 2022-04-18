@@ -11,12 +11,23 @@ const state: UserState = {
   user: {
     username: "",
     email: "",
+    score: Number(localStorage.getItem("user_score")) || 0,
     token: "",
     cards: [] as ICard[],
     loggedIn: false,
   },
 };
 const mutations = {
+  SET_SCORE(state: UserState, payload: number): void {
+    state.user.score += payload;
+    let score = Number(localStorage.getItem("user_score")) || 0 as number;
+    score += payload;
+    const user = {
+      username: state.user.username,
+      score: score
+    };
+    localStorage.setItem("user_score", JSON.stringify(user));
+  },
   SET_USER(state: UserState, payload: SetUserCommitPayload): void {
     // eslint-disable-next-line
     if (payload && payload.hasOwnProperty("token")) {
@@ -64,6 +75,9 @@ const getters = {
   user(state: UserState): UserState["user"] {
     return state.user;
   },
+  score(state: UserState): UserState["user"]["score"] {
+    return state.user.score;
+  }
 };
 
 export default {

@@ -136,6 +136,7 @@ export interface MyRootState {
 export interface UserState {
   user: {
     username: string | null;
+    score: number;
     email: string | null;
     token?: string | null | undefined;
     cards: ICard[];

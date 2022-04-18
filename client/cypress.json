@@ -1,7 +1,9 @@
 {
-  "pluginsFile": "tests/e2e/plugins/index.js", 
+  "pluginsFile": "tests/e2e/plugins/index.js",
   "screenshotsFolder": "tests/e2e/fixtures/screenshots/actuals",
   "viewportHeight": 1200,
   "viewportWidth": 1400,
-  "trashAssetsBeforeRuns": false
+  "video": false,
+  "trashAssetsBeforeRuns": false,
+  "projectId": "g6qzak"
 }
