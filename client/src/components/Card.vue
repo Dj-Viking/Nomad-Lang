@@ -5,17 +5,14 @@
         <div v-if="card.isFrontSide">
           <div class="card">
             <div style="display: flex; justify-content: space-between">
-              <i
-                style="
+              <i style="
                   color: #f14668;
                   font-size: 30px;
                   margin-top: 0.2em;
                   margin-left: 0.4em;
                   margin-bottom: 0.4em;
                   cursor: pointer;
-                "
-                class="fa fa-trash"
-                @click.prevent="
+                " class="fa fa-trash" @click.prevent="
                   ($event) => {
                     //update vuex cards that are displayed
                     deleteCard($event, id);
@@ -24,17 +21,13 @@
                       submitDeleteCard($event, id);
                     }
                   }
-                "
-              ></i>
-              <button
-                class="button is-primary ml-6"
-                style="color: black; margin-top: 0.3em; margin-right: 0.4em"
+                "></i>
+              <button class="button is-primary ml-6" style="color: black; margin-top: 0.3em; margin-right: 0.4em"
                 @click.prevent="
                   ($event) => {
                     openEditModal($event, card);
                   }
-                "
-              >
+                ">
                 Edit
                 <i style="margin-left: 0.5em" class="fa fa-pencil-square-o">
                 </i>
@@ -43,10 +36,7 @@
             <div class="card-image">
               {{ card?.frontSidePicture }}
               <figure class="image is-4by3">
-                <img
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="Placeholder image"
-                />
+                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
               </figure>
             </div>
             <div class="card-content">
@@ -58,40 +48,24 @@
                   <div v-else>
                     <p class="title is-4">{{ card?.frontSideText }}</p>
                   </div>
-                  <form
-                    :id="id"
-                    @submit.prevent="
-                      ($event) => {
-                        submitCardFlipCheck($event);
-                      }
-                    "
-                  >
-                    <input
-                      style="margin: 0 auto; width: 80%"
-                      class="input"
-                      type="text"
-                      placeholder="Translate!"
-                    />
-                    <button
-                      class="button is-primary"
-                      style="color: black"
-                      type="submit"
-                    >
+                  <form :id="id" @submit.prevent="
+                    ($event) => {
+                      submitCardFlipCheck($event);
+                    }
+                  ">
+                    <input style="margin: 0 auto; width: 80%" class="input" type="text" v-model="translation"
+                      placeholder="Translate!" />
+                    <button class="button is-primary" style="color: black" type="submit">
                       Check
                     </button>
                   </form>
-                  <button
-                    :id="id"
-                    type="submit"
-                    class="button is-warning"
-                    @click.prevent="
-                      ($event) => {
-                        (async () => {
-                          shiftCardNext($event);
-                        })();
-                      }
-                    "
-                  >
+                  <button :id="id" type="submit" class="button is-warning" @click.prevent="
+                    ($event) => {
+                      (async () => {
+                        shiftCardNext($event);
+                      })();
+                    }
+                  ">
                     Next
                   </button>
                 </div>
@@ -105,10 +79,7 @@
             <div class="card-image">
               {{ card?.backSidePicture }}
               <figure class="image is-4by3">
-                <img
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="Placeholder image"
-                />
+                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
               </figure>
             </div>
             <div class="card-content">
@@ -117,25 +88,13 @@
                   <p class="title is-5">
                     {{ card?.backSideText }}
                   </p>
-                  <form
-                    :id="id"
-                    @submit.prevent="
-                      ($event) => {
-                        submitCardFlipCheck($event);
-                      }
-                    "
-                  >
-                    <input
-                      style="margin: 0 auto; width: 80%"
-                      class="input"
-                      type="text"
-                      placeholder="Translate!"
-                    />
-                    <button
-                      class="button is-primary"
-                      style="color: black"
-                      type="submit"
-                    >
+                  <form :id="id" @submit.prevent="
+                    ($event) => {
+                      submitCardFlipCheck($event);
+                    }
+                  ">
+                    <input style="margin: 0 auto; width: 80%" class="input" type="text" placeholder="Translate!" />
+                    <button class="button is-primary" style="color: black" type="submit">
                       Flip
                     </button>
                   </form>
@@ -155,7 +114,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, ref } from "@vue/runtime-core";
 import store from "../store";
 import Spinner from "../components/Spinner.vue";
 import {
@@ -177,9 +136,11 @@ export default defineComponent({
   },
   setup() {
     const toast = useToast();
+    const translation = ref("");
 
     return {
       toast,
+      translation,
     };
   },
   computed: {
@@ -213,6 +174,21 @@ export default defineComponent({
     },
     submitCardFlipCheck(event: any): void {
       const id = event.target.id;
+      console.log("translation", this.translation);
+      if (this.card.backSideText === this.translation) {
+        console.log("YAYYYYY got it right!");
+        // TODO: display message on card that it was right
+        // use case insensitivity regex perhaps
+        // increment the user's score when right
+        // after some time flip the card back to the front and go to the next card in the CardList being displayed
+      } else {
+        console.error("got it wrong");
+        // TODO display message on card that it was wrong
+        // decrement the user's score and then show the answer
+        // on the backside, after some time flip back to front and then
+        // go to the next card in the CardList
+      }
+      this.translation = "";
       //set the class on for the flip animation on the card object itself.
       store.commit(
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
@@ -279,11 +255,14 @@ make some kind of class for the card 'flipping'
 .slide-fade-enter-active {
   transition: all 0.3s ease;
 }
+
 .slide-fade-leave-active {
   transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
 }
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
+
+/* .slide-fade-leave-active below version 2.1.8 */
+.slide-fade-enter,
+.slide-fade-leave-to {
   transform: translateX(100px);
   opacity: 0;
 }
