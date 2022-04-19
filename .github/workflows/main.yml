@@ -46,8 +46,8 @@ jobs:
         env:
           ENV_TXT: ${{ secrets.ENV_TXT }}
       # getting cypress set up in the CI
-      - name: Cypress run with env
-        run: echo "starting concurrently script to test app"; npm start test
+      # - name: Cypress run with env
+      #   run: echo "starting concurrently script to test app"; npm start test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
