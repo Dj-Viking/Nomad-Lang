@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   LOCALHOST_URL,
   EMAIL,
@@ -7,13 +8,11 @@ import {
 } from "../../constants";
 
 beforeEach(() => {
-  // eslint-disable-next-line
   // @ts-ignore //this is ignored because I didn't make the type yet
   cy.restoreLocalStorage();
 });
 
 afterEach(() => {
-  // eslint-disable-next-line
   // @ts-ignore //this is ignored because I didn't make the type yet
   cy.saveLocalStorage();
 });
@@ -33,6 +32,12 @@ describe("deletes-screenshots", () => {
         console.log("delete actuals response dir or null", dirOrNull);
       });
     }
+  });
+  it("visit's home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "runner" });
   });
 });
 

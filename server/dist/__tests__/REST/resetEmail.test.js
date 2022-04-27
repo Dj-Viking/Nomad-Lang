@@ -36,12 +36,12 @@ describe("test the reset email function", () => {
         });
         expect(signup.status).toBe(201);
         const parsed = JSON.parse(signup.text);
-        expect(typeof parsed.user._id).toBe("string");
-        newUserId = parsed.user._id;
+        expect(typeof parsed._id).toBe("string");
+        newUserId = parsed._id;
         expect(typeof newUserId).toBe("string");
-        expect(typeof parsed.user.token).toBe("string");
-        expect(parsed.user.cards).toStrictEqual([]);
-        newUserToken = parsed.user.token;
+        expect(typeof parsed.token).toBe("string");
+        expect(parsed.cards).toStrictEqual([]);
+        newUserToken = parsed.token;
         expect(typeof newUserToken).toBe("string");
     }));
     test("POST /user/forgotPassword hits forgotPassword route without email arg", () => __awaiter(void 0, void 0, void 0, function* () {

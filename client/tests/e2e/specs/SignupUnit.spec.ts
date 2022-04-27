@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   LOCALHOST_URL,
   EMAIL,
@@ -7,20 +8,18 @@ import {
   REGISTER_USERNAME,
   ACTUALS_SIGNUPUNITSPEC_PATH,
   ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS,
-} from "tests/constants";
+} from "../../constants";
 
 let unique_username = "";
 let unique_email = "";
 
 // const token = "";
 beforeEach(() => {
-  // eslint-disable-next-line
   //@ts-ignore
   cy.restoreLocalStorage();
 });
 
 afterEach(() => {
-  // eslint-disable-next-line
   //@ts-ignore
   cy.saveLocalStorage();
 });
@@ -42,6 +41,18 @@ describe("deletes-screenshots", () => {
         }
       );
     }
+  });
+  it("visits the home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("clicks signup router link to navigate to the signup page", () => {
+    cy.get("a.button.is-success")
+      .contains("Signup")
+      .should("have.length", 1)
+      .click();
+  });
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "runner" });
   });
 });
 
@@ -72,7 +83,7 @@ describe("tests signup with invalid email, has error message", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=username]").clear();
@@ -96,7 +107,7 @@ describe("tries to make account with too short password", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=username]").clear();
@@ -120,7 +131,7 @@ describe("checks the user or email error appears", () => {
     cy.get("button").contains("Sign Up!").click();
   });
   it("checks that error message appears", () => {
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=email]").clear();
@@ -139,7 +150,7 @@ describe("checks the user or email error appears", () => {
     cy.get("button").contains("Sign Up!").click();
   });
   it("checks that error message appears", () => {
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=email]").clear();
@@ -167,12 +178,10 @@ describe("tests the register with valid inputs works, has success message, and n
   });
   it("clicks the submit button", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
-    // eslint-disable-next-line
-//@ts-ignore
+    //@ts-ignore
     cy.saveLocalStorage();
     cy.wait(2000);
-    // eslint-disable-next-line
-//@ts-ignore
+    //@ts-ignore
     cy.saveLocalStorage();
 
     // cy.window().then((window) => {
@@ -186,22 +195,19 @@ describe("tests the register with valid inputs works, has success message, and n
     // cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
-    // eslint-disable-next-line
-//@ts-ignore
+    //@ts-ignore
     cy.restoreLocalStorage();
     cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
   it("waits a bit and checks we are back at the home page, i.e. checking if the add new card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
-    // cy.restoreLocalStorage();
+    //not sure why the assertion only works here but okay
+    // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
-      // cy.restoreLocalStorage();
       const token = window.localStorage.getItem("id_token");
       expect(token).to.not.be.null;
     });
     cy.wait(2000);
     cy.get("button").contains("Add New Card");
-    //not sure why the assertion only works here but okay
-    // cypress trashes local storage during the test to prevent buildup of state or something like that
   });
 });
 
@@ -222,8 +228,7 @@ describe("should be able to login with those credentials that we just registered
   it("clicks the submit button", () => {
     cy.get("button").contains("Login").should("have.length", 1).click();
     cy.wait(2000);
-    // eslint-disable-next-line
-//@ts-ignore
+    //@ts-ignore
     cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {

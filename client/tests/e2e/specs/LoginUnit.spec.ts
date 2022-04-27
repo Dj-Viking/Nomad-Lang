@@ -1,4 +1,4 @@
-import { LOCALHOST_URL, EMAIL, PASSWORD, USERNAME } from "tests/constants";
+import { LOCALHOST_URL, EMAIL, PASSWORD, USERNAME, ACTUALS_LOGINUNITSPEC_PATH_HEADLESS, ACTUALS_LOGINUNITSPEC_PATH } from "../../constants";
 
 beforeEach(() => {
   // eslint-disable-next-line
@@ -11,6 +11,45 @@ afterEach(() => {
   // @ts-ignore //this is ignored because I didn't make the type yet
   cy.saveLocalStorage();
 });
+
+describe("login-page-unit", () => {
+  it("deletes any actuals for this test before we enter the page", () => {
+    if (Cypress.browser.isHeadless) {
+      cy.task("deleteActuals", ACTUALS_LOGINUNITSPEC_PATH_HEADLESS).then(
+        (dirOrNull) => {
+          console.log(
+            "delete actuals response dir or null for login regression test",
+            dirOrNull
+          );
+        }
+      );
+    }
+    if (Cypress.browser.isHeaded) {
+      cy.task("deleteActuals", ACTUALS_LOGINUNITSPEC_PATH).then(
+        (dirOrNull) => {
+          console.log(
+            "delete actuals response dir or null for login regression test",
+            dirOrNull
+          );
+        }
+      );
+    }
+  });
+
+  it("visits the site home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("clicks login router link to navigate to the login page", () => {
+    cy.get("a.button.is-success")
+      .contains("Login")
+      .should("have.length", 1)
+      .click();
+  });
+  it("screenshots-the-login-page", () => {
+    cy.get("html").screenshot({ capture: "viewport" });
+  });
+});
+  
 
 describe("login-unit-test, tests login functionality", () => {
   it("visits the site login page", () => {
@@ -38,7 +77,7 @@ describe("tests login with incorrect credentials, has error message", () => {
     cy.get("button").contains("Login").should("have.length", 1).click();
   });
   it("checks that error message appears", () => {
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+    cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
   });
   it("clears the inputs", () => {
     cy.get("input[name=email-or-username]").clear();
@@ -61,10 +100,10 @@ describe("tests the login with correct credentials works, has success message, a
     });
     it("checks that success message appears ", () => {
       cy.wait(500);
-      cy.get("div.Vue-Toastification__toast-body").should("have.length", 2);
+      cy.get("div.Vue-Toastification__toast--success").should("have.length", 1);
     });
     it("waits a bit and checks we are back at the home page, i.e. checking if the add new card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
-      cy.wait(2000);
+      cy.wait(3000);
       cy.get("button").contains("Add New Card");
       //not sure why the assertion only works here but okay
       // cypress trashes local storage during the test to prevent buildup of state or something like that
@@ -75,15 +114,17 @@ describe("tests the login with correct credentials works, has success message, a
     });
 
     it("logs out", () => {
+      cy.wait(1000);
       cy.get("a.button.is-danger").contains("Logout").click();
     });
   });
 
   describe("logs back in to sign in with using only email", () => {
-    it("visits the site login page", () => {
-      cy.visit(LOCALHOST_URL);
-    });
+    // it("visits the site login page", () => {
+    //   cy.visit(LOCALHOST_URL);
+    // });
     it("clicks login router link to navigate to the login page", () => {
+      cy.wait(1000);
       cy.get("a.button.is-success")
         .contains("Login")
         .should("have.length", 1)

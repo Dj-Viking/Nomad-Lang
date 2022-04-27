@@ -1,24 +1,23 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "CommonJS",
+    "module": "commonjs",
     "strict": true,
     "jsx": "preserve",
-    "importHelpers": true,
     "moduleResolution": "node",
-    "noImplicitAny": false,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
       "webpack-env",
       "node",
-      "cypress",
+      "cypress", 
+      "mocha",
+      "jest"
     ],
     "paths": {
       "@/*": [
@@ -33,13 +32,12 @@
     ]
   },
   "include": [
+    "tests/**/*.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx"
   ],
   "exclude": [
-    "./node_modules"
+    "node_modules"
   ]
 }

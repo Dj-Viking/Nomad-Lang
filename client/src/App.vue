@@ -17,7 +17,7 @@ import { defineComponent } from "vue";
 import Modal from "./components/Modal.vue";
 import SideBar from "./components/SideBar.vue";
 import store from "./store";
-import { ModalState, RootCommitType, SidebarState } from "./types";
+import { ModalState } from "./types";
 export default defineComponent({
   name: "App",
   components: {
@@ -25,20 +25,8 @@ export default defineComponent({
     SideBar,
   },
   computed: {
-    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
-      store.state.sidebar.sidebar.isOpen,
     activeClass: (): ModalState["modal"]["activeClass"] =>
       store.state.modal.modal.activeClass,
-  },
-  methods: {
-    openModal() {
-      store.commit("modal/SET_MODAL_TITLE", "setting title from home page", {
-        root: true,
-      });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
-        root: true,
-      });
-    },
   },
   mounted() {
     const theme = window.localStorage.getItem("theme");

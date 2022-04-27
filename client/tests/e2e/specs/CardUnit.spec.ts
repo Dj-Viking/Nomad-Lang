@@ -40,10 +40,18 @@ describe("deletes-screenshots", () => {
       });
     }
   });
+  it("visits the home page", () => {
+    cy.visit(LOCALHOST_URL);
+  });
+  it("screenshots-the-entire-page", () => {
+    cy.get("html").screenshot({ capture: "runner" });
+  });
 });
 
 describe("visits home page", () => {
   it("visits home page", () => {
+    console.log("localhost URL", LOCALHOST_URL);
+
     cy.visit(LOCALHOST_URL);
   });
 });
@@ -57,7 +65,7 @@ describe("checks all CRUD operations of interactions with cards as not logged in
   });
   it("while not logged in open the add card modal", () => {
     // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
+    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
     // cy.get("input[name=textInput]").type(inputText);
 
@@ -121,7 +129,7 @@ describe("checks all CRUD operations of interactions with cards as not logged in
 
   it("adds a couple more cards and then hits clear button", () => {
     // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
+    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
     //add a card start
     //open the modal
@@ -174,7 +182,7 @@ describe("registers a new user that will crud the cards", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
     cy.wait(2000);
     // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
+    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
@@ -191,13 +199,13 @@ describe("registers a new user that will crud the cards", () => {
       console.log("what is the token here", token);
       expect(token).to.not.be.null;
       // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
+      // @ts-ignore //this is ignored because I didn't make the type yet
       cy.saveLocalStorage();
     });
   });
   it("creates DO ALL CRUD operations here since this is the only time the token will be available to make requests", () => {
     // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
+    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
     cy.window().then((window: Cypress.AUTWindow) => {
       expect(window.localStorage.getItem("id_token")).to.equal(token);
@@ -385,7 +393,7 @@ describe("registers a new user that will crud the cards", () => {
 describe("checks local storage", () => {
   it("checks window local storage here ", () => {
     // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
+    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
     cy.window().then((window: Cypress.AUTWindow) => {
       expect(window.localStorage.getItem("id_token")).to.equal(token);

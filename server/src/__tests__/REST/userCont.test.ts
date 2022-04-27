@@ -49,6 +49,16 @@ describe("CRUD user tests", () => {
     });
     expect(missing4.status).toBe(400);
   });
+  test("POST /user/signup signup with wrong email format", async () => {
+    const wrongEmail = await request(app).post("/user/signup").send({
+      username: "kdjfj",
+      email: "kjdfkjd",
+      password: "kdjfkjd",
+    });
+    expect(wrongEmail.status).toBe(400);
+    const parsed = JSON.parse(wrongEmail.text);
+    expect(parsed.error).toBe("Email was not correct format");
+  });
   test("POST /user/signup creates a user", async () => {
     const signup = await request(app).post("/user/signup").send({
       username: "test user",
@@ -63,6 +73,13 @@ describe("CRUD user tests", () => {
     expect(parsed.cards).toStrictEqual([]);
     newUserToken = parsed.token as string;
     expect(typeof newUserToken).toBe("string");
+  });
+  test("POST /user/login with only username", async () => {
+    const login = await request(app).post("/user/login").send({
+      username: "test user",
+      password: "test",
+    });
+    expect(login.status).toBe(200);
   });
   test("POST /user/login hits login route", async () => {
     const login = await request(app).post("/user/login").send({

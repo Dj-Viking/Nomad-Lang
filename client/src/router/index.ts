@@ -5,7 +5,7 @@ import Signup from "@/views/Signup.vue";
 import ForgotPassword from "@/views/ForgotPassword.vue";
 import ChangePassword from "@/views/ChangePassword.vue";
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",

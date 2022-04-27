@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   AddCardPayload,
@@ -15,38 +16,28 @@ import {
   UserEntityBase,
 } from "@/types";
 import { API_URL } from "@/constants";
+interface SignupArgs {
+  username: string;
+  email: string;
+  password: string;
+}
+interface LoginArgs {
+  username?: string;
+  email?: string;
+  password: string;
+}
 export interface IApiService {
-  headers: Record<string, string>;
-  me: (token?: string) => Promise<MeQueryResponse>;
-  login: (args: {
-    email?: string;
-    username?: string;
-    password: string;
-  }) => Promise<LoginResponse>;
-  signup: (args: {
-    username: string;
-    email: string;
-    password: string;
-  }) => Promise<RegisterResponse | void>;
-  addCard: (
-    token: string,
-    card: AddCardPayload
-  ) => Promise<AddCardResponse | never>;
-  clearCards: (token: string) => Promise<ClearCardsResponse>;
-  editCard: (
-    token: string,
-    card: IEditCardPayload
-  ) => Promise<EditCardResponse>;
-  deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
-  forgotPassword: (email: string) => Promise<ForgotPassResponse>;
-  changePassword: (
-    resetToken: string,
-    newPassword: string
-  ) => Promise<ChangePasswordResponse>;
-  changeThemePref: (
-    token: string,
-    themePref: string
-  ) => Promise<ChangeThemePrefResponse>;
+  headers:                                                      Record<string, string>;
+  me:              (token?: string)                          => Promise<MeQueryResponse>;
+  login:           (args: LoginArgs)                         => Promise<LoginResponse>;
+  signup:          (args: SignupArgs)                        => Promise<RegisterResponse | void>;
+  addCard:         (token: string, card: AddCardPayload)     => Promise<AddCardResponse | never>;
+  clearCards:      (token: string)                           => Promise<ClearCardsResponse>;
+  editCard:        (token: string, card: IEditCardPayload)   => Promise<EditCardResponse>;
+  deleteCard:      (token: string, id: string)               => Promise<DeleteCardResponse>;
+  forgotPassword:  (email: string)                           => Promise<ForgotPassResponse>;
+  changePassword:  (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
+  changeThemePref: (token: string, themePref: string)        => Promise<ChangeThemePrefResponse>;
 }
 
 class ApiService implements IApiService {
@@ -87,11 +78,7 @@ class ApiService implements IApiService {
       return { user: void 0, error: err.message };
     }
   }
-  public async login(args: {
-    email?: string;
-    username?: string;
-    password: string;
-  }): Promise<LoginResponse> {
+  public async login(args: LoginArgs): Promise<LoginResponse> {
     const { username, email, password } = args;
     this._clearHeaders();
     this._setInitialHeaders();
@@ -109,17 +96,13 @@ class ApiService implements IApiService {
     } catch (error) {
       console.error(error);
       const err = error as Error;
-      return {
+      throw {
         user: null,
         error: err.message,
       };
     }
   }
-  public async signup(args: {
-    username: string;
-    email: string;
-    password: string;
-  }): Promise<RegisterResponse | void> {
+  public async signup(args: SignupArgs): Promise<RegisterResponse | void> {
     this._clearHeaders();
     this._setInitialHeaders();
     try {
@@ -129,15 +112,18 @@ class ApiService implements IApiService {
         body: JSON.stringify({ username, email, password }),
         headers: this.headers,
       });
-      const data = (await res.json()) as UserEntityBase;
+      const data = (await res.json()) as UserEntityBase & { error: string };
+      // FIXME: this is stupid but works for now
+      if (!!data.error) throw new Error(`${data.error}`);
       return {
         user: data,
         error: null,
       };
     } catch (error) {
-      console.error(error);
+      // @ts-ignore
+      console.error("what is error here", error.message);
       const err = error as Error;
-      return {
+      throw {
         user: null,
         error: err.message,
       };

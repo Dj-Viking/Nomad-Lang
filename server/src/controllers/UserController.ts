@@ -77,9 +77,14 @@ export const UserController = {
   },
   signup: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const { username, email, password } = req.body;
       if (!username || !email || !password) {
         return res.status(400).json({ error: "missing username, email, and/or password input!" });
+      }
+
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Email was not correct format" });
       }
 
       const user = await User.create({
@@ -97,7 +102,7 @@ export const UserController = {
 
       const updated = await User.findOneAndUpdate(
         {
-          _id: user._id,
+          _id: user._id.toHexString(),
         },
         { token },
         { new: true }
@@ -116,7 +121,7 @@ export const UserController = {
     } catch (error) {
       console.error(error);
       const err = error as Error;
-      return res.status(500).json({ message: err.message });
+      return res.status(500).json({ error: err.message });
     }
   },
   clearCards: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
@@ -175,7 +180,9 @@ export const UserController = {
       );
 
       return res.status(200).json({ cards: updatedUser!.cards });
-    } catch (error) {}
+    } catch (error) {
+      return res.status(500);
+    }
   },
   deleteCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
@@ -192,10 +199,15 @@ export const UserController = {
       if (updatedUser === null)
         return res.status(400).json({ error: "Could not delete a card at this time" });
       return res.status(200).json({ cards: updatedUser!.cards });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      return res.status(500);
+    }
   },
   forgotPassword: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
+      console.log("am i here", req.body.email);
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const { email } = req.body;
       // if no email in body then error
@@ -241,7 +253,6 @@ export const UserController = {
     }
   },
   changePassword: async function (req: Express.MyRequest, res: Response): Promise<Response> {
-    // console.log("email from token", req!.user!.resetEmail);
     try {
       const { newPassword } = req.body;
       if (!newPassword) return res.status(400).json({ error: "missing password input" });

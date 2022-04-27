@@ -1,41 +1,19 @@
+
 <template>
   <base-layout :isHome="false">
     <form class="field box" style="margin: 0 20%">
       <label class="mt-0 label">Username</label>
-      <input
-        class="mt-4 input"
-        type="text"
-        name="username"
-        autocomplete="off"
-        v-model="username"
-        placeholder="Username"
-      />
+      <input class="mt-4 input" type="text" name="username" autocomplete="off" v-model="username"
+        placeholder="Username" />
       <label class="mt-4 label">Email</label>
-      <input
-        class="mt-4 input"
-        type="text"
-        name="email"
-        autocomplete="off"
-        v-model="email"
-        placeholder="example@mail.com"
-        required
-      />
+      <input class="mt-4 input" type="text" name="email" autocomplete="off" v-model="email"
+        placeholder="example@mail.com" required />
       <label class="mt-4 label">Password</label>
-      <input
-        class="mt-4 input"
-        type="password"
-        name="password"
-        v-model="password"
-        placeholder="***************"
-        required
-      />
+      <input class="mt-4 input" type="password" name="password" v-model="password" placeholder="***************"
+        required />
       <PasswordStrengthMeter :input="password" />
-      <button
-        :disabled="!username || !email || !password"
-        v-if="!isLoading"
-        class="button is-success mt-5"
-        type="submit"
-        @click.prevent="
+      <button :disabled="!username || !email || !password" v-if="!isLoading" class="button is-success mt-5"
+        type="submit" @click.prevent="
           ($event) => {
             submitted = true;
             isLoading = true;
@@ -48,15 +26,10 @@
               });
             })();
           }
-        "
-      >
+        ">
         Sign Up!
       </button>
-      <button
-        v-if="isLoading"
-        is-loading
-        class="button is-loading is-success mt-5"
-      >
+      <button v-if="isLoading" is-loading class="button is-loading is-success mt-5">
         spinner
       </button>
     </form>
@@ -64,6 +37,7 @@
 </template>
 <script lang="ts">
 /* eslint-disable no-unreachable */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { defineComponent, onMounted, ref } from "vue";
 import PasswordStrengthMeter from "@/components/PasswordStrengthMeter.vue";
 import { RegisterResponse, RootCommitType, RootDispatchType } from "../types";
@@ -121,7 +95,7 @@ export default defineComponent({
       try {
         const { user, error } = (await api.signup(args)) as RegisterResponse;
         if (!!error) {
-          throw error;
+          throw new Error(`${error}`);
         }
         //user is defined
         auth.setToken(user!.token as string);
@@ -159,7 +133,8 @@ export default defineComponent({
         console.error("error during the signup", error);
         this.submitted = false;
         this.isLoading = false;
-        this.toast.error(`Oops! error happened during signup ${error}`, {
+        // @ts-ignore FIX ME provide better error message and standardize the error handling on front end
+        this.toast.error(`Oops! error happened during signup ${error.error}`, {
           timeout: 3000,
         });
       }

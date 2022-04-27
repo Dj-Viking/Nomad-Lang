@@ -1,3 +1,4 @@
+
 <template>
   <div class="side-bar" :class="{ open: sidebarOpen, closed: !sidebarOpen }">
     <div style="display: flex; flex-direction: column; min-width: 100px">
@@ -14,11 +15,7 @@
               <ToggleButton />
             </div>
             <i
-              @click.prevent="
-                ($event) => {
-                  toggleSideBar($event);
-                }
-              "
+              v-on="{ click: toggleSideBar }"
               style="
                 cursor: pointer;
                 margin-top: 0.5em;
@@ -81,12 +78,9 @@
             <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
               <ToggleButton />
             </div>
+           
             <i
-              @click.prevent="
-                ($event) => {
-                  toggleSideBar($event);
-                }
-              "
+              v-on="{ click: toggleSideBar }"
               style="
                 cursor: pointer;
                 margin-top: 0.5em;
@@ -108,6 +102,8 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import store from "@/store";
 import {
   CardsState,
@@ -208,8 +204,8 @@ export default defineComponent({
 
       return void 0;
     },
-    // eslint-disable-next-line
     toggleSideBar(_event: MouseEvent): void {
+      _event.preventDefault();
       this.searchTerm = "";
       let searchTermEl: HTMLElement | null = null;
 
@@ -217,7 +213,6 @@ export default defineComponent({
         searchTermEl = document.querySelector(`input#iamsearch`);
       }, 1200);
 
-      // eslint-disable-next-line
       const self = this;
 
       (async function (ms: number): Promise<void> {
@@ -225,22 +220,61 @@ export default defineComponent({
           setTimeout(function () {
             if (searchTermEl !== null) {
               searchTermEl.addEventListener("blur", () => {
+                console.log("self searchterm", typeof self.searchTerm, self.searchTerm);
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
-                }
+                } else return void 0; 
               });
             }
             resolve();
           }, ms);
         });
       })(1300);
+
       store.commit(
         "sidebar/TOGGLE_SIDEBAR" as RootCommitType,
         {},
         { root: true }
       );
     },
-    toggleSideBarWithC(): void {
+
+    listenOnKeyDown(event: any): void {
+      event.preventDefault();
+      switch (true) {
+        case event.key === "c" || event.key === "C":
+          {
+            // eslint-disable-next-line
+            if (!!this.searchTerm || this.modalActive) return;
+
+            this.toggleSideBarWithC(event);
+          }
+          break;
+        case event.key === "1":
+          {
+            if (this.modalActive) return;
+            let categoryName = document.querySelector(`div#cards-container`)
+              ?.children[0].children[0].id as string;
+
+            // eslint-disable-next-line
+            if (!!this.searchTerm) {
+              return;
+            }
+
+            // edge case if sidebar was closed don't set undefined category
+            // because it breaks a lot of things lol
+            if (categoryName === undefined || !!this.searchTerm.length) {
+              return;
+            }
+
+            this.toggleCategoryWithOneKey(categoryName as string);
+          }
+          break;
+        default:
+          return;
+      }
+    },
+    toggleSideBarWithC(event: any): void {
+      event.preventDefault();
       if (this.route.fullPath !== "/") return;
 
       this.searchTerm = "";
@@ -250,9 +284,6 @@ export default defineComponent({
         searchTermEl = document.querySelector(`input#iamsearch`);
       }, 1200);
 
-      // let tempSearchTerm = this.sidebarSearchTerm;
-
-      // eslint-disable-next-line
       const self = this;
 
       (async function (ms: number): Promise<void> {
@@ -286,47 +317,13 @@ export default defineComponent({
       );
     },
   },
-  mounted: function (): void {
+  mounted() {
     //arrow function because i need "this" keyword to be in context of vue component
-
-    document.addEventListener("keyup", (event) => {
-      switch (true) {
-        case event.key === "c" || event.key === "C":
-          {
-            // eslint-disable-next-line
-            if (!!this.searchTerm || this.modalActive) return;
-
-            this.toggleSideBarWithC();
-          }
-          break;
-        case event.key === "1":
-          {
-            if (this.modalActive) return;
-            let categoryName = document.querySelector(`div#cards-container`)
-              ?.children[0].children[0].id as string;
-
-            // eslint-disable-next-line
-            if (!!this.searchTerm) {
-              return;
-            }
-
-            // edge case if sidebar was closed don't set undefined category
-            // because it breaks a lot of things lol
-            if (categoryName === undefined || !!this.searchTerm.length) {
-              return;
-            }
-
-            this.toggleCategoryWithOneKey(categoryName as string);
-          }
-          break;
-        default:
-          return;
-      }
-    });
+    document.addEventListener("keyup", this.listenOnKeyDown);
   },
-  unmounted: function (): void {
-    document.removeEventListener("keyup", this.toggleSideBarWithC);
-  },
+  unmounted() {
+    document.removeEventListener("keyup", this.listenOnKeyDown);
+  }
 });
 </script>
 

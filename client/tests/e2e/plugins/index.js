@@ -10,24 +10,15 @@
 // /* eslint-disable import/no-extraneous-dependencies, global-require */
 // const webpack = require('@cypress/webpack-preprocessor')
 
-// var __importDefault =
-//   (this && this.__importDefault) ||
-//   function (mod) {
-//     return mod && mod.__esModule ? mod : { default: mod };
-//   };
-// Object.defineProperty(exports, "__esModule", { value: true });
 
-// eslint-disable-next-line
-// const registerCodeCoverageTasks = require("@cypress/code-coverage/task");
-// eslint-disable-next-line
-// const fs = require("fs")
+
 // eslint-disable-next-line
 const { deleteActuals } = require("../../utils/deleteActuals");
 // eslint-disable-next-line
 const { writeDiff } = require("../../utils/writeDiff");
 // eslint-disable-next-line
 const { deleteDiff } = require("../../utils/deleteDiff");
-import * as coverage from "@cypress/code-coverage/task";
+const coverage = require("@cypress/code-coverage/task");
 
 module.exports = (on, config) => {
   on("before:browser:launch", (browser, launchOptions) => {
@@ -84,9 +75,7 @@ module.exports = (on, config) => {
     },
   });
   //@ts-ignore
-  // eslint-disable-next-line
-  coverage(on, config); //hmm not sure hwo to do this yet
-  // prob switch to jest with vue testing
+  coverage(on, config);
 
   return Object.assign({}, config, {
     fixturesFolder: "tests/e2e/fixtures",

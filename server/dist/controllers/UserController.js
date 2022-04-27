@@ -93,9 +93,13 @@ exports.UserController = {
     signup: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const { username, email, password } = req.body;
                 if (!username || !email || !password) {
                     return res.status(400).json({ error: "missing username, email, and/or password input!" });
+                }
+                if (!emailRegex.test(email)) {
+                    return res.status(400).json({ error: "Email was not correct format" });
                 }
                 const user = yield models_1.User.create({
                     username,
@@ -109,7 +113,7 @@ exports.UserController = {
                     uuid: uuid.v4(),
                 });
                 const updated = yield models_1.User.findOneAndUpdate({
-                    _id: user._id,
+                    _id: user._id.toHexString(),
                 }, { token }, { new: true })
                     .select("-password")
                     .select("-__v");
@@ -125,7 +129,7 @@ exports.UserController = {
             catch (error) {
                 console.error(error);
                 const err = error;
-                return res.status(500).json({ message: err.message });
+                return res.status(500).json({ error: err.message });
             }
         });
     },
