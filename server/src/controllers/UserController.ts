@@ -180,7 +180,9 @@ export const UserController = {
       );
 
       return res.status(200).json({ cards: updatedUser!.cards });
-    } catch (error) {}
+    } catch (error) {
+      return res.status(500);
+    }
   },
   deleteCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
@@ -197,10 +199,15 @@ export const UserController = {
       if (updatedUser === null)
         return res.status(400).json({ error: "Could not delete a card at this time" });
       return res.status(200).json({ cards: updatedUser!.cards });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      return res.status(500);
+    }
   },
   forgotPassword: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
+      console.log("am i here", req.body.email);
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const { email } = req.body;
       // if no email in body then error

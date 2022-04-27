@@ -34,6 +34,13 @@ describe("test the reset email function", () => {
     newUserToken = parsed.token as string;
     expect(typeof newUserToken).toBe("string");
   });
+  // sends 200 if email was bad format
+  test("POST /user/forgotPassword hits endpoint with bad email but still sends 200", async () => {
+    const forgot = await request(app).post("/user/forgotPassword").send({
+      email: "kdjfkdjf",
+    });
+    expect(forgot.status).toBe(200);
+  });
   //try to reset their email
   test("POST /user/forgotPassword hits forgotPassword route without email arg", async () => {
     const forgotPassword = await request(app)
