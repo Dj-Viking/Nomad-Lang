@@ -6,6 +6,7 @@ import { ModalState } from "../../src/types";
 const state: ModalState = {
   modal: {
     context: {
+      //@ts-expect-error start with empty context
       card: {},
     },
     activeClass: false, //inactive by default
@@ -26,6 +27,7 @@ const mutations = {
     state.modal.context.card = payload;
   },
   CLEAR_MODAL_CONTEXT(state: ModalState): void {
+    //@ts-expect-error need to clean up the context
     state.modal.context.card = {};
   },
 };

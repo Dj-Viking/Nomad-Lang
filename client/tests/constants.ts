@@ -363,7 +363,6 @@ export const EXPECTED_ADD_LOCAL_CARD_OBJECT: ICard = {
   backSideText: "back side text",
   backSideLanguage: "back side text language",
   backSidePicture: "",
-  color: "blue",
 };
 EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
   EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;

@@ -1,5 +1,4 @@
 export interface ICard {
-  // eslint-disable-next-line
   _id: string;
   creatorId?: number | string;
   frontSideText?: string;
@@ -14,7 +13,23 @@ export interface ICard {
   isBackSide?: boolean;
   categorized?: { [key: string]: ICard[] };
   uncategorized?: Array<ICard>;
-  color?: string | "blue"; //TODO remove
+}
+
+export class CardClass implements ICard {
+  _id = "";
+  creatorId?: string | number | undefined;
+  frontSideText?: string | undefined;
+  frontSideLanguage?: string | undefined;
+  frontSidePicture?: string | undefined;
+  backSideLanguage?: string | undefined;
+  backSidePicture?: string | undefined;
+  backSideText?: string | undefined;
+  updatedAt?: string | number | undefined;
+  createdAt?: string | number | undefined;
+  isFrontSide?: boolean | undefined;
+  isBackSide?: boolean | undefined;
+  categorized?: { [key: string]: ICard[]; } | undefined;
+  uncategorized?: ICard[] | undefined;
 }
 
 export type ThemePrefChangeResponse = {
@@ -35,7 +50,7 @@ export type EditCardResponse = {
 };
 export interface Modal {
   context: {
-    card: ICard | Record<string, never>;
+    card: CardClass;
   };
   activeClass: boolean;
   title: string;
