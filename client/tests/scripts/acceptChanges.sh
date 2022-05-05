@@ -12,7 +12,7 @@ echo '------------------'
 
 # probably unreachable if js script runs before this bash script
 if [ "$SPECNAME" = "" ]; then
-  echo "[ERROR]: Please specify a test name as first argument of the script"
+  echo "[ERROR]: Please define the SPECNAME environment variable before executing this shell script"
   echo "example: SPECNAME='HomeRegression.spec.ts' npm run acceptChanges"
   exit 1
 fi

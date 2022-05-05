@@ -35,15 +35,13 @@
 
 <script lang="ts">
 import {
-  ModalState,
   RootCommitType,
-  UserState,
 } from "@/types";
-import { defineComponent, ref } from "@vue/runtime-core";
+import { defineComponent, ref, computed } from "@vue/runtime-core";
+import { useStore } from "vuex";
 import ClearCardModal from "./ModalTypes/ClearCardModal.vue";
 import { keyGen } from "@/utils/keyGen";
 import { useToast } from "vue-toastification";
-import store from "../store";
 import EditCardModal from "./ModalTypes/EditCardModal.vue";
 import AddCardModal from "./ModalTypes/AddCardModal.vue";
 export default defineComponent({
@@ -55,35 +53,34 @@ export default defineComponent({
   },
   setup() {
     const toast = useToast();
-
+    const store = useStore();
     const errMsg = ref("");
     const showErrMsg = ref(false);
-
+    const title = computed(() => store.state.modal.modal.title);
+    const activeClass = computed(() => store.state.modal.modal.activeClass);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const modalContext = computed(() => store.state.modal.modal.context);
     return {
+      title,
+      activeClass,
+      isLoggedIn,
+      modalContext,
       keyGen,
       errMsg,
       toast,
+      store,
       showErrMsg,
     };
-  },
-  computed: {
-    title: (): ModalState["modal"]["title"] => store.state.modal.modal.title,
-    activeClass: (): ModalState["modal"]["activeClass"] =>
-      store.state.modal.modal.activeClass,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    modalContext: (): ModalState["modal"]["context"] =>
-      store.state.modal.modal.context,
   },
   methods: {
     // eslint-disable-next-line
     closeModal(_event?: Event): void {
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
     },
     closeModalViaEsc(): void {
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
     },

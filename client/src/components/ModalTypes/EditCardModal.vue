@@ -187,46 +187,48 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useStore } from "vuex";
 import store from "../../store";
 import auth from "../../utils/AuthService";
-import { CardClass, EditCardCommitPayload, IEditCardPayload, MyRootState, RootCommitType, UserState } from "../../types";
+import { CardClass, EditCardCommitPayload, IEditCardPayload, MyRootState, RootCommitType } from "../../types";
 import { api } from "../../utils/ApiService";
+import { useToast } from "vue-toastification";
 export default defineComponent({
   name: "EditCardModal",
   props: {
     title: String,
     card: CardClass
   },
-  computed: {
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-  },
   setup() {
+    const toast = useToast();
     const store = useStore<MyRootState>();
     const errMsg = ref("");
     const showErrMsg = ref(false);
 
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+
     const frontSideTextInput = ref(
-      store.state.modal.modal.context.card.frontSideText as any
+      store.state.modal.modal.context.card.frontSideText
     );
     const frontSideLanguageInput = ref(
-      store.state.modal.modal.context.card.frontSideLanguage as any
+      store.state.modal.modal.context.card.frontSideLanguage
     );
     const frontSidePictureInput = ref(
-      store.state.modal.modal.context.card.frontSidePicture as any
+      store.state.modal.modal.context.card.frontSidePicture
     );
     const backSideTextInput = ref(
-      store.state.modal.modal.context.card.backSideText as any
+      store.state.modal.modal.context.card.backSideText
     );
     const backSideLanguageInput = ref(
-      store.state.modal.modal.context.card.backSideLanguage as any
+      store.state.modal.modal.context.card.backSideLanguage
     );
     const backSidePictureInput = ref(
-      store.state.modal.modal.context.card.backSidePicture as any
+      store.state.modal.modal.context.card.backSidePicture
     );
     return {
+      isLoggedIn,
+      toast,
       store,
       errMsg,
       showErrMsg,

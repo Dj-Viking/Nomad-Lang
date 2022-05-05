@@ -185,35 +185,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useStore } from "vuex";
 import store from "../../store";
-import { AddCardPayload, AddCardResponse, CardsState, MyRootState, RootCommitType, RootDispatchType, UserState } from "../../types";
+import { AddCardPayload, AddCardResponse, MyRootState, RootCommitType, RootDispatchType } from "../../types";
 import { api } from "../../utils/ApiService";
 import auth from "../../utils/AuthService";
+import { useToast } from "vue-toastification";
 import { keyGen } from "../../utils/keyGen";
 export default defineComponent({
   name: "AddCardModal",
   props: {
     title: String
   },
-  computed: {
-    cards: (): CardsState["allCards"] => store.state.cards.allCards,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-  },
   setup() {
+    const toast = useToast();
     const store = useStore<MyRootState>();
     const errMsg = ref("");
     const showErrMsg = ref(false);
-
     const frontSideTextInput = ref("");
     const frontSideLanguageInput = ref("");
     const frontSidePictureInput = ref("");
     const backSideTextInput = ref("");
     const backSideLanguageInput = ref("");
     const backSidePictureInput = ref("");
+    const cards = computed(() => store.state.cards.allCards);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
     return {
+      isLoggedIn,
+      cards,
+      toast,
       keyGen,
       store,
       errMsg,

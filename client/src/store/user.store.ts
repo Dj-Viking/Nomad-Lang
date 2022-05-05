@@ -42,7 +42,7 @@ const mutations = {
       ...payload,
     } as UserState["user"];
   },
-  SET_USER_TODOS(state: UserState, payload: ICard[]): void {
+  SET_USER_CARDS(state: UserState, payload: ICard[]): void {
     state.user.cards = payload;
   },
   SET_LOGGED_IN(state: UserState, payload: boolean): void {
