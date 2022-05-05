@@ -1,7 +1,14 @@
 ChangeThemePrefResponse,
 <template>
-  <Transition type="transition" name="fade" mode="out-in">
-    <div v-if="sidebarOpen || cards.length > 0" style="width: 100px">
+  <Transition
+    type="transition"
+    name="fade"
+    mode="out-in"
+  >
+    <div
+      v-if="sidebarOpen || cards.length > 0"
+      style="width: 100px"
+    >
       <div
         :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
         @click.prevent="
@@ -92,4 +99,5 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+</style>

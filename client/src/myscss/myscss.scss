@@ -8,7 +8,7 @@
 
 .body-light {
   transition: .5s;
-  background-color: white; 
+  background-color: white;
 }
 
 .title-dark {
@@ -18,23 +18,25 @@
   color: white;
 }
 
-.title-light {    
+.title-light {
   font-size: 2rem;
   font-weight: 600;
   line-height: 1.125;
   color: #363636;
 }
+
 @keyframes toggle-slot-light {
   from {
     background-color: rgb(34, 34, 34);
   }
+
   to {
     background-color: rgb(255, 172, 49);
   }
 }
+
 .toggle-slot-light {
   margin-top: 0.5em;
-  margin-left: 0.6em;
   animation: toggle-slot-light;
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -50,13 +52,14 @@
   from {
     background-color: rgb(255, 172, 49);
   }
+
   to {
     background-color: rgb(34, 34, 34);
   }
 }
+
 .toggle-slot-dark {
   margin-top: 0.5em;
-  margin-left: 0.6em;
   animation: toggle-slot-dark;
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -72,10 +75,12 @@
   from {
     left: 8px;
   }
+
   to {
-    left: 69.5px;
+    left: 80px;
   }
 }
+
 .my-toggle-dark {
   font-size: 20px;
   color: rgb(34, 34, 34);
@@ -91,7 +96,7 @@
   position: absolute !important;
   cursor: pointer;
   top: 8px;
-  left: 69.5px;
+  left: 80px;
   z-index: 10000;
   border-radius: 50% !important;
 }
@@ -100,10 +105,12 @@
   from {
     left: 68px;
   }
+
   to {
     left: 8px;
   }
 }
+
 .my-toggle-light {
   font-size: 20px;
   color: rgb(255, 172, 49);

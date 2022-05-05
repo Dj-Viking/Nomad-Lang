@@ -1,17 +1,25 @@
 
 <template>
-  <div class="side-bar" :class="{ open: sidebarOpen, closed: !sidebarOpen }">
+  <div
+    class="side-bar"
+    :class="{ open: sidebarOpen, closed: !sidebarOpen }"
+  >
     <div style="display: flex; flex-direction: column; min-width: 100px">
-      <Transition type="transition" name="fade" mode="out-in">
+      <Transition
+        type="transition"
+        name="fade"
+        mode="out-in"
+      >
         <div v-if="sidebarOpen">
-          <div
-            style="
+          <div style="
               display: flex;
               justify-content: center;
               flex-direction: column;
-            "
-          >
-            <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
+            ">
+            <div
+              style="margin: 0 auto;"
+              :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }"
+            >
               <ToggleButton />
             </div>
             <i
@@ -33,6 +41,7 @@
             <input
               placeholder="Search"
               class="input"
+              style="width: 80%; margin: 0 auto;"
               type="text"
               autocomplete="off"
               id="iamsearch"
@@ -44,9 +53,7 @@
             <h4
               style="
                 font-size: 15px;
-                margin-bottom: 1em;
-                margin-top: 1em;
-                margin-left: 10px;
+                margin: 1em auto 1em auto;
                 height: 30px;
               "
               class="title"
@@ -55,14 +62,14 @@
             </h4>
           </div>
           <div id="cards-container">
-            <div v-for="(key, i) of Object.keys(categories)" :key="i">
-              <span
-                :id="
-                  !!categories[key] &&
-                  categories[key].cards[0]?.frontSideLanguage
-                "
-                >{{ i + 1 }}.&nbsp;</span
-              >
+            <div
+              v-for="(key, i) of Object.keys(categories)"
+              :key="i"
+            >
+              <span :id="
+                !!categories[key] &&
+                categories[key].cards[0]?.frontSideLanguage
+              ">{{ i + 1 }}.&nbsp;</span>
               <SideBarNode
                 :id="categories[key].id?.toString()"
                 :isActive="categories[key].isActive"
@@ -78,7 +85,7 @@
             <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
               <ToggleButton />
             </div>
-           
+
             <i
               v-on="{ click: toggleSideBar }"
               style="
@@ -223,7 +230,7 @@ export default defineComponent({
                 console.log("self searchterm", typeof self.searchTerm, self.searchTerm);
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
-                } else return void 0; 
+                } else return void 0;
               });
             }
             resolve();
@@ -336,6 +343,7 @@ export default defineComponent({
 
   z-index: 100;
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity height 0.1s ease;
@@ -351,13 +359,14 @@ export default defineComponent({
   color: #2c3e50;
   font-size: 30px;
 }
+
 .big-dark {
   color: white;
   font-size: 30px;
 }
 
 .open {
-  width: 120px;
+  width: 130px;
   transition: 0.2s;
 }
 
@@ -365,9 +374,11 @@ export default defineComponent({
   width: 0px;
   transition: 0.1s ease 0.3s;
 }
+
 .show-me {
   display: block;
 }
+
 .hide-me {
   display: none;
 }

@@ -1,63 +1,106 @@
 <template>
   <div class="container some-unique-class">
-    <h2 v-if="cards.length > 0" :class="{ 'title-light': isLight, 'title-dark': isDark }" class="title mb-0">
+    <h2
+      v-if="cards.length > 0"
+      :class="{ 'title-light': isLight, 'title-dark': isDark }"
+      class="title mb-0"
+    >
       <div style="display: flex; flex-direction: column;">
         <span>Your Cards</span>
         <div style="display: flex">
-          <div width="100%" height="10px" style="flex: 3.6">&nbsp;</div> <span style="flex: 2; font-size: 20px;">Your
+          <div
+            width="100%"
+            height="10px"
+            style="flex: 3.6"
+          >&nbsp;</div> <span style="flex: 2; font-size: 20px;">Your
             score:
             {{ userScore }}</span>
         </div>
       </div>
     </h2>
-    <h2 v-else :class="{ title: isLight, 'title-dark': isDark }" class="mb-0">
+    <h2
+      v-else
+      :class="{ title: isLight, 'title-dark': isDark }"
+      class="mb-0"
+    >
       No Cards Yet
     </h2>
-    <div style="display: flex; flex-direction: row; justify-content: center">
-      <button style="margin-right: 0.5em" class="button is-info" @click.prevent="
-        ($event) => {
-          //clear local cards
-          clearCardsModal($event);
-        }
-      ">
+    <div style="display: flex; flex-direction: row; justify-content: center; margin: 0 auto 1em auto;">
+      <button
+        style="margin-right: 0.5em"
+        class="button is-info"
+        @click.prevent="
+          ($event) => {
+            //clear local cards
+            clearCardsModal($event);
+          }
+        "
+      >
         clear cards
       </button>
       <div class="control">
-        <button id="add-button" @click.prevent="openAddModal($event)" class="button is-info" type="button" style="
+        <button
+          id="add-button"
+          @click.prevent="openAddModal($event)"
+          class="button is-info"
+          type="button"
+          style="
             color: rgb(255, 255, 255);
             margin-left: 0.5em;
             margin-right: 0.5em;
-          ">
+          "
+        >
           Add New Card
         </button>
       </div>
       <div class="control">
-        <button class="button is-info" style="color: white; margin-left: 0.5em"
-          @click.prevent="resetDisplayCards($event)">
+        <button
+          class="button is-info"
+          style="color: white; margin-left: 0.5em"
+          @click.prevent="resetDisplayCards($event)"
+        >
           <span v-if="!aCategoryIsActive">Reset Cards</span>
           <span v-else>Reset Category</span>
         </button>
       </div>
     </div>
-    <Transition type="transition" name="fade" mode="out-in">
-      <div style="
+    <Transition
+      type="transition"
+      name="fade"
+      mode="out-in"
+    >
+      <div
+        style="
           align-items: center;
           display: flex;
           justify-content: center;
           flex-direction: column;
-        " v-if="cards.length > 0">
-        <div style="
+        "
+        v-if="cards.length > 0"
+      >
+        <div
+          style="
             margin-bottom: 0;
             width: 80%;
             position: relative;
             align-items: center;
             display: flex;
             justify-content: center;
-          " :class="{
+          "
+          :class="{
             'notification is-light': isLight,
             'notification is-dark': isDark,
-          }" v-for="(card, i) of cards" :key="i">
-          <Card :id="card._id" :cards="cards" :isFrontSide="true" :isBackSide="false" :card="card" />
+          }"
+          v-for="(card, i) of cards"
+          :key="i"
+        >
+          <Card
+            :id="card._id"
+            :cards="cards"
+            :isFrontSide="true"
+            :isBackSide="false"
+            :card="card"
+          />
         </div>
       </div>
     </Transition>
