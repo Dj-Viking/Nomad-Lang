@@ -10,7 +10,7 @@
     "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts",
     "testWriteDiff": "ts-node ./tests/utils/testWriteDiff.ts",
     "testDeleteDiff": "ts-node ./tests/utils/testDeleteDiff.ts",
-    "regressionDirs:create": "sh ./tests/scripts/createRegressionDirs.sh",
+    "createRegressionDirs": "sh ./tests/scripts/createRegressionDirs.sh",
     "deleteBase": "ts-node ./tests/scripts/deleteBase.ts",
     "acceptChanges": "npm run deleteBase; sh ./tests/scripts/acceptChanges.sh",
     "showActuals": "ts-node ./tests/scripts/showActuals.ts",

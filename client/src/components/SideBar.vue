@@ -250,9 +250,16 @@ export default defineComponent({
       switch (true) {
         case event.key === "c" || event.key === "C":
           {
-            // eslint-disable-next-line
+            const translationInputEl = document.querySelector("input#translation-input");
+            const currentFocusedEl = document.activeElement;
+
+            // if input is focused and c key was pushed don't open the sidebar
+            if (translationInputEl?.nodeName === currentFocusedEl?.nodeName) return;
+
+            // if searchTerm has text such as c key or modal is active don't open sidebar
             if (!!this.searchTerm || this.modalActive) return;
 
+            // otherwise open side bar when c key was pressed on the keyboard
             this.toggleSideBarWithC(event);
           }
           break;

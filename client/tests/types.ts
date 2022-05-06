@@ -19,13 +19,13 @@ export enum ANSI_ESCAPES {
 
 export interface MeQueryResponse extends Object {
   errors:
-    | null
-    | [
-        {
-          field: string;
-          message: string;
-        }
-      ];
+  | null
+  | [
+    {
+      field: string;
+      message: string;
+    }
+  ];
   token: string;
   me: {
     token: string;

@@ -48,7 +48,6 @@
               </button>
             </div>
             <div class="card-image">
-              {{ card?.frontSidePicture }}
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
@@ -79,6 +78,7 @@
                     "
                   >
                     <input
+                      id="translation-input"
                       style="margin: 0 auto; width: 80%"
                       class="input"
                       type="text"
@@ -86,6 +86,7 @@
                       placeholder="Translate!"
                     />
                     <button
+                      id="check-answer-btn"
                       class="button is-primary"
                       style="color: black; margin-top: 1.5rem"
                       type="submit"
@@ -96,6 +97,7 @@
                   <button
                     :id="id!"
                     type="submit"
+                    style="margin-top: 1.5rem"
                     class="button is-warning"
                     @click.prevent="
                       ($event) => {
@@ -116,7 +118,6 @@
           <div class="card">
             <div style="height: 48px">&nbsp;</div>
             <div class="card-image">
-              {{ card?.backSidePicture }}
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
@@ -140,12 +141,9 @@
                       }
                     "
                   >
-                    <input
-                      style="margin: 0 auto; width: 80%"
-                      class="input"
-                      type="text"
-                      placeholder="Translate!"
-                    />
+                    <div style="margin: 0 auto; width: 281px; padding: 7px 11px 7px 11px">
+                      &nbsp;
+                    </div>
                     <button
                       class="button is-primary"
                       style="color: black; margin-top: 1.5rem"
@@ -153,7 +151,7 @@
                     >
                       Flip
                     </button>
-                    <div style="height: 40px;">
+                    <div style="height: 40px; margin-top: 1.5rem">
                       &nbsp;
                     </div>
                   </form>
@@ -222,10 +220,10 @@ export default defineComponent({
         root: true,
       });
     },
-    async submitCardFlipCheck(event: any, isFrontSide: boolean): Promise<void> {
+    async submitCardFlipCheck(event: any, _isFrontSide: boolean): Promise<void> {
       const id = event.target.id;
       console.log("translation", this.translation);
-      if (isFrontSide) {
+      if (_isFrontSide) {
         if (this.card!.backSideText === this.translation) {
           console.log("YAYYYYY got it right!");
           // TODO: display message on card that it was right
@@ -242,21 +240,11 @@ export default defineComponent({
         this.translation = "";
         //set the class on for the flip animation on the card object itself.
         this.store.commit(
-          "cards/TOGGLE_CARD_SIDE" as RootCommitType,
-          //send as number because target.id is a string and all cards db assigned id's are numbers
-          id,
-          {
-            root: true,
-          }
+          "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
         );
       } else { //is backside, just flip without checking translation
         this.store.commit(
-          "cards/TOGGLE_CARD_SIDE" as RootCommitType,
-          //send as number because target.id is a string and all cards db assigned id's are numbers
-          id,
-          {
-            root: true,
-          }
+          "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
         );
         // done checking answer just go to the next card
         await this.shiftCardNext(null, id);

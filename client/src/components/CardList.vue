@@ -97,8 +97,6 @@
           <Card
             :id="card._id"
             :cards="cards"
-            :isFrontSide="true"
-            :isBackSide="false"
             :card="card"
           />
         </div>
@@ -116,8 +114,6 @@ import {
 import { ref, defineComponent, computed } from "vue";
 import Card from "../components/Card.vue";
 import { useStore } from "vuex";
-// import Spinner from "../components/Spinner.vue";
-
 export default defineComponent({
   name: "CardList",
   components: {

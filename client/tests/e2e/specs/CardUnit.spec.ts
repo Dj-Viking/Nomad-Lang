@@ -67,7 +67,6 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     // eslint-disable-next-line
     // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
-    // cy.get("input[name=textInput]").type(inputText);
 
     //add a card start
     //open the modal
@@ -104,7 +103,7 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     // get the card container and traverse to get the text content that was input
     cy.get("div.notification.is-light").should("have.length", 1);
 
-    cy.get("p.title.is-4").then((element) => {
+    cy.get("p.title.is-5").then((element) => {
       const textEntered = element.text();
       console.log(textEntered);
       expect(textEntered).to.be.equal(
@@ -280,7 +279,7 @@ describe("registers a new user that will crud the cards", () => {
     cy.wait(500);
 
     // just check that we got the card with the edited text on it
-    cy.get("p.title.is-4").then((element) => {
+    cy.get("p.title.is-5").then((element) => {
       const textEntered = element.text();
       console.log(textEntered);
       expect(textEntered).to.be.equal(
