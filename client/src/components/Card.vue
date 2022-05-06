@@ -63,13 +63,18 @@
                     <p v-html="card?.frontSideText"></p>
                   </div>
                   <div v-else>
-                    <p class="title is-4">{{ card?.frontSideText }}</p>
+                    <p
+                      style="margin-bottom: 1.5rem"
+                      class="title is-5"
+                    >{{ card?.frontSideText }}</p>
                   </div>
                   <form
                     :id="id"
                     @submit.prevent="
                       ($event) => {
-                        submitCardFlipCheck($event, true);
+                        (async () => {
+                          await submitCardFlipCheck($event, true);
+                        })();
                       }
                     "
                   >
@@ -82,7 +87,7 @@
                     />
                     <button
                       class="button is-primary"
-                      style="color: black"
+                      style="color: black; margin-top: 1.5rem"
                       type="submit"
                     >
                       Check
@@ -129,7 +134,9 @@
                     :id="id"
                     @submit.prevent="
                       ($event) => {
-                        submitCardFlipCheck($event, false);
+                        (async () => {
+                          await submitCardFlipCheck($event, false);
+                        })();
                       }
                     "
                   >
@@ -141,11 +148,14 @@
                     />
                     <button
                       class="button is-primary"
-                      style="color: black"
+                      style="color: black; margin-top: 1.5rem"
                       type="submit"
                     >
                       Flip
                     </button>
+                    <div style="height: 40px;">
+                      &nbsp;
+                    </div>
                   </form>
                 </div>
               </div>
@@ -212,7 +222,7 @@ export default defineComponent({
         root: true,
       });
     },
-    submitCardFlipCheck(event: any, isFrontSide: boolean): void {
+    async submitCardFlipCheck(event: any, isFrontSide: boolean): Promise<void> {
       const id = event.target.id;
       console.log("translation", this.translation);
       if (isFrontSide) {
@@ -248,14 +258,17 @@ export default defineComponent({
             root: true,
           }
         );
+        // done checking answer just go to the next card
+        await this.shiftCardNext(null, id);
       }
     },
-    async shiftCardNext(event: any): Promise<void> {
+    async shiftCardNext(event?: any, id?: string): Promise<void> {
+      const cardId = (() => !event ? id : event.target.id)();
       //update display cards array state
       // to shift a card out of the stack after done using it
       await this.store.dispatch(
         "cards/shiftCardNext" as RootDispatchType,
-        event.target.id,
+        cardId,
         {
           root: true,
         }
