@@ -1,9 +1,11 @@
 <template>
-  <div
-    :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }"
-  >
+  <div :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }">
     <nav style="margin: 0">
-      <Transition type="transition" name="fade" mode="out-in">
+      <Transition
+        type="transition"
+        name="fade"
+        mode="out-in"
+      >
         <div v-if="!isHome">
           <div class="nav-buttons">
             <div class="nav-animate-in">
@@ -11,14 +13,20 @@
                 style="text-decoration: none"
                 class="button is-success"
                 :to="'/'"
-                >Home</router-link
-              >
+              >Home</router-link>
             </div>
           </div>
         </div>
         <div v-else>
-          <Transition type="transition" name="fade" mode="out-in">
-            <div v-if="isLoggedIn" class="nav-buttons">
+          <Transition
+            type="transition"
+            name="fade"
+            mode="out-in"
+          >
+            <div
+              v-if="isLoggedIn"
+              class="nav-buttons"
+            >
               <a
                 style="cursor: pointer"
                 class="button is-danger"
@@ -28,23 +36,23 @@
                     logout();
                   }
                 "
-                >Logout</a
-              >
+              >Logout</a>
             </div>
-            <div v-else class="nav-buttons">
+            <div
+              v-else
+              class="nav-buttons"
+            >
               <div class="nav-animate-in">
                 <router-link
                   style="text-decoration: none; margin-right: 0.5em"
                   class="button is-success"
                   :to="'/login'"
-                  >Login</router-link
-                >
+                >Login</router-link>
                 <router-link
                   style="text-decoration: none"
                   class="button is-success"
                   :to="'/signup'"
-                  >Signup</router-link
-                >
+                >Signup</router-link>
               </div>
             </div>
           </Transition>
@@ -70,7 +78,9 @@ import store from "../store";
 import { api } from "@/utils/ApiService";
 export default defineComponent({
   name: "BaseLayout",
-  props: ["isHome"],
+  props: {
+    isHome: Boolean
+  },
   computed: {
     //if i need to change this read only state i need to dispatch an action or commit some mutation
     isLoggedIn: (): UserState["user"]["loggedIn"] =>
@@ -185,12 +195,14 @@ export default defineComponent({
   justify-content: flex-end;
   margin: 0.5em;
 }
+
 .divider {
   color: green;
   font-size: 40px;
   margin-left: 10px;
   margin-right: 10px;
 }
+
 .link {
   color: green;
   font-size: 40px;
@@ -200,6 +212,7 @@ export default defineComponent({
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -210,6 +223,7 @@ export default defineComponent({
   margin-right: 0px !important;
   transition: 0.2s;
 }
+
 .content-adjust {
   margin-left: 0px !important;
   margin-right: 0px !important;

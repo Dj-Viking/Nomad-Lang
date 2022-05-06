@@ -245,7 +245,8 @@ export type AddCardResponse = {
 
 export type MyGetters =
   | "sidebarCategories/aCategoryIsActive"
-  | "sidebarCategories/currentActiveCategoryCards";
+  | "sidebarCategories/currentActiveCategoryCards"
+  | "user/userScore"
 
 export type RootCommitType =
   | "user/SET_USER"

@@ -6,8 +6,7 @@
       @submit.prevent="
         ($event) => {
           store.commit('loading/SET_LOADING', true, { root: true });
-          let event = $event;
-          readEvent(event);
+          readEvent($event);
         }
       "
     >
@@ -40,7 +39,10 @@
         </div>
       </div>
       <div style="display: flex; justify-content: flex-end">
-        <router-link :to="'/forgot'" class="link">Forgot Password?</router-link>
+        <router-link
+          :to="'/forgot'"
+          class="link"
+        >Forgot Password?</router-link>
       </div>
       <button
         type="submit"
@@ -72,32 +74,27 @@
   </base-layout>
 </template>
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import {
-  LoadingState,
   LoginResponse,
+  MyRootState,
   RootCommitType,
   RootDispatchType,
-  // RootDispatchType,
 } from "@/types";
 import auth from "@/utils/AuthService";
 import router from "@/router";
 import { api } from "@/utils/ApiService";
-import store from "@/store";
 import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "Login",
-  computed: {
-    isLoading: (): LoadingState["loading"]["isLoading"] =>
-      store.state.loading.loading.isLoading,
-  },
   setup(this: void) {
     const toast = useToast();
-    const store = useStore();
+    const store = useStore<MyRootState>();
     const loginInput = ref("");
     const password = ref("");
+    const isLoading = computed(() => store.state.loading.loading.isLoading);
 
     onMounted(() => {
       store.commit("loading/SET_LOADING", false, { root: true });
@@ -106,6 +103,7 @@ export default defineComponent({
 
     return {
       toast,
+      isLoading,
       loginInput,
       password,
       store,
@@ -123,13 +121,13 @@ export default defineComponent({
       password: string;
     }): Promise<void> {
       try {
-        store.commit("loading/SET_LOADING" as RootCommitType, true, {
+        this.store.commit("loading/SET_LOADING" as RootCommitType, true, {
           root: true,
         });
         const { user, error } = (await api.login(args)) as LoginResponse;
         if (!!error && typeof user === "undefined") {
           // auth.clearToken();
-          store.commit("loading/SET_LOADING" as RootCommitType, false, {
+          this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
             root: true,
           });
           // throw error;
@@ -139,7 +137,7 @@ export default defineComponent({
             timeout: 3000,
           });
           // log in the user
-          store.commit(
+          this.store.commit(
             "user/SET_LOGGED_IN" as RootCommitType,
             { ...user },
             {
@@ -147,7 +145,7 @@ export default defineComponent({
             }
           );
           //set user
-          store.dispatch(
+          this.store.dispatch(
             "user/setUser" as RootDispatchType,
             { ...user },
             {
@@ -155,26 +153,26 @@ export default defineComponent({
             }
           );
           // set cards
-          await store.dispatch(
+          await this.store.dispatch(
             "cards/setCards" as RootDispatchType,
             { cards: user!.cards },
             { root: true }
           );
           setTimeout(() => {
-            store.commit("loading/SET_LOADING" as RootCommitType, false, {
+            this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
               root: true,
             });
             router.push("/");
           }, 3000);
           // set theme
-          store.commit("theme/SET_THEME" as RootCommitType, user!.themePref, {
+          this.store.commit("theme/SET_THEME" as RootCommitType, user!.themePref, {
             root: true,
           });
         }
       } catch (error) {
         // console.error("error during login", error);
         auth.clearToken();
-        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+        this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
         this.toast.error(`Oops! There was a problem with login ${error}`, {

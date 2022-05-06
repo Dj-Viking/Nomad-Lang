@@ -10,7 +10,7 @@
         name="slide-fade"
         mode="out-in"
       >
-        <div v-if="card.isFrontSide">
+        <div v-if="card!.isFrontSide">
           <div class="card">
             <div style="display: flex; justify-content: space-between">
               <i
@@ -26,7 +26,7 @@
                 @click.prevent="
                   ($event) => {
                     //update vuex cards that are displayed
-                    openDeleteCardModal($event, id);
+                    openDeleteCardModal($event, id!);
                   }
                 "
               ></i>
@@ -35,7 +35,7 @@
                 style="color: black; margin-top: 0.3em; margin-right: 0.4em"
                 @click.prevent="
                   ($event) => {
-                    openEditModal($event, card);
+                    openEditModal($event, card!);
                   }
                 "
               >
@@ -89,7 +89,7 @@
                     </button>
                   </form>
                   <button
-                    :id="id"
+                    :id="id!"
                     type="submit"
                     class="button is-warning"
                     @click.prevent="
@@ -163,57 +163,59 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
-import store from "../store";
+import { defineComponent, ref, computed, PropType } from "@vue/runtime-core";
 import Spinner from "../components/Spinner.vue";
 import {
+  CardClass,
   ICard,
-  LoadingState,
-  ModalState,
+  MyRootState,
   RootCommitType,
   RootDispatchType,
-  UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
+import { useStore } from "vuex";
 export default defineComponent({
   name: "Card",
-  props: ["cards", "card", "id"],
   components: {
     Spinner,
   },
+  props: {
+    card: Object as PropType<CardClass>,
+    cards: Array as PropType<Array<CardClass>>,
+    id: String
+  },
   setup() {
     const toast = useToast();
+    const store = useStore<MyRootState>();
     const translation = ref("");
-
+    const isLoading = computed(() => store.state.loading.loading.isLoading);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const activeClass = computed(() => store.state.modal.modal.activeClass);
     return {
       toast,
+      store,
       translation,
+      isLoading,
+      isLoggedIn,
+      activeClass,
     };
-  },
-  computed: {
-    isLoading: (): LoadingState["loading"]["isLoading"] =>
-      store.state.loading.loading.isLoading,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    activeClass: (): ModalState["modal"]["activeClass"] =>
-      store.state.modal.modal.activeClass,
   },
   methods: {
     openDeleteCardModal(_event: Event, id: string): void {
-      store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete", {
+      this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete", {
         root: true,
       });
-      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, { _id: id }, {
+      this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, { _id: id }, {
         root: true,
       });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
     submitCardFlipCheck(event: any): void {
       const id = event.target.id;
       console.log("translation", this.translation);
-      if (this.card.backSideText === this.translation) {
+      if (this.card!.backSideText === this.translation) {
         console.log("YAYYYYY got it right!");
         // TODO: display message on card that it was right
         // use case insensitivity regex perhaps
@@ -228,7 +230,7 @@ export default defineComponent({
       }
       this.translation = "";
       //set the class on for the flip animation on the card object itself.
-      store.commit(
+      this.store.commit(
         "cards/TOGGLE_CARD_SIDE" as RootCommitType,
         //send as number because target.id is a string and all cards db assigned id's are numbers
         id,
@@ -240,7 +242,7 @@ export default defineComponent({
     async shiftCardNext(event: any): Promise<void> {
       //update display cards array state
       // to shift a card out of the stack after done using it
-      await store.dispatch(
+      await this.store.dispatch(
         "cards/shiftCardNext" as RootDispatchType,
         event.target.id,
         {
@@ -250,13 +252,13 @@ export default defineComponent({
     },
     // eslint-disable-next-line
     openEditModal(_event: Event, card: ICard) {
-      store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
+      this.store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
         root: true,
       });
-      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
+      this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
         root: true,
       });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
@@ -264,7 +266,7 @@ export default defineComponent({
   mounted() {
     if (this.card) {
       setTimeout(() => {
-        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+        this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
       }, 500);

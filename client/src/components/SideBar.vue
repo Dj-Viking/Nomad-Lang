@@ -113,21 +113,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import store from "@/store";
 import {
-  CardsState,
-  CategorizedCardsObject,
   ICard,
-  ModalState,
+  MyRootState,
   RootCommitType,
   RootDispatchType,
-  SidebarState,
 } from "@/types";
 import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
-import { defineComponent, ref } from "@vue/runtime-core";
+import { defineComponent, ref, computed } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
 import ToggleButton from "../components/ToggleButton.vue";
 import { createHighlightedCardTextHtml } from "@/utils/createHighlightedCardTextHtml";
-
+import { useStore } from "vuex";
 export default defineComponent({
   name: "SideBar",
   components: {
@@ -136,23 +133,26 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
+    const store = useStore<MyRootState>();
     const searchTerm = ref("");
+    const isLight = computed(() => store.state.theme.theme === "light");
+    const isDark = computed(() => store.state.theme.theme === "dark");
+    const allCards = computed(() => store.state.cards.allCards);
+    const cards = computed(() => store.state.cards.cards);
+    const categories = computed(() => store.state.cards.categorized);
+    const sidebarOpen = computed(() => store.state.sidebar.sidebar.isOpen);
+    const modalActive = computed(() => store.state.modal.modal.activeClass);
     return {
-      searchTerm,
       route,
+      searchTerm,
+      isLight,
+      isDark,
+      allCards,
+      cards,
+      categories,
+      sidebarOpen,
+      modalActive
     };
-  },
-  computed: {
-    isLight: () => store.state.theme.theme === "light",
-    isDark: () => store.state.theme.theme === "dark",
-    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
-    cards: (): CardsState["cards"] => store.state.cards.cards,
-    categories: (): CardsState["categorized"] =>
-      store.state.cards.categorized as CategorizedCardsObject,
-    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
-      store.state.sidebar.sidebar.isOpen,
-    modalActive: (): ModalState["modal"]["activeClass"] =>
-      store.state.modal.modal.activeClass,
   },
   methods: {
     search(event: any): void {

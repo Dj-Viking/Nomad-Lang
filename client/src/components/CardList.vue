@@ -110,14 +110,12 @@
 <script lang="ts">
 import {
   RootCommitType,
-  CardsState,
-  UserState,
-  LoadingState,
   MyGetters,
+  MyRootState,
 } from "../types";
-import { ref, defineComponent } from "vue";
-import store from "../store";
+import { ref, defineComponent, computed } from "vue";
 import Card from "../components/Card.vue";
+import { useStore } from "vuex";
 // import Spinner from "../components/Spinner.vue";
 
 export default defineComponent({
@@ -129,41 +127,45 @@ export default defineComponent({
   setup() {
     const inputId = ref(0);
     const input = ref("");
-
+    const store = useStore<MyRootState>();
+    const userScore = computed(() => store.getters["user/score" as MyGetters]);
+    const aCategoryIsActive = computed(() => store.getters["sidebarCategories/aCategoryIsActive" as MyGetters]);
+    const currentActiveCategoryCards = computed(() => {
+      return store.getters["sidebarCategories/currentActiveCategoryCards" as MyGetters];
+    });
+    const isLight = computed(() => store.state.theme.theme === "light");
+    const isDark = computed(() => store.state.theme.theme === "dark");
+    const allCards = computed(() => store.state.cards.allCards);
+    const cards = computed(() => store.state.cards.cards);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const isLoading = computed(() => store.state.loading.loading.isLoading);
     return {
-      input,
       inputId,
+      input,
+      store,
+      userScore,
+      aCategoryIsActive,
+      currentActiveCategoryCards,
+      isLight,
+      isDark,
+      allCards,
+      cards,
+      isLoggedIn,
+      isLoading,
     };
-  },
-  computed: {
-    userScore: () => store.getters["user/score"],
-    aCategoryIsActive: () =>
-      store.getters["sidebarCategories/aCategoryIsActive" as MyGetters],
-    currentActiveCategoryCards: () =>
-      store.getters[
-      "sidebarCategories/currentActiveCategoryCards" as MyGetters
-      ],
-    isLight: () => store.state.theme.theme === "light",
-    isDark: () => store.state.theme.theme === "dark",
-    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
-    cards: (): CardsState["cards"] => store.state.cards.cards,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    isLoading: (): LoadingState["loading"]["isLoading"] =>
-      store.state.loading.loading.isLoading,
   },
   methods: {
     // eslint-disable-next-line
     resetDisplayCards(_event: any): void {
       if (this.cards.length !== this.allCards.length) {
         if (this.aCategoryIsActive) {
-          store.commit(
+          this.store.commit(
             "cards/SET_DISPLAY_CARDS" as RootCommitType,
             { cards: this.currentActiveCategoryCards },
             { root: true }
           );
         } else {
-          store.commit(
+          this.store.commit(
             "cards/SET_DISPLAY_CARDS" as RootCommitType,
             { cards: this.allCards },
             { root: true }
@@ -178,10 +180,10 @@ export default defineComponent({
 
     // eslint-disable-next-line
     clearCardsModal(_event: Event): void {
-      store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Clear Cards", {
+      this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Clear Cards", {
         root: true,
       });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
@@ -189,11 +191,11 @@ export default defineComponent({
     openAddModal(_event: MouseEvent): void {
       _event.preventDefault();
       //set modal title
-      store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
+      this.store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
         root: true,
       });
       // open the modal
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },

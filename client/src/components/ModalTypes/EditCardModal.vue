@@ -187,7 +187,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, PropType } from "vue";
 import { useStore } from "vuex";
 import store from "../../store";
 import auth from "../../utils/AuthService";
@@ -198,7 +198,7 @@ export default defineComponent({
   name: "EditCardModal",
   props: {
     title: String,
-    card: CardClass
+    card: Object as PropType<CardClass>
   },
   setup() {
     const toast = useToast();
