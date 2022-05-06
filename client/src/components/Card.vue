@@ -69,7 +69,7 @@
                     :id="id"
                     @submit.prevent="
                       ($event) => {
-                        submitCardFlipCheck($event);
+                        submitCardFlipCheck($event, true);
                       }
                     "
                   >
@@ -129,7 +129,7 @@
                     :id="id"
                     @submit.prevent="
                       ($event) => {
-                        submitCardFlipCheck($event);
+                        submitCardFlipCheck($event, false);
                       }
                     "
                   >
@@ -212,32 +212,43 @@ export default defineComponent({
         root: true,
       });
     },
-    submitCardFlipCheck(event: any): void {
+    submitCardFlipCheck(event: any, isFrontSide: boolean): void {
       const id = event.target.id;
       console.log("translation", this.translation);
-      if (this.card!.backSideText === this.translation) {
-        console.log("YAYYYYY got it right!");
-        // TODO: display message on card that it was right
-        // use case insensitivity regex perhaps
-        // increment the user's score when right
-        // after some time flip the card back to the front and go to the next card in the CardList being displayed
-      } else {
-        console.error("got it wrong");
-        // TODO display message on card that it was wrong
-        // decrement the user's score and then show the answer
-        // on the backside, after some time flip back to front and then
-        // go to the next card in the CardList
-      }
-      this.translation = "";
-      //set the class on for the flip animation on the card object itself.
-      this.store.commit(
-        "cards/TOGGLE_CARD_SIDE" as RootCommitType,
-        //send as number because target.id is a string and all cards db assigned id's are numbers
-        id,
-        {
-          root: true,
+      if (isFrontSide) {
+        if (this.card!.backSideText === this.translation) {
+          console.log("YAYYYYY got it right!");
+          // TODO: display message on card that it was right
+          // use case insensitivity regex perhaps
+          // increment the user's score when right
+          // after some time flip the card back to the front and go to the next card in the CardList being displayed
+        } else {
+          console.error("got it wrong");
+          // TODO display message on card that it was wrong
+          // decrement the user's score and then show the answer
+          // on the backside, after some time flip back to front and then
+          // go to the next card in the CardList
         }
-      );
+        this.translation = "";
+        //set the class on for the flip animation on the card object itself.
+        this.store.commit(
+          "cards/TOGGLE_CARD_SIDE" as RootCommitType,
+          //send as number because target.id is a string and all cards db assigned id's are numbers
+          id,
+          {
+            root: true,
+          }
+        );
+      } else { //is backside, just flip without checking translation
+        this.store.commit(
+          "cards/TOGGLE_CARD_SIDE" as RootCommitType,
+          //send as number because target.id is a string and all cards db assigned id's are numbers
+          id,
+          {
+            root: true,
+          }
+        );
+      }
     },
     async shiftCardNext(event: any): Promise<void> {
       //update display cards array state
