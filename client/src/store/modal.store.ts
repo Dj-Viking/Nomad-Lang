@@ -24,7 +24,7 @@ const mutations = {
     state: ModalState,
     payload: ModalState["modal"]["context"]["card"]
   ): void {
-    state.modal.context.card = payload;
+    state.modal.context.card = { ...payload };
   },
   CLEAR_MODAL_CONTEXT(state: ModalState): void {
     //@ts-expect-error need to clean up the context

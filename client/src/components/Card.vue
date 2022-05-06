@@ -1,42 +1,59 @@
 <template>
-  <Transition type="transition" name="fade" mode="out-in">
+  <Transition
+    type="transition"
+    name="fade"
+    mode="out-in"
+  >
     <div v-if="!isLoading">
-      <Transition type="transition" name="slide-fade" mode="out-in">
+      <Transition
+        type="transition"
+        name="slide-fade"
+        mode="out-in"
+      >
         <div v-if="card.isFrontSide">
           <div class="card">
             <div style="display: flex; justify-content: space-between">
-              <i style="
+              <i
+                style="
                   color: #f14668;
                   font-size: 30px;
                   margin-top: 0.2em;
                   margin-left: 0.4em;
                   margin-bottom: 0.4em;
                   cursor: pointer;
-                " class="fa fa-trash" @click.prevent="
+                "
+                class="fa fa-trash"
+                @click.prevent="
                   ($event) => {
                     //update vuex cards that are displayed
-                    deleteCard($event, id);
-                    //only delete user's cards if they are logged in
-                    if (isLoggedIn) {
-                      submitDeleteCard($event, id);
-                    }
+                    openDeleteCardModal($event, id);
                   }
-                "></i>
-              <button class="button is-primary ml-6" style="color: black; margin-top: 0.3em; margin-right: 0.4em"
+                "
+              ></i>
+              <button
+                class="button is-primary ml-6"
+                style="color: black; margin-top: 0.3em; margin-right: 0.4em"
                 @click.prevent="
                   ($event) => {
                     openEditModal($event, card);
                   }
-                ">
+                "
+              >
                 Edit
-                <i style="margin-left: 0.5em" class="fa fa-pencil-square-o">
+                <i
+                  style="margin-left: 0.5em"
+                  class="fa fa-pencil-square-o"
+                >
                 </i>
               </button>
             </div>
             <div class="card-image">
               {{ card?.frontSidePicture }}
               <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
+                <img
+                  src="https://bulma.io/images/placeholders/1280x960.png"
+                  alt="Placeholder image"
+                />
               </figure>
             </div>
             <div class="card-content">
@@ -48,24 +65,41 @@
                   <div v-else>
                     <p class="title is-4">{{ card?.frontSideText }}</p>
                   </div>
-                  <form :id="id" @submit.prevent="
-                    ($event) => {
-                      submitCardFlipCheck($event);
-                    }
-                  ">
-                    <input style="margin: 0 auto; width: 80%" class="input" type="text" v-model="translation"
-                      placeholder="Translate!" />
-                    <button class="button is-primary" style="color: black" type="submit">
+                  <form
+                    :id="id"
+                    @submit.prevent="
+                      ($event) => {
+                        submitCardFlipCheck($event);
+                      }
+                    "
+                  >
+                    <input
+                      style="margin: 0 auto; width: 80%"
+                      class="input"
+                      type="text"
+                      v-model="translation"
+                      placeholder="Translate!"
+                    />
+                    <button
+                      class="button is-primary"
+                      style="color: black"
+                      type="submit"
+                    >
                       Check
                     </button>
                   </form>
-                  <button :id="id" type="submit" class="button is-warning" @click.prevent="
-                    ($event) => {
-                      (async () => {
-                        shiftCardNext($event);
-                      })();
-                    }
-                  ">
+                  <button
+                    :id="id"
+                    type="submit"
+                    class="button is-warning"
+                    @click.prevent="
+                      ($event) => {
+                        (async () => {
+                          shiftCardNext($event);
+                        })();
+                      }
+                    "
+                  >
                     Next
                   </button>
                 </div>
@@ -79,7 +113,10 @@
             <div class="card-image">
               {{ card?.backSidePicture }}
               <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
+                <img
+                  src="https://bulma.io/images/placeholders/1280x960.png"
+                  alt="Placeholder image"
+                />
               </figure>
             </div>
             <div class="card-content">
@@ -88,13 +125,25 @@
                   <p class="title is-5">
                     {{ card?.backSideText }}
                   </p>
-                  <form :id="id" @submit.prevent="
-                    ($event) => {
-                      submitCardFlipCheck($event);
-                    }
-                  ">
-                    <input style="margin: 0 auto; width: 80%" class="input" type="text" placeholder="Translate!" />
-                    <button class="button is-primary" style="color: black" type="submit">
+                  <form
+                    :id="id"
+                    @submit.prevent="
+                      ($event) => {
+                        submitCardFlipCheck($event);
+                      }
+                    "
+                  >
+                    <input
+                      style="margin: 0 auto; width: 80%"
+                      class="input"
+                      type="text"
+                      placeholder="Translate!"
+                    />
+                    <button
+                      class="button is-primary"
+                      style="color: black"
+                      type="submit"
+                    >
                       Flip
                     </button>
                   </form>
@@ -126,8 +175,6 @@ import {
   UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
-import { api } from "@/utils/ApiService";
-import auth from "@/utils/AuthService";
 export default defineComponent({
   name: "Card",
   props: ["cards", "card", "id"],
@@ -152,25 +199,16 @@ export default defineComponent({
       store.state.modal.modal.activeClass,
   },
   methods: {
-    async deleteCard(_event: Event, id: string): Promise<void> {
-      await store.dispatch("cards/deleteCard" as RootDispatchType, id, {
+    openDeleteCardModal(_event: Event, id: string): void {
+      store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete", {
         root: true,
       });
-    },
-    async submitDeleteCard(_event: any, id: string): Promise<void> {
-      try {
-        const { cards, error } = await api.deleteCard(
-          auth.getToken() as string,
-          id
-        );
-        if (!!error) throw error;
-        console.log("cards returned from api after deleting", cards);
-      } catch (error) {
-        this.toast.error(`error during submitting delete card: ${error}`, {
-          timeout: 3000,
-        });
-        console.error(error);
-      }
+      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, { _id: id }, {
+        root: true,
+      });
+      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+        root: true,
+      });
     },
     submitCardFlipCheck(event: any): void {
       const id = event.target.id;

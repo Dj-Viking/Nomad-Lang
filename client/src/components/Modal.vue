@@ -12,17 +12,26 @@
       <div v-if="/Clear/g.test(title)">
         <ClearCardModal :title="title" />
       </div>
+
       <div v-if="/Edit/g.test(title)">
         <EditCardModal
           :title="title"
           :card="modalContext.card"
         />
       </div>
+
       <div
         id="add-form-container"
         v-if="/Add/g.test(title)"
       >
         <AddCardModal :title="title" />
+      </div>
+
+      <div v-if="/Delete/g.test(title)">
+        <DeleteCardModal
+          :title="title"
+          :id="cardId"
+        />
       </div>
     </div>
     <button
@@ -35,6 +44,7 @@
 
 <script lang="ts">
 import {
+  MyRootState,
   RootCommitType,
 } from "@/types";
 import { defineComponent, ref, computed } from "@vue/runtime-core";
@@ -44,23 +54,27 @@ import { keyGen } from "@/utils/keyGen";
 import { useToast } from "vue-toastification";
 import EditCardModal from "./ModalTypes/EditCardModal.vue";
 import AddCardModal from "./ModalTypes/AddCardModal.vue";
+import DeleteCardModal from "./ModalTypes/DeleteCardModal.vue";
 export default defineComponent({
   name: "Modal",
   components: {
     ClearCardModal,
     EditCardModal,
-    AddCardModal
+    AddCardModal,
+    DeleteCardModal
   },
   setup() {
     const toast = useToast();
-    const store = useStore();
+    const store = useStore<MyRootState>();
     const errMsg = ref("");
     const showErrMsg = ref(false);
+    const cardId = computed(() => store.state.modal.modal.context.card._id);
     const title = computed(() => store.state.modal.modal.title);
     const activeClass = computed(() => store.state.modal.modal.activeClass);
     const isLoggedIn = computed(() => store.state.user.user.loggedIn);
     const modalContext = computed(() => store.state.modal.modal.context);
     return {
+      cardId,
       title,
       activeClass,
       isLoggedIn,

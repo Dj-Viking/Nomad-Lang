@@ -58,7 +58,7 @@ describe("visits home page", () => {
 
 describe("checks all CRUD operations of interactions with cards as not logged in", () => {
   it("clears todos on the screen", () => {
-    cy.get("button.is-info").contains("clear cards").click();
+    cy.get("button.is-info").contains("Clear Cards").click();
     //click yes on the clear cards modal when it appears
     cy.wait(1000);
     cy.get("button.button.is-info").contains("Yes").click();
@@ -125,6 +125,9 @@ describe("checks all CRUD operations of interactions with cards as not logged in
 
     //delete button click
     cy.get("i.fa.fa-trash").click();
+    cy.wait(300);
+    cy.get("button#delete-yes").contains("Yes").should("have.length", 1).click();
+    cy.wait(300);
   });
 
   it("adds a couple more cards and then hits clear button", () => {
@@ -151,7 +154,7 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     // //add a card finish
   });
   it("checks that the cards are gone after clear button click", () => {
-    cy.get("button.is-info").contains("clear cards").click();
+    cy.get("button.is-info").contains("Clear Cards").click();
     cy.wait(300);
     cy.get("button.button.is-info").contains("Yes").click();
   });
@@ -286,6 +289,9 @@ describe("registers a new user that will crud the cards", () => {
     });
     //   //delete button click
     cy.get("i.fa.fa-trash").click();
+    cy.wait(300);
+    cy.get("button#delete-yes").contains("Yes").should("have.length", 1).click();
+    cy.wait(300);
     //checks it was deleted
     cy.get("div.some-unique-class")
       .children()
@@ -333,6 +339,9 @@ describe("registers a new user that will crud the cards", () => {
     //   //delete button click
     cy.wait(500);
     cy.get("i.fa.fa-trash").click();
+    cy.wait(300);
+    cy.get("button#delete-yes").contains("Yes").should("have.length", 1).click();
+    cy.wait(300);
     //checks it was deleted
     cy.get("div.some-unique-class")
       .children()
@@ -375,7 +384,7 @@ describe("registers a new user that will crud the cards", () => {
     //add a card finish
 
     //clear cards as logged in user
-    cy.get("button.is-info").contains("clear cards").click();
+    cy.get("button.is-info").contains("Clear Cards").click();
     cy.get("button.button.is-info").contains("Yes").click();
     cy.wait(500);
     cy.get("div.some-unique-class")

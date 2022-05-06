@@ -36,7 +36,7 @@
           }
         "
       >
-        clear cards
+        Clear Cards
       </button>
       <div class="control">
         <button

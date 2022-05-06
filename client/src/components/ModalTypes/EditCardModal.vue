@@ -72,7 +72,7 @@
             name="modalEditFsText"
             type="text"
             class="input"
-            :placeholder="card.frontSideText"
+            :placeholder="card!.frontSideText"
             v-model="frontSideTextInput"
           />
         </div>
@@ -91,7 +91,7 @@
             name="modalEditFsTextLanguage"
             type="text"
             class="input"
-            :placeholder="card.frontSideLanguage"
+            :placeholder="card!.frontSideLanguage"
             v-model="frontSideLanguageInput"
           />
         </div>
@@ -109,7 +109,7 @@
             name="modalEditFsTextPicture"
             type="text"
             class="input"
-            :placeholder="card.frontSidePicture"
+            :placeholder="card!.frontSidePicture"
             v-model="frontSidePictureInput"
           />
         </div>
@@ -128,7 +128,7 @@
             name="modalEditBsText"
             type="text"
             class="input"
-            :placeholder="card.backSideText"
+            :placeholder="card!.backSideText"
             v-model="backSideTextInput"
           />
         </div>
@@ -145,7 +145,7 @@
             name="modalEditBsTextLanguage"
             type="text"
             class="input"
-            :placeholder="card.backSideLanguage"
+            :placeholder="card!.backSideLanguage"
             v-model="backSideLanguageInput"
           />
         </div>
@@ -162,7 +162,7 @@
             name="modalEditBsTextPicture"
             type="text"
             class="input"
-            :placeholder="card.backSidePicture"
+            :placeholder="card!.backSidePicture"
             v-model="backSidePictureInput"
           />
         </div>

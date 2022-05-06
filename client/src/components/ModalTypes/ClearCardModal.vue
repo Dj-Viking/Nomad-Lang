@@ -42,27 +42,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import store from "../../store";
+import { defineComponent, computed } from "vue";
 import { api } from "../../utils/ApiService";
 import auth from "../../utils/AuthService";
-import { RootCommitType, RootDispatchType, UserState } from "../../types";
+import { MyRootState, RootCommitType, RootDispatchType } from "../../types";
+import { useStore } from "vuex";
 export default defineComponent({
   name: "ClearCardModal",
   props: {
     title: String,
   },
-  computed: {
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
+  setup() {
+    const store = useStore<MyRootState>();
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    return {
+      isLoggedIn,
+      store
+    };
   },
   methods: {
     // eslint-disable-next-line
     async confirmClearButtonEvent(_event: any): Promise<void> {
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
-      await store.dispatch(
+      await this.store.dispatch(
         "cards/setCards" as RootDispatchType,
         { cards: [] },
         { root: true }
@@ -80,7 +84,7 @@ export default defineComponent({
     },
     // eslint-disable-next-line
     cancelClearButtonEvent(_event: any): void {
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, false, {
         root: true,
       });
     },
