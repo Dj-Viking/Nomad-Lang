@@ -152,6 +152,7 @@ export interface UserState {
   user: {
     username: string | null;
     score: number;
+    answers: { correct: number; incorrect: number; };
     email: string | null;
     token?: string | null | undefined;
     cards: ICard[];
@@ -246,12 +247,17 @@ export type AddCardResponse = {
 export type MyGetters =
   | "sidebarCategories/aCategoryIsActive"
   | "sidebarCategories/currentActiveCategoryCards"
-  | "user/userScore"
+  | "user/correct"
+  | "user/incorrect"
 
 export type RootCommitType =
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
+  | "user/INCREMENT_CORRECT"
+  | "user/INCREMENT_INCORRECT"
+  | "user/SAVE_SCORE"
+  | "user/RESET_ANSWERS"
   /** */
   | "theme/TOGGLE_THEME"
   | "theme/SET_THEME"

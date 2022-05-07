@@ -11,22 +11,38 @@ const state: UserState = {
   user: {
     username: "",
     email: "",
-    score: Number(localStorage.getItem("user_score")) || 0,
+    score: 0,
+    answers: {
+      correct: 0,
+      incorrect: 0,
+    },
     token: "",
     cards: [] as ICard[],
     loggedIn: false,
   },
 };
 const mutations = {
-  SET_SCORE(state: UserState, payload: number): void {
-    state.user.score += payload;
-    let score = Number(localStorage.getItem("user_score")) || 0 as number;
-    score += payload;
+  SAVE_SCORE(state: UserState, payload: { correct: number, incorrect: number }): void {
+    let { correct, incorrect } = payload;
+    let score = 0;
+    for (let i = 0; i < correct; i++) score += 5;
+    for (let i = 0; i < incorrect; i++) score -= 5;
     const user = {
       username: state.user.username,
+      date: Date.now(),
       score: score
     };
     localStorage.setItem("user_score", JSON.stringify(user));
+  },
+  RESET_ANSWERS(state: UserState): void {
+    state.user.answers.correct = 0;
+    state.user.answers.incorrect = 0;
+  },
+  INCREMENT_CORRECT(state: UserState): void {
+    state.user.answers.correct += 1;
+  },
+  INCREMENT_INCORRECT(state: UserState): void {
+    state.user.answers.incorrect += 1;
   },
   SET_USER(state: UserState, payload: SetUserCommitPayload): void {
     // eslint-disable-next-line
@@ -75,8 +91,11 @@ const getters = {
   user(state: UserState): UserState["user"] {
     return state.user;
   },
-  score(state: UserState): UserState["user"]["score"] {
-    return state.user.score;
+  correct(state: UserState): UserState["user"]["answers"]["correct"] {
+    return state.user.answers.correct;
+  },
+  incorrect(state: UserState): UserState["user"]["answers"]["incorrect"] {
+    return state.user.answers.incorrect;
   }
 };
 

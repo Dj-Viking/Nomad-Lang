@@ -227,7 +227,6 @@ export default defineComponent({
           setTimeout(function () {
             if (searchTermEl !== null) {
               searchTermEl.addEventListener("blur", () => {
-                console.log("self searchterm", typeof self.searchTerm, self.searchTerm);
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
                 } else return void 0;

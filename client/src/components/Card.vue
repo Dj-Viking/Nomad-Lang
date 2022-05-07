@@ -210,7 +210,7 @@ export default defineComponent({
   },
   methods: {
     openDeleteCardModal(_event: Event, id: string): void {
-      this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete", {
+      this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete This Card", {
         root: true,
       });
       this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, { _id: id }, {
@@ -224,14 +224,15 @@ export default defineComponent({
       const id = event.target.id;
       console.log("translation", this.translation);
       if (_isFrontSide) {
-        if (this.card!.backSideText === this.translation) {
-          console.log("YAYYYYY got it right!");
+        if (new RegExp(`${this.card!.backSideText}`, "i").test(this.translation)) {
+          // increment correct score
+          this.store.commit("user/INCREMENT_CORRECT" as RootCommitType, null, { root: true });
           // TODO: display message on card that it was right
-          // use case insensitivity regex perhaps
           // increment the user's score when right
           // after some time flip the card back to the front and go to the next card in the CardList being displayed
         } else {
-          console.error("got it wrong");
+          // increment incorrect score
+          this.store.commit("user/INCREMENT_INCORRECT" as RootCommitType, null, { root: true });
           // TODO display message on card that it was wrong
           // decrement the user's score and then show the answer
           // on the backside, after some time flip back to front and then
@@ -254,13 +255,7 @@ export default defineComponent({
       const cardId = (() => !event ? id : event.target.id)();
       //update display cards array state
       // to shift a card out of the stack after done using it
-      await this.store.dispatch(
-        "cards/shiftCardNext" as RootDispatchType,
-        cardId,
-        {
-          root: true,
-        }
-      );
+      await this.store.dispatch("cards/shiftCardNext" as RootDispatchType, cardId, { root: true });
     },
     // eslint-disable-next-line
     openEditModal(_event: Event, card: ICard) {

@@ -12,9 +12,10 @@
             width="100%"
             height="10px"
             style="flex: 3.6"
-          >&nbsp;</div> <span style="flex: 2; font-size: 20px;">Your
-            score:
-            {{ userScore }}</span>
+          >&nbsp;</div>
+          <span style="flex: 2; font-size: 20px;"> Your score:&nbsp;
+            <span class="has-text-primary">Correct: {{ correct }}&nbsp;&nbsp;</span>
+            <span class="has-text-danger">Incorrect: {{ incorrect }}&nbsp;</span></span>
         </div>
       </div>
     </h2>
@@ -101,6 +102,33 @@
           />
         </div>
       </div>
+      <div
+        style="margin: 10%;"
+        v-else
+      >
+        <span style="color: white;">
+          <h3
+            style="color: white"
+            class="title is-3"
+          >
+            Final Score
+          </h3>
+          <p style="color: white;">
+            Correct: {{ correct }}
+          </p>
+          <p style="color: white;">
+            Incorrect: {{ incorrect }}
+          </p>
+        </span>
+        <div style="margin-top: 10px;">
+          <button
+            class="button is-info"
+            @click.prevent="resetDisplayCards($event)"
+          >
+            Play Again
+          </button>
+        </div>
+      </div>
     </Transition>
   </div>
 </template>
@@ -110,6 +138,7 @@ import {
   RootCommitType,
   MyGetters,
   MyRootState,
+  CardClass,
 } from "../types";
 import { ref, defineComponent, computed } from "vue";
 import Card from "../components/Card.vue";
@@ -124,11 +153,16 @@ export default defineComponent({
     const inputId = ref(0);
     const input = ref("");
     const store = useStore<MyRootState>();
-    const userScore = computed(() => store.getters["user/score" as MyGetters]);
-    const aCategoryIsActive = computed(() => store.getters["sidebarCategories/aCategoryIsActive" as MyGetters]);
-    const currentActiveCategoryCards = computed(() => {
-      return store.getters["sidebarCategories/currentActiveCategoryCards" as MyGetters];
-    });
+
+    const correct = computed<number>(() =>
+      store.getters["user/correct" as MyGetters]);
+    const incorrect = computed<number>(() =>
+      store.getters["user/incorrect" as MyGetters]);
+    const aCategoryIsActive = computed<boolean>(() =>
+      store.getters["sidebarCategories/aCategoryIsActive" as MyGetters]);
+    const currentActiveCategoryCards = computed<Array<CardClass>>(() =>
+      store.getters["sidebarCategories/currentActiveCategoryCards" as MyGetters]);
+
     const isLight = computed(() => store.state.theme.theme === "light");
     const isDark = computed(() => store.state.theme.theme === "dark");
     const allCards = computed(() => store.state.cards.allCards);
@@ -139,7 +173,8 @@ export default defineComponent({
       inputId,
       input,
       store,
-      userScore,
+      correct,
+      incorrect,
       aCategoryIsActive,
       currentActiveCategoryCards,
       isLight,
@@ -153,6 +188,7 @@ export default defineComponent({
   methods: {
     // eslint-disable-next-line
     resetDisplayCards(_event: any): void {
+      this.store.commit("user/RESET_ANSWERS" as RootCommitType, null, { root: true });
       if (this.cards.length !== this.allCards.length) {
         if (this.aCategoryIsActive) {
           this.store.commit(
