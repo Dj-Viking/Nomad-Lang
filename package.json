@@ -1,6 +1,6 @@
 {
   "name": "nomad-lang",
-  "version": "1.4.2",
+  "version": "2.4.2",
   "description": "",
   "scripts": {
     "dev": "sh dev.sh",

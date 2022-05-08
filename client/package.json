@@ -1,6 +1,6 @@
 {
   "name": "app-lang",
-  "version": "1.4.2",
+  "version": "2.4.2",
   "private": true,
   "scripts": {
     "cy:open": "cypress open",
@@ -42,6 +42,7 @@
     "he": "^1.2.0",
     "moment": "^2.29.2",
     "register-service-worker": "^1.7.2",
+    "@vue/cli-plugin-babel": "~5.0.0",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vue-router-mock": "^0.1.7",
@@ -61,7 +62,6 @@
     "@types/pngjs": "6.0.0",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-pwa": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
