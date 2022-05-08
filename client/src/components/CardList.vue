@@ -1,63 +1,148 @@
 <template>
   <div class="container some-unique-class">
-    <h2 v-if="cards.length > 0" :class="{ 'title-light': isLight, 'title-dark': isDark }" class="title mb-0">
+    <h2
+      v-if="cards.length > 0"
+      :class="{ 'title-light': isLight, 'title-dark': isDark }"
+      class="title mb-0"
+    >
       <div style="display: flex; flex-direction: column;">
         <span>Your Cards</span>
-        <div style="display: flex">
-          <div width="100%" height="10px" style="flex: 3.6">&nbsp;</div> <span style="flex: 2; font-size: 20px;">Your
-            score:
-            {{ userScore }}</span>
+        <div style="display: flex; justify-content: center;">
+          <div style="display: flex; flex-direction: column; font-size: 20px; margin-bottom: .5em; margin-top: .5em;">
+            Your score:
+            <span
+              id="correct-score"
+              style="margin-right: 10px;"
+              class="has-text-primary no-margin-left-mobile"
+            >
+              Correct: {{ correct }}
+            </span>
+            <span
+              id="incorrect-score"
+              class="has-text-danger"
+            >
+              Incorrect: {{ incorrect }}
+            </span>
+          </div>
         </div>
       </div>
     </h2>
-    <h2 v-else :class="{ title: isLight, 'title-dark': isDark }" class="mb-0">
+    <h2
+      v-else
+      :class="{ title: isLight, 'title-dark': isDark }"
+      class="mb-0"
+    >
       No Cards Yet
     </h2>
-    <div style="display: flex; flex-direction: row; justify-content: center">
-      <button style="margin-right: 0.5em" class="button is-info" @click.prevent="
-        ($event) => {
-          //clear local cards
-          clearCardsModal($event);
-        }
-      ">
-        clear cards
+    <div style="display: flex; flex-direction: row; justify-content: center; margin: 0 auto 1em auto;">
+      <button
+        style="margin-right: 0.5em"
+        class="button is-info button-shrink"
+        @click.prevent="
+          ($event) => {
+            //clear local cards
+            clearCardsModal($event);
+          }
+        "
+      >
+        Clear Cards
       </button>
       <div class="control">
-        <button id="add-button" @click.prevent="openAddModal($event)" class="button is-info" type="button" style="
-            color: rgb(255, 255, 255);
+        <button
+          id="add-button"
+          @click.prevent="openAddModal($event)"
+          class="button is-info button-shrink"
+          type="button"
+          style="
+            color: white;
             margin-left: 0.5em;
             margin-right: 0.5em;
-          ">
+          "
+        >
           Add New Card
         </button>
       </div>
       <div class="control">
-        <button class="button is-info" style="color: white; margin-left: 0.5em"
-          @click.prevent="resetDisplayCards($event)">
+        <button
+          class="button is-info button-shrink"
+          style="color: white; margin-left: 0.5em"
+          @click.prevent="resetDisplayCards($event)"
+        >
           <span v-if="!aCategoryIsActive">Reset Cards</span>
           <span v-else>Reset Category</span>
         </button>
       </div>
     </div>
-    <Transition type="transition" name="fade" mode="out-in">
-      <div style="
+    <Transition
+      type="transition"
+      name="fade"
+      mode="out-in"
+    >
+      <div
+        style="
           align-items: center;
           display: flex;
           justify-content: center;
           flex-direction: column;
-        " v-if="cards.length > 0">
-        <div style="
+        "
+        v-if="cards.length > 0"
+      >
+        <div
+          style="
             margin-bottom: 0;
             width: 80%;
             position: relative;
             align-items: center;
             display: flex;
             justify-content: center;
-          " :class="{
+          "
+          :class="{
             'notification is-light': isLight,
             'notification is-dark': isDark,
-          }" v-for="(card, i) of cards" :key="i">
-          <Card :id="card._id" :cards="cards" :isFrontSide="true" :isBackSide="false" :card="card" />
+          }"
+          v-for="(card, i) of cards"
+          :key="i"
+        >
+          <Card
+            :id="card._id"
+            :cards="cards"
+            :card="card"
+          />
+        </div>
+      </div>
+      <div
+        style="margin: 10%;"
+        v-else
+      >
+        <div v-if="allCards.length > 0">
+          <span style="color: white;">
+            <h3
+              :class="{ 'text-light': isLight, 'text-dark': isDark }"
+              class="title is-3"
+            >
+              Final Score
+            </h3>
+            <p
+              id="correct-final-score"
+              :class="{ 'text-light': isLight, 'text-dark': isDark }"
+            >
+              Correct: {{ correct }}
+            </p>
+            <p
+              id="incorrect-final-score"
+              :class="{ 'text-light': isLight, 'text-dark': isDark }"
+            >
+              Incorrect: {{ incorrect }}
+            </p>
+          </span>
+          <div style="margin-top: 10px;">
+            <button
+              class="button is-info"
+              @click.prevent="resetDisplayCards($event)"
+            >
+              Play Again
+            </button>
+          </div>
         </div>
       </div>
     </Transition>
@@ -67,16 +152,13 @@
 <script lang="ts">
 import {
   RootCommitType,
-  CardsState,
-  UserState,
-  LoadingState,
   MyGetters,
+  MyRootState,
+  CardClass,
 } from "../types";
-import { ref, defineComponent } from "vue";
-import store from "../store";
+import { ref, defineComponent, computed } from "vue";
 import Card from "../components/Card.vue";
-// import Spinner from "../components/Spinner.vue";
-
+import { useStore } from "vuex";
 export default defineComponent({
   name: "CardList",
   components: {
@@ -86,41 +168,52 @@ export default defineComponent({
   setup() {
     const inputId = ref(0);
     const input = ref("");
+    const store = useStore<MyRootState>();
 
+    const correct = computed<number>(() =>
+      store.getters["user/correct" as MyGetters]);
+    const incorrect = computed<number>(() =>
+      store.getters["user/incorrect" as MyGetters]);
+    const aCategoryIsActive = computed<boolean>(() =>
+      store.getters["sidebarCategories/aCategoryIsActive" as MyGetters]);
+    const currentActiveCategoryCards = computed<Array<CardClass>>(() =>
+      store.getters["sidebarCategories/currentActiveCategoryCards" as MyGetters]);
+
+    const isLight = computed(() => store.state.theme.theme === "light");
+    const isDark = computed(() => store.state.theme.theme === "dark");
+    const allCards = computed(() => store.state.cards.allCards);
+    const cards = computed(() => store.state.cards.cards);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const isLoading = computed(() => store.state.loading.loading.isLoading);
     return {
-      input,
       inputId,
+      input,
+      store,
+      correct,
+      incorrect,
+      aCategoryIsActive,
+      currentActiveCategoryCards,
+      isLight,
+      isDark,
+      allCards,
+      cards,
+      isLoggedIn,
+      isLoading,
     };
   },
-  computed: {
-    userScore: () => store.getters["user/score"],
-    aCategoryIsActive: () =>
-      store.getters["sidebarCategories/aCategoryIsActive" as MyGetters],
-    currentActiveCategoryCards: () =>
-      store.getters[
-      "sidebarCategories/currentActiveCategoryCards" as MyGetters
-      ],
-    isLight: () => store.state.theme.theme === "light",
-    isDark: () => store.state.theme.theme === "dark",
-    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
-    cards: (): CardsState["cards"] => store.state.cards.cards,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    isLoading: (): LoadingState["loading"]["isLoading"] =>
-      store.state.loading.loading.isLoading,
-  },
   methods: {
-    // eslint-disable-next-line
     resetDisplayCards(_event: any): void {
+      _event.preventDefault();
+      this.store.commit("user/RESET_ANSWERS" as RootCommitType, null, { root: true });
       if (this.cards.length !== this.allCards.length) {
         if (this.aCategoryIsActive) {
-          store.commit(
+          this.store.commit(
             "cards/SET_DISPLAY_CARDS" as RootCommitType,
             { cards: this.currentActiveCategoryCards },
             { root: true }
           );
         } else {
-          store.commit(
+          this.store.commit(
             "cards/SET_DISPLAY_CARDS" as RootCommitType,
             { cards: this.allCards },
             { root: true }
@@ -129,28 +222,22 @@ export default defineComponent({
       }
     },
     // eslint-disable-next-line
-    readInputEvent(_event: Event) {
-      //do nothing
-    },
-
-    // eslint-disable-next-line
     clearCardsModal(_event: Event): void {
-      store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Clear Cards", {
+      this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Clear Cards", {
         root: true,
       });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
-    // eslint-disable-next-line
     openAddModal(_event: MouseEvent): void {
       _event.preventDefault();
       //set modal title
-      store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
+      this.store.commit("modal/SET_MODAL_TITLE", "Add a new Card", {
         root: true,
       });
       // open the modal
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
@@ -174,4 +261,29 @@ export default defineComponent({
   opacity: 0;
   height: 0;
 }
+
+@media only screen and (min-width: 1280px) {
+  .no-margin-left-mobile {
+    margin-left: 10px;
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+
+  .no-margin-left-mobile {
+    margin-left: 10px;
+  }
+
+}
+
+@media only screen and (max-width: 430px) {
+  .button-shrink {
+    font-size: 3vw;
+    width: 25vw;
+    height: 5vh;
+  }
+
+}
+
+@media only screen and (max-width: 557px) {}
 </style>

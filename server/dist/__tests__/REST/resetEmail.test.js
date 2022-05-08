@@ -44,6 +44,12 @@ describe("test the reset email function", () => {
         newUserToken = parsed.token;
         expect(typeof newUserToken).toBe("string");
     }));
+    test("POST /user/forgotPassword hits endpoint with bad email but still sends 200", () => __awaiter(void 0, void 0, void 0, function* () {
+        const forgot = yield (0, supertest_1.default)(app).post("/user/forgotPassword").send({
+            email: "kdjfkdjf",
+        });
+        expect(forgot.status).toBe(200);
+    }));
     test("POST /user/forgotPassword hits forgotPassword route without email arg", () => __awaiter(void 0, void 0, void 0, function* () {
         const forgotPassword = yield (0, supertest_1.default)(app)
             .post("/user/forgotPassword")

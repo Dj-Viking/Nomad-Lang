@@ -1,7 +1,14 @@
 ChangeThemePrefResponse,
 <template>
-  <Transition type="transition" name="fade" mode="out-in">
-    <div v-if="sidebarOpen || cards.length > 0" style="width: 100px">
+  <Transition
+    type="transition"
+    name="fade"
+    mode="out-in"
+  >
+    <div
+      v-if="sidebarOpen || cards.length > 0"
+      style="width: 100px"
+    >
       <div
         :class="{ 'toggle-slot-light': isLight, 'toggle-slot-dark': isDark }"
         @click.prevent="
@@ -37,32 +44,35 @@ ChangeThemePrefResponse,
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, computed } from "@vue/runtime-core";
 import {
-  CardsState,
   ChangeThemePrefResponse,
+  MyRootState,
   RootCommitType,
-  SidebarState,
-  UserState,
 } from "@/types";
 import store from "../store";
 import { useToast } from "vue-toastification";
 import { api } from "@/utils/ApiService";
 import auth from "@/utils/AuthService";
+import { useStore } from "vuex";
 export default defineComponent({
   name: "ToggleButton",
-  computed: {
-    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
-      store.state.sidebar.sidebar.isOpen,
-    cards: (): CardsState["cards"] => store.state.cards.cards,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    isLight: () => store.state.theme.theme === "light",
-    isDark: () => store.state.theme.theme === "dark",
-  },
   setup() {
     const toast = useToast();
-    return { toast };
+    const store = useStore<MyRootState>();
+    const sidebarOpen = computed(() => store.state.sidebar.sidebar.isOpen);
+    const cards = computed(() => store.state.cards.cards);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const isLight = computed(() => store.state.theme.theme === "light");
+    const isDark = computed(() => store.state.theme.theme === "dark");
+    return {
+      toast,
+      sidebarOpen,
+      cards,
+      isLoggedIn,
+      isLight,
+      isDark,
+    };
   },
   methods: {
     // eslint-disable-next-line
@@ -92,4 +102,5 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+</style>

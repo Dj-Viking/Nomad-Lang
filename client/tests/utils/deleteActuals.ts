@@ -14,7 +14,7 @@ export function deleteActuals(path: string): void {
     if (files.length > 0) {
       console.log(
         "\x1b[33m",
-        "files found to delete BE CAREFUL MAKE SURE YOU KNOW EXACTLY WHAT PATH YOU ARE USING!! COMMENT OUT THE UNLINK IF YOU DONT KNOW YET",
+        "files found to delete BE CAREFUL MAKE SURE YOU KNOW EXACTLY WHAT PATH YOU ARE USING!! COMMENT OUT THE UNLINK IF YOU DONT KNOW YET\n",
         files,
         "\x1b[00m"
       );

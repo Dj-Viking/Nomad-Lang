@@ -170,6 +170,39 @@ export const ACTUALS_CHANGE_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS =
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */
+export const CARD_BACK_REGRESSION_SPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/CardRegressionBack.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const CARD_BACK_REGRESSION_SPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/CardRegressionBack.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const CARD_FRONT_REGRESSION_SPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/CardRegressionFront.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const CARD_FRONT_REGRESSION_SPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/CardRegressionFront.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
+export const ACTUALS_CARD_GAME_UNIT_SPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/CardGameUnit.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/CardGameUnit.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
 export const ACTUALS_CARDUNITSPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/CardUnit.spec.ts";
 /**
@@ -229,6 +262,30 @@ export const PATH_TO_ACTUAL_FROM_TASK_FUNCTION =
  */
 export const PATH_TO_BASE_FROM_TASK_FUNCTION =
   "./tests/e2e/fixtures/screenshots/base/LoadHome.spec.ts/Check-the-nav-bar-for-the-correct-nav-links -- screenshots-the-home-view-window.png";
+
+/**
+ * path to the base home page screenshot fixture
+ */
+export const BASE_CARD_BACK_FIXTURE =
+  "/screenshots/base/CardRegressionBack.spec.ts/screenshot-back-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
+
+/**
+ * path to the actual home page screenshot fixture
+ */
+export const ACTUAL_CARD_BACK_FIXTURE =
+  "/screenshots/actuals/CardRegressionBack.spec.ts/screenshot-back-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
+
+/**
+ * path to the base home page screenshot fixture
+ */
+export const BASE_CARD_FRONT_FIXTURE =
+  "/screenshots/base/CardRegressionFront.spec.ts/screenshot-front-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
+
+/**
+ * path to the actual home page screenshot fixture
+ */
+export const ACTUAL_CARD_FRONT_FIXTURE =
+  "/screenshots/actuals/CardRegressionFront.spec.ts/screenshot-front-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
 
 /**
  * path to the base home page screenshot fixture
@@ -293,6 +350,16 @@ export const ACTUAL_LOGIN_FULL_PAGE_FIXTURE =
 export const LOGIN_SCREENSHOT_FILE_NAME =
   "login-page-regression -- screenshots-the-login-page.png";
 
+/**
+ * the actual file name including the extension
+ */
+export const CARD_BACK_SCREENSHOT_FILE_NAME =
+  "screenshot-back-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element.png";
+/**
+ * the actual file name including the extension
+ */
+export const CARD_FRONT_SCREENSHOT_FILE_NAME =
+  "screenshot-front-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element.png";
 /**
  * the actual file name including the extension
  */
@@ -363,7 +430,6 @@ export const EXPECTED_ADD_LOCAL_CARD_OBJECT: ICard = {
   backSideText: "back side text",
   backSideLanguage: "back side text language",
   backSidePicture: "",
-  color: "blue",
 };
 EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
   EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;

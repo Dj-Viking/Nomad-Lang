@@ -177,7 +177,9 @@ exports.UserController = {
                 }, { new: true });
                 return res.status(200).json({ cards: updatedUser.cards });
             }
-            catch (error) { }
+            catch (error) {
+                return res.status(500);
+            }
         });
     },
     deleteCard: function (req, res) {
@@ -193,12 +195,16 @@ exports.UserController = {
                     return res.status(400).json({ error: "Could not delete a card at this time" });
                 return res.status(200).json({ cards: updatedUser.cards });
             }
-            catch (error) { }
+            catch (error) {
+                console.error(error);
+                return res.status(500);
+            }
         });
     },
     forgotPassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("am i here", req.body.email);
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const { email } = req.body;
                 if (!email)

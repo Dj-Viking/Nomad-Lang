@@ -6,6 +6,14 @@ const testName = process.env.SPECNAME;
 
 (function () {
   console.log("ENV var passed in", process.env.SPECNAME);
+  if (!process.env.SPECNAME) {
+    console.log(`\x1b[31m 
+      [ERROR]: no SPECNAME env variable defined when executing the accept changes script.
+      \x1b[33m example: SPECNAME="HomeRegression.spec.ts" npm run acceptChanges
+      \x1b[00m
+    `);
+    process.exit(1);
+  }
 
   try {
     //find all files in the directory that do not pattern match with the word screenshot

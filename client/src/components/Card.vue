@@ -1,42 +1,58 @@
 <template>
-  <Transition type="transition" name="fade" mode="out-in">
+  <Transition
+    type="transition"
+    name="fade"
+    mode="out-in"
+  >
     <div v-if="!isLoading">
-      <Transition type="transition" name="slide-fade" mode="out-in">
-        <div v-if="card.isFrontSide">
+      <Transition
+        type="transition"
+        name="slide-fade"
+        mode="out-in"
+      >
+        <div v-if="card!.isFrontSide">
           <div class="card">
             <div style="display: flex; justify-content: space-between">
-              <i style="
+              <i
+                style="
                   color: #f14668;
                   font-size: 30px;
                   margin-top: 0.2em;
                   margin-left: 0.4em;
                   margin-bottom: 0.4em;
                   cursor: pointer;
-                " class="fa fa-trash" @click.prevent="
-                  ($event) => {
-                    //update vuex cards that are displayed
-                    deleteCard($event, id);
-                    //only delete user's cards if they are logged in
-                    if (isLoggedIn) {
-                      submitDeleteCard($event, id);
-                    }
-                  }
-                "></i>
-              <button class="button is-primary ml-6" style="color: black; margin-top: 0.3em; margin-right: 0.4em"
+                "
+                class="fa fa-trash"
                 @click.prevent="
                   ($event) => {
-                    openEditModal($event, card);
+                    //update vuex cards that are displayed
+                    openDeleteCardModal($event, id!);
                   }
-                ">
+                "
+              ></i>
+              <button
+                class="button is-primary ml-6"
+                style="color: black; margin-top: 0.3em; margin-right: 0.4em"
+                @click.prevent="
+                  ($event) => {
+                    openEditModal($event, card!);
+                  }
+                "
+              >
                 Edit
-                <i style="margin-left: 0.5em" class="fa fa-pencil-square-o">
+                <i
+                  style="margin-left: 0.5em"
+                  class="fa fa-pencil-square-o"
+                >
                 </i>
               </button>
             </div>
             <div class="card-image">
-              {{ card?.frontSidePicture }}
               <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
+                <img
+                  src="https://bulma.io/images/placeholders/1280x960.png"
+                  alt="Placeholder image"
+                />
               </figure>
             </div>
             <div class="card-content">
@@ -46,26 +62,51 @@
                     <p v-html="card?.frontSideText"></p>
                   </div>
                   <div v-else>
-                    <p class="title is-4">{{ card?.frontSideText }}</p>
+                    <p
+                      style="margin-bottom: 1.5rem"
+                      class="title is-5"
+                    >{{ card?.frontSideText }}</p>
                   </div>
-                  <form :id="id" @submit.prevent="
-                    ($event) => {
-                      submitCardFlipCheck($event);
-                    }
-                  ">
-                    <input style="margin: 0 auto; width: 80%" class="input" type="text" v-model="translation"
-                      placeholder="Translate!" />
-                    <button class="button is-primary" style="color: black" type="submit">
+                  <form
+                    :id="id"
+                    @submit.prevent="
+                      ($event) => {
+                        (async () => {
+                          await submitCardFlipCheck($event, true);
+                        })();
+                      }
+                    "
+                  >
+                    <input
+                      id="translation-input"
+                      style="margin: 0 auto; width: 80%"
+                      class="input"
+                      type="text"
+                      v-model="translation"
+                      placeholder="Translate!"
+                    />
+                    <button
+                      id="check-answer-btn"
+                      class="button is-primary"
+                      style="color: black; margin-top: 1.5rem"
+                      type="submit"
+                    >
                       Check
                     </button>
                   </form>
-                  <button :id="id" type="submit" class="button is-warning" @click.prevent="
-                    ($event) => {
-                      (async () => {
-                        shiftCardNext($event);
-                      })();
-                    }
-                  ">
+                  <button
+                    :id="id!"
+                    type="submit"
+                    style="margin-top: 1.5rem"
+                    class="button is-warning"
+                    @click.prevent="
+                      ($event) => {
+                        (async () => {
+                          shiftCardNext($event);
+                        })();
+                      }
+                    "
+                  >
                     Next
                   </button>
                 </div>
@@ -75,29 +116,109 @@
         </div>
         <div v-else>
           <div class="card">
-            <div style="height: 48px">&nbsp;</div>
+            <div style="display: flex; justify-content: space-between">
+              <i
+                style="
+                  color: #f14668;
+                  font-size: 30px;
+                  margin-top: 0.2em;
+                  margin-left: 0.4em;
+                  margin-bottom: 0.4em;
+                  cursor: pointer;
+                  visibility: hidden;
+                "
+                class="fa fa-trash"
+                @click.prevent="
+                  ($event) => {
+                    //update vuex cards that are displayed
+                    openDeleteCardModal($event, id!);
+                  }
+                "
+              ></i>
+              <button
+                class="button is-primary ml-6"
+                style="color: black; margin-top: 0.3em; margin-right: 0.4em; visibility: hidden;"
+                @click.prevent="
+                  ($event) => {
+                    openEditModal($event, card!);
+                  }
+                "
+              >
+                Edit
+                <i
+                  style="margin-left: 0.5em"
+                  class="fa fa-pencil-square-o"
+                >
+                </i>
+              </button>
+            </div>
             <div class="card-image">
-              {{ card?.backSidePicture }}
               <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image" />
+                <img
+                  src="https://bulma.io/images/placeholders/1280x960.png"
+                  alt="Placeholder image"
+                />
               </figure>
             </div>
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-5">
-                    {{ card?.backSideText }}
-                  </p>
-                  <form :id="id" @submit.prevent="
-                    ($event) => {
-                      submitCardFlipCheck($event);
-                    }
-                  ">
-                    <input style="margin: 0 auto; width: 80%" class="input" type="text" placeholder="Translate!" />
-                    <button class="button is-primary" style="color: black" type="submit">
+                  <div v-if="/<strong>/g.test(card?.backSideText)">
+                    <p v-html="card?.backSideText"></p>
+                  </div>
+                  <div v-else>
+                    <p
+                      style="margin-bottom: 1.5rem"
+                      class="title is-5"
+                    >{{ card?.backSideText }}</p>
+                  </div>
+                  <form
+                    :id="id"
+                    @submit.prevent="
+                      ($event) => {
+                        (async () => {
+                          await shiftCardNext($event, id);
+                        })();
+                      }
+                    "
+                  >
+                    <input
+                      id="translation-input"
+                      style="margin: 0 auto; width: 80%; visibility: hidden;"
+                      class="input"
+                      type="text"
+                      v-model="translation"
+                      placeholder="Translate!"
+                    />
+                    <button
+                      id="check-answer-btn"
+                      class="button is-primary"
+                      style="
+                        color: black; 
+                        margin-top: 1.5rem;
+                        padding-left: 26px;
+                        padding-right: 26px;
+                      "
+                      type="submit"
+                    >
                       Flip
                     </button>
                   </form>
+                  <button
+                    :id="id!"
+                    type="submit"
+                    style="margin-top: 1.5rem; visibility: hidden;"
+                    class="button is-warning"
+                    @click.prevent="
+                      ($event) => {
+                        (async () => {
+                          shiftCardNext($event);
+                        })();
+                      }
+                    "
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
             </div>
@@ -114,111 +235,101 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
-import store from "../store";
+import { defineComponent, ref, computed, PropType } from "@vue/runtime-core";
 import Spinner from "../components/Spinner.vue";
 import {
+  CardClass,
   ICard,
-  LoadingState,
-  ModalState,
+  MyRootState,
   RootCommitType,
   RootDispatchType,
-  UserState,
 } from "@/types";
 import { useToast } from "vue-toastification";
-import { api } from "@/utils/ApiService";
-import auth from "@/utils/AuthService";
+import { useStore } from "vuex";
 export default defineComponent({
   name: "Card",
-  props: ["cards", "card", "id"],
   components: {
     Spinner,
   },
+  props: {
+    card: Object as PropType<CardClass>,
+    cards: Array as PropType<Array<CardClass>>,
+    id: String
+  },
   setup() {
     const toast = useToast();
+    const store = useStore<MyRootState>();
     const translation = ref("");
-
+    const isLoading = computed(() => store.state.loading.loading.isLoading);
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const activeClass = computed(() => store.state.modal.modal.activeClass);
     return {
       toast,
+      store,
       translation,
+      isLoading,
+      isLoggedIn,
+      activeClass,
     };
   },
-  computed: {
-    isLoading: (): LoadingState["loading"]["isLoading"] =>
-      store.state.loading.loading.isLoading,
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    activeClass: (): ModalState["modal"]["activeClass"] =>
-      store.state.modal.modal.activeClass,
-  },
   methods: {
-    async deleteCard(_event: Event, id: string): Promise<void> {
-      await store.dispatch("cards/deleteCard" as RootDispatchType, id, {
+    openDeleteCardModal(_event: Event, id: string): void {
+      this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete This Card", {
+        root: true,
+      });
+      this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, { _id: id }, {
+        root: true,
+      });
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
-    async submitDeleteCard(_event: any, id: string): Promise<void> {
-      try {
-        const { cards, error } = await api.deleteCard(
-          auth.getToken() as string,
-          id
-        );
-        if (!!error) throw error;
-        console.log("cards returned from api after deleting", cards);
-      } catch (error) {
-        this.toast.error(`error during submitting delete card: ${error}`, {
-          timeout: 3000,
-        });
-        console.error(error);
-      }
-    },
-    submitCardFlipCheck(event: any): void {
+    async submitCardFlipCheck(event: any, _isFrontSide: boolean): Promise<void> {
       const id = event.target.id;
       console.log("translation", this.translation);
-      if (this.card.backSideText === this.translation) {
-        console.log("YAYYYYY got it right!");
-        // TODO: display message on card that it was right
-        // use case insensitivity regex perhaps
-        // increment the user's score when right
-        // after some time flip the card back to the front and go to the next card in the CardList being displayed
-      } else {
-        console.error("got it wrong");
-        // TODO display message on card that it was wrong
-        // decrement the user's score and then show the answer
-        // on the backside, after some time flip back to front and then
-        // go to the next card in the CardList
-      }
-      this.translation = "";
-      //set the class on for the flip animation on the card object itself.
-      store.commit(
-        "cards/TOGGLE_CARD_SIDE" as RootCommitType,
-        //send as number because target.id is a string and all cards db assigned id's are numbers
-        id,
-        {
-          root: true,
+      if (_isFrontSide) {
+        if (new RegExp(`^${this.card!.backSideText}$`, "i").test(this.translation)) {
+          // increment correct score
+          this.store.commit("user/INCREMENT_CORRECT" as RootCommitType, null, { root: true });
+          // TODO: display message on card that it was right
+          // increment the user's score when right
+          // after some time flip the card back to the front and go to the next card in the CardList being displayed
+        } else {
+          // increment incorrect score
+          this.store.commit("user/INCREMENT_INCORRECT" as RootCommitType, null, { root: true });
+          // TODO display message on card that it was wrong
+          // decrement the user's score and then show the answer
+          // on the backside, after some time flip back to front and then
+          // go to the next card in the CardList
         }
-      );
+        this.translation = "";
+        //set the class on for the flip animation on the card object itself.
+        this.store.commit(
+          "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
+        );
+      } else { //is backside, just flip without checking translation
+        this.store.commit(
+          "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
+        );
+        // done checking answer just go to the next card
+        await this.shiftCardNext(null, id);
+      }
     },
-    async shiftCardNext(event: any): Promise<void> {
+    async shiftCardNext(event?: any, id?: string): Promise<void> {
+      const cardId = (() => !event ? id : event.target.id)();
       //update display cards array state
       // to shift a card out of the stack after done using it
-      await store.dispatch(
-        "cards/shiftCardNext" as RootDispatchType,
-        event.target.id,
-        {
-          root: true,
-        }
-      );
+      await this.store.dispatch("cards/shiftCardNext" as RootDispatchType, cardId, { root: true });
     },
     // eslint-disable-next-line
     openEditModal(_event: Event, card: ICard) {
-      store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
+      this.store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
         root: true,
       });
-      store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
+      this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
         root: true,
       });
-      store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
+      this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
         root: true,
       });
     },
@@ -226,7 +337,7 @@ export default defineComponent({
   mounted() {
     if (this.card) {
       setTimeout(() => {
-        store.commit("loading/SET_LOADING" as RootCommitType, false, {
+        this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
       }, 500);

@@ -1,17 +1,25 @@
 
 <template>
-  <div class="side-bar" :class="{ open: sidebarOpen, closed: !sidebarOpen }">
+  <div
+    class="side-bar"
+    :class="{ open: sidebarOpen, closed: !sidebarOpen }"
+  >
     <div style="display: flex; flex-direction: column; min-width: 100px">
-      <Transition type="transition" name="fade" mode="out-in">
+      <Transition
+        type="transition"
+        name="fade"
+        mode="out-in"
+      >
         <div v-if="sidebarOpen">
-          <div
-            style="
+          <div style="
               display: flex;
               justify-content: center;
               flex-direction: column;
-            "
-          >
-            <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
+            ">
+            <div
+              style="margin: 0 auto;"
+              :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }"
+            >
               <ToggleButton />
             </div>
             <i
@@ -33,6 +41,7 @@
             <input
               placeholder="Search"
               class="input"
+              style="width: 80%; margin: 0 auto;"
               type="text"
               autocomplete="off"
               id="iamsearch"
@@ -44,9 +53,7 @@
             <h4
               style="
                 font-size: 15px;
-                margin-bottom: 1em;
-                margin-top: 1em;
-                margin-left: 10px;
+                margin: 1em auto 1em auto;
                 height: 30px;
               "
               class="title"
@@ -55,14 +62,14 @@
             </h4>
           </div>
           <div id="cards-container">
-            <div v-for="(key, i) of Object.keys(categories)" :key="i">
-              <span
-                :id="
-                  !!categories[key] &&
-                  categories[key].cards[0]?.frontSideLanguage
-                "
-                >{{ i + 1 }}.&nbsp;</span
-              >
+            <div
+              v-for="(key, i) of Object.keys(categories)"
+              :key="i"
+            >
+              <span :id="
+                !!categories[key] &&
+                categories[key].cards[0]?.frontSideLanguage
+              ">{{ i + 1 }}.&nbsp;</span>
               <SideBarNode
                 :id="categories[key].id?.toString()"
                 :isActive="categories[key].isActive"
@@ -74,11 +81,11 @@
           </div>
         </div>
         <div v-else>
-          <div style="display: flex; flex-direction: column">
-            <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
+          <div style="display: flex; flex-direction: column; margin-left: 15px; margin-right: 15px;">
+            <div :class="{ 'show-me': !sidebarOpen, 'hide-me': sidebarOpen }">
               <ToggleButton />
             </div>
-           
+
             <i
               v-on="{ click: toggleSideBar }"
               style="
@@ -87,6 +94,7 @@
                 margin-left: 0.5em;
                 margin-right: 0.5em;
               "
+              class="hide-sidebar-toggle-mobile"
               :class="{
                 'fa fa-chevron-left big': sidebarOpen,
                 'fa fa-chevron-right big-dark': !sidebarOpen && isDark,
@@ -106,21 +114,18 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import store from "@/store";
 import {
-  CardsState,
-  CategorizedCardsObject,
   ICard,
-  ModalState,
+  MyRootState,
   RootCommitType,
   RootDispatchType,
-  SidebarState,
 } from "@/types";
 import { escapeRegexp } from "@/utils/escapeRegexp";
 import SideBarNode from "./SideBarNode.vue";
-import { defineComponent, ref } from "@vue/runtime-core";
+import { defineComponent, ref, computed } from "@vue/runtime-core";
 import { useRoute } from "vue-router";
 import ToggleButton from "../components/ToggleButton.vue";
 import { createHighlightedCardTextHtml } from "@/utils/createHighlightedCardTextHtml";
-
+import { useStore } from "vuex";
 export default defineComponent({
   name: "SideBar",
   components: {
@@ -129,30 +134,32 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
+    const store = useStore<MyRootState>();
     const searchTerm = ref("");
+    const isLight = computed(() => store.state.theme.theme === "light");
+    const isDark = computed(() => store.state.theme.theme === "dark");
+    const allCards = computed(() => store.state.cards.allCards);
+    const cards = computed(() => store.state.cards.cards);
+    const categories = computed(() => store.state.cards.categorized);
+    const sidebarOpen = computed(() => store.state.sidebar.sidebar.isOpen);
+    const modalActive = computed(() => store.state.modal.modal.activeClass);
     return {
-      searchTerm,
       route,
+      searchTerm,
+      isLight,
+      isDark,
+      allCards,
+      cards,
+      categories,
+      sidebarOpen,
+      modalActive
     };
-  },
-  computed: {
-    isLight: () => store.state.theme.theme === "light",
-    isDark: () => store.state.theme.theme === "dark",
-    allCards: (): CardsState["allCards"] => store.state.cards.allCards,
-    cards: (): CardsState["cards"] => store.state.cards.cards,
-    categories: (): CardsState["categorized"] =>
-      store.state.cards.categorized as CategorizedCardsObject,
-    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
-      store.state.sidebar.sidebar.isOpen,
-    modalActive: (): ModalState["modal"]["activeClass"] =>
-      store.state.modal.modal.activeClass,
   },
   methods: {
     search(event: any): void {
-      const input = event.target.value;
+      const input = event.target.value as string;
       const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
 
-      // console.log("search value", input);
       //set categories that match the content of the cards in the array
 
       //create the frontside text content to be the html that will be
@@ -220,10 +227,9 @@ export default defineComponent({
           setTimeout(function () {
             if (searchTermEl !== null) {
               searchTermEl.addEventListener("blur", () => {
-                console.log("self searchterm", typeof self.searchTerm, self.searchTerm);
                 if (self.searchTerm !== "") {
                   self.searchTerm = "";
-                } else return void 0; 
+                } else return void 0;
               });
             }
             resolve();
@@ -243,9 +249,16 @@ export default defineComponent({
       switch (true) {
         case event.key === "c" || event.key === "C":
           {
-            // eslint-disable-next-line
+            const translationInputEl = document.querySelector("input#translation-input");
+            const currentFocusedEl = document.activeElement;
+
+            // if input is focused and c key was pushed don't open the sidebar
+            if (translationInputEl?.nodeName === currentFocusedEl?.nodeName) return;
+
+            // if searchTerm has text such as c key or modal is active don't open sidebar
             if (!!this.searchTerm || this.modalActive) return;
 
+            // otherwise open side bar when c key was pressed on the keyboard
             this.toggleSideBarWithC(event);
           }
           break;
@@ -318,7 +331,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    //arrow function because i need "this" keyword to be in context of vue component
     document.addEventListener("keyup", this.listenOnKeyDown);
   },
   unmounted() {
@@ -336,6 +348,7 @@ export default defineComponent({
 
   z-index: 100;
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity height 0.1s ease;
@@ -351,13 +364,14 @@ export default defineComponent({
   color: #2c3e50;
   font-size: 30px;
 }
+
 .big-dark {
   color: white;
   font-size: 30px;
 }
 
 .open {
-  width: 120px;
+  width: 130px;
   transition: 0.2s;
 }
 
@@ -365,10 +379,24 @@ export default defineComponent({
   width: 0px;
   transition: 0.1s ease 0.3s;
 }
+
 .show-me {
   display: block;
 }
+
 .hide-me {
   display: none;
+}
+
+@media screen and (max-width: 1280px) {
+  .hide-sidebar-toggle-mobile {
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .hide-sidebar-toggle-mobile {
+    visibility: hidden;
+  }
 }
 </style>

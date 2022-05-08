@@ -50,6 +50,16 @@ describe("CRUD user tests", () => {
         });
         expect(missing4.status).toBe(400);
     }));
+    test("POST /user/signup signup with wrong email format", () => __awaiter(void 0, void 0, void 0, function* () {
+        const wrongEmail = yield (0, supertest_1.default)(app).post("/user/signup").send({
+            username: "kdjfj",
+            email: "kjdfkjd",
+            password: "kdjfkjd",
+        });
+        expect(wrongEmail.status).toBe(400);
+        const parsed = JSON.parse(wrongEmail.text);
+        expect(parsed.error).toBe("Email was not correct format");
+    }));
     test("POST /user/signup creates a user", () => __awaiter(void 0, void 0, void 0, function* () {
         const signup = yield (0, supertest_1.default)(app).post("/user/signup").send({
             username: "test user",
@@ -64,6 +74,13 @@ describe("CRUD user tests", () => {
         expect(parsed.cards).toStrictEqual([]);
         newUserToken = parsed.token;
         expect(typeof newUserToken).toBe("string");
+    }));
+    test("POST /user/login with only username", () => __awaiter(void 0, void 0, void 0, function* () {
+        const login = yield (0, supertest_1.default)(app).post("/user/login").send({
+            username: "test user",
+            password: "test",
+        });
+        expect(login.status).toBe(200);
     }));
     test("POST /user/login hits login route", () => __awaiter(void 0, void 0, void 0, function* () {
         const login = yield (0, supertest_1.default)(app).post("/user/login").send({
