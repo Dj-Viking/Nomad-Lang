@@ -170,6 +170,17 @@ export const ACTUALS_CHANGE_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS =
  * path to the actuals screenshots folder
  * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
  */
+export const CARD_BACK_REGRESSION_SPEC_PATH =
+  "../client/tests/e2e/fixtures/screenshots/actuals/CardRegressionBack.spec.ts";
+/**
+ * path to actuals when running headless electron cypress
+ */
+export const CARD_BACK_REGRESSION_SPEC_PATH_HEADLESS =
+  "./tests/e2e/fixtures/screenshots/actuals/CardRegressionBack.spec.ts";
+/**
+ * path to the actuals screenshots folder
+ * for some reason I have to use this path because when running the fs function with the path ../ it starts from the root folder of this repository project
+ */
 export const CARD_FRONT_REGRESSION_SPEC_PATH =
   "../client/tests/e2e/fixtures/screenshots/actuals/CardRegressionFront.spec.ts";
 /**
@@ -255,6 +266,18 @@ export const PATH_TO_BASE_FROM_TASK_FUNCTION =
 /**
  * path to the base home page screenshot fixture
  */
+export const BASE_CARD_BACK_FIXTURE =
+  "/screenshots/base/CardRegressionBack.spec.ts/screenshot-back-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
+
+/**
+ * path to the actual home page screenshot fixture
+ */
+export const ACTUAL_CARD_BACK_FIXTURE =
+  "/screenshots/actuals/CardRegressionBack.spec.ts/screenshot-back-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
+
+/**
+ * path to the base home page screenshot fixture
+ */
 export const BASE_CARD_FRONT_FIXTURE =
   "/screenshots/base/CardRegressionFront.spec.ts/screenshot-front-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element";
 
@@ -327,6 +350,11 @@ export const ACTUAL_LOGIN_FULL_PAGE_FIXTURE =
 export const LOGIN_SCREENSHOT_FILE_NAME =
   "login-page-regression -- screenshots-the-login-page.png";
 
+/**
+ * the actual file name including the extension
+ */
+export const CARD_BACK_SCREENSHOT_FILE_NAME =
+  "screenshot-back-of-card -- finds-the-first-card-in-the-list-and-screenshots-the-element.png";
 /**
  * the actual file name including the extension
  */

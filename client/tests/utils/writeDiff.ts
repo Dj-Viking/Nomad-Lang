@@ -2,7 +2,7 @@ import fs from "fs";
 import Pixelmatch from "pixelmatch";
 import { PNGWithMetadata, PNG } from "pngjs";
 
-interface IWriteDiffResult {
+export interface IWriteDiffResult {
   complete: boolean;
   matchNum: number | null;
   error: string | Error | null;
