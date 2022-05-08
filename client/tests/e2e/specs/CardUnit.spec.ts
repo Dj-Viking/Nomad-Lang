@@ -241,7 +241,7 @@ describe("registers a new user that will crud the cards", () => {
     //add a card finish
 
     //wait a bit for it to appear in the DOM
-    cy.wait(400);
+    cy.wait(1000);
     cy.get("div.some-unique-class").children().eq(2).children();
 
     //edit standalone operations
