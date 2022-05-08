@@ -106,27 +106,29 @@
         style="margin: 10%;"
         v-else
       >
-        <span style="color: white;">
-          <h3
-            style="color: white"
-            class="title is-3"
-          >
-            Final Score
-          </h3>
-          <p style="color: white;">
-            Correct: {{ correct }}
-          </p>
-          <p style="color: white;">
-            Incorrect: {{ incorrect }}
-          </p>
-        </span>
-        <div style="margin-top: 10px;">
-          <button
-            class="button is-info"
-            @click.prevent="resetDisplayCards($event)"
-          >
-            Play Again
-          </button>
+        <div v-if="allCards > 0">
+          <span style="color: white;">
+            <h3
+              :class="{ 'text-light': isLight, 'text-dark': isDark }"
+              class="title is-3"
+            >
+              Final Score
+            </h3>
+            <p :class="{ 'text-light': isLight, 'text-dark': isDark }">
+              Correct: {{ correct }}
+            </p>
+            <p :class="{ 'text-light': isLight, 'text-dark': isDark }">
+              Incorrect: {{ incorrect }}
+            </p>
+          </span>
+          <div style="margin-top: 10px;">
+            <button
+              class="button is-info"
+              @click.prevent="resetDisplayCards($event)"
+            >
+              Play Again
+            </button>
+          </div>
         </div>
       </div>
     </Transition>
@@ -186,8 +188,8 @@ export default defineComponent({
     };
   },
   methods: {
-    // eslint-disable-next-line
     resetDisplayCards(_event: any): void {
+      _event.preventDefault();
       this.store.commit("user/RESET_ANSWERS" as RootCommitType, null, { root: true });
       if (this.cards.length !== this.allCards.length) {
         if (this.aCategoryIsActive) {
@@ -206,11 +208,6 @@ export default defineComponent({
       }
     },
     // eslint-disable-next-line
-    readInputEvent(_event: Event) {
-      //do nothing
-    },
-
-    // eslint-disable-next-line
     clearCardsModal(_event: Event): void {
       this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Clear Cards", {
         root: true,
@@ -219,7 +216,6 @@ export default defineComponent({
         root: true,
       });
     },
-    // eslint-disable-next-line
     openAddModal(_event: MouseEvent): void {
       _event.preventDefault();
       //set modal title

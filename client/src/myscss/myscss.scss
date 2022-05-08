@@ -25,6 +25,14 @@
   color: #363636;
 }
 
+.text-dark {
+  color: white;
+}
+
+.text-light {
+  color: #363636;
+}
+
 @keyframes toggle-slot-light {
   from {
     background-color: rgb(34, 34, 34);
