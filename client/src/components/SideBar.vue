@@ -81,8 +81,8 @@
           </div>
         </div>
         <div v-else>
-          <div style="display: flex; flex-direction: column">
-            <div :class="{ 'show-me': sidebarOpen, 'hide-me': !sidebarOpen }">
+          <div style="display: flex; flex-direction: column; margin-left: 15px; margin-right: 15px;">
+            <div :class="{ 'show-me': !sidebarOpen, 'hide-me': sidebarOpen }">
               <ToggleButton />
             </div>
 
@@ -94,6 +94,7 @@
                 margin-left: 0.5em;
                 margin-right: 0.5em;
               "
+              class="hide-sidebar-toggle-mobile"
               :class="{
                 'fa fa-chevron-left big': sidebarOpen,
                 'fa fa-chevron-right big-dark': !sidebarOpen && isDark,
@@ -156,10 +157,9 @@ export default defineComponent({
   },
   methods: {
     search(event: any): void {
-      const input = event.target.value;
+      const input = event.target.value as string;
       const searchRegex = new RegExp(`(${escapeRegexp(input)})+`, "g");
 
-      // console.log("search value", input);
       //set categories that match the content of the cards in the array
 
       //create the frontside text content to be the html that will be
@@ -331,7 +331,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    //arrow function because i need "this" keyword to be in context of vue component
     document.addEventListener("keyup", this.listenOnKeyDown);
   },
   unmounted() {
@@ -387,5 +386,17 @@ export default defineComponent({
 
 .hide-me {
   display: none;
+}
+
+@media screen and (max-width: 1280px) {
+  .hide-sidebar-toggle-mobile {
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .hide-sidebar-toggle-mobile {
+    visibility: hidden;
+  }
 }
 </style>

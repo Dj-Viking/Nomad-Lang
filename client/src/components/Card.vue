@@ -116,7 +116,42 @@
         </div>
         <div v-else>
           <div class="card">
-            <div style="height: 48px">&nbsp;</div>
+            <div style="display: flex; justify-content: space-between">
+              <i
+                style="
+                  color: #f14668;
+                  font-size: 30px;
+                  margin-top: 0.2em;
+                  margin-left: 0.4em;
+                  margin-bottom: 0.4em;
+                  cursor: pointer;
+                  visibility: hidden;
+                "
+                class="fa fa-trash"
+                @click.prevent="
+                  ($event) => {
+                    //update vuex cards that are displayed
+                    openDeleteCardModal($event, id!);
+                  }
+                "
+              ></i>
+              <button
+                class="button is-primary ml-6"
+                style="color: black; margin-top: 0.3em; margin-right: 0.4em; visibility: hidden;"
+                @click.prevent="
+                  ($event) => {
+                    openEditModal($event, card!);
+                  }
+                "
+              >
+                Edit
+                <i
+                  style="margin-left: 0.5em"
+                  class="fa fa-pencil-square-o"
+                >
+                </i>
+              </button>
+            </div>
             <div class="card-image">
               <figure class="image is-4by3">
                 <img
@@ -128,33 +163,62 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <p class="title is-5">
-                    {{ card?.backSideText }}
-                  </p>
+                  <div v-if="/<strong>/g.test(card?.backSideText)">
+                    <p v-html="card?.backSideText"></p>
+                  </div>
+                  <div v-else>
+                    <p
+                      style="margin-bottom: 1.5rem"
+                      class="title is-5"
+                    >{{ card?.backSideText }}</p>
+                  </div>
                   <form
                     :id="id"
                     @submit.prevent="
                       ($event) => {
                         (async () => {
-                          await submitCardFlipCheck($event, false);
+                          await shiftCardNext($event, id);
                         })();
                       }
                     "
                   >
-                    <div style="margin: 0 auto; width: 281px; padding: 7px 11px 7px 11px">
-                      &nbsp;
-                    </div>
+                    <input
+                      id="translation-input"
+                      style="margin: 0 auto; width: 80%; visibility: hidden;"
+                      class="input"
+                      type="text"
+                      v-model="translation"
+                      placeholder="Translate!"
+                    />
                     <button
+                      id="check-answer-btn"
                       class="button is-primary"
-                      style="color: black; margin-top: 1.5rem"
+                      style="
+                        color: black; 
+                        margin-top: 1.5rem;
+                        padding-left: 26px;
+                        padding-right: 26px;
+                      "
                       type="submit"
                     >
                       Flip
                     </button>
-                    <div style="height: 40px; margin-top: 1.5rem">
-                      &nbsp;
-                    </div>
                   </form>
+                  <button
+                    :id="id!"
+                    type="submit"
+                    style="margin-top: 1.5rem; visibility: hidden;"
+                    class="button is-warning"
+                    @click.prevent="
+                      ($event) => {
+                        (async () => {
+                          shiftCardNext($event);
+                        })();
+                      }
+                    "
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
             </div>
@@ -224,7 +288,7 @@ export default defineComponent({
       const id = event.target.id;
       console.log("translation", this.translation);
       if (_isFrontSide) {
-        if (new RegExp(`${this.card!.backSideText}`, "i").test(this.translation)) {
+        if (new RegExp(`^${this.card!.backSideText}$`, "i").test(this.translation)) {
           // increment correct score
           this.store.commit("user/INCREMENT_CORRECT" as RootCommitType, null, { root: true });
           // TODO: display message on card that it was right

@@ -7,15 +7,23 @@
     >
       <div style="display: flex; flex-direction: column;">
         <span>Your Cards</span>
-        <div style="display: flex">
-          <div
-            width="100%"
-            height="10px"
-            style="flex: 3.6"
-          >&nbsp;</div>
-          <span style="flex: 2; font-size: 20px;"> Your score:&nbsp;
-            <span class="has-text-primary">Correct: {{ correct }}&nbsp;&nbsp;</span>
-            <span class="has-text-danger">Incorrect: {{ incorrect }}&nbsp;</span></span>
+        <div style="display: flex; justify-content: center;">
+          <div style="display: flex; flex-direction: column; font-size: 20px; margin-bottom: .5em; margin-top: .5em;">
+            Your score:
+            <span
+              id="correct-score"
+              style="margin-right: 10px;"
+              class="has-text-primary no-margin-left-mobile"
+            >
+              Correct: {{ correct }}
+            </span>
+            <span
+              id="incorrect-score"
+              class="has-text-danger"
+            >
+              Incorrect: {{ incorrect }}
+            </span>
+          </div>
         </div>
       </div>
     </h2>
@@ -29,7 +37,7 @@
     <div style="display: flex; flex-direction: row; justify-content: center; margin: 0 auto 1em auto;">
       <button
         style="margin-right: 0.5em"
-        class="button is-info"
+        class="button is-info button-shrink"
         @click.prevent="
           ($event) => {
             //clear local cards
@@ -43,10 +51,10 @@
         <button
           id="add-button"
           @click.prevent="openAddModal($event)"
-          class="button is-info"
+          class="button is-info button-shrink"
           type="button"
           style="
-            color: rgb(255, 255, 255);
+            color: white;
             margin-left: 0.5em;
             margin-right: 0.5em;
           "
@@ -56,7 +64,7 @@
       </div>
       <div class="control">
         <button
-          class="button is-info"
+          class="button is-info button-shrink"
           style="color: white; margin-left: 0.5em"
           @click.prevent="resetDisplayCards($event)"
         >
@@ -106,7 +114,7 @@
         style="margin: 10%;"
         v-else
       >
-        <div v-if="allCards > 0">
+        <div v-if="allCards.length > 0">
           <span style="color: white;">
             <h3
               :class="{ 'text-light': isLight, 'text-dark': isDark }"
@@ -114,10 +122,16 @@
             >
               Final Score
             </h3>
-            <p :class="{ 'text-light': isLight, 'text-dark': isDark }">
+            <p
+              id="correct-final-score"
+              :class="{ 'text-light': isLight, 'text-dark': isDark }"
+            >
               Correct: {{ correct }}
             </p>
-            <p :class="{ 'text-light': isLight, 'text-dark': isDark }">
+            <p
+              id="incorrect-final-score"
+              :class="{ 'text-light': isLight, 'text-dark': isDark }"
+            >
               Incorrect: {{ incorrect }}
             </p>
           </span>
@@ -247,4 +261,29 @@ export default defineComponent({
   opacity: 0;
   height: 0;
 }
+
+@media only screen and (min-width: 1280px) {
+  .no-margin-left-mobile {
+    margin-left: 10px;
+  }
+}
+
+@media only screen and (max-width: 1280px) {
+
+  .no-margin-left-mobile {
+    margin-left: 10px;
+  }
+
+}
+
+@media only screen and (max-width: 430px) {
+  .button-shrink {
+    font-size: 3vw;
+    width: 25vw;
+    height: 5vh;
+  }
+
+}
+
+@media only screen and (max-width: 557px) {}
 </style>

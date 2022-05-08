@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import {
   LOCALHOST_URL,
   REGISTER_USERNAME,
@@ -142,11 +143,16 @@ describe("checking translation answer result", () => {
   it("checks the translation answer submit result", () => {
     cy.get("input#translation-input")
       .should("have.length", 1)
-      .type("back side text");
+      .type("back side text wrong");
 
     cy.get("button#check-answer-btn")
       .should("have.length", 1)
       .click();
+  });
+  it("checks that incorrect was incremented", () => {
+    cy.get("span#incorrect-score").should("have.length", 1).then(el => {
+      expect(el.text().trim()).to.eq(`Incorrect: 1`);
+    });
   });
 });
 
