@@ -3,7 +3,6 @@
   "version": "2.4.2",
   "description": "",
   "scripts": {
-    "dev": "sh dev.sh",
     "install": "cd server && npm i && cd ../client && npm i",
     "tscheck": "cd client; npm run tscheck",
     "test:ci": "sh test:ci.sh",
