@@ -76,7 +76,7 @@ export {
 /**
  * localhost domain for the vue app
  */
-export const LOCALHOST_URL = "https://nomad-lang.herokuapp.com";
+export const LOCALHOST_URL = "http://localhost:8080";
 
 /**
  * path to actuals when running headless cypress
