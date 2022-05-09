@@ -78,6 +78,7 @@
                     "
                   >
                     <input
+                      autocomplete="off"
                       id="translation-input"
                       style="margin: 0 auto; width: 80%"
                       class="input"
@@ -183,6 +184,7 @@
                     "
                   >
                     <input
+                      autocomplete="off"
                       id="translation-input"
                       style="margin: 0 auto; width: 80%; visibility: hidden;"
                       class="input"
