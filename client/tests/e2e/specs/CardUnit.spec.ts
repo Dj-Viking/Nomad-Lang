@@ -48,14 +48,6 @@ describe("deletes-screenshots", () => {
   });
 });
 
-describe("visits home page", () => {
-  it("visits home page", () => {
-    console.log("localhost URL", LOCALHOST_URL);
-
-    cy.visit(LOCALHOST_URL);
-  });
-});
-
 describe("checks all CRUD operations of interactions with cards as not logged in", () => {
   it("clears todos on the screen", () => {
     cy.get("button.is-info").contains("Clear Cards").click();

@@ -56,18 +56,6 @@ describe("deletes-screenshots", () => {
   });
 });
 
-describe("signup-unit-test, tests signup functionality", () => {
-  it("visits the site signup page", () => {
-    cy.visit(LOCALHOST_URL);
-  });
-  it("clicks signup router link to navigate to the signup page", () => {
-    cy.get("a.button.is-success")
-      .contains("Signup")
-      .should("have.length", 1)
-      .click();
-  });
-});
-
 describe("tests signup with invalid email, has error message", () => {
   //clear inputs after this is done so the next test can run just fine
   it("types in some username", () => {
@@ -212,9 +200,14 @@ describe("tests the register with valid inputs works, has success message, and n
 });
 
 describe("should be able to login with those credentials that we just registered with", () => {
-  it("goes to login page", () => {
-    cy.visit(LOCALHOST_URL + "/login");
+  //use client side routing to get to login page
+  //signed in already lets log out and then log in
+  it("logs out to client side route to login page", () => {
+    cy.get("a.button.is-danger").contains("Logout").should("have.length", 1).click();
+    cy.wait(500);
+    cy.get("a.button.is-success").contains("Login").should("have.length", 1).click();
   });
+
   it("types in email", () => {
     cy.get("input[name=email-or-username]")
       .should("have.length", 1)
