@@ -58,7 +58,7 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <div v-if="/<strong>/g.test(card?.frontSideText)">
+                  <div v-if="/<strong>/g.test(card?.frontSideText!)">
                     <p v-html="card?.frontSideText"></p>
                   </div>
                   <div v-else>
@@ -164,7 +164,7 @@
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
-                  <div v-if="/<strong>/g.test(card?.backSideText)">
+                  <div v-if="/<strong>/g.test(card?.backSideText!)">
                     <p v-html="card?.backSideText"></p>
                   </div>
                   <div v-else>
