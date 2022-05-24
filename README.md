@@ -10,10 +10,10 @@
 
 # Motivation
 * As an enthusiastic traveler and curious learner about the world. I wanted a tool that I could use offline without internet while on the go to practice vocabulary of cards that I created previously while having internet. I have used this before while on an airplane with no internet. The PWA cached version of the deployed application will work without internet and all the cards are stored within the application service worker.
-
+<!-- 
 # Usage
 
-* (gif here soon)
+* (gif here soon) -->
 
 <!-- 
 # Coming soon
