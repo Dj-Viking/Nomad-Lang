@@ -15,7 +15,7 @@
 
 * (gif here soon)
 
-
+<!-- 
 # Coming soon
 * Picture uploads - ability to upload pictures to resemble the vocabulary word. User will have the ability to upload their own pictures only for a given size. 
-* Statistics tracking - the app will track how often the user has correctly answered the translation and will display the words that need more work more often. 
+* Statistics tracking - the app will track how often the user has correctly answered the translation and will display the words that need more work more often.  -->
