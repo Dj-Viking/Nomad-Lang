@@ -47,14 +47,14 @@
                 </i>
               </button>
             </div>
-            <div class="card-image">
+            <!-- <div class="card-image">
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
                   alt="Placeholder image"
                 />
               </figure>
-            </div>
+            </div> -->
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
@@ -77,6 +77,34 @@
                       }
                     "
                   >
+                    <button
+                      type="button"
+                      :value="`some value here`"
+                      class="button is-info"
+                    >
+                      choice 1
+                    </button>
+                    <button
+                      type="button"
+                      :value="`some value here`"
+                      class="button is-info"
+                    >
+                      choice 2
+                    </button>
+                    <button
+                      type="button"
+                      :value="`some value here`"
+                      class="button is-info"
+                    >
+                      choice 3
+                    </button>
+                    <button
+                      type="button"
+                      :value="`some value here`"
+                      class="button is-info"
+                    >
+                      choice 4
+                    </button>
                     <input
                       autocomplete="off"
                       id="translation-input"
