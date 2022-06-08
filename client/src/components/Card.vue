@@ -81,8 +81,8 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content;"
                       id="answer-container"
                     >
-
                       <button
+                        style="margin-bottom: 1.5rem; margin-right: 0.5rem"
                         type="button"
                         :value="`some value here`"
                         class="button is-info"
@@ -90,6 +90,7 @@
                         choice 1
                       </button>
                       <button
+                        style="margin-bottom: 1.5rem"
                         type="button"
                         :value="`some value here`"
                         class="button is-info"
@@ -97,6 +98,7 @@
                         choice 2
                       </button>
                       <button
+                        style="margin-right: 0.5rem"
                         type="button"
                         :value="`some value here`"
                         class="button is-info"
