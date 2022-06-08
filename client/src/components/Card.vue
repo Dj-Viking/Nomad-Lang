@@ -77,34 +77,40 @@
                       }
                     "
                   >
-                    <button
-                      type="button"
-                      :value="`some value here`"
-                      class="button is-info"
+                    <div
+                      style="margin-bottom: 1.5rem; max-width: fit-content;"
+                      id="answer-container"
                     >
-                      choice 1
-                    </button>
-                    <button
-                      type="button"
-                      :value="`some value here`"
-                      class="button is-info"
-                    >
-                      choice 2
-                    </button>
-                    <button
-                      type="button"
-                      :value="`some value here`"
-                      class="button is-info"
-                    >
-                      choice 3
-                    </button>
-                    <button
-                      type="button"
-                      :value="`some value here`"
-                      class="button is-info"
-                    >
-                      choice 4
-                    </button>
+
+                      <button
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        choice 1
+                      </button>
+                      <button
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        choice 2
+                      </button>
+                      <button
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        choice 3
+                      </button>
+                      <button
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        choice 4
+                      </button>
+                    </div>
                     <input
                       autocomplete="off"
                       id="translation-input"
