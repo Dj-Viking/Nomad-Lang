@@ -22,8 +22,10 @@
     ></progress>
     <div style="display: flex; flex-direction: row; justify-content: center">
       <span>Password Strength:&nbsp;</span>
-      <label :style="{ color: `${assessText.color}` }" class="label"
-        >{{ assessText.text }}
+      <label
+        :style="{ color: `${assessText.color}` }"
+        class="label"
+      >{{ assessText.text }}
       </label>
     </div>
   </div>

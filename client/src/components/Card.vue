@@ -81,6 +81,8 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content;"
                       id="answer-container"
                     >
+
+                      <ChoiceButton />
                       <button
                         style="margin-bottom: 1.5rem; margin-right: 0.5rem"
                         type="button"
