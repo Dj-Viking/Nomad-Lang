@@ -1,5 +1,6 @@
 export interface ICard {
   _id: string;
+  choices?: Array<Choice>;
   creatorId?: number | string;
   frontSideText?: string;
   frontSideLanguage?: string;
@@ -15,8 +16,14 @@ export interface ICard {
   uncategorized?: Array<ICard>;
 }
 
+export class Choice {
+  text!: string;
+  id!: string;
+}
+
 export class CardClass implements ICard {
   _id = "";
+  choices?: Array<Choice>;
   creatorId?: string | number | undefined;
   frontSideText?: string | undefined;
   frontSideLanguage?: string | undefined;
@@ -223,6 +230,7 @@ export type RootDispatchType =
   /** */
   | "sidebarCategories/toggleWithOneKey"
   /** */
+  | "cards/getFakeChoices"
   | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
@@ -262,6 +270,7 @@ export type RootCommitType =
   | "theme/TOGGLE_THEME"
   | "theme/SET_THEME"
   /** */
+  | "cards/SET_CARDS_CHOICES"
   | "cards/ADD_CARD"
   | "cards/SET_ALL_CARDS"
   | "cards/SET_DISPLAY_CARDS"

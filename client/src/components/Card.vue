@@ -89,7 +89,7 @@
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        choice 1
+                        {{ card?.choices![0].text || "asdf" }}
                       </button>
                       <button
                         style="margin-bottom: 1.5rem"
@@ -97,7 +97,7 @@
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        choice 2
+                        {{ card?.choices![1].text || "asdf" }}
                       </button>
                       <button
                         style="margin-right: 0.5rem"
@@ -105,14 +105,14 @@
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        choice 3
+                        {{ card?.choices![2].text || "asdf" }}
                       </button>
                       <button
                         type="button"
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        choice 4
+                        {{ card?.choices![3].text || "asdf" }}
                       </button>
                     </div>
                     <input
@@ -277,6 +277,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "@vue/runtime-core";
 import Spinner from "../components/Spinner.vue";
+import ChoiceButton from "../components/ChoiceButton.vue";
 import {
   CardClass,
   ICard,
@@ -290,6 +291,7 @@ export default defineComponent({
   name: "Card",
   components: {
     Spinner,
+    ChoiceButton
   },
   props: {
     card: Object as PropType<CardClass>,
@@ -374,8 +376,12 @@ export default defineComponent({
       });
     },
   },
-  mounted() {
+  async mounted() {
     if (this.card) {
+      if (this.card.choices?.length === 0) {
+        // TODO: don't update all cards...just this particular card rendering right now
+        await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
+      }
       setTimeout(() => {
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
