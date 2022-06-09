@@ -81,37 +81,10 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content;"
                       id="answer-container"
                     >
-                      <button
-                        style="margin-bottom: 1.5rem; margin-right: 0.5rem"
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.backSideText || "empty" }}
-                      </button>
-                      <button
-                        style="margin-bottom: 1.5rem"
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.choices![0].text || "nothing yet" }}
-                      </button>
-                      <button
-                        style="margin-right: 0.5rem"
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.choices![0].text || "nothing yet" }}
-                      </button>
-                      <button
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.choices![0].text || "nothing yet" }}
-                      </button>
+                      <ChoiceButton :text="card?.backSideText" />
+                      <ChoiceButton :text="card?.choices![0].text" />
+                      <ChoiceButton :text="card?.choices![1].text" />
+                      <ChoiceButton :text="card?.choices![2].text" />
                     </div>
                     <input
                       autocomplete="off"
@@ -321,10 +294,12 @@ import {
 } from "@/types";
 import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
+import ChoiceButton from "../components/ChoiceButton.vue";
 export default defineComponent({
   name: "Card",
   components: {
     Spinner,
+    ChoiceButton
   },
   props: {
     card: Object as PropType<CardClass>,
@@ -426,6 +401,7 @@ export default defineComponent({
   },
   async mounted() {
     if (this.card) {
+      // TODO: do this on the cardlist component instead of this one because the fetch is executing on each render of each card we should do it on the list before we allocate the cards and commit them to state
       await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
       if (this.card.choices?.length === 0) {
         // TODO: don't update all cards...just this particular card rendering right now
