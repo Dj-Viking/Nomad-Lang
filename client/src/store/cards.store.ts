@@ -8,6 +8,7 @@ import {
   CategorizedCardsObject,
   RootDispatchType,
   Choice,
+  CardClass,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
 import { shuffleArray } from "@/utils/shuffleArray";
@@ -42,10 +43,11 @@ const mutations = {
         };
     });
   },
+
   SET_CARDS_CHOICES(
     state: CardsState,
     payload: [string, string, string]
-  ) {
+  ): void {
 
     const new_choices = new Array(3).fill(null).map((_, index) => {
       return {
@@ -183,11 +185,27 @@ const mutations = {
   },
 };
 const actions = {
+  async getCardsChoices(context: ActionContext<CardsState, MyRootState>, payload: { id: string }): Promise<Choice[]> {
+    //
+    let choices = [] as Choice[];
+    const { id } = payload;
+    console.log("got id of card", id);
+
+
+    choices = state.cards.map((card: CardClass, index: number, _cards: Array<CardClass>) => {
+      return _cards[index].choices![index];
+    });
+
+    console.log("choices in vuex", choices);
+
+    return Promise.resolve(choices);
+
+  },
   async getFakeChoices(
 
-    { commit }: ActionContext<CardsState, MyRootState>,
+    { commit, dispatch }: ActionContext<CardsState, MyRootState>,
     // eslint-disable-next-line
-    _payload: null
+    isInDb: boolean
   ): Promise<void> { //commit new set of cards with updated fake choices until they are changed by user.
     try {
       const category = "dev";
@@ -226,7 +244,9 @@ const actions = {
 
       const choices = [...jokes];
 
-
+      if (!isInDb) {
+        await dispatch("cards/saveChoices" as RootDispatchType, choices, { root: true });
+      }
 
 
       commit("SET_CARDS_CHOICES", choices);
@@ -235,7 +255,9 @@ const actions = {
       console.error("error during getting fake choices from chuck norris api", error);
     }
   },
-  async saveChoices() {/* */ },
+  async saveChoices() {
+    // call own api to update the user's cards to have the choices.
+  },
   async addCard(
     { commit }: ActionContext<CardsState, MyRootState>,
     card: ICard

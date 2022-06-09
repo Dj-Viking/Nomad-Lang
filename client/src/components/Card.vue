@@ -81,15 +81,13 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content;"
                       id="answer-container"
                     >
-
-                      <ChoiceButton />
                       <button
                         style="margin-bottom: 1.5rem; margin-right: 0.5rem"
                         type="button"
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        {{ card?.choices![0].text || "asdf" }}
+                        {{ card?.backSideText || "empty" }}
                       </button>
                       <button
                         style="margin-bottom: 1.5rem"
@@ -97,7 +95,7 @@
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        {{ card?.choices![1].text || "asdf" }}
+                        {{ card?.choices![0].text || "nothing yet" }}
                       </button>
                       <button
                         style="margin-right: 0.5rem"
@@ -105,14 +103,14 @@
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        {{ card?.choices![2].text || "asdf" }}
+                        {{ card?.choices![0].text || "nothing yet" }}
                       </button>
                       <button
                         type="button"
                         :value="`some value here`"
                         class="button is-info"
                       >
-                        {{ card?.choices![3].text || "asdf" }}
+                        {{ card?.choices![0].text || "nothing yet" }}
                       </button>
                     </div>
                     <input
@@ -277,9 +275,9 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "@vue/runtime-core";
 import Spinner from "../components/Spinner.vue";
-import ChoiceButton from "../components/ChoiceButton.vue";
 import {
   CardClass,
+  Choice,
   ICard,
   MyRootState,
   RootCommitType,
@@ -291,7 +289,6 @@ export default defineComponent({
   name: "Card",
   components: {
     Spinner,
-    ChoiceButton
   },
   props: {
     card: Object as PropType<CardClass>,
@@ -302,10 +299,17 @@ export default defineComponent({
     const toast = useToast();
     const store = useStore<MyRootState>();
     const translation = ref("");
+    const choices = ref<Choice[]>([{ id: "dkjf", text: "kjdf" }]);
+    const all_cards = computed(() => store.state.cards.allCards);
+    const my_cards = computed(() => store.state.cards.cards);
     const isLoading = computed(() => store.state.loading.loading.isLoading);
     const isLoggedIn = computed(() => store.state.user.user.loggedIn);
     const activeClass = computed(() => store.state.modal.modal.activeClass);
+
     return {
+      choices,
+      all_cards,
+      my_cards,
       toast,
       store,
       translation,
@@ -315,6 +319,14 @@ export default defineComponent({
     };
   },
   methods: {
+    getChoiceFromCardsArrayById(id: string): Array<Choice> {
+      return this.all_cards.find(item => item._id = id)?.choices as Choice[];
+    },
+    async getCardsChoices(): Promise<Choice[]> {
+      const choices = await this.store.dispatch("cards/getCardsChoices" as RootDispatchType, this.card!._id, { root: true });
+      console.log("choices in card component", choices);
+      return choices;
+    },
     openDeleteCardModal(_event: Event, id: string): void {
       this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete This Card", {
         root: true,
@@ -378,15 +390,18 @@ export default defineComponent({
   },
   async mounted() {
     if (this.card) {
-      if (this.card.choices?.length === 0) {
-        // TODO: don't update all cards...just this particular card rendering right now
-        await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
-      }
-      setTimeout(() => {
+      await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
+      // if (this.card.choices?.length === 0) {
+      //   // TODO: don't update all cards...just this particular card rendering right now
+      //   await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
+      // }
+      this.choices = await this.getCardsChoices();
+      setTimeout(async () => {
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
-      }, 500);
+        console.log("choices on mounted after some time", this.choices);
+      }, 1000);
     }
   },
 });
