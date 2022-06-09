@@ -189,14 +189,14 @@
                 </i>
               </button>
             </div>
-            <div class="card-image">
+            <!-- <div class="card-image">
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
                   alt="Placeholder image"
                 />
               </figure>
-            </div>
+            </div> -->
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
@@ -219,6 +219,42 @@
                       }
                     "
                   >
+                    <div
+                      style="margin-bottom: 1.5rem; max-width: fit-content; visibility: hidden;"
+                      id="answer-container"
+                    >
+                      <button
+                        style="margin-bottom: 1.5rem; margin-right: 0.5rem"
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        {{ card?.backSideText || "empty" }}
+                      </button>
+                      <button
+                        style="margin-bottom: 1.5rem"
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        {{ card?.choices![0].text || "nothing yet" }}
+                      </button>
+                      <button
+                        style="margin-right: 0.5rem"
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        {{ card?.choices![0].text || "nothing yet" }}
+                      </button>
+                      <button
+                        type="button"
+                        :value="`some value here`"
+                        class="button is-info"
+                      >
+                        {{ card?.choices![0].text || "nothing yet" }}
+                      </button>
+                    </div>
                     <input
                       autocomplete="off"
                       id="translation-input"
@@ -391,11 +427,12 @@ export default defineComponent({
   async mounted() {
     if (this.card) {
       await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
-      // if (this.card.choices?.length === 0) {
-      //   // TODO: don't update all cards...just this particular card rendering right now
-      //   await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
-      // }
+      if (this.card.choices?.length === 0) {
+        // TODO: don't update all cards...just this particular card rendering right now
+        await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
+      }
       this.choices = await this.getCardsChoices();
+
       setTimeout(async () => {
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,

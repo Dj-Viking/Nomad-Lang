@@ -248,7 +248,6 @@ const actions = {
         await dispatch("cards/saveChoices" as RootDispatchType, choices, { root: true });
       }
 
-
       commit("SET_CARDS_CHOICES", choices);
 
     } catch (error) {
