@@ -196,37 +196,10 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content; visibility: hidden;"
                       id="answer-container"
                     >
-                      <button
-                        style="margin-bottom: 1.5rem; margin-right: 0.5rem"
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.backSideText || "empty" }}
-                      </button>
-                      <button
-                        style="margin-bottom: 1.5rem"
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.choices![0].text || "nothing yet" }}
-                      </button>
-                      <button
-                        style="margin-right: 0.5rem"
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.choices![0].text || "nothing yet" }}
-                      </button>
-                      <button
-                        type="button"
-                        :value="`some value here`"
-                        class="button is-info"
-                      >
-                        {{ card?.choices![0].text || "nothing yet" }}
-                      </button>
+                      <ChoiceButton :text="card?.backSideText" />
+                      <ChoiceButton :text="choices![0]" />
+                      <ChoiceButton :text="choices![1]" />
+                      <ChoiceButton :text="choices![2]" />
                     </div>
                     <input
                       autocomplete="off"
@@ -302,6 +275,7 @@ export default defineComponent({
     ChoiceButton
   },
   props: {
+    choices: Object as PropType<string[]>,
     card: Object as PropType<CardClass>,
     cards: Array as PropType<Array<CardClass>>,
     id: String
@@ -310,7 +284,6 @@ export default defineComponent({
     const toast = useToast();
     const store = useStore<MyRootState>();
     const translation = ref("");
-    const choices = ref<Choice[]>([{ id: "dkjf", text: "kjdf" }]);
     const all_cards = computed(() => store.state.cards.allCards);
     const my_cards = computed(() => store.state.cards.cards);
     const isLoading = computed(() => store.state.loading.loading.isLoading);
@@ -318,7 +291,6 @@ export default defineComponent({
     const activeClass = computed(() => store.state.modal.modal.activeClass);
 
     return {
-      choices,
       all_cards,
       my_cards,
       toast,
@@ -401,20 +373,11 @@ export default defineComponent({
   },
   async mounted() {
     if (this.card) {
-      // TODO: do this on the cardlist component instead of this one because the fetch is executing on each render of each card we should do it on the list before we allocate the cards and commit them to state
-      await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
-      if (this.card.choices?.length === 0) {
-        // TODO: don't update all cards...just this particular card rendering right now
-        await this.store.dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
-      }
-      this.choices = await this.getCardsChoices();
-
       setTimeout(async () => {
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
-        console.log("choices on mounted after some time", this.choices);
-      }, 1000);
+      }, 600);
     }
   },
 });

@@ -43,12 +43,10 @@ const mutations = {
         };
     });
   },
-
   SET_CARDS_CHOICES(
     state: CardsState,
     payload: [string, string, string]
   ): void {
-
     const new_choices = new Array(3).fill(null).map((_, index) => {
       return {
         id: keyGen(),
@@ -68,6 +66,8 @@ const mutations = {
         choices: [...new_choices]
       };
     });
+
+    console.log("cards now in mutation", state.cards);
 
   },
   SET_CATEGORIZED_CARD_MAP(
@@ -249,9 +249,11 @@ const actions = {
       }
 
       commit("SET_CARDS_CHOICES", choices);
+      return Promise.resolve();
 
     } catch (error) {
       console.error("error during getting fake choices from chuck norris api", error);
+      return Promise.reject();
     }
   },
   async saveChoices() {
@@ -289,6 +291,7 @@ const actions = {
     const shuffledCards = shuffleArray(cardsRef);
 
     try {
+
       commit(
         "cards/SET_ALL_CARDS" as RootCommitType,
         { cards: shuffledCards },
@@ -299,6 +302,7 @@ const actions = {
         { cards: shuffledCards },
         { root: true }
       );
+      await dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
       //after commits are done set the categories
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
