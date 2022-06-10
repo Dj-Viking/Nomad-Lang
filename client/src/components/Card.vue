@@ -259,7 +259,6 @@ import { defineComponent, ref, computed, PropType } from "@vue/runtime-core";
 import Spinner from "../components/Spinner.vue";
 import {
   CardClass,
-  Choice,
   ICard,
   MyRootState,
   RootCommitType,
@@ -302,14 +301,6 @@ export default defineComponent({
     };
   },
   methods: {
-    getChoiceFromCardsArrayById(id: string): Array<Choice> {
-      return this.all_cards.find(item => item._id = id)?.choices as Choice[];
-    },
-    async getCardsChoices(): Promise<Choice[]> {
-      const choices = await this.store.dispatch("cards/getCardsChoices" as RootDispatchType, this.card!._id, { root: true });
-      console.log("choices in card component", choices);
-      return choices;
-    },
     openDeleteCardModal(_event: Event, id: string): void {
       this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete This Card", {
         root: true,
