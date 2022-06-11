@@ -1,4 +1,5 @@
 import { prop, modelOptions, mongoose } from "@typegoose/typegoose";
+import { ChoiceClass } from "./ChoiceClass";
 
 @modelOptions({
   schemaOptions: {
@@ -11,6 +12,9 @@ import { prop, modelOptions, mongoose } from "@typegoose/typegoose";
 })
 export class CardClass {
   public _id: mongoose.Types.ObjectId;
+
+  @prop({ type: () => ChoiceClass, default: [] })
+  public choices?: ChoiceClass[];
 
   @prop()
   public frontSideText?: string;

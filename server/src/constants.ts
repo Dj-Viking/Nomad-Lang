@@ -6,6 +6,20 @@
 import { ICard } from "types";
 
 // export const COOKIE_NAME = "sid";
+
+/* eslint-disable */
+export const MOCK_CARD_CHOICES = [
+  {
+    text: "aiuhjfiuj",
+  },
+  {
+    text: "asf8eh3jf",
+  },
+  {
+    text: "a;lsdjkf89efj",
+  },
+];
+
 export const IS_PROD: boolean | undefined = process.env.NODE_ENV === "production";
 export const MOCK_ADD_CARD = {
   frontSideLanguage: "dkfkdjf",

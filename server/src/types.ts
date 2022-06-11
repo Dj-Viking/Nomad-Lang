@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 // import { GraphQLScalarType, Kind } from 'graphql';
 import jwt from "jsonwebtoken";
+import { ChoiceClass } from "./models";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -173,6 +174,7 @@ export interface ILoginResponse {
 
 export interface ICard {
   _id?: string | mongoose.Types.ObjectId;
+  choices?: ChoiceClass[];
   frontSideText?: string;
   frontSideLanguage?: string;
   frontSidePicture?: string;
