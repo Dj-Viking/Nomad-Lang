@@ -210,13 +210,13 @@ const actions = {
     try {
       const category = "dev";
       //fetch chuck norris api
-      const responses = new Array(3).fill(null).map(async (): Promise<Response> => {
+      const responses: Array<Promise<Response>> = new Array(3).fill(null).map(async (): Promise<Response> => {
         return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`, { method: "GET" });
       });
 
-      const rezzed = await Promise.all(responses);
+      const rezzed: Array<Response> = await Promise.all(responses);
 
-      const data_promises = new Array(3).fill(null).map(async (_, index) => {
+      const data_promises: Array<Promise<any>> = new Array(3).fill(null).map(async (_, index) => {
         return rezzed[index].json();
       });
 
