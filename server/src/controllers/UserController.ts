@@ -2,7 +2,7 @@
 import { Express, MyJwtData } from "../types";
 const fetch = require("node-fetch");
 import { Response } from "express";
-import { CardClass, User } from "../models";
+import { CardClass, ChoiceClass, User } from "../models";
 import { signToken } from "../utils/signToken";
 import mongoose from "mongoose";
 import { hash } from "argon2";
@@ -337,14 +337,41 @@ export const UserController = {
   ): Promise<Response | void> {
     try {
       const category = "dev";
+      //fetch chuck norris api
       let result = null;
-      const responses = new Array(3).fill(null).map(() => {
-        return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`);
-      });
+      const responses: Array<Promise<Response>> = new Array(3)
+        .fill(null)
+        .map(async (): Promise<Response> => {
+          return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`, {
+            method: "GET",
+          });
+        });
+
+      const rezzed: Array<Response> = await Promise.all(responses);
+
       const datas = new Array(3).fill(null).map((_, index: number) => {
-        return responses[index].json();
+        return rezzed[index].json();
       });
-      result = datas;
+      result = await Promise.all(datas);
+
+      result = result.map((item: any) => {
+        return {
+          id: Math.random() * 1000 + "kdjfkjd",
+          text: item.value,
+        };
+      });
+      result = result.map((choice: ChoiceClass) => {
+        let new_data;
+
+        //scramble the string around
+        new_data = choice.text.split("").map((_char: string, _index: number, arr: string[]) => {
+          return arr[Math.ceil(Math.random() * arr.length)];
+        });
+
+        return {
+          text: new_data.join("").slice(0, 7),
+        };
+      });
       return res.status(200).json({ message: "hell yeah brother!", data: result });
     } catch (error) {
       console.error(error);

@@ -316,13 +316,33 @@ exports.UserController = {
             try {
                 const category = "dev";
                 let result = null;
-                const responses = new Array(3).fill(null).map(() => {
-                    return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`);
-                });
+                const responses = new Array(3)
+                    .fill(null)
+                    .map(() => __awaiter(this, void 0, void 0, function* () {
+                    return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`, {
+                        method: "GET",
+                    });
+                }));
+                const rezzed = yield Promise.all(responses);
                 const datas = new Array(3).fill(null).map((_, index) => {
-                    return responses[index].json();
+                    return rezzed[index].json();
                 });
-                result = datas;
+                result = yield Promise.all(datas);
+                result = result.map((item) => {
+                    return {
+                        id: Math.random() * 1000 + "kdjfkjd",
+                        text: item.value,
+                    };
+                });
+                result = result.map((choice) => {
+                    let new_data;
+                    new_data = choice.text.split("").map((_char, _index, arr) => {
+                        return arr[Math.ceil(Math.random() * arr.length)];
+                    });
+                    return {
+                        text: new_data.join("").slice(0, 7),
+                    };
+                });
                 return res.status(200).json({ message: "hell yeah brother!", data: result });
             }
             catch (error) {
