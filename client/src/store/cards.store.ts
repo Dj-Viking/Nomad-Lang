@@ -84,8 +84,6 @@ const mutations = {
       };
     });
 
-    console.log("cards now in mutation", state.cards);
-
   },
   SET_CATEGORIZED_CARD_MAP(
     state: CardsState,
@@ -243,7 +241,6 @@ const actions = {
     payload: CardsState & { choices: Choice[] }
   ): Promise<void | boolean> {
     const { cards, choices } = payload;
-    console.log("do i have choices here in set cards", choices);
 
     if (!Array.isArray(cards)) {
       throw {
@@ -261,11 +258,14 @@ const actions = {
         { cards: shuffledCards },
         { root: true }
       );
+
       commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: shuffledCards },
         { root: true }
       );
+
+      // if (choices && !cards[0].choices)
       commit(
         "cards/SET_CARDS_CHOICES" as RootCommitType,
         choices,
