@@ -11,7 +11,7 @@ import { ChoiceClass } from "./ChoiceClass";
   },
 })
 export class CardClass {
-  public _id: mongoose.Types.ObjectId;
+  public _id!: mongoose.Types.ObjectId;
 
   @prop({ type: () => ChoiceClass, default: [] })
   public choices?: ChoiceClass[];
@@ -38,8 +38,8 @@ export class CardClass {
   public creator?: string;
 
   @prop({ default: Date.now() })
-  public createdAt: Date;
+  public createdAt!: Date;
 
   @prop({ default: Date.now() })
-  public updatedAt: Date;
+  public updatedAt!: Date;
 }

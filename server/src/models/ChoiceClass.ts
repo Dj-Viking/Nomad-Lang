@@ -11,5 +11,5 @@ import { prop, modelOptions } from "@typegoose/typegoose";
 })
 export class ChoiceClass {
     @prop({ type: () => String, default: "nothing yet" })
-    text: string;
+    text!: string;
 }
