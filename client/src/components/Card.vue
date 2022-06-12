@@ -400,9 +400,9 @@ export default defineComponent({
       });
     },
   },
-  async mounted() {
+  mounted() {
     if (this.card) {
-      setTimeout(async () => {
+      setTimeout(() => {
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
