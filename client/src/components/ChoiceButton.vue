@@ -29,9 +29,9 @@ export default defineComponent({
     },
     methods: {
         submitCardFlipCheck(event: any, _isFrontSide: boolean): void {
-            console.log("event", event);
             const id = event.target.id;
             const text = event.target.value;
+            console.log("id and text after clicking", id, text);
             if (_isFrontSide) {
                 if (new RegExp(`^${this.card!.backSideText}$`, "i").test(text)) {
                     // increment correct score

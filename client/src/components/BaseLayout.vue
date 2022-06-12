@@ -135,9 +135,7 @@ export default defineComponent({
 
     // TODO: api call here to get choices ready before user tries to use them on the cards before they are set...
     const { choices, err } = await api.updateChoices();
-    console.log("base layout mounting after fetching choices user");
     if (error) throw err;
-    console.log("did we get choice objects here in base layout", choices);
 
     // set cards if any
     if (user!.cards.length > 0) {

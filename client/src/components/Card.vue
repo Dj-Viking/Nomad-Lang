@@ -210,10 +210,22 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content; visibility: hidden;"
                       id="answer-container"
                     >
-                      <ChoiceButton :text="card?.backSideText" />
-                      <ChoiceButton :text="choices![0]" />
-                      <ChoiceButton :text="choices![1]" />
-                      <ChoiceButton :text="choices![2]" />
+                      <ChoiceButton
+                        :card="card"
+                        :text="card?.backSideText"
+                      />
+                      <ChoiceButton
+                        :card="card"
+                        :text="card?.choices![0].text"
+                      />
+                      <ChoiceButton
+                        :card="card"
+                        :text="card?.choices![1].text"
+                      />
+                      <ChoiceButton
+                        :card="card"
+                        :text="card?.choices![2].text"
+                      />
                     </div>
                     <input
                       autocomplete="off"
@@ -327,8 +339,8 @@ export default defineComponent({
       });
     },
     async submitCardFlipCheck(event: any, _isFrontSide: boolean): Promise<void> {
+
       const id = event.target.id;
-      console.log("translation", this.translation);
       if (_isFrontSide) {
         if (new RegExp(`^${this.card!.backSideText}$`, "i").test(this.translation)) {
           // increment correct score
@@ -346,6 +358,7 @@ export default defineComponent({
         }
         this.translation = "";
         //set the class on for the flip animation on the card object itself.
+        console.log("flip check after store commit if incorrect");
         this.store.commit(
           "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
         );

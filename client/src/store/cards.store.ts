@@ -337,11 +337,6 @@ const actions = {
   ): Promise<boolean | Error> {
     try {
       const { cards } = payload;
-      // taking in the cards array and sorting the categories by creating an object
-      // that has a key that is dynamic which will be this meta-list of categories
-      // because trying to do this with type-graphql typeorm was very strange and
-      // probably nobody is trying to do that sort of thing right now....
-      // create a new cards Object to return that contains the cards categorized by their frontside language
 
       //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;
@@ -351,10 +346,9 @@ const actions = {
       while (iter < cards.length) {
         if (cards[iter].frontSideLanguage === "") {
           uncategorized.unshift(cards[iter]);
-        }
-        if (cards[iter].frontSideLanguage !== "") {
+        } else
           toCategorize.unshift(cards[iter]);
-        }
+
         iter++;
       }
 
