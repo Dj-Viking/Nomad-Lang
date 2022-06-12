@@ -81,22 +81,24 @@
                       style="margin-bottom: 1.5rem; max-width: fit-content;"
                       id="answer-container"
                     >
-                      <ChoiceButton
-                        :card="card"
-                        :text="card?.backSideText"
-                      />
-                      <ChoiceButton
-                        :card="card"
-                        :text="card?.choices![0].text || `nothing yet`"
-                      />
-                      <ChoiceButton
-                        :card="card"
-                        :text="card?.choices![1].text || `nothing yet`"
-                      />
-                      <ChoiceButton
-                        :card="card"
-                        :text="card?.choices![2].text || `nothing yet`"
-                      />
+                      <div v-if="card?.choices && card?.choices?.length">
+                        <ChoiceButton
+                          :card="card"
+                          :text="card?.backSideText"
+                        />
+                        <ChoiceButton
+                          :card="card"
+                          :text="card?.choices![0].text || `nothing yet`"
+                        />
+                        <ChoiceButton
+                          :card="card"
+                          :text="card?.choices![1].text || `nothing yet`"
+                        />
+                        <ChoiceButton
+                          :card="card"
+                          :text="card?.choices![2].text || `nothing yet`"
+                        />
+                      </div>
                     </div>
                     <input
                       autocomplete="off"
@@ -376,12 +378,11 @@ export default defineComponent({
   },
   async mounted() {
     if (this.card) {
-      console.log('got the card', this.card);
       setTimeout(async () => {
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
-      }, 600);
+      }, 500);
     }
   },
 });

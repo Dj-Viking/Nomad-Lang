@@ -18,7 +18,7 @@ export interface ICard {
 
 export class Choice {
   text!: string;
-  id!: string;
+  _id?: string;
 }
 
 export class CardClass implements ICard {
@@ -361,7 +361,10 @@ export type ChangeThemePrefResponse = {
 };
 
 export type UpdateChoicesResponse = {
-  choices: CardClass[] | null
+  choices: null | {
+    data: Choice[],
+    message: string;
+  }
 } & {
   err?: unknown | null;
 }

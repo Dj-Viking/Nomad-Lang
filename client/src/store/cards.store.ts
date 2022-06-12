@@ -17,7 +17,22 @@ import { ActionContext } from "vuex";
 
 const state: CardsState = {
   allCards: [],
-  cards: [],
+  cards: [
+    // {
+    //   _id: "",
+    //   choices: [
+    //     {
+    //       text: "kdfjkdj"
+    //     },
+    //     {
+    //       text: "kdfjkdj"
+    //     },
+    //     {
+    //       text: "kdfjkdj"
+    //     }
+    //   ]
+    // }
+  ],
   categorized: {},
 };
 const mutations = {
@@ -45,12 +60,13 @@ const mutations = {
   },
   SET_CARDS_CHOICES(
     state: CardsState,
-    payload: [string, string, string]
+    payload: [Choice, Choice, Choice]
   ): void {
+    console.log("am i here in set cards mutation", payload);
     const new_choices = new Array(3).fill(null).map((_, index) => {
       return {
         id: keyGen(),
-        text: payload[index]
+        text: payload[index].text
       } as Choice;
     });
 
@@ -60,6 +76,7 @@ const mutations = {
         choices: [...new_choices]
       };
     });
+
     state.cards = state.cards.map(card => {
       return {
         ...card,
@@ -223,9 +240,11 @@ const actions = {
   },
   async setCards(
     { state, dispatch, commit }: ActionContext<CardsState, MyRootState>,
-    payload: CardsState
+    payload: CardsState & { choices: Choice[] }
   ): Promise<void | boolean> {
-    const { cards } = payload;
+    const { cards, choices } = payload;
+    console.log("do i have choices here in set cards", choices);
+
     if (!Array.isArray(cards)) {
       throw {
         error: `cards was not an iteritable type! but was ${cards} as typeof ${typeof cards}`,
@@ -245,6 +264,11 @@ const actions = {
       commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: shuffledCards },
+        { root: true }
+      );
+      commit(
+        "cards/SET_CARDS_CHOICES" as RootCommitType,
+        choices,
         { root: true }
       );
 
