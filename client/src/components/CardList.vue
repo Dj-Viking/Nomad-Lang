@@ -72,9 +72,6 @@
           <span v-else>Reset Category</span>
         </button>
       </div>
-      <div class="control">
-        <GiveRandomChoices />
-      </div>
     </div>
     <Transition
       type="transition"
@@ -161,13 +158,11 @@ import {
 } from "../types";
 import { ref, defineComponent, computed } from "vue";
 import Card from "../components/Card.vue";
-import GiveRandomChoices from "../components/GiveRandomChoices.vue";
 import { useStore } from "vuex";
 export default defineComponent({
   name: "CardList",
   components: {
     Card,
-    GiveRandomChoices
   },
   setup() {
     const inputId = ref(0);

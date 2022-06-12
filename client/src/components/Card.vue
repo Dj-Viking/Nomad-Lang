@@ -85,24 +85,24 @@
                         <ChoiceButton
                           :order="1"
                           :card="card"
-                          :text="card?.backSideText"
+                          :text="card?.choices![0].text || `nothing yet`"
                         />
                         <ChoiceButton
                           :order="2"
                           :card="card"
-                          :text="card?.choices![0].text || `nothing yet`"
+                          :text="card?.choices![1].text || `nothing yet`"
                         />
                       </div>
                       <div style="display: flex; flex-direction: row; justify-content: center;">
                         <ChoiceButton
                           :order="3"
                           :card="card"
-                          :text="card?.choices![1].text || `nothing yet`"
+                          :text="card?.choices![2].text || `nothing yet`"
                         />
                         <ChoiceButton
                           :order="4"
                           :card="card"
-                          :text="card?.choices![2].text || `nothing yet`"
+                          :text="card?.choices![3].text || `nothing yet`"
                         />
                       </div>
                     </div>
@@ -316,9 +316,10 @@ export default defineComponent({
     id: String
   },
   setup() {
+
     const toast = useToast();
     const store = useStore<MyRootState>();
-    const translation = ref("");
+    const translation = ref<string>("");
     const all_cards = computed(() => store.state.cards.allCards);
     const my_cards = computed(() => store.state.cards.cards);
     const isLoading = computed(() => store.state.loading.loading.isLoading);

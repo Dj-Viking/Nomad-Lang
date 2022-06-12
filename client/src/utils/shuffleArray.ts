@@ -1,13 +1,14 @@
-import { ICard } from "@/types";
+export function shuffleArray(arr: any[]): any[] {
+    // make copy to de-reference the argument passed by reference
+    let result = [...arr];
 
-export function shuffleArray(cards: ICard[]): ICard[] {
-  //must be a copy here... i think its a reference issue??
-  let disconnectedCards = [...cards];
-  for (let i = disconnectedCards.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    let temp = disconnectedCards[i];
-    disconnectedCards[i] = disconnectedCards[j];
-    disconnectedCards[j] = temp;
-  }
-  return disconnectedCards;
+    for (let i = 0; i < result.length; i++) {
+        let random_index = Math.floor(Math.random() * result.length);
+        let current_item = result[i];
+        result[i] = result[random_index];
+        //avoid dupes
+        result[random_index] = current_item;
+    }
+
+    return result;
 }

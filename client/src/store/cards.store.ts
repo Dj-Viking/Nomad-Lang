@@ -11,6 +11,7 @@ import {
   CardClass,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
+import { shuffleCards } from "@/utils/shuffleCards";
 import { shuffleArray } from "@/utils/shuffleArray";
 import { keyGen } from "../utils/keyGen";
 import { ActionContext } from "vuex";
@@ -70,19 +71,23 @@ const mutations = {
       } as Choice;
     });
 
+    console.log("some backside text...", state.allCards[0].backSideText);
+
     state.allCards = state.allCards.map(card => {
       return {
         ...card,
-        choices: [...new_choices]
+        choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
       };
     });
+
 
     state.cards = state.cards.map(card => {
       return {
         ...card,
-        choices: [...new_choices]
+        choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
       };
     });
+
 
   },
   SET_CATEGORIZED_CARD_MAP(
@@ -249,7 +254,7 @@ const actions = {
     }
     const cardsRef = [...cards];
 
-    const shuffledCards = shuffleArray(cardsRef);
+    const shuffledCards = shuffleCards(cardsRef);
 
     try {
 
