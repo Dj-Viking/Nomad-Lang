@@ -26,9 +26,9 @@ export default defineComponent({
     methods: {
         //update user's cards with the categories fetched from chuck norris serverside
         async updateChoices(): Promise<void> {
-            const { cards, error } = await api.updateChoices();
-            if (error) throw error;
-            console.log("should get cards from update chocies", cards);
+            const { choices, err } = await api.updateChoices();
+            if (err) throw err;
+            console.log("should get cards from update chocies", choices);
         }
     },
 });

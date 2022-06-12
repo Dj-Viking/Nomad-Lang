@@ -305,14 +305,14 @@ class ApiService implements IApiService {
       const data = await res.json();
       console.log("data from beta button", data);
       return {
-        cards: data,
-        error: null
+        choices: data,
+        err: null
       }
     } catch (error) {
       console.error(error);
       return {
-        cards: null,
-        error: error
+        choices: null,
+        err: error
       }
     }
   }

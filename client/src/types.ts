@@ -231,9 +231,7 @@ export type RootDispatchType =
   | "sidebarCategories/toggleWithOneKey"
   /** */
   | "cards/saveChoices"
-  | "cards/getCardsChoices"
-  | "cards/getFakeChoices"
-  | "cards/setCards"
+  | "cards/getCardsChoices" | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
   | "cards/addCard"
@@ -363,7 +361,7 @@ export type ChangeThemePrefResponse = {
 };
 
 export type UpdateChoicesResponse = {
-  cards: CardClass[] | null
+  choices: CardClass[] | null
 } & {
-  error?: unknown | null;
+  err?: unknown | null;
 }

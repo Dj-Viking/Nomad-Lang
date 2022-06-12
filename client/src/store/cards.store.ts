@@ -201,61 +201,6 @@ const actions = {
     return Promise.resolve(choices);
 
   },
-  async getFakeChoices(
-
-    { commit, dispatch }: ActionContext<CardsState, MyRootState>,
-    // eslint-disable-next-line
-    isInDb: boolean
-  ): Promise<void> { //commit new set of cards with updated fake choices until they are changed by user.
-    try {
-      const category = "dev";
-      //fetch chuck norris api
-      const responses: Array<Promise<Response>> = new Array(3).fill(null).map(async (): Promise<Response> => {
-        return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`, { method: "GET" });
-      });
-
-      const rezzed: Array<Response> = await Promise.all(responses);
-
-      const data_promises: Array<Promise<any>> = new Array(3).fill(null).map(async (_, index) => {
-        return rezzed[index].json();
-      });
-
-      const datas = await Promise.all(data_promises);
-      console.log("all datas", datas);
-
-
-      const jokes = datas.map(data => {
-
-        let new_data;
-
-        //scramble the string around
-        new_data = data.value.split("").map((char: string, index: number, arr: string[]) => {
-          return arr[Math.ceil(Math.random() * arr.length)];
-        });
-
-        // let other_data = [new_data.split(" ")];
-
-        return new_data.join("").slice(0, 7);
-      });
-      //commit the jokes into the cards array state
-      // set new cards with the backside text as one of the choices (correct answer)
-      // place the remaining three choices into the card's choices array
-      console.log("jokes", jokes);
-
-      const choices = [...jokes];
-
-      if (!isInDb) {
-        await dispatch("cards/saveChoices" as RootDispatchType, choices, { root: true });
-      }
-
-      commit("SET_CARDS_CHOICES", choices);
-      return Promise.resolve();
-
-    } catch (error) {
-      console.error("error during getting fake choices from chuck norris api", error);
-      return Promise.reject();
-    }
-  },
   async saveChoices() {
     // call own api to update the user's cards to have the choices.
   },
@@ -302,7 +247,7 @@ const actions = {
         { cards: shuffledCards },
         { root: true }
       );
-      await dispatch("cards/getFakeChoices" as RootDispatchType, null, { root: true });
+
       //after commits are done set the categories
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
