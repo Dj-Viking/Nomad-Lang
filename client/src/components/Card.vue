@@ -78,23 +78,29 @@
                     "
                   >
                     <div
-                      style="margin-bottom: 1.5rem; max-width: fit-content;"
+                      style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; flex-direction: column; justify-content: center;"
                       id="answer-container"
                     >
-                      <div v-if="card?.choices && card?.choices?.length">
+                      <div style="display: flex; flex-direction: row; justify-content: center;">
                         <ChoiceButton
+                          :order="1"
                           :card="card"
                           :text="card?.backSideText"
                         />
                         <ChoiceButton
+                          :order="2"
                           :card="card"
                           :text="card?.choices![0].text || `nothing yet`"
                         />
+                      </div>
+                      <div style="display: flex; flex-direction: row; justify-content: center;">
                         <ChoiceButton
+                          :order="3"
                           :card="card"
                           :text="card?.choices![1].text || `nothing yet`"
                         />
                         <ChoiceButton
+                          :order="4"
                           :card="card"
                           :text="card?.choices![2].text || `nothing yet`"
                         />
@@ -211,18 +217,22 @@
                       id="answer-container"
                     >
                       <ChoiceButton
+                        :order="1"
                         :card="card"
                         :text="card?.backSideText"
                       />
                       <ChoiceButton
+                        :order="2"
                         :card="card"
                         :text="card?.choices![0].text"
                       />
                       <ChoiceButton
+                        :order="3"
                         :card="card"
                         :text="card?.choices![1].text"
                       />
                       <ChoiceButton
+                        :order="4"
                         :card="card"
                         :text="card?.choices![2].text"
                       />

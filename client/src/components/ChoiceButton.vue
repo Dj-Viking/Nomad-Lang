@@ -5,6 +5,7 @@
         :id="card!._id"
         :value="`${text}`"
         class="button is-info"
+        :class="{ 'is-second': order === 2, 'is-fourth': order === 4 }"
         @click.prevent="(e) => {
             submitCardFlipCheck(e, true)
         }"
@@ -19,6 +20,7 @@ import { useStore } from "vuex";
 export default defineComponent({
     name: "ChoiceButton.vue",
     props: {
+        order: Number,
         card: Object as PropType<CardClass>,
         text: String
     },
@@ -57,8 +59,6 @@ export default defineComponent({
                 );
                 // done checking answer just go to the next card
                 (async () => {
-                    console.log("ksdjfkdj");
-
                     await this.shiftCardNext(null, id);
                 })();
             }
@@ -73,4 +73,11 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
+.is-second {
+    margin-left: 0.5em;
+}
+
+.is-fourth {
+    margin-left: 0.5em;
+}
 </style>
