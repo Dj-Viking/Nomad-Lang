@@ -33,7 +33,7 @@ export default defineComponent({
             const text = event.target.value;
             console.log("id and text after clicking", id, text);
             if (_isFrontSide) {
-                if (new RegExp(`^${this.card!.backSideText}$`, "i").test(text)) {
+                if (text === this.card?.backSideText) {
                     // increment correct score
                     this.store.commit("user/INCREMENT_CORRECT" as RootCommitType, null, { root: true });
                     // TODO: display message on card that it was right
