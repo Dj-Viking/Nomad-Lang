@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Express, MyJwtData } from "../types";
+const fetch = require("node-fetch");
 import { Response } from "express";
 import { CardClass, User } from "../models";
 import { signToken } from "../utils/signToken";
@@ -328,6 +329,25 @@ export const UserController = {
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "error while changing theme preference" });
+    }
+  },
+  getFakeChoices: async function (
+    _req: Express.MyRequest,
+    res: Response
+  ): Promise<Response | void> {
+    try {
+      const category = "dev";
+      let result = null;
+      const responses = new Array(3).fill(null).map(() => {
+        return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`);
+      });
+      const datas = new Array(3).fill(null).map((_, index: number) => {
+        return responses[index].json();
+      });
+      result = datas;
+      return res.status(200).json({ message: "hell yeah brother!", data: result });
+    } catch (error) {
+      console.error(error);
     }
   },
 };

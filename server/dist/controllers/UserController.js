@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
+const fetch = require("node-fetch");
 const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
 const mongoose_1 = __importDefault(require("mongoose"));
@@ -307,6 +308,25 @@ exports.UserController = {
             catch (error) {
                 console.error(error);
                 return res.status(500).json({ error: "error while changing theme preference" });
+            }
+        });
+    },
+    getFakeChoices: function (_req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const category = "dev";
+                let result = null;
+                const responses = new Array(3).fill(null).map(() => {
+                    return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`);
+                });
+                const datas = new Array(3).fill(null).map((_, index) => {
+                    return responses[index].json();
+                });
+                result = datas;
+                return res.status(200).json({ message: "hell yeah brother!", data: result });
+            }
+            catch (error) {
+                console.error(error);
             }
         });
     },

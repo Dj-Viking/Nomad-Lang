@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 import {
   AddCardPayload,
   AddCardResponse,
@@ -14,8 +15,10 @@ import {
   MeQueryResponse,
   RegisterResponse,
   UserEntityBase,
+  UpdateChoicesResponse,
 } from "@/types";
 import { API_URL } from "@/constants";
+import { CardClass } from "@/types";
 interface SignupArgs {
   username: string;
   email: string;
@@ -27,17 +30,18 @@ interface LoginArgs {
   password: string;
 }
 export interface IApiService {
-  headers:                                                      Record<string, string>;
-  me:              (token?: string)                          => Promise<MeQueryResponse>;
-  login:           (args: LoginArgs)                         => Promise<LoginResponse>;
-  signup:          (args: SignupArgs)                        => Promise<RegisterResponse | void>;
-  addCard:         (token: string, card: AddCardPayload)     => Promise<AddCardResponse | never>;
-  clearCards:      (token: string)                           => Promise<ClearCardsResponse>;
-  editCard:        (token: string, card: IEditCardPayload)   => Promise<EditCardResponse>;
-  deleteCard:      (token: string, id: string)               => Promise<DeleteCardResponse>;
-  forgotPassword:  (email: string)                           => Promise<ForgotPassResponse>;
-  changePassword:  (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
-  changeThemePref: (token: string, themePref: string)        => Promise<ChangeThemePrefResponse>;
+  headers: Record<string, string>;
+  me: (token?: string) => Promise<MeQueryResponse>;
+  login: (args: LoginArgs) => Promise<LoginResponse>;
+  signup: (args: SignupArgs) => Promise<RegisterResponse | void>;
+  addCard: (token: string, card: AddCardPayload) => Promise<AddCardResponse | never>;
+  clearCards: (token: string) => Promise<ClearCardsResponse>;
+  editCard: (token: string, card: IEditCardPayload) => Promise<EditCardResponse>;
+  deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
+  forgotPassword: (email: string) => Promise<ForgotPassResponse>;
+  changePassword: (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
+  changeThemePref: (token: string, themePref: string) => Promise<ChangeThemePrefResponse>;
+  updateChoices: () => Promise<UpdateChoicesResponse | void>;
 }
 
 class ApiService implements IApiService {
@@ -293,6 +297,23 @@ class ApiService implements IApiService {
       return {
         error: err.message,
       };
+    }
+  }
+  async updateChoices(): Promise<UpdateChoicesResponse> {
+    try {
+      const res = await fetch(`${API_URL}` + "/user/getFakeChoices", { method: "GET" });
+      const data = await res.json();
+      console.log("data from beta button", data);
+      return {
+        cards: data,
+        error: null
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        cards: null,
+        error: error
+      }
     }
   }
 }

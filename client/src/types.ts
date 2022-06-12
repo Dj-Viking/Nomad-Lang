@@ -361,3 +361,9 @@ export type ChangeThemePrefResponse = {
 } & {
   error?: unknown | null;
 };
+
+export type UpdateChoicesResponse = {
+  cards: CardClass[] | null
+} & {
+  error?: unknown | null;
+}

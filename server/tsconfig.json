@@ -4,11 +4,15 @@
     "module": "commonjs",
     "lib": [
       "dom",
+      "es5",
       "es6",
       "es2017",
       "esnext.asynciterable"
     ],
-    "types": ["node", "jest"],
+    "types": [
+      "node",
+      "jest"
+    ],
     "skipLibCheck": false,
     "sourceMap": true,
     "outDir": "dist",
