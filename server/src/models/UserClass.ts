@@ -37,10 +37,10 @@ export class UserClass {
   public themePref?: string;
 
   @prop({ default: Date.now() })
-  public createdAt: Date;
+  public createdAt!: Date;
 
   @prop({ default: Date.now() })
-  public updatedAt: Date;
+  public updatedAt!: Date;
 
   //important note, this method is not a part of the Model but the returned Document from a Model query
   // e.g. const user = User.findOne({ _id })
