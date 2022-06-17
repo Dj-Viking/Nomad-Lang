@@ -171,6 +171,7 @@ exports.UserController = {
                 else
                     void 0;
                 for (const key in req.body) {
+                    console.log("body key");
                     tempCard = Object.assign(Object.assign({}, tempCard), { [`cards.$.${key}`]: req.body[key] });
                 }
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {

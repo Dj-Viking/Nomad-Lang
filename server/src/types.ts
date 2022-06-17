@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 // import { GraphQLScalarType, Kind } from 'graphql';
 import jwt from "jsonwebtoken";
-import { ChoiceClass } from "./models";
+import { CardClass, ChoiceClass } from "./models";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
@@ -142,7 +142,7 @@ export interface IMeResponse {
     email: string;
     _id: string;
     role?: string;
-    cards?: [];
+    cards?: CardClass[];
     token?: string;
   };
 }

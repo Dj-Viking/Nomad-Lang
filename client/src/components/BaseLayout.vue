@@ -1,3 +1,4 @@
+
 <template>
   <div :class="{ 'content-shrink': sidebarOpen, 'content-adjust': !sidebarOpen }">
     <nav style="margin: 0">
@@ -64,29 +65,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+import { defineComponent, computed } from "vue";
 import {
+  Choice,
   MeQueryResponse,
+  MyRootState,
   RootCommitType,
   RootDispatchType,
-  SidebarState,
-  UserState,
 } from "../types";
 import auth from "../utils/AuthService";
-import store from "../store";
 // import { keyGen } from "@/utils/keyGen";
 import { api } from "@/utils/ApiService";
+import { useStore } from "vuex";
+import { keyGen } from "@/utils/keyGen";
+import { shuffleArray } from "@/utils/shuffleArray";
 export default defineComponent({
   name: "BaseLayout",
   props: {
     isHome: Boolean
   },
-  computed: {
-    //if i need to change this read only state i need to dispatch an action or commit some mutation
-    isLoggedIn: (): UserState["user"]["loggedIn"] =>
-      store.state.user.user.loggedIn,
-    sidebarOpen: (): SidebarState["sidebar"]["isOpen"] =>
-      store.state.sidebar.sidebar.isOpen,
+  setup() {
+    const store = useStore<MyRootState>();
+    const isLoggedIn = computed(() => store.state.user.user.loggedIn);
+    const sidebarOpen = computed(() => store.state.sidebar.sidebar.isOpen);
+    return { isLoggedIn, store, sidebarOpen };
   },
   methods: {
     // eslint-disable-next-line
@@ -95,13 +98,13 @@ export default defineComponent({
     },
     logout() {
       auth.clearToken();
-      store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+      this.store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
         root: true,
       });
       //refetching after setting the token to
       //empty string will not allow for a refresh token on the site
       // this.refetch();
-      store.commit(
+      this.store.commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: [] },
         {
@@ -116,38 +119,60 @@ export default defineComponent({
     if (!!error) {
       // console.error("error during me query on mount!", error);
       auth.clearToken();
-      store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+      this.store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
         root: true,
       });
       return;
     }
 
     //set logged in
-    store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
+    this.store.commit("user/SET_LOGGED_IN" as RootCommitType, true, {
       root: true,
     });
     // set user
-    store.commit(
+    this.store.commit(
       "user/SET_USER" as RootCommitType,
       { ...user },
       { root: true }
     );
 
-    // TODO: api call here to get choices ready before user tries to use them on the cards before they are set...
-    const { choices, err } = await api.updateChoices();
-    if (error) throw err;
+    // fetch choices only if the cards the user has in their collection DO NOT have choices in them.
+    let choices_or_null: Choice[] | null = null;
+    if (!user!.cards![0].choices!.length) {
+      const { choices, err } = await api.updateChoices();
+
+      choices_or_null = choices ? [...choices.data] : null;
+
+      console.log(" got choices I think", choices_or_null);
+
+      if (err || !choices_or_null) throw {
+        error: "choices was null or there was an error fetching for choices"
+      };
+    }
 
     // set cards if any
     if (user!.cards.length > 0) {
+      console.log("am i in setting cards in base layout");
 
-      await store.dispatch(
+      await this.store.dispatch(
         "cards/setCards" as RootDispatchType,
-        { cards: user!.cards, choices: choices!.data },
+        {//set choices if null create fake ones here
+          cards: user!.cards, choices: choices_or_null || new Array(3).fill(null).map(() => {
+            return {
+              id: keyGen(),
+              text: shuffleArray([...((Math.ceil(Math.random() * 1000)).toString() + "kdjfkjdkjf").split("")]).join("")
+            };
+          })
+        },
         { root: true }
       );
+
+      // update the cards choices in the user's DB
+
+
     }
     // set theme
-    store.commit("theme/SET_THEME" as RootCommitType, user!.themePref, {
+    this.store.commit("theme/SET_THEME" as RootCommitType, user!.themePref, {
       root: true,
     });
   },
@@ -161,33 +186,33 @@ export default defineComponent({
           )) as MeQueryResponse;
           if (!!error) {
             auth.clearToken();
-            store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+            this.store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
               root: true,
             });
             return;
           }
           auth.setToken(user?.token as string);
           /// set user
-          store.dispatch(
+          this.store.dispatch(
             "user/setUser" as RootDispatchType,
             { ...user },
             {
               root: true,
             }
           );
-          if (user!.cards!.length > 0) {
-            store.dispatch(
-              "cards/setCards" as RootDispatchType,
-              { cards: user?.cards },
-              {
-                root: true,
-              }
-            );
-          }
+          // if (user!.cards!.length > 0) {
+          //   await store.dispatch(
+          //     "cards/setCards" as RootDispatchType,
+          //     { cards: user?.cards },
+          //     {
+          //       root: true,
+          //     }
+          //   );
+          // }
         }
       } catch (error) {
         auth.clearToken();
-        store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
+        this.store.commit("user/SET_LOGGED_IN" as RootCommitType, false, {
           root: true,
         });
         // console.error("error in $route navigation", error);

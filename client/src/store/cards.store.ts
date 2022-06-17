@@ -8,7 +8,6 @@ import {
   CategorizedCardsObject,
   RootDispatchType,
   Choice,
-  CardClass,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
 import { shuffleCards } from "@/utils/shuffleCards";
@@ -63,7 +62,6 @@ const mutations = {
     state: CardsState,
     payload: [Choice, Choice, Choice]
   ): void {
-    console.log("am i here in set cards mutation", payload);
     const new_choices = new Array(3).fill(null).map((_, index) => {
       return {
         id: keyGen(),
@@ -71,22 +69,19 @@ const mutations = {
       } as Choice;
     });
 
-    console.log("some backside text...", state.allCards[0].backSideText);
-
-    state.allCards = state.allCards.map(card => {
+    state.allCards = [...state.allCards.map(card => {
       return {
         ...card,
         choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
       };
-    });
+    })];
 
-
-    state.cards = state.cards.map(card => {
+    state.cards = [...state.cards.map(card => {
       return {
         ...card,
         choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
       };
-    });
+    })];
 
 
   },
@@ -205,22 +200,6 @@ const mutations = {
   },
 };
 const actions = {
-  async getCardsChoices(context: ActionContext<CardsState, MyRootState>, payload: { id: string }): Promise<Choice[]> {
-    //
-    let choices = [] as Choice[];
-    const { id } = payload;
-    console.log("got id of card", id);
-
-
-    choices = state.cards.map((card: CardClass, index: number, _cards: Array<CardClass>) => {
-      return _cards[index].choices![index];
-    });
-
-    console.log("choices in vuex", choices);
-
-    return Promise.resolve(choices);
-
-  },
   async saveChoices() {
     // call own api to update the user's cards to have the choices.
   },
@@ -257,6 +236,7 @@ const actions = {
     const shuffledCards = shuffleCards(cardsRef);
 
     try {
+      console.log("do i have choices before setting cards", choices);
 
       commit(
         "cards/SET_ALL_CARDS" as RootCommitType,
@@ -269,7 +249,6 @@ const actions = {
         { cards: shuffledCards },
         { root: true }
       );
-
       // if (choices && !cards[0].choices)
       commit(
         "cards/SET_CARDS_CHOICES" as RootCommitType,

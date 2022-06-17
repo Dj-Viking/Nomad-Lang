@@ -16,6 +16,7 @@ import {
   RegisterResponse,
   UserEntityBase,
   UpdateChoicesResponse,
+  Choice,
 } from "@/types";
 import { API_URL } from "@/constants";
 import { CardClass } from "@/types";
@@ -36,7 +37,7 @@ export interface IApiService {
   signup: (args: SignupArgs) => Promise<RegisterResponse | void>;
   addCard: (token: string, card: AddCardPayload) => Promise<AddCardResponse | never>;
   clearCards: (token: string) => Promise<ClearCardsResponse>;
-  editCard: (token: string, card: IEditCardPayload) => Promise<EditCardResponse>;
+  editCard: (token: string, card: IEditCardPayload, choices?: Array<Choice>) => Promise<EditCardResponse>;
   deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
   forgotPassword: (email: string) => Promise<ForgotPassResponse>;
   changePassword: (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
@@ -181,7 +182,8 @@ class ApiService implements IApiService {
   }
   public async editCard(
     token: string,
-    card: IEditCardPayload
+    card: IEditCardPayload,
+    choices?: Choice[]
   ): Promise<EditCardResponse> {
     this._clearHeaders();
     this._setInitialHeaders();
@@ -189,7 +191,7 @@ class ApiService implements IApiService {
     try {
       const res = await fetch(`${API_URL}` + `/user/editCard/${card.id}`, {
         method: "PUT",
-        body: JSON.stringify(card),
+        body: JSON.stringify(choices ? { card, choices } : card),
         headers: this.headers,
       });
       const data = await res.json();

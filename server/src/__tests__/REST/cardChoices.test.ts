@@ -2,7 +2,7 @@
 import request from "supertest";
 import mongoose from "mongoose";
 import createServer from "../../app";
-import { ICard, ICreateUserResponse, IUserCreateCardResponse, IUserEditCardResponse } from "../../types";
+import { ICard, ICreateUserResponse, IMeResponse, IUserCreateCardResponse, IUserEditCardResponse } from "../../types";
 import { MOCK_ADD_CARD, MOCK_CARD_CHOICES } from "../../constants";
 import { User } from "../../models";
 
@@ -74,6 +74,18 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(parsed.cards[0].choices![0].text).toBe(MOCK_CARD_CHOICES[0].text);
 
     });
+
+    test("/GET /user/me check user's cards for choices in them after choices endpoint has been called", async () => {
+        const user = await request(app).get("/user/me").set({
+            "authorization": `Bearer ${newUserToken}`
+        });
+        expect(user.status).toBe(200);
+        const parsed = JSON.parse(user.text) as IMeResponse;
+        console.log(parsed.user.cards);
+        expect(parsed.user.cards).toHaveLength(1);
+        expect(parsed.user.cards![0].choices).toHaveLength(4);
+    });
+
     test("delete the user we just made from the database", async () => {
         await User.deleteOne({ _id: newUserId });
     });

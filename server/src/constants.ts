@@ -13,6 +13,9 @@ export const MOCK_CARD_CHOICES = [
     text: "aiuhjfiuj",
   },
   {
+    text: "aiuhjfiuj",
+  },
+  {
     text: "asf8eh3jf",
   },
   {

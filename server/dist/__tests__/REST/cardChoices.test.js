@@ -76,6 +76,16 @@ describe("test adding in the card choices to the user's db card collection", () 
         const parsed = JSON.parse(edit.text);
         expect(parsed.cards[0].choices[0].text).toBe(constants_1.MOCK_CARD_CHOICES[0].text);
     }));
+    test("/GET /user/me check user's cards for choices in them after choices endpoint has been called", () => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield (0, supertest_1.default)(app).get("/user/me").set({
+            "authorization": `Bearer ${newUserToken}`
+        });
+        expect(user.status).toBe(200);
+        const parsed = JSON.parse(user.text);
+        console.log(parsed.user.cards);
+        expect(parsed.user.cards).toHaveLength(1);
+        expect(parsed.user.cards[0].choices).toHaveLength(4);
+    }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });
     }));

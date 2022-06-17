@@ -166,6 +166,7 @@ export const UserController = {
 
       // set up the tempCard object that will update the subdocument card of the user's cards subdoc array
       for (const key in req.body) {
+        console.log("body key");
         tempCard = {
           ...tempCard,
           [`cards.$.${key}`]: req.body[key],
