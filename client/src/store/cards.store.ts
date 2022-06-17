@@ -17,22 +17,7 @@ import { ActionContext } from "vuex";
 
 const state: CardsState = {
   allCards: [],
-  cards: [
-    // {
-    //   _id: "",
-    //   choices: [
-    //     {
-    //       text: "kdfjkdj"
-    //     },
-    //     {
-    //       text: "kdfjkdj"
-    //     },
-    //     {
-    //       text: "kdfjkdj"
-    //     }
-    //   ]
-    // }
-  ],
+  cards: [],
   categorized: {},
 };
 const mutations = {
