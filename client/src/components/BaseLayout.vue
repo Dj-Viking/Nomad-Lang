@@ -136,17 +136,26 @@ export default defineComponent({
       { root: true }
     );
 
+    console.log("user", user);
+
     // fetch choices only if the cards the user has in their collection DO NOT have choices in them.
     let choices_or_null: Choice[] | null = null;
-    if (!user!.cards![0].choices!.length) {
+    let cards_have_choices = !!user!.cards![0].choices!.length;
+
+    if (!cards_have_choices) {
+      console.log("am i here");
       const { choices, err } = await api.updateChoices();
 
       choices_or_null = choices ? [...choices.data] : null;
 
-      console.log(" got choices I think", choices_or_null);
-
       if (err || !choices_or_null) throw {
         error: "choices was null or there was an error fetching for choices"
+      };
+
+      const { result, er } = await api.addChoicesToCards(choices_or_null, auth.getToken()!);
+
+      if (er || !result) throw {
+        error: "could not update the user's cards choices"
       };
     }
 

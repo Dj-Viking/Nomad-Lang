@@ -23,6 +23,5 @@ describe("test the chuck norris api choice getter thing", () => {
         const parsed = JSON.parse(fake_choices_res.text) as { message: string; data: ChoiceClass[] };
         expect(typeof parsed.message).toBe("string");
         expect(parsed.data).toHaveLength(3);
-        // expect(parsed.data).toBe("kdfjdks");
     });
 });

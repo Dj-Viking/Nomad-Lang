@@ -143,6 +143,41 @@ export const UserController = {
       console.error(error);
     }
   },
+  addChoicesToCards: async function (
+    req: Express.MyRequest,
+    res: Response
+  ): Promise<Response | void> {
+    try {
+      const { choices } = req.body;
+      console.log("body", req.body);
+      console.log("typeo f choices", typeof choices);
+      const user = await User.findOne({ email: req!.user!.email });
+
+      const updateUsersCardsPromises = user!.cards.map((card) => {
+        let tempCard = {};
+        tempCard = {
+          ...card,
+          _id: card._id.toHexString(),
+          [`cards.$.choices`]: choices,
+        };
+        return User.findOneAndUpdate(
+          { email: req!.user!.email, "cards._id": card._id.toHexString() },
+          {
+            $set: { ...tempCard },
+          }
+        );
+      });
+
+      await Promise.all(updateUsersCardsPromises);
+
+      return res.status(200).json({ result: true, error: null });
+    } catch (error) {
+      console.error("error when adding choices to a user's cards", error);
+      return res
+        .status(500)
+        .json({ result: null, error: "there was a problem with updating a card's choices" });
+    }
+  },
   editCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const { id } = req.params;
@@ -166,7 +201,6 @@ export const UserController = {
 
       // set up the tempCard object that will update the subdocument card of the user's cards subdoc array
       for (const key in req.body) {
-        console.log("body key");
         tempCard = {
           ...tempCard,
           [`cards.$.${key}`]: req.body[key],
@@ -208,8 +242,6 @@ export const UserController = {
   },
   forgotPassword: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
-      console.log("am i here", req.body.email);
-
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const { email } = req.body;
       // if no email in body then error

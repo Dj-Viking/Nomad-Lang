@@ -2,7 +2,7 @@
 import request from "supertest";
 import mongoose from "mongoose";
 import createServer from "../../app";
-import { ICard, ICreateUserResponse, IMeResponse, IUserCreateCardResponse, IUserEditCardResponse } from "../../types";
+import { ICard, ICreateUserResponse, IMeResponse, IUserAddChoicesResponse, IUserCreateCardResponse, IUserEditCardResponse } from "../../types";
 import { MOCK_ADD_CARD, MOCK_CARD_CHOICES } from "../../constants";
 import { User } from "../../models";
 
@@ -72,7 +72,17 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(edit.status).toBe(200);
         const parsed = JSON.parse(edit.text) as IUserEditCardResponse;
         expect(parsed.cards[0].choices![0].text).toBe(MOCK_CARD_CHOICES[0].text);
+    });
 
+    test("/PUT /user/addChoicesToCards/:id add choices to cards in new endpoint for simplicity", async () => {
+        const add_choices = await request(app).put(`/user/addChoicesToCards`).send({
+            choices: MOCK_CARD_CHOICES
+        }).set({
+            "authorization": `Bearer ${newUserToken}`
+        });
+        expect(add_choices.status).toBe(200);
+        const parsed = JSON.parse(add_choices.text) as IUserAddChoicesResponse
+        expect(parsed.result).toBe(true);
     });
 
     test("/GET /user/me check user's cards for choices in them after choices endpoint has been called", async () => {
@@ -81,7 +91,6 @@ describe("test adding in the card choices to the user's db card collection", () 
         });
         expect(user.status).toBe(200);
         const parsed = JSON.parse(user.text) as IMeResponse;
-        console.log(parsed.user.cards);
         expect(parsed.user.cards).toHaveLength(1);
         expect(parsed.user.cards![0].choices).toHaveLength(4);
     });

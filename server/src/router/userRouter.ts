@@ -13,6 +13,7 @@ const {
   changeThemePref,
   deleteCard,
   getFakeChoices,
+  addChoicesToCards,
 } = UserController;
 
 const userRouter = Router();
@@ -27,6 +28,7 @@ userRouter.get("/me", authMiddleware, me);
 userRouter.put("/clearCards", authMiddleware, clearCards);
 userRouter.post("/addCard", authMiddleware, addCard);
 userRouter.put("/editCard/:id", authMiddleware, editCard);
+userRouter.put("/addChoicesToCards", authMiddleware, addChoicesToCards);
 userRouter.delete("/deleteCard/:id", authMiddleware, deleteCard);
 userRouter.put("/changePassword", authMiddleware, changePassword);
 userRouter.put("/changeThemePref", authMiddleware, changeThemePref);

@@ -17,9 +17,9 @@ import {
   UserEntityBase,
   UpdateChoicesResponse,
   Choice,
+  AddChoicesResponse,
 } from "@/types";
 import { API_URL } from "@/constants";
-import { CardClass } from "@/types";
 interface SignupArgs {
   username: string;
   email: string;
@@ -40,6 +40,7 @@ export interface IApiService {
   editCard: (token: string, card: IEditCardPayload, choices?: Array<Choice>) => Promise<EditCardResponse>;
   deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
   forgotPassword: (email: string) => Promise<ForgotPassResponse>;
+  addChoicesToCards: (choices: Choice[], token: string) => Promise<AddChoicesResponse>;
   changePassword: (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
   changeThemePref: (token: string, themePref: string) => Promise<ChangeThemePrefResponse>;
   updateChoices: () => Promise<UpdateChoicesResponse | void>;
@@ -180,6 +181,31 @@ class ApiService implements IApiService {
       throw error;
     }
   }
+  public async addChoicesToCards(
+    choices: Array<Choice>,
+    token: string
+  ): Promise<AddChoicesResponse> {
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
+    try {
+      const res = await fetch(`${API_URL}` + `/user/addChoicesToCards`, {
+        method: "PUT",
+        body: JSON.stringify({ choices }),
+        headers: this.headers
+      });
+      const data = await res.json();
+      return {
+        result: data,
+        er: null
+      }
+    } catch (error) {
+      return {
+        result: null,
+        er: error
+      }
+    }
+  }
   public async editCard(
     token: string,
     card: IEditCardPayload,
@@ -191,7 +217,7 @@ class ApiService implements IApiService {
     try {
       const res = await fetch(`${API_URL}` + `/user/editCard/${card.id}`, {
         method: "PUT",
-        body: JSON.stringify(choices ? { card, choices } : card),
+        body: JSON.stringify(card),
         headers: this.headers,
       });
       const data = await res.json();

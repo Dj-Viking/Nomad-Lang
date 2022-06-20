@@ -151,6 +151,31 @@ exports.UserController = {
             }
         });
     },
+    addChoicesToCards: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { choices } = req.body;
+                console.log("body", req.body);
+                console.log("typeo f choices", typeof choices);
+                const user = yield models_1.User.findOne({ email: req.user.email });
+                const updateUsersCardsPromises = user.cards.map((card) => {
+                    let tempCard = {};
+                    tempCard = Object.assign(Object.assign({}, card), { _id: card._id.toHexString(), [`cards.$.choices`]: choices });
+                    return models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": card._id.toHexString() }, {
+                        $set: Object.assign({}, tempCard),
+                    });
+                });
+                yield Promise.all(updateUsersCardsPromises);
+                return res.status(200).json({ result: true, error: null });
+            }
+            catch (error) {
+                console.error("error when adding choices to a user's cards", error);
+                return res
+                    .status(500)
+                    .json({ result: null, error: "there was a problem with updating a card's choices" });
+            }
+        });
+    },
     editCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -171,7 +196,6 @@ exports.UserController = {
                 else
                     void 0;
                 for (const key in req.body) {
-                    console.log("body key");
                     tempCard = Object.assign(Object.assign({}, tempCard), { [`cards.$.${key}`]: req.body[key] });
                 }
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
@@ -206,7 +230,6 @@ exports.UserController = {
     forgotPassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("am i here", req.body.email);
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const { email } = req.body;
                 if (!email)

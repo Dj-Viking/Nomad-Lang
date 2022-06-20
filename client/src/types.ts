@@ -368,3 +368,9 @@ export type UpdateChoicesResponse = {
 } & {
   err?: unknown | null;
 }
+
+export type AddChoicesResponse = {
+  result: boolean | null;
+} & {
+  er?: unknown | null;
+}

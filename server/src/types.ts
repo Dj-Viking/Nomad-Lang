@@ -227,3 +227,9 @@ export interface IForgotPassResponse {
 export interface IChangeThemeResponse {
   themePref: string;
 }
+
+export type IUserAddChoicesResponse = {
+  result: boolean | null;
+} & {
+  err: unknown | null;
+};

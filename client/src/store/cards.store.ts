@@ -153,8 +153,7 @@ const mutations = {
     // card we found by the ID passed in from the modal context
     // if the keys dont have values then we wont edit that field on the
     Object.keys(payload).forEach((key): void => {
-      // @ts-ignore
-      if (key !== "id" && !!payload[key]) {
+      if (key !== "id" && !!payload[key as keyof EditCardCommitPayload]) {
         switch (key) {
           case "frontSideText":
             state.cards[index].frontSideText = frontSideText;
