@@ -1,19 +1,19 @@
 /* eslint-disable */
 // import { Card } from "../../models";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
-import {
-    Card,
-    User
-} from "../../models";
+// import {
+//     Card,
+//     User
+// } from "../../models";
 
-beforeAll(async () => {
-    await mongoose.connect("mongodb://localhost/app-lang", {});
-});
+// beforeAll(async () => {
+//     await mongoose.connect("mongodb://localhost/app-lang", {});
+// });
 
-afterAll(async () => {
-    await mongoose.connection.close();
-});
+// afterAll(async () => {
+//     await mongoose.connection.close();
+// });
 
 // describe("can get viking", () => {
 //     test(" update cards", async () => {
@@ -89,28 +89,28 @@ afterAll(async () => {
 //         }])
 //     });
 // });
-describe("placeholder", () => {
-    test("blah", async () => {
-        const cards = await Card.find({ creator: "viking" });
+// describe("placeholder", () => {
+//     test("blah", async () => {
+//         const cards = await Card.find({ creator: "viking" });
 
-        const updatePromises = cards.map(card => {
-            return Card.findOneAndUpdate(
-                { _id: card._id.toHexString() },
-                {
-                    $set: {
-                        choices: []
-                    },
-                },
-                { new: true },
-            );
-        });
+//         const updatePromises = cards.map(card => {
+//             return Card.findOneAndUpdate(
+//                 { _id: card._id.toHexString() },
+//                 {
+//                     $set: {
+//                         choices: []
+//                     },
+//                 },
+//                 { new: true },
+//             );
+//         });
 
-        const updated = await Promise.all(updatePromises);
+//         const updated = await Promise.all(updatePromises);
 
-        await User.findOneAndUpdate({ username: "viking" }, {
-            $set: {
-                cards: [...updated].map(card => card?._id.toHexString())
-            }
-        })
-    });
-});
+//         await User.findOneAndUpdate({ username: "viking" }, {
+//             $set: {
+//                 cards: [...updated].map(card => card?._id.toHexString())
+//             }
+//         })
+//     });
+// });
