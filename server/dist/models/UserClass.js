@@ -50,7 +50,7 @@ __decorate([
     __metadata("design:type", String)
 ], UserClass.prototype, "token", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ type: () => CardClass_1.CardClass, default: [] }),
+    (0, typegoose_1.prop)({ ref: () => CardClass_1.CardClass, default: [] }),
     __metadata("design:type", Array)
 ], UserClass.prototype, "cards", void 0);
 __decorate([

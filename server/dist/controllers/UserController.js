@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
-const fetch = require("node-fetch");
 const models_1 = require("../models");
 const signToken_1 = require("../utils/signToken");
 const mongoose_1 = __importDefault(require("mongoose"));
@@ -35,13 +34,14 @@ exports.UserController = {
                 const updated = yield models_1.User.findOneAndUpdate({ email: user.email }, { token }, { new: true })
                     .select("-password")
                     .select("-__v");
+                const cards = yield models_1.Card.find({ creator: updated.username });
                 return res.status(200).json({
                     user: {
                         username: updated.username,
                         email: updated.email,
                         _id: updated._id,
                         token,
-                        cards: updated.cards,
+                        cards: cards,
                         themePref: updated.themePref,
                     },
                 });
@@ -151,56 +151,21 @@ exports.UserController = {
             }
         });
     },
-    addChoicesToCards: function (req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { choices } = req.body;
-                console.log("body", req.body);
-                console.log("typeo f choices", typeof choices);
-                const user = yield models_1.User.findOne({ email: req.user.email });
-                const updateUsersCardsPromises = user.cards.map((card) => {
-                    let tempCard = {};
-                    tempCard = Object.assign(Object.assign({}, card), { _id: card._id.toHexString(), [`cards.$.choices`]: choices });
-                    return models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": card._id.toHexString() }, {
-                        $set: Object.assign({}, tempCard),
-                    });
-                });
-                yield Promise.all(updateUsersCardsPromises);
-                return res.status(200).json({ result: true, error: null });
-            }
-            catch (error) {
-                console.error("error when adding choices to a user's cards", error);
-                return res
-                    .status(500)
-                    .json({ result: null, error: "there was a problem with updating a card's choices" });
-            }
-        });
-    },
     editCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (Object.keys(req.body).length === 0) {
+                    return res.status(422).json({ error: "Unprocessable body" });
+                }
                 const { id } = req.params;
                 const validId = mongoose_1.default.Types.ObjectId.isValid(id);
-                if (!validId)
+                if (!validId) {
                     return res
                         .status(400)
                         .json({ error: "Bad request, id parameter was not a valid id format" });
-                let tempCard = {};
-                let fieldCount = 0;
-                for (let i = 0; i < Object.keys(req.body).length; i++)
-                    fieldCount++;
-                if (fieldCount === 0)
-                    return res.status(400).json({
-                        error: "Need to provide fields to the json body that match a card's schema properties",
-                    });
-                else
-                    void 0;
-                for (const key in req.body) {
-                    tempCard = Object.assign(Object.assign({}, tempCard), { [`cards.$.${key}`]: req.body[key] });
                 }
-                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
-                    $set: Object.assign({}, tempCard),
-                }, { new: true });
+                yield models_1.Card.findOneAndUpdate({ _id: id }, Object.assign({}, req.body), { new: true });
+                const updatedUser = yield models_1.User.findOne({ email: req.user.email });
                 return res.status(200).json({ cards: updatedUser.cards });
             }
             catch (error) {
@@ -208,18 +173,43 @@ exports.UserController = {
             }
         });
     },
+    addChoicesToCards: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userCards = yield models_1.Card.find({ creator: req.user.username });
+                const updatePromises = userCards.map((id) => {
+                    return models_1.Card.findOneAndUpdate({ _id: id }, {
+                        $set: {
+                            choices: req.body.choices,
+                        },
+                    }, { new: true });
+                });
+                yield Promise.all(updatePromises);
+                return res.status(200).json({ result: true });
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+    },
     deleteCard: function (req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
-                    $pull: {
-                        cards: { _id: id },
+                const cardDelete = yield models_1.Card.deleteOne({ _id: id });
+                if (cardDelete.deletedCount === 0) {
+                    return res.status(404).json({ error: "Card not found" });
+                }
+                const userCards = (_a = (yield models_1.User.findOne({ email: req.user.email }))) === null || _a === void 0 ? void 0 : _a.cards;
+                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                    $set: {
+                        cards: [...userCards].filter((card) => card.toHexString() !== id),
                     },
                 }, { new: true });
-                if (updatedUser === null)
+                if (userCards === null || userCards === undefined)
                     return res.status(400).json({ error: "Could not delete a card at this time" });
-                return res.status(200).json({ cards: updatedUser.cards });
+                return res.status(200).json({ cards: updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.cards });
             }
             catch (error) {
                 console.error(error);
@@ -300,9 +290,10 @@ exports.UserController = {
     addCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const card = yield models_1.Card.create(Object.assign(Object.assign({}, req.body), { creator: req.user.username }));
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
                     $push: {
-                        cards: Object.assign({}, req.body),
+                        cards: card._id,
                     },
                 }, { new: true })
                     .select("-password")
@@ -332,45 +323,6 @@ exports.UserController = {
             catch (error) {
                 console.error(error);
                 return res.status(500).json({ error: "error while changing theme preference" });
-            }
-        });
-    },
-    getFakeChoices: function (_req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const category = "dev";
-                let result = null;
-                const responses = new Array(3)
-                    .fill(null)
-                    .map(() => __awaiter(this, void 0, void 0, function* () {
-                    return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`, {
-                        method: "GET",
-                    });
-                }));
-                const rezzed = yield Promise.all(responses);
-                const datas = new Array(3).fill(null).map((_, index) => {
-                    return rezzed[index].json();
-                });
-                result = yield Promise.all(datas);
-                result = result.map((item) => {
-                    return {
-                        id: Math.random() * 1000 + "kdjfkjd",
-                        text: item.value,
-                    };
-                });
-                result = result.map((choice) => {
-                    let new_data;
-                    new_data = choice.text.split("").map((_char, _index, arr) => {
-                        return arr[Math.ceil(Math.random() * arr.length)];
-                    });
-                    return {
-                        text: new_data.join("").slice(0, 7),
-                    };
-                });
-                return res.status(200).json({ message: "hell yeah brother!", data: result });
-            }
-            catch (error) {
-                console.error(error);
             }
         });
     },

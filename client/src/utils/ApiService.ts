@@ -43,7 +43,7 @@ export interface IApiService {
   addChoicesToCards: (choices: Choice[], token: string) => Promise<AddChoicesResponse>;
   changePassword: (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
   changeThemePref: (token: string, themePref: string) => Promise<ChangeThemePrefResponse>;
-  updateChoices: () => Promise<UpdateChoicesResponse | void>;
+  updateChoices: (token: string) => Promise<UpdateChoicesResponse | void>;
 }
 
 class ApiService implements IApiService {
@@ -327,9 +327,15 @@ class ApiService implements IApiService {
       };
     }
   }
-  async updateChoices(): Promise<UpdateChoicesResponse> {
+  async updateChoices(token: string): Promise<UpdateChoicesResponse> {
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token)
     try {
-      const res = await fetch(`${API_URL}` + "/user/getFakeChoices", { method: "GET" });
+      const res = await fetch(`${API_URL}` + "/user/addChoicesToCards", {
+        method: "PUT",
+        headers: this.headers
+      });
       const data = await res.json();
       console.log("data from beta button", data);
       return {

@@ -12,7 +12,6 @@ const {
   editCard,
   changeThemePref,
   deleteCard,
-  getFakeChoices,
   addChoicesToCards,
 } = UserController;
 
@@ -21,7 +20,6 @@ const userRouter = Router();
 userRouter.post("/login", login);
 userRouter.post("/signup", signup);
 userRouter.post("/forgotPassword", forgotPassword);
-userRouter.get("/getFakeChoices", getFakeChoices);
 
 // need auth
 userRouter.get("/me", authMiddleware, me);

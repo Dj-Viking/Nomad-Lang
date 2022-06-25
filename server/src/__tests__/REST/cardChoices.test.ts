@@ -2,9 +2,9 @@
 import request from "supertest";
 import mongoose from "mongoose";
 import createServer from "../../app";
-import { ICard, ICreateUserResponse, IMeResponse, IUserAddChoicesResponse, IUserCreateCardResponse, IUserEditCardResponse } from "../../types";
+import { ICard, ICreateUserResponse, IMeResponse, IUserAddChoicesResponse, IUserCreateCardResponse, /*IUserEditCardResponse,*/ } from "../../types";
 import { MOCK_ADD_CARD, MOCK_CARD_CHOICES } from "../../constants";
-import { User } from "../../models";
+import { Card, User } from "../../models";
 
 beforeAll(async () => {
     await mongoose.connect("mongodb://localhost/rest-cats-test", {});
@@ -17,7 +17,6 @@ afterAll(async () => {
 });
 
 const app = createServer();
-let newCardId: string | null = null;
 let newUserId: string | null = null;
 let newUserToken: string | null = null;
 
@@ -51,35 +50,36 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(addCard.status).toBe(200);
         const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
         expect(parsed.cards).toHaveLength(1);
-        expect(typeof parsed.cards[0]._id).toBe("string");
-        expect(typeof parsed.cards[0].frontSideLanguage).toBe("string");
-        expect(parsed.cards[0].frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
-        newCardId = parsed.cards[0]._id as string;
-        expect(parsed.cards[0].creator).toBe("test user");
-        expect(typeof parsed.cards[0].createdAt).toBe("string");
-        expect(typeof parsed.cards[0].updatedAt).toBe("string");
+        expect(typeof parsed.cards[0]).toBe("string");
+        const card = await Card.findOne({ _id: parsed.cards[0] });
+        expect(typeof card?.frontSideLanguage).toBe("string");
+        expect(card?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
+        expect(card?.creator).toBe("test user");
+        expect(typeof card?.createdAt).toBe("object");
+        expect(typeof card?.updatedAt).toBe("object");
     });
 
-    test("/PUT /user/editCard/:id add in the choices using the edit card endpoint", async () => {
-        const edit = await request(app)
-            .put(`/user/editCard/${newCardId}`)
-            .send({
-                choices: MOCK_CARD_CHOICES
-            })
-            .set({
-                "authorization": `Bearer ${newUserToken}`
-            });
-        expect(edit.status).toBe(200);
-        const parsed = JSON.parse(edit.text) as IUserEditCardResponse;
-        expect(parsed.cards[0].choices![0].text).toBe(MOCK_CARD_CHOICES[0].text);
+    test("just keep adding some cards", async () => {
+        await request(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(MOCK_ADD_CARD as ICard);
+        await request(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(MOCK_ADD_CARD as ICard);
+        await request(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(MOCK_ADD_CARD as ICard);
+        await request(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(MOCK_ADD_CARD as ICard);
+        await request(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(MOCK_ADD_CARD as ICard);
+        await request(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(MOCK_ADD_CARD as ICard);
     });
 
     test("/PUT /user/addChoicesToCards/:id add choices to cards in new endpoint for simplicity", async () => {
+        const user = await User.findOne({ _id: newUserId });
+
         const add_choices = await request(app).put(`/user/addChoicesToCards`).send({
+            cardIds: user?.cards.map(card => card?._id.toHexString()),
             choices: MOCK_CARD_CHOICES
         }).set({
             "authorization": `Bearer ${newUserToken}`
         });
+        if (add_choices.status !== 200) {
+            console.log("error?", JSON.parse(add_choices.text))
+        }
         expect(add_choices.status).toBe(200);
         const parsed = JSON.parse(add_choices.text) as IUserAddChoicesResponse
         expect(parsed.result).toBe(true);
@@ -91,8 +91,9 @@ describe("test adding in the card choices to the user's db card collection", () 
         });
         expect(user.status).toBe(200);
         const parsed = JSON.parse(user.text) as IMeResponse;
-        expect(parsed.user.cards).toHaveLength(1);
-        expect(parsed.user.cards![0].choices).toHaveLength(4);
+        expect(parsed.user.cards).toHaveLength(7);
+        const userCards = await Card.find({ creator: parsed.user.username });
+        expect(userCards[0]?.choices).toHaveLength(4);
     });
 
     test("delete the user we just made from the database", async () => {

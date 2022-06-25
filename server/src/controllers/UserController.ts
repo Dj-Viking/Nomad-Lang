@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Express, MyJwtData } from "../types";
-const fetch = require("node-fetch");
 import { Response } from "express";
-import { CardClass, ChoiceClass, User } from "../models";
+import { Card, User } from "../models";
 import { signToken } from "../utils/signToken";
 import mongoose from "mongoose";
 import { hash } from "argon2";
@@ -23,13 +22,15 @@ export const UserController = {
         .select("-password")
         .select("-__v");
 
+      const cards = await Card.find({ creator: updated!.username });
+
       return res.status(200).json({
         user: {
           username: updated!.username,
           email: updated!.email,
           _id: updated!._id,
           token,
-          cards: updated!.cards,
+          cards: cards,
           themePref: updated!.themePref,
         },
       });
@@ -143,98 +144,85 @@ export const UserController = {
       console.error(error);
     }
   },
-  addChoicesToCards: async function (
-    req: Express.MyRequest,
-    res: Response
-  ): Promise<Response | void> {
-    try {
-      const { choices } = req.body;
-      console.log("body", req.body);
-      console.log("typeo f choices", typeof choices);
-      const user = await User.findOne({ email: req!.user!.email });
-
-      const updateUsersCardsPromises = user!.cards.map((card) => {
-        let tempCard = {};
-        tempCard = {
-          ...card,
-          _id: card._id.toHexString(),
-          [`cards.$.choices`]: choices,
-        };
-        return User.findOneAndUpdate(
-          { email: req!.user!.email, "cards._id": card._id.toHexString() },
-          {
-            $set: { ...tempCard },
-          }
-        );
-      });
-
-      await Promise.all(updateUsersCardsPromises);
-
-      return res.status(200).json({ result: true, error: null });
-    } catch (error) {
-      console.error("error when adding choices to a user's cards", error);
-      return res
-        .status(500)
-        .json({ result: null, error: "there was a problem with updating a card's choices" });
-    }
-  },
   editCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
+      if (Object.keys(req.body).length === 0) {
+        return res.status(422).json({ error: "Unprocessable body" });
+      }
       const { id } = req.params;
       const validId = mongoose.Types.ObjectId.isValid(id);
 
-      if (!validId)
+      if (!validId) {
         return res
           .status(400)
           .json({ error: "Bad request, id parameter was not a valid id format" });
-
-      let tempCard = {} as CardClass;
-      let fieldCount = 0;
-
-      for (let i = 0; i < Object.keys(req.body).length; i++) fieldCount++;
-
-      if (fieldCount === 0)
-        return res.status(400).json({
-          error: "Need to provide fields to the json body that match a card's schema properties",
-        });
-      else void 0;
-
-      // set up the tempCard object that will update the subdocument card of the user's cards subdoc array
-      for (const key in req.body) {
-        tempCard = {
-          ...tempCard,
-          [`cards.$.${key}`]: req.body[key],
-        };
       }
 
-      const updatedUser = await User.findOneAndUpdate(
-        { email: req!.user!.email, "cards._id": id }, //find user's card subdocument by it's id from req.params
+      await Card.findOneAndUpdate(
+        { _id: id },
         {
-          $set: { ...tempCard }, //update that card in the subdoc array that we found in the cards._id filter
+          ...req.body,
         },
         { new: true }
       );
+
+      const updatedUser = await User.findOne({ email: req!.user!.email });
 
       return res.status(200).json({ cards: updatedUser!.cards });
     } catch (error) {
       return res.status(500);
     }
   },
+  addChoicesToCards: async function (
+    req: Express.MyRequest,
+    res: Response
+  ): Promise<Response | void> {
+    try {
+      const userCards = await Card.find({ creator: req!.user!.username });
+
+      const updatePromises = userCards.map((id) => {
+        return Card.findOneAndUpdate(
+          { _id: id },
+          {
+            $set: {
+              choices: req.body.choices,
+            },
+          },
+          { new: true }
+        );
+      });
+
+      await Promise.all(updatePromises);
+
+      return res.status(200).json({ result: true });
+    } catch (error) {
+      console.error(error);
+    }
+  },
   deleteCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
       const { id } = req.params;
+      const cardDelete = await Card.deleteOne({ _id: id });
+      if (cardDelete.deletedCount === 0) {
+        return res.status(404).json({ error: "Card not found" });
+      }
+      const userCards = (await User.findOne({ email: req!.user!.email }))?.cards;
+
       const updatedUser = await User.findOneAndUpdate(
-        { email: req!.user!.email, "cards._id": id },
+        { email: req!.user!.email },
         {
-          $pull: {
-            cards: { _id: id },
+          $set: {
+            cards: [...(userCards as mongoose.Types.ObjectId[])].filter(
+              (card) => card.toHexString() !== id
+            ),
           },
         },
         { new: true }
       );
-      if (updatedUser === null)
+
+      if (userCards === null || userCards === undefined)
         return res.status(400).json({ error: "Could not delete a card at this time" });
-      return res.status(200).json({ cards: updatedUser!.cards });
+      return res.status(200).json({ cards: updatedUser?.cards });
     } catch (error) {
       console.error(error);
       return res.status(500);
@@ -322,11 +310,12 @@ export const UserController = {
   },
   addCard: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
     try {
+      const card = await Card.create({ ...req.body, creator: req!.user!.username });
       const updatedUser = await User.findOneAndUpdate(
         { email: req!.user!.email },
         {
           $push: {
-            cards: { ...req.body },
+            cards: card._id,
           },
         },
         { new: true }
@@ -362,52 +351,6 @@ export const UserController = {
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "error while changing theme preference" });
-    }
-  },
-  getFakeChoices: async function (
-    _req: Express.MyRequest,
-    res: Response
-  ): Promise<Response | void> {
-    try {
-      const category = "dev";
-      //fetch chuck norris api
-      let result = null;
-      const responses: Array<Promise<Response>> = new Array(3)
-        .fill(null)
-        .map(async (): Promise<Response> => {
-          return fetch(`https://api.chucknorris.io/jokes/random?category=${category}`, {
-            method: "GET",
-          });
-        });
-
-      const rezzed: Array<Response> = await Promise.all(responses);
-
-      const datas = new Array(3).fill(null).map((_, index: number) => {
-        return rezzed[index].json();
-      });
-      result = await Promise.all(datas);
-
-      result = result.map((item: any) => {
-        return {
-          id: Math.random() * 1000 + "kdjfkjd",
-          text: item.value,
-        };
-      });
-      result = result.map((choice: ChoiceClass) => {
-        let new_data;
-
-        //scramble the string around
-        new_data = choice.text.split("").map((_char: string, _index: number, arr: string[]) => {
-          return arr[Math.ceil(Math.random() * arr.length)];
-        });
-
-        return {
-          text: new_data.join("").slice(0, 7),
-        };
-      });
-      return res.status(200).json({ message: "hell yeah brother!", data: result });
-    } catch (error) {
-      console.error(error);
     }
   },
 };

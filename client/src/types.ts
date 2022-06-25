@@ -240,6 +240,7 @@ export type RootDispatchType =
 
 export interface AddCardPayload {
   frontSideText?: string;
+  creator?: string;
   frontSideLanguage?: string;
   frontSidePicture?: string;
   backSideText?: string;
@@ -362,7 +363,7 @@ export type ChangeThemePrefResponse = {
 
 export type UpdateChoicesResponse = {
   choices: null | {
-    data: Choice[],
+    data: boolean,
     message: string;
   }
 } & {

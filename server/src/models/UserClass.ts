@@ -1,4 +1,4 @@
-import { prop, pre, plugin, DocumentType, modelOptions } from "@typegoose/typegoose";
+import { prop, Ref, pre, plugin, DocumentType, modelOptions } from "@typegoose/typegoose";
 import { CardClass } from "./CardClass";
 import argon2 from "argon2";
 import mongooseUniqueValidator from "mongoose-unique-validator";
@@ -30,8 +30,8 @@ export class UserClass {
   @prop()
   public token?: string;
 
-  @prop({ type: () => CardClass, default: [] })
-  public cards!: CardClass[]; // This is a typed Array
+  @prop({ ref: () => CardClass, default: [] })
+  public cards!: Ref<CardClass>[]; // This is a ref Array
 
   @prop({ default: "light" })
   public themePref?: string;
