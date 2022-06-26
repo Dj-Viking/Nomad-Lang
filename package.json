@@ -1,6 +1,6 @@
 {
   "name": "nomad-lang",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "",
   "scripts": {
     "install": "cd server && npm i --legacy-peer-deps && cd ../client && npm i --legacy-peer-deps",
