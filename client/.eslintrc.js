@@ -15,6 +15,7 @@ module.exports = {
     "vue/multi-word-component-names": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "no-extra-boolean-cast": "off",
+    "no-multi-spaces": "off",
     "no-prototype-builtins": "off",
     "prefer-const": "off",
     "@typescript-eslint/no-explicit-any": "off",

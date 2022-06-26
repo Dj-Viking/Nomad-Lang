@@ -34,13 +34,14 @@ exports.UserController = {
                 const updated = yield models_1.User.findOneAndUpdate({ email: user.email }, { token }, { new: true })
                     .select("-password")
                     .select("-__v");
+                const cards = yield models_1.Card.find({ creator: updated.username });
                 return res.status(200).json({
                     user: {
                         username: updated.username,
                         email: updated.email,
                         _id: updated._id,
                         token,
-                        cards: updated.cards,
+                        cards: cards,
                         themePref: updated.themePref,
                     },
                 });
@@ -153,28 +154,18 @@ exports.UserController = {
     editCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (Object.keys(req.body).length === 0) {
+                    return res.status(422).json({ error: "Unprocessable body" });
+                }
                 const { id } = req.params;
                 const validId = mongoose_1.default.Types.ObjectId.isValid(id);
-                if (!validId)
+                if (!validId) {
                     return res
                         .status(400)
                         .json({ error: "Bad request, id parameter was not a valid id format" });
-                let tempCard = {};
-                let fieldCount = 0;
-                for (let i = 0; i < Object.keys(req.body).length; i++)
-                    fieldCount++;
-                if (fieldCount === 0)
-                    return res.status(400).json({
-                        error: "Need to provide fields to the json body that match a card's schema properties",
-                    });
-                else
-                    void 0;
-                for (const key in req.body) {
-                    tempCard = Object.assign(Object.assign({}, tempCard), { [`cards.$.${key}`]: req.body[key] });
                 }
-                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
-                    $set: Object.assign({}, tempCard),
-                }, { new: true });
+                yield models_1.Card.findOneAndUpdate({ _id: id }, Object.assign({}, req.body), { new: true });
+                const updatedUser = yield models_1.User.findOne({ email: req.user.email });
                 return res.status(200).json({ cards: updatedUser.cards });
             }
             catch (error) {
@@ -182,18 +173,43 @@ exports.UserController = {
             }
         });
     },
+    addChoicesToCards: function (req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userCards = yield models_1.Card.find({ creator: req.user.username });
+                const updatePromises = userCards.map((card) => {
+                    return models_1.Card.findOneAndUpdate({ _id: card._id.toHexString() }, {
+                        $set: {
+                            choices: [...req.body.choices, { text: card.backSideText }],
+                        },
+                    }, { new: true });
+                });
+                yield Promise.all(updatePromises);
+                return res.status(200).json({ result: true });
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+    },
     deleteCard: function (req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email, "cards._id": id }, {
-                    $pull: {
-                        cards: { _id: id },
+                const cardDelete = yield models_1.Card.deleteOne({ _id: id });
+                if (cardDelete.deletedCount === 0) {
+                    return res.status(404).json({ error: "Card not found" });
+                }
+                const userCards = (_a = (yield models_1.User.findOne({ email: req.user.email }))) === null || _a === void 0 ? void 0 : _a.cards;
+                const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
+                    $set: {
+                        cards: [...userCards].filter((card) => card.toHexString() !== id),
                     },
                 }, { new: true });
-                if (updatedUser === null)
+                if (userCards === null || userCards === undefined)
                     return res.status(400).json({ error: "Could not delete a card at this time" });
-                return res.status(200).json({ cards: updatedUser.cards });
+                return res.status(200).json({ cards: updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.cards });
             }
             catch (error) {
                 console.error(error);
@@ -204,7 +220,6 @@ exports.UserController = {
     forgotPassword: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("am i here", req.body.email);
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const { email } = req.body;
                 if (!email)
@@ -275,14 +290,16 @@ exports.UserController = {
     addCard: function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const card = yield models_1.Card.create(Object.assign(Object.assign({}, req.body), { creator: req.user.username }));
                 const updatedUser = yield models_1.User.findOneAndUpdate({ email: req.user.email }, {
                     $push: {
-                        cards: Object.assign({}, req.body),
+                        cards: card._id,
                     },
                 }, { new: true })
                     .select("-password")
                     .select("-__v");
-                return res.status(200).json({ cards: updatedUser.cards });
+                const all_cards = yield models_1.Card.find({ creator: updatedUser.username });
+                return res.status(200).json({ cards: all_cards });
             }
             catch (error) {
                 console.error(error);

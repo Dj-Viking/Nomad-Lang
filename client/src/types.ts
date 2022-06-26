@@ -1,5 +1,6 @@
 export interface ICard {
   _id: string;
+  choices?: Array<Choice>;
   creatorId?: number | string;
   frontSideText?: string;
   frontSideLanguage?: string;
@@ -11,12 +12,18 @@ export interface ICard {
   createdAt?: number | string;
   isFrontSide?: boolean;
   isBackSide?: boolean;
-  categorized?: { [key: string]: ICard[] };
-  uncategorized?: Array<ICard>;
+  categorized?: { [key: string]: CardClass[] };
+  uncategorized?: Array<CardClass>;
+}
+
+export class Choice {
+  text!: string;
+  _id?: string;
 }
 
 export class CardClass implements ICard {
   _id = "";
+  choices?: Array<Choice>;
   creatorId?: string | number | undefined;
   frontSideText?: string | undefined;
   frontSideLanguage?: string | undefined;
@@ -28,8 +35,8 @@ export class CardClass implements ICard {
   createdAt?: string | number | undefined;
   isFrontSide?: boolean | undefined;
   isBackSide?: boolean | undefined;
-  categorized?: { [key: string]: ICard[]; } | undefined;
-  uncategorized?: ICard[] | undefined;
+  categorized?: { [key: string]: CardClass[]; } | undefined;
+  uncategorized?: CardClass[] | undefined;
 }
 
 export type ThemePrefChangeResponse = {
@@ -38,13 +45,13 @@ export type ThemePrefChangeResponse = {
   error?: unknown;
 };
 export type DeleteCardResponse = {
-  cards?: ICard[] | null;
+  cards?: CardClass[] | null;
 } & {
   error?: unknown | null;
 };
 
 export type EditCardResponse = {
-  cards?: ICard[] | null;
+  cards?: CardClass[] | null;
 } & {
   error?: unknown | null;
 };
@@ -79,7 +86,7 @@ export interface EditCardCommitPayload {
   color?: string;
 }
 export interface EditCardModalContext {
-  card: ICard;
+  card: CardClass;
 }
 export interface ModalState {
   modal: Modal;
@@ -118,7 +125,7 @@ export type MeQueryResponse = {
   error?: string;
 };
 export type GetUserCardsResponse = {
-  cards: ICard[];
+  cards: CardClass[];
 } & {
   error: string;
 };
@@ -155,7 +162,7 @@ export interface UserState {
     answers: { correct: number; incorrect: number; };
     email: string | null;
     token?: string | null | undefined;
-    cards: ICard[];
+    cards: CardClass[];
     loggedIn: boolean;
     id?: number;
     createdAt?: number;
@@ -167,7 +174,7 @@ export interface SetUserCommitPayload {
   username: string | null;
   email: string | null;
   token?: string | null | undefined;
-  cards: ICard[];
+  cards: CardClass[];
   loggedIn: boolean;
   id?: number;
   createdAt?: number;
@@ -180,21 +187,21 @@ export interface UserEntityBase {
   themePref: string;
   email: string;
   token: string | null;
-  cards: Array<ICard>;
+  cards: Array<CardClass>;
   createdAt: number;
   updatedAt: number;
 }
 export interface CardsState {
-  allCards: Array<ICard>;
-  cards: Array<ICard>;
+  allCards: Array<CardClass>;
+  cards: Array<CardClass>;
   categorized: CategorizedCardsObject; //class of categorized
-  uncategorized?: Array<ICard>;
+  uncategorized?: Array<CardClass>;
 }
 
 export interface CategorizedCardsObject {
   [key: string]: {
     id?: string;
-    cards: ICard[];
+    cards: CardClass[];
     isActive: boolean;
   };
 }
@@ -203,7 +210,7 @@ export interface SidebarCategorizedCardsState {
     [key: string]: {
       id: string;
       isActive: boolean;
-      cards: ICard[];
+      cards: CardClass[];
     };
   };
 }
@@ -223,7 +230,8 @@ export type RootDispatchType =
   /** */
   | "sidebarCategories/toggleWithOneKey"
   /** */
-  | "cards/setCards"
+  | "cards/saveChoices"
+  | "cards/getCardsChoices" | "cards/setCards"
   | "cards/deleteCard"
   | "cards/editCard"
   | "cards/addCard"
@@ -232,6 +240,7 @@ export type RootDispatchType =
 
 export interface AddCardPayload {
   frontSideText?: string;
+  creator?: string;
   frontSideLanguage?: string;
   frontSidePicture?: string;
   backSideText?: string;
@@ -239,7 +248,7 @@ export interface AddCardPayload {
   backSidePicture?: string;
 }
 export type AddCardResponse = {
-  cards?: ICard[];
+  cards?: CardClass[];
 } & {
   error?: unknown;
 };
@@ -262,6 +271,7 @@ export type RootCommitType =
   | "theme/TOGGLE_THEME"
   | "theme/SET_THEME"
   /** */
+  | "cards/SET_CARDS_CHOICES"
   | "cards/ADD_CARD"
   | "cards/SET_ALL_CARDS"
   | "cards/SET_DISPLAY_CARDS"
@@ -305,7 +315,7 @@ export type RegisterResponse = {
 export type LoginResponse = {
   user?: UserEntityBase | null;
 } & {
-  error?: unknown | undefined;
+  error?: string | null;
 };
 
 export type ForgotPassResponse = {
@@ -317,7 +327,7 @@ export type ForgotPassResponse = {
 export type ChangePasswordResponse = {
   done?: boolean | null;
   token?: string | null;
-  cards?: ICard[] | null;
+  cards?: CardClass[] | null;
 } & {
   error: string;
 };
@@ -350,3 +360,18 @@ export type ChangeThemePrefResponse = {
 } & {
   error?: unknown | null;
 };
+
+export type UpdateChoicesResponse = {
+  choices: null | {
+    data: boolean,
+    message: string;
+  }
+} & {
+  err?: unknown | null;
+}
+
+export type AddChoicesResponse = {
+  result: boolean | null;
+} & {
+  er?: unknown | null;
+}

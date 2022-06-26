@@ -1,4 +1,4 @@
-import { prop, pre, plugin, DocumentType, modelOptions } from "@typegoose/typegoose";
+import { prop, Ref, pre, plugin, DocumentType, modelOptions } from "@typegoose/typegoose";
 import { CardClass } from "./CardClass";
 import argon2 from "argon2";
 import mongooseUniqueValidator from "mongoose-unique-validator";
@@ -30,17 +30,17 @@ export class UserClass {
   @prop()
   public token?: string;
 
-  @prop({ type: () => CardClass, default: [] })
-  public cards!: CardClass[]; // This is a typed Array
+  @prop({ ref: () => CardClass, default: [] })
+  public cards!: Ref<CardClass>[]; // This is a ref Array
 
   @prop({ default: "light" })
   public themePref?: string;
 
   @prop({ default: Date.now() })
-  public createdAt: Date;
+  public createdAt!: Date;
 
   @prop({ default: Date.now() })
-  public updatedAt: Date;
+  public updatedAt!: Date;
 
   //important note, this method is not a part of the Model but the returned Document from a Model query
   // e.g. const user = User.findOne({ _id })

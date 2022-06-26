@@ -24,7 +24,7 @@ const mutations = {
           window.localStorage.setItem("theme", "light");
 
           // eslint-disable-next-line
-            document.querySelector("html")!.style.transition = "0.5s";
+          document.querySelector("html")!.style.transition = "0.5s";
           // eslint-disable-next-line
           document.querySelector("html")!.style.backgroundColor = "white";
           document.body.classList.remove("body-dark");
@@ -65,7 +65,14 @@ const mutations = {
   },
 };
 const actions = {};
-const getters = {};
+const getters = {
+  isLight(state: ThemeState) {
+    return state.theme === "light";
+  },
+  isDark(state: ThemeState) {
+    return state.theme === "dark";
+  }
+};
 
 export default {
   namespaced: true,

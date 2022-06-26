@@ -163,7 +163,6 @@ export default defineComponent({
   name: "CardList",
   components: {
     Card,
-    // Spinner,
   },
   setup() {
     const inputId = ref(0);

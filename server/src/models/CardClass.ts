@@ -1,4 +1,5 @@
 import { prop, modelOptions, mongoose } from "@typegoose/typegoose";
+import { ChoiceClass } from "./ChoiceClass";
 
 @modelOptions({
   schemaOptions: {
@@ -10,7 +11,10 @@ import { prop, modelOptions, mongoose } from "@typegoose/typegoose";
   },
 })
 export class CardClass {
-  public _id: mongoose.Types.ObjectId;
+  public _id!: mongoose.Types.ObjectId;
+
+  @prop({ type: () => ChoiceClass, default: [] })
+  public choices?: ChoiceClass[];
 
   @prop()
   public frontSideText?: string;
@@ -34,8 +38,8 @@ export class CardClass {
   public creator?: string;
 
   @prop({ default: Date.now() })
-  public createdAt: Date;
+  public createdAt!: Date;
 
   @prop({ default: Date.now() })
-  public updatedAt: Date;
+  public updatedAt!: Date;
 }

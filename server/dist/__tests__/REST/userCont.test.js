@@ -134,6 +134,7 @@ describe("CRUD user tests", () => {
         expect(noToken.status).toBe(401);
     }));
     test("POST /user/addCard hits add card route", () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b, _c, _d, _e;
         const addCard = yield (0, supertest_1.default)(app)
             .post("/user/addCard")
             .set({
@@ -142,16 +143,19 @@ describe("CRUD user tests", () => {
             .send(constants_1.MOCK_ADD_CARD);
         expect(addCard.status).toBe(200);
         const parsed = JSON.parse(addCard.text);
+        console.log("parsed", parsed);
         expect(parsed.cards).toHaveLength(1);
         expect(typeof parsed.cards[0]._id).toBe("string");
-        expect(typeof parsed.cards[0].frontSideLanguage).toBe("string");
-        expect(parsed.cards[0].frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
+        expect(typeof parsed.cards[0]).toBe("object");
         newCardId = parsed.cards[0]._id;
-        expect(parsed.cards[0].creator).toBe("test user");
-        expect(typeof parsed.cards[0].createdAt).toBe("string");
-        expect(typeof parsed.cards[0].updatedAt).toBe("string");
+        expect(typeof ((_a = parsed.cards[0]) === null || _a === void 0 ? void 0 : _a.frontSideLanguage)).toBe("string");
+        expect((_b = parsed.cards[0]) === null || _b === void 0 ? void 0 : _b.frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
+        expect((_c = parsed.cards[0]) === null || _c === void 0 ? void 0 : _c.creator).toBe("test user");
+        expect(typeof ((_d = parsed.cards[0]) === null || _d === void 0 ? void 0 : _d.createdAt)).toBe("string");
+        expect(typeof ((_e = parsed.cards[0]) === null || _e === void 0 ? void 0 : _e.updatedAt)).toBe("string");
     }));
     test("POST /user/addCard hits add card route adds another card to see if theres two", () => __awaiter(void 0, void 0, void 0, function* () {
+        var _f, _g, _h, _j;
         const addCard = yield (0, supertest_1.default)(app)
             .post("/user/addCard")
             .set({
@@ -161,10 +165,21 @@ describe("CRUD user tests", () => {
         expect(addCard.status).toBe(200);
         const parsed = JSON.parse(addCard.text);
         expect(parsed.cards).toHaveLength(2);
-        expect(typeof parsed.cards[0]._id).toBe("string");
-        expect(parsed.cards[0].creator).toBe("test user");
-        expect(typeof parsed.cards[0].createdAt).toBe("string");
-        expect(typeof parsed.cards[0].updatedAt).toBe("string");
+        const cards = yield models_1.Card.find({ _id: newCardId });
+        expect(typeof ((_f = cards[0]) === null || _f === void 0 ? void 0 : _f._id.toHexString())).toBe("string");
+        expect((_g = cards[0]) === null || _g === void 0 ? void 0 : _g.creator).toBe("test user");
+        expect(typeof ((_h = cards[0]) === null || _h === void 0 ? void 0 : _h.createdAt)).toBe("object");
+        expect(typeof ((_j = cards[0]) === null || _j === void 0 ? void 0 : _j.updatedAt)).toBe("object");
+    }));
+    test("GET /user/me get user cards on me query", () => __awaiter(void 0, void 0, void 0, function* () {
+        const me = yield (0, supertest_1.default)(app)
+            .get("/user/me")
+            .set({
+            authorization: `Bearer ${newUserToken}`,
+        });
+        expect(me.status).toBe(200);
+        const parsed = JSON.parse(me.text);
+        expect(parsed.user.cards).toHaveLength(2);
     }));
     test("PUT /user/editCard/:id test a user can edit their cards by id", () => __awaiter(void 0, void 0, void 0, function* () {
         const editCard = yield (0, supertest_1.default)(app)
@@ -174,9 +189,8 @@ describe("CRUD user tests", () => {
         })
             .send(constants_1.MOCK_EDIT_CARD);
         expect(editCard.status).toBe(200);
-        const parsed = JSON.parse(editCard.text);
-        expect(parsed.cards).toHaveLength(2);
-        expect(parsed.cards[0].frontSideLanguage).toBe(constants_1.MOCK_EDIT_CARD.frontSideLanguage);
+        const card = yield models_1.Card.findOne({ _id: newCardId });
+        expect(card === null || card === void 0 ? void 0 : card.frontSideLanguage).toBe(constants_1.MOCK_EDIT_CARD.frontSideLanguage);
     }));
     test("PUT /user/editCard/:id try to edit card with empty body", () => __awaiter(void 0, void 0, void 0, function* () {
         const editCard = yield (0, supertest_1.default)(app)
@@ -184,12 +198,13 @@ describe("CRUD user tests", () => {
             .set({
             authorization: `Bearer ${newestUserToken}`,
         });
-        expect(editCard.status).toBe(400);
-        expect(JSON.parse(editCard.text).error).toBe("Need to provide fields to the json body that match a card's schema properties");
+        expect(editCard.status).toBe(422);
+        expect(JSON.parse(editCard.text).error).toBe("Unprocessable body");
     }));
     test("PUT /user/editCard/:id try to edit card badId", () => __awaiter(void 0, void 0, void 0, function* () {
         const badId = yield (0, supertest_1.default)(app)
             .put(`/user/editCard/dkfjkdfjkdjkf`)
+            .send({ something: "dkjfkdj" })
             .set({
             authorization: `Bearer ${newestUserToken}`,
         });
@@ -212,8 +227,8 @@ describe("CRUD user tests", () => {
             .set({
             authorization: `Bearer ${newestUserToken}`,
         });
-        expect(badId.status).toBe(400);
-        expect(JSON.parse(badId.text).error).toBe("Could not delete a card at this time");
+        expect(badId.status).toBe(404);
+        expect(JSON.parse(badId.text).error).toBe("Card not found");
     }));
     test("PUT /user/clearCards update user cards clearing them", () => __awaiter(void 0, void 0, void 0, function* () {
         const cleared = yield (0, supertest_1.default)(app)

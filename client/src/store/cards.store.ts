@@ -2,16 +2,19 @@
 import {
   MyRootState,
   CardsState,
-  UserState,
   ICard,
   RootCommitType,
   EditCardCommitPayload,
   CategorizedCardsObject,
   RootDispatchType,
+  Choice,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
+import { shuffleCards } from "@/utils/shuffleCards";
 import { shuffleArray } from "@/utils/shuffleArray";
+import { keyGen } from "../utils/keyGen";
 import { ActionContext } from "vuex";
+import { createCardChoices } from "@/utils/createCardChoices";
 
 const state: CardsState = {
   allCards: [],
@@ -41,6 +44,33 @@ const mutations = {
         };
     });
   },
+  SET_CARDS_CHOICES(
+    state: CardsState,
+    payload: [Choice, Choice, Choice]
+  ): void {
+    const new_choices = new Array(3).fill(null).map((_, index) => {
+      return {
+        id: keyGen(),
+        text: payload[index].text
+      } as Choice;
+    });
+
+    state.allCards = [...state.allCards.map(card => {
+      return {
+        ...card,
+        choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
+      };
+    })];
+
+    state.cards = [...state.cards.map(card => {
+      return {
+        ...card,
+        choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
+      };
+    })];
+
+
+  },
   SET_CATEGORIZED_CARD_MAP(
     state: CardsState,
     payload: CategorizedCardsObject
@@ -61,6 +91,7 @@ const mutations = {
     state.allCards = cards.map((card) => {
       return {
         ...card,
+        choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
@@ -76,6 +107,7 @@ const mutations = {
     state.cards = cards.map((card) => {
       return {
         ...card,
+        choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
@@ -90,6 +122,7 @@ const mutations = {
 
     const initCard = {
       ...card,
+      choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
       isFrontSide: true,
       isBackSide: false,
     };
@@ -124,8 +157,7 @@ const mutations = {
     // card we found by the ID passed in from the modal context
     // if the keys dont have values then we wont edit that field on the
     Object.keys(payload).forEach((key): void => {
-      // @ts-ignore
-      if (key !== "id" && !!payload[key]) {
+      if (key !== "id" && !!payload[key as keyof EditCardCommitPayload]) {
         switch (key) {
           case "frontSideText":
             state.cards[index].frontSideText = frontSideText;
@@ -156,8 +188,11 @@ const mutations = {
   },
 };
 const actions = {
+  async saveChoices() {
+    // call own api to update the user's cards to have the choices.
+  },
   async addCard(
-    { commit }: ActionContext<UserState, MyRootState>,
+    { commit }: ActionContext<CardsState, MyRootState>,
     card: ICard
   ): Promise<void | boolean> {
     if (typeof card !== "object" || card === null)
@@ -175,9 +210,10 @@ const actions = {
   },
   async setCards(
     { state, dispatch, commit }: ActionContext<CardsState, MyRootState>,
-    payload: CardsState
+    payload: CardsState & { choices: Choice[] }
   ): Promise<void | boolean> {
-    const { cards } = payload;
+    const { cards, choices } = payload;
+
     if (!Array.isArray(cards)) {
       throw {
         error: `cards was not an iteritable type! but was ${cards} as typeof ${typeof cards}`,
@@ -185,25 +221,39 @@ const actions = {
     }
     const cardsRef = [...cards];
 
-    const shuffledCards = shuffleArray(cardsRef);
+    const shuffledCards = shuffleCards(cardsRef);
 
     try {
+
       commit(
         "cards/SET_ALL_CARDS" as RootCommitType,
         { cards: shuffledCards },
         { root: true }
       );
+
       commit(
         "cards/SET_DISPLAY_CARDS" as RootCommitType,
         { cards: shuffledCards },
         { root: true }
       );
+      // if (choices && !cards[0].choices)
+      commit(
+        "cards/SET_CARDS_CHOICES" as RootCommitType,
+        choices,
+        { root: true }
+      );
+
+
+      // TODO: FIX THIS PLEASE THANKS THIS IS FREEZING THE BROWSER TEMP FIX IN PLACE TO STOP FREEZING BUT
+      // THE CARDS BEING SENT IN ARE NOT CORRECT!!
       //after commits are done set the categories
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
-        { cards: state.allCards },
+        { cards: shuffledCards },
         { root: true }
       );
+
+      window.localStorage.setItem("cards", JSON.stringify(state.allCards));
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
@@ -263,12 +313,6 @@ const actions = {
   ): Promise<boolean | Error> {
     try {
       const { cards } = payload;
-      // taking in the cards array and sorting the categories by creating an object
-      // that has a key that is dynamic which will be this meta-list of categories
-      // because trying to do this with type-graphql typeorm was very strange and
-      // probably nobody is trying to do that sort of thing right now....
-      // create a new cards Object to return that contains the cards categorized by their frontside language
-
       //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;
       const toCategorize = [] as Array<ICard>;
@@ -277,10 +321,9 @@ const actions = {
       while (iter < cards.length) {
         if (cards[iter].frontSideLanguage === "") {
           uncategorized.unshift(cards[iter]);
-        }
-        if (cards[iter].frontSideLanguage !== "") {
+        } else
           toCategorize.unshift(cards[iter]);
-        }
+
         iter++;
       }
 
@@ -288,7 +331,6 @@ const actions = {
       const returnCategorized = createCategorizedCardsObject(
         toCategorize as ICard[]
       );
-
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
         returnCategorized,

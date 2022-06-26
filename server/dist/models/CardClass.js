@@ -11,8 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CardClass = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
+const ChoiceClass_1 = require("./ChoiceClass");
 let CardClass = class CardClass {
 };
+__decorate([
+    (0, typegoose_1.prop)({ type: () => ChoiceClass_1.ChoiceClass, default: [] }),
+    __metadata("design:type", Array)
+], CardClass.prototype, "choices", void 0);
 __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)

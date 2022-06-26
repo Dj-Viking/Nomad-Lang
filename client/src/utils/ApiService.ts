@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 import {
   AddCardPayload,
   AddCardResponse,
@@ -14,6 +15,9 @@ import {
   MeQueryResponse,
   RegisterResponse,
   UserEntityBase,
+  UpdateChoicesResponse,
+  Choice,
+  AddChoicesResponse,
 } from "@/types";
 import { API_URL } from "@/constants";
 interface SignupArgs {
@@ -27,17 +31,18 @@ interface LoginArgs {
   password: string;
 }
 export interface IApiService {
-  headers:                                                      Record<string, string>;
-  me:              (token?: string)                          => Promise<MeQueryResponse>;
-  login:           (args: LoginArgs)                         => Promise<LoginResponse>;
-  signup:          (args: SignupArgs)                        => Promise<RegisterResponse | void>;
-  addCard:         (token: string, card: AddCardPayload)     => Promise<AddCardResponse | never>;
-  clearCards:      (token: string)                           => Promise<ClearCardsResponse>;
-  editCard:        (token: string, card: IEditCardPayload)   => Promise<EditCardResponse>;
-  deleteCard:      (token: string, id: string)               => Promise<DeleteCardResponse>;
-  forgotPassword:  (email: string)                           => Promise<ForgotPassResponse>;
-  changePassword:  (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
-  changeThemePref: (token: string, themePref: string)        => Promise<ChangeThemePrefResponse>;
+  headers: Record<string, string>;
+  me: (token?: string) => Promise<MeQueryResponse>;
+  login: (args: LoginArgs) => Promise<LoginResponse>;
+  signup: (args: SignupArgs) => Promise<RegisterResponse | void>;
+  addCard: (token: string, card: AddCardPayload) => Promise<AddCardResponse | never>;
+  clearCards: (token: string) => Promise<ClearCardsResponse>;
+  editCard: (token: string, card: IEditCardPayload, choices?: Array<Choice>) => Promise<EditCardResponse>;
+  deleteCard: (token: string, id: string) => Promise<DeleteCardResponse>;
+  forgotPassword: (email: string) => Promise<ForgotPassResponse>;
+  addChoicesToCards: (choices: Choice[], token: string) => Promise<AddChoicesResponse>;
+  changePassword: (resetToken: string, newPassword: string) => Promise<ChangePasswordResponse>;
+  changeThemePref: (token: string, themePref: string) => Promise<ChangeThemePrefResponse>;
 }
 
 class ApiService implements IApiService {
@@ -89,6 +94,10 @@ class ApiService implements IApiService {
         headers: this.headers,
       });
       const data = (await res.json()) as UserEntityBase;
+      if (res.status !== 200) {
+        // @ts-ignore
+        throw new Error(data.error);
+      }
       return {
         user: data,
         error: null,
@@ -175,9 +184,35 @@ class ApiService implements IApiService {
       throw error;
     }
   }
+  public async addChoicesToCards(
+    choices: Array<Choice>,
+    token: string
+  ): Promise<AddChoicesResponse> {
+    this._clearHeaders();
+    this._setInitialHeaders();
+    this._setAuthHeader(token);
+    try {
+      const res = await fetch(`${API_URL}` + `/user/addChoicesToCards`, {
+        method: "PUT",
+        body: JSON.stringify({ choices }),
+        headers: this.headers
+      });
+      const data = await res.json();
+      return {
+        result: data,
+        er: null
+      }
+    } catch (error) {
+      return {
+        result: null,
+        er: error
+      }
+    }
+  }
   public async editCard(
     token: string,
-    card: IEditCardPayload
+    card: IEditCardPayload,
+    choices?: Choice[]
   ): Promise<EditCardResponse> {
     this._clearHeaders();
     this._setInitialHeaders();

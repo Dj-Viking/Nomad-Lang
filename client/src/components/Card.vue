@@ -47,14 +47,14 @@
                 </i>
               </button>
             </div>
-            <div class="card-image">
+            <!-- <div class="card-image">
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
                   alt="Placeholder image"
                 />
               </figure>
-            </div>
+            </div> -->
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
@@ -77,6 +77,35 @@
                       }
                     "
                   >
+                    <div
+                      style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; flex-direction: column; justify-content: center;"
+                      id="answer-container"
+                    >
+                      <div style="display: flex; flex-direction: row; justify-content: center;">
+                        <ChoiceButton
+                          :order="1"
+                          :card="card"
+                          :text="card?.choices![0].text || `nothing yet`"
+                        />
+                        <ChoiceButton
+                          :order="2"
+                          :card="card"
+                          :text="card?.choices![1].text || `nothing yet`"
+                        />
+                      </div>
+                      <div style="display: flex; flex-direction: row; justify-content: center;">
+                        <ChoiceButton
+                          :order="3"
+                          :card="card"
+                          :text="card?.choices![2].text || `nothing yet`"
+                        />
+                        <ChoiceButton
+                          :order="4"
+                          :card="card"
+                          :text="card?.choices![3].text || `nothing yet`"
+                        />
+                      </div>
+                    </div>
                     <input
                       autocomplete="off"
                       id="translation-input"
@@ -153,14 +182,14 @@
                 </i>
               </button>
             </div>
-            <div class="card-image">
+            <!-- <div class="card-image">
               <figure class="image is-4by3">
                 <img
                   src="https://bulma.io/images/placeholders/1280x960.png"
                   alt="Placeholder image"
                 />
               </figure>
-            </div>
+            </div> -->
             <div class="card-content">
               <div class="media">
                 <div class="media-content">
@@ -183,6 +212,31 @@
                       }
                     "
                   >
+                    <div
+                      style="margin-bottom: 1.5rem; max-width: fit-content; visibility: hidden;"
+                      id="answer-container"
+                    >
+                      <ChoiceButton
+                        :order="1"
+                        :card="card"
+                        :text="card?.backSideText"
+                      />
+                      <ChoiceButton
+                        :order="2"
+                        :card="card"
+                        :text="card?.choices![0].text"
+                      />
+                      <ChoiceButton
+                        :order="3"
+                        :card="card"
+                        :text="card?.choices![1].text"
+                      />
+                      <ChoiceButton
+                        :order="4"
+                        :card="card"
+                        :text="card?.choices![2].text"
+                      />
+                    </div>
                     <input
                       autocomplete="off"
                       id="translation-input"
@@ -248,24 +302,33 @@ import {
 } from "@/types";
 import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
+import ChoiceButton from "../components/ChoiceButton.vue";
 export default defineComponent({
   name: "Card",
   components: {
     Spinner,
+    ChoiceButton
   },
   props: {
+    choices: Object as PropType<string[]>,
     card: Object as PropType<CardClass>,
     cards: Array as PropType<Array<CardClass>>,
     id: String
   },
   setup() {
+
     const toast = useToast();
     const store = useStore<MyRootState>();
-    const translation = ref("");
+    const translation = ref<string>("");
+    const all_cards = computed(() => store.state.cards.allCards);
+    const my_cards = computed(() => store.state.cards.cards);
     const isLoading = computed(() => store.state.loading.loading.isLoading);
     const isLoggedIn = computed(() => store.state.user.user.loggedIn);
     const activeClass = computed(() => store.state.modal.modal.activeClass);
+
     return {
+      all_cards,
+      my_cards,
       toast,
       store,
       translation,
@@ -287,8 +350,8 @@ export default defineComponent({
       });
     },
     async submitCardFlipCheck(event: any, _isFrontSide: boolean): Promise<void> {
+
       const id = event.target.id;
-      console.log("translation", this.translation);
       if (_isFrontSide) {
         if (new RegExp(`^${this.card!.backSideText}$`, "i").test(this.translation)) {
           // increment correct score
@@ -306,6 +369,7 @@ export default defineComponent({
         }
         this.translation = "";
         //set the class on for the flip animation on the card object itself.
+        console.log("flip check after store commit if incorrect");
         this.store.commit(
           "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
         );

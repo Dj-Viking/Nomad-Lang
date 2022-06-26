@@ -74,6 +74,7 @@
   </base-layout>
 </template>
 <script lang="ts">
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { defineComponent, ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import {
@@ -125,12 +126,14 @@ export default defineComponent({
           root: true,
         });
         const { user, error } = (await api.login(args)) as LoginResponse;
-        if (!!error && typeof user === "undefined") {
+        console.log(user, error);
+        if (error) {
           // auth.clearToken();
+          console.log("am i herjer");
           this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
             root: true,
           });
-          // throw error;
+          throw new Error(error);
         } else {
           auth.setToken(user!.token as string);
           this.toast.success("Good luck have fun!", {
@@ -152,12 +155,6 @@ export default defineComponent({
               root: true,
             }
           );
-          // set cards
-          await this.store.dispatch(
-            "cards/setCards" as RootDispatchType,
-            { cards: user!.cards },
-            { root: true }
-          );
           setTimeout(() => {
             this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
               root: true,
@@ -175,7 +172,8 @@ export default defineComponent({
         this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
           root: true,
         });
-        this.toast.error(`Oops! There was a problem with login ${error}`, {
+        // @ts-ignore
+        this.toast.error(`Oops! There was a problem with login ${error.error}`, {
           timeout: 3000,
         });
       }

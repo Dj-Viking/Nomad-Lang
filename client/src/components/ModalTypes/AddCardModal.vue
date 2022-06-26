@@ -3,7 +3,7 @@
     <form
       id="add-card-form"
       @submit.prevent="
-        ($event) => {
+        async ($event) => {
           //update local state with the extra propertiesa 'front' and 'back' sides
           // also if not logged in create an ID as Date.now()
       
@@ -21,8 +21,6 @@
               //@ts-ignore something is wrong with vue language server...this card is in scope....
               await submitAddCard($event, card);
             })();
-            clearCardInputFields();
-            closeModal();
           } else {
             const offlineCard = {
               _id: keyGen(), //ids must be unique
@@ -38,12 +36,8 @@
               createdAt: Date.now(),
               updatedAt: Date.now(),
             };
-            (async () => {
-              //@ts-ignore
-              await addLocalCard($event, offlineCard);
-            })()
-            clearCardInputFields();
-            closeModal();
+            //@ts-ignore
+            addLocalCard($event, offlineCard);
           }
         }
       "
@@ -193,6 +187,7 @@ import { api } from "../../utils/ApiService";
 import auth from "../../utils/AuthService";
 import { useToast } from "vue-toastification";
 import { keyGen } from "../../utils/keyGen";
+import { createCardChoices } from "@/utils/createCardChoices";
 export default defineComponent({
   name: "AddCardModal",
   props: {
@@ -242,16 +237,25 @@ export default defineComponent({
 
         console.log("add card response hopefully cards", cards);
         // set cards
+        const choices = createCardChoices();
+        console.log("making choices", choices);
+
         this.store.dispatch(
           "cards/setCards" as RootDispatchType,
-          { cards },
+          { cards, choices: [...choices] },
           { root: true }
-        );
+        ).then(() => {
+          this.closeModal();
+        });
       } catch (error) {
         console.error("error when submitting card", error);
         this.toast.error(`error when submitting card ${error}`, {
           timeout: 3000,
         });
+        setTimeout(() => {
+          this.closeModal();
+          this.clearCardInputFields();
+        }, 300);
       }
     },
     // eslint-disable-next-line
@@ -269,11 +273,20 @@ export default defineComponent({
       this.backSidePictureInput = "";
     },
     // eslint-disable-next-line
-    async addLocalCard(_event: Event, card: AddCardPayload): Promise<void> {
+    addLocalCard(_event: Event, card: AddCardPayload): void {
       console.log("card", card);
-      await store.dispatch("cards/setCards" as RootDispatchType,
-        { cards: [...this.cards, card] },
-        { root: true });
+      store.dispatch("cards/setCards" as RootDispatchType,
+        {
+          cards: [...this.cards, card], choices: [
+            { text: "kdjfkdjf" },
+            { text: "kdjfkdjf" },
+            { text: "kdjfkdjf" },
+          ]
+        },
+        { root: true }).then(() => {
+          this.clearCardInputFields();
+          this.closeModal();
+        });
     },
   }
 });

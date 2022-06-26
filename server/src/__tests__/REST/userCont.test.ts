@@ -1,6 +1,6 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import { User } from "../../models";
+import { Card, User } from "../../models";
 import createServer from "../../app";
 import {
   ICard,
@@ -9,7 +9,6 @@ import {
   ILoginResponse,
   IMeResponse,
   IUserCreateCardResponse,
-  IUserEditCardResponse,
   IUserDeleteCardResponse,
 } from "../../types";
 import { MOCK_ADD_CARD, MOCK_EDIT_CARD } from "../../constants";
@@ -122,6 +121,7 @@ describe("CRUD user tests", () => {
     expect(me.status).toBe(200);
     const parsed = JSON.parse(me.text) as IMeResponse;
     expect(typeof parsed.user.token).toBe("string");
+    // expect(parsed.user.cards).toHaveLength(123);
     newestUserToken = parsed.user.token as string;
     expect(typeof newestUserToken).toBe("string");
     expect(newestUserToken).not.toBe(newUserToken);
@@ -141,14 +141,16 @@ describe("CRUD user tests", () => {
       .send(MOCK_ADD_CARD as ICard);
     expect(addCard.status).toBe(200);
     const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
+    console.log("parsed", parsed);
     expect(parsed.cards).toHaveLength(1);
     expect(typeof parsed.cards[0]._id).toBe("string");
-    expect(typeof parsed.cards[0].frontSideLanguage).toBe("string");
-    expect(parsed.cards[0].frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
+    expect(typeof parsed.cards[0]).toBe("object");
     newCardId = parsed.cards[0]._id as string;
-    expect(parsed.cards[0].creator).toBe("test user");
-    expect(typeof parsed.cards[0].createdAt).toBe("string");
-    expect(typeof parsed.cards[0].updatedAt).toBe("string");
+    expect(typeof parsed.cards[0]?.frontSideLanguage).toBe("string");
+    expect(parsed.cards[0]?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
+    expect(parsed.cards[0]?.creator).toBe("test user");
+    expect(typeof parsed.cards[0]?.createdAt).toBe("string");
+    expect(typeof parsed.cards[0]?.updatedAt).toBe("string");
   });
 
   test("POST /user/addCard hits add card route adds another card to see if theres two", async () => {
@@ -161,10 +163,22 @@ describe("CRUD user tests", () => {
     expect(addCard.status).toBe(200);
     const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
     expect(parsed.cards).toHaveLength(2);
-    expect(typeof parsed.cards[0]._id).toBe("string");
-    expect(parsed.cards[0].creator).toBe("test user");
-    expect(typeof parsed.cards[0].createdAt).toBe("string");
-    expect(typeof parsed.cards[0].updatedAt).toBe("string");
+    const cards = await Card.find({ _id: newCardId });
+    expect(typeof cards[0]?._id.toHexString()).toBe("string");
+    expect(cards[0]?.creator).toBe("test user");
+    expect(typeof cards[0]?.createdAt).toBe("object");
+    expect(typeof cards[0]?.updatedAt).toBe("object");
+  });
+
+  test("GET /user/me get user cards on me query", async () => {
+    const me = await request(app)
+      .get("/user/me")
+      .set({
+        authorization: `Bearer ${newUserToken}`,
+      });
+    expect(me.status).toBe(200);
+    const parsed = JSON.parse(me.text) as IMeResponse;
+    expect(parsed.user.cards).toHaveLength(2);
   });
 
   test("PUT /user/editCard/:id test a user can edit their cards by id", async () => {
@@ -175,9 +189,8 @@ describe("CRUD user tests", () => {
       })
       .send(MOCK_EDIT_CARD);
     expect(editCard.status).toBe(200);
-    const parsed = JSON.parse(editCard.text) as IUserEditCardResponse;
-    expect(parsed.cards).toHaveLength(2);
-    expect(parsed.cards[0].frontSideLanguage).toBe(MOCK_EDIT_CARD.frontSideLanguage); //"edited language"
+    const card = await Card.findOne({ _id: newCardId });
+    expect(card?.frontSideLanguage).toBe(MOCK_EDIT_CARD.frontSideLanguage); //"edited language"
   });
   test("PUT /user/editCard/:id try to edit card with empty body", async () => {
     const editCard = await request(app)
@@ -185,14 +198,13 @@ describe("CRUD user tests", () => {
       .set({
         authorization: `Bearer ${newestUserToken}`,
       });
-    expect(editCard.status).toBe(400);
-    expect(JSON.parse(editCard.text).error).toBe(
-      "Need to provide fields to the json body that match a card's schema properties"
-    );
+    expect(editCard.status).toBe(422);
+    expect(JSON.parse(editCard.text).error).toBe("Unprocessable body");
   });
   test("PUT /user/editCard/:id try to edit card badId", async () => {
     const badId = await request(app)
       .put(`/user/editCard/dkfjkdfjkdjkf`)
+      .send({ something: "dkjfkdj" })
       .set({
         authorization: `Bearer ${newestUserToken}`,
       });
@@ -217,8 +229,8 @@ describe("CRUD user tests", () => {
       .set({
         authorization: `Bearer ${newestUserToken}`,
       });
-    expect(badId.status).toBe(400);
-    expect(JSON.parse(badId.text).error).toBe("Could not delete a card at this time");
+    expect(badId.status).toBe(404);
+    expect(JSON.parse(badId.text).error).toBe("Card not found");
   });
   test("PUT /user/clearCards update user cards clearing them", async () => {
     const cleared = await request(app)
@@ -230,16 +242,6 @@ describe("CRUD user tests", () => {
     const parsed = JSON.parse(cleared.text);
     expect(parsed.user.cards).toHaveLength(0);
   });
-  // test("POST /user/changePassword hits changePassword route", async () => {
-  //   const changePassword = await request(app).post("/user/changePassword").send({
-  //     username: "test user",
-  //     email: "test@email.com",
-  //     password: "test",
-  //   });
-  //   expect(changePassword.status).toBe(400);
-  //   const parsed = JSON.parse(changePassword.text) as ICreateUserResponse;
-  //   expect(parsed).toBe("dkfjdkj");
-  // });
   test("delete the user we just made from the database", async () => {
     await User.deleteOne({ _id: newUserId });
   });

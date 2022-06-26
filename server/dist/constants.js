@@ -1,6 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.APP_DOMAIN_PREFIX = exports.MOCK_EDIT_CARD = exports.MOCK_ADD_CARD = exports.IS_PROD = void 0;
+exports.APP_DOMAIN_PREFIX = exports.MOCK_EDIT_CARD = exports.MOCK_ADD_CARD = exports.IS_PROD = exports.MOCK_CARD_CHOICES = void 0;
+exports.MOCK_CARD_CHOICES = [
+    {
+        text: "aiuhjfiuj",
+    },
+    {
+        text: "aiuhjfiuj",
+    },
+    {
+        text: "asf8eh3jf",
+    },
+];
 exports.IS_PROD = process.env.NODE_ENV === "production";
 exports.MOCK_ADD_CARD = {
     frontSideLanguage: "dkfkdjf",

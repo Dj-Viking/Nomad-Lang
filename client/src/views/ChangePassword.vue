@@ -8,6 +8,7 @@
           readEvent($event);
           isLoading = true;
           const matched = verifyMatch(passwordInput, confirmInput);
+          // @ts-ignore
           if (matched) {
             (async () => {
               await submitChangePassword({
@@ -28,7 +29,10 @@
       "
     >
       <div class="field">
-        <label for="passwordInput" class="label">New Password</label>
+        <label
+          for="passwordInput"
+          class="label"
+        >New Password</label>
         <div class="control">
           <input
             class="input"
@@ -42,7 +46,10 @@
         </div>
       </div>
       <div class="field">
-        <label for="confirmInput" class="label">Confirm New Password</label>
+        <label
+          for="confirmInput"
+          class="label"
+        >Confirm New Password</label>
         <div class="control">
           <input
             class="input"
