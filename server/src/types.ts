@@ -6,20 +6,8 @@ import { CardClass, ChoiceClass } from "./models";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
 
-//performing an interesection so we can make req.session.userId
-//req.session.welcomeBackMsg and req.session.username available to be assigned
-// new values on the req.session object
 export type MyContext = {
-  req: Request & {
-    user: MyJwtData | null;
-    // session: Session & Partial<SessionData> & {
-    //     userId?: number;
-    // } & {
-    //     welcomeBackMsg?: String;
-    // } & {
-    //     username?: String;
-    // }
-  };
+  req: Request & { user: MyJwtData | null };
   res: Response;
   next: NextFunction;
 };

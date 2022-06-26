@@ -4,10 +4,10 @@ import {
   CardsState,
   ICard,
   RootCommitType,
-  EditCardCommitPayload,
   CategorizedCardsObject,
   RootDispatchType,
   Choice,
+  EditCardPayload,
 } from "@/types";
 import { createCategorizedCardsObject } from "@/utils/createCategorizedCardsObject";
 import { shuffleCards } from "@/utils/shuffleCards";
@@ -141,42 +141,44 @@ const mutations = {
   },
   //only for local state
   // TODO edit a field conditionally depending on the choice of field(s) that were chose to edit
-  EDIT_CARD(state: CardsState, payload: EditCardCommitPayload): void {
-    const {
-      id,
-      frontSideText,
-      frontSideLanguage,
-      frontSidePicture,
-      backSideLanguage,
-      backSideText,
-      backSidePicture,
-    } = payload;
-    //find the index of the card we want to edit
+  EDIT_CARD(state: CardsState, payload: EditCardPayload): void {
+    const { id, frontSideText, frontSideLanguage, frontSidePicture, backSideLanguage, backSideText, backSidePicture, } = payload.card;
+    const { choices } = payload;
+
     const index = state.cards.findIndex((card) => card._id === id);
-    //if there are values for each key in the payload then edit those properties on the
-    // card we found by the ID passed in from the modal context
-    // if the keys dont have values then we wont edit that field on the
-    Object.keys(payload).forEach((key): void => {
-      if (key !== "id" && !!payload[key as keyof EditCardCommitPayload]) {
+    const index_all = state.allCards.findIndex((card) => card._id === id);
+
+    [...Object.keys(payload.card), "choices"].forEach((key): void => {
+      if (key !== "id") {
         switch (key) {
-          case "frontSideText":
-            state.cards[index].frontSideText = frontSideText;
-            break;
-          case "frontSideLanguage":
-            state.cards[index].frontSideLanguage = frontSideLanguage;
-            break;
-          case "frontSidePicture":
-            state.cards[index].frontSidePicture = frontSidePicture;
-            break;
-          case "backSideLanguage":
-            state.cards[index].backSideLanguage = backSideLanguage;
-            break;
-          case "backSideText":
-            state.cards[index].backSideText = backSideText;
-            break;
-          case "backSidePicture":
-            state.cards[index].backSidePicture = backSidePicture;
-            break;
+          case "choices": {
+            state.cards[index].choices = [...choices, { text: backSideText }];
+            state.allCards[index_all].choices = [...choices, { text: backSideText }];
+          } break;
+          case "frontSideText": {
+            state.cards[index].frontSideText = frontSideText || state.cards[index].frontSideText;
+            state.allCards[index_all].frontSideText = frontSideText || state.cards[index_all].frontSideText;
+          } break;
+          case "frontSideLanguage": {
+            state.cards[index].frontSideLanguage = frontSideLanguage || state.cards[index].frontSideLanguage;
+            state.allCards[index_all].frontSideLanguage = frontSideLanguage || state.allCards[index_all].frontSideLanguage;
+          } break;
+          case "frontSidePicture": {
+            state.cards[index].frontSidePicture = frontSidePicture || state.cards[index].frontSidePicture;
+            state.allCards[index_all].frontSidePicture = frontSidePicture || state.allCards[index_all].frontSidePicture;
+          } break;
+          case "backSideLanguage": {
+            state.cards[index].backSideLanguage = backSideLanguage || state.cards[index].backSideLanguage;
+            state.allCards[index_all].backSideLanguage = backSideLanguage || state.allCards[index_all].backSideLanguage;
+          } break;
+          case "backSideText": {
+            state.cards[index].backSideText = backSideText || state.cards[index].backSideText;
+            state.allCards[index_all].backSideText = backSideText || state.allCards[index_all].backSideText;
+          } break;
+          case "backSidePicture": {
+            state.cards[index].backSidePicture = backSidePicture || state.cards[index].backSidePicture;
+            state.allCards[index_all].backSidePicture = backSidePicture || state.allCards[index_all].backSidePicture;
+          } break;
           default:
             return void 0;
         }
@@ -185,6 +187,7 @@ const mutations = {
     });
 
     state.cards[index].updatedAt = Date.now();
+    state.allCards[index_all].updatedAt = Date.now();
   },
 };
 const actions = {
@@ -284,7 +287,7 @@ const actions = {
 
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
-        { cards: state.allCards },
+        { cards: [...state.allCards] },
         { root: true }
       );
 
@@ -295,12 +298,12 @@ const actions = {
     }
   },
   async editCard(
-    { commit }: ActionContext<CardsState, MyRootState>,
-    payload: { index: number; text: string }
+    { commit, dispatch, state }: ActionContext<CardsState, MyRootState>,
+    payload: EditCardPayload
   ): Promise<void | boolean> {
     try {
       commit("cards/EDIT_CARD" as RootCommitType, payload, { root: true });
-
+      await dispatch("cards/setCards" as RootDispatchType, { cards: [...state.allCards], choices: payload.choices }, { root: true });
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
@@ -331,6 +334,7 @@ const actions = {
       const returnCategorized = createCategorizedCardsObject(
         toCategorize as ICard[]
       );
+
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
         returnCategorized,
