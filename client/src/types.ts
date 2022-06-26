@@ -315,7 +315,7 @@ export type RegisterResponse = {
 export type LoginResponse = {
   user?: UserEntityBase | null;
 } & {
-  error?: unknown | undefined;
+  error?: string | null;
 };
 
 export type ForgotPassResponse = {

@@ -94,6 +94,10 @@ class ApiService implements IApiService {
         headers: this.headers,
       });
       const data = (await res.json()) as UserEntityBase;
+      if (res.status !== 200) {
+        // @ts-ignore
+        throw new Error(data.error);
+      }
       return {
         user: data,
         error: null,
