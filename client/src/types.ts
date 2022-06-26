@@ -74,16 +74,19 @@ export interface AddCardCommitPayload {
   color?: string;
   id?: number;
 }
-export interface EditCardCommitPayload {
-  id: number | string | undefined;
-  cardId?: number;
-  frontSideText: string;
-  frontSideLanguage: string;
-  frontSidePicture: string;
-  backSideText: string;
-  backSideLanguage: string;
-  backSidePicture: string;
-  color?: string;
+export interface EditCardPayload {
+  card: {
+    id: number | string | undefined;
+    cardId?: number;
+    frontSideText: string;
+    frontSideLanguage: string;
+    frontSidePicture: string;
+    backSideText: string;
+    backSideLanguage: string;
+    backSidePicture: string;
+    color?: string;
+  };
+  choices: Choice[];
 }
 export interface EditCardModalContext {
   card: CardClass;

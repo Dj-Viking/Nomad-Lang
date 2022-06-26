@@ -21,16 +21,12 @@
             backSidePicture:
               backSidePictureInput || card?.backSidePicture,
           };
-          if (isLoggedIn) {
-            (async () => {
-              //@ts-ignore
-              submitEditCard(_card);
-            })();
-          }
-          //@ts-ignore
-          editLocalCard($event, _card);
-          clearCardInputFields();
-          closeModal();
+          (async () => {
+            //@ts-ignore
+            submitEditCard(_card);
+            clearCardInputFields();
+            closeModal();
+          })();
         } else {
           const _card = {
             id: card?._id,
@@ -44,10 +40,12 @@
             createdAt: Date.now(),
             updatedAt: Date.now(),
           };
-          //@ts-ignore
-          editLocalCard($event, _card);
-          clearCardInputFields();
-          closeModal();
+          (async () => {
+            //@ts-ignore
+            editLocalCard($event, _card);
+            clearCardInputFields();
+            closeModal();
+          })();
         }
       }
     ">
@@ -189,11 +187,11 @@
 <script lang="ts">
 import { defineComponent, ref, computed, PropType } from "vue";
 import { useStore } from "vuex";
-import store from "../../store";
 import auth from "../../utils/AuthService";
-import { CardClass, EditCardCommitPayload, IEditCardPayload, MyRootState, RootCommitType } from "../../types";
+import { CardClass, EditCardPayload, IEditCardPayload, MyRootState, RootCommitType, RootDispatchType } from "../../types";
 import { api } from "../../utils/ApiService";
 import { useToast } from "vue-toastification";
+import { createCardChoices } from "@/utils/createCardChoices";
 export default defineComponent({
   name: "EditCardModal",
   props: {
@@ -228,6 +226,7 @@ export default defineComponent({
     );
     return {
       isLoggedIn,
+      createCardChoices,
       toast,
       store,
       errMsg,
@@ -260,12 +259,15 @@ export default defineComponent({
       try {
         const { error } = await api.editCard(auth.getToken() as string, card);
         if (!!error) throw error;
+        await this.store.dispatch("cards/editCard" as RootDispatchType, { card, choices: this.card?.choices }, {
+          root: true,
+        });
       } catch (error) {
         this.toast.error(`error when editing a card: ${error}`);
       }
     },
-    editLocalCard(_event: Event, card: EditCardCommitPayload): void {
-      store.commit("cards/EDIT_CARD" as RootCommitType, card, {
+    async editLocalCard(_event: Event, card: EditCardPayload): Promise<void> {
+      this.store.dispatch("cards/editCard" as RootDispatchType, { card, choices: this.card?.choices }, {
         root: true,
       });
       this.clearCardInputFields();
