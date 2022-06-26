@@ -14,6 +14,7 @@ import { shuffleCards } from "@/utils/shuffleCards";
 import { shuffleArray } from "@/utils/shuffleArray";
 import { keyGen } from "../utils/keyGen";
 import { ActionContext } from "vuex";
+import { createCardChoices } from "@/utils/createCardChoices";
 
 const state: CardsState = {
   allCards: [],
@@ -119,6 +120,7 @@ const mutations = {
 
     const initCard = {
       ...card,
+      choices: createCardChoices(),
       isFrontSide: true,
       isBackSide: false,
     };
@@ -220,7 +222,6 @@ const actions = {
     const shuffledCards = shuffleCards(cardsRef);
 
     try {
-      console.log("do i have choices before setting cards", choices);
 
       commit(
         "cards/SET_ALL_CARDS" as RootCommitType,
@@ -240,12 +241,17 @@ const actions = {
         { root: true }
       );
 
+
+      // TODO: FIX THIS PLEASE THANKS THIS IS FREEZING THE BROWSER TEMP FIX IN PLACE TO STOP FREEZING BUT
+      // THE CARDS BEING SENT IN ARE NOT CORRECT!!
       //after commits are done set the categories
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,
-        { cards: state.allCards },
+        { cards: shuffledCards },
         { root: true }
       );
+
+      window.localStorage.setItem("cards", JSON.stringify(state.allCards));
       return Promise.resolve(true);
     } catch (error) {
       console.error(error);
@@ -305,6 +311,7 @@ const actions = {
   ): Promise<boolean | Error> {
     try {
       const { cards } = payload;
+      console.log("what cards am i sending here", cards);
 
       //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;
@@ -320,10 +327,13 @@ const actions = {
         iter++;
       }
 
+      console.log("what is tocategorize", toCategorize);
+
       //init before falling into the loop where it will change and return as the comit payload
       const returnCategorized = createCategorizedCardsObject(
         toCategorize as ICard[]
       );
+      console.log("stuck here?");
 
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
