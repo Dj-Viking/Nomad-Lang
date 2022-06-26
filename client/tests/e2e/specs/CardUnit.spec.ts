@@ -50,7 +50,7 @@ describe("deletes-screenshots", () => {
 
 describe("checks all CRUD operations of interactions with cards as not logged in", () => {
   it("clears todos on the screen", () => {
-    cy.get("button.is-info").contains("Clear Cards").click();
+    cy.get("button.is-info.button-shrink").contains("Clear Cards").click();
     //click yes on the clear cards modal when it appears
     cy.wait(1000);
     cy.get("button.button.is-info").contains("Yes").click();
@@ -145,7 +145,8 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     // //add a card finish
   });
   it("checks that the cards are gone after clear button click", () => {
-    cy.get("button.is-info").contains("Clear Cards").click();
+    cy.wait(500);
+    cy.get("button.is-info.button-shrink").contains("Clear Cards").click();
     cy.wait(300);
     cy.get("button.button.is-info").contains("Yes").click();
   });
@@ -375,7 +376,7 @@ describe("registers a new user that will crud the cards", () => {
     //add a card finish
 
     //clear cards as logged in user
-    cy.get("button.is-info").contains("Clear Cards").click();
+    cy.get("button.is-info.button-shrink").contains("Clear Cards").click();
     cy.get("button.button.is-info").contains("Yes").click();
     cy.wait(500);
     cy.get("div.some-unique-class")
