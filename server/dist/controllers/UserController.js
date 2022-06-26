@@ -177,10 +177,10 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userCards = yield models_1.Card.find({ creator: req.user.username });
-                const updatePromises = userCards.map((id) => {
-                    return models_1.Card.findOneAndUpdate({ _id: id }, {
+                const updatePromises = userCards.map((card) => {
+                    return models_1.Card.findOneAndUpdate({ _id: card._id.toHexString() }, {
                         $set: {
-                            choices: req.body.choices,
+                            choices: [...req.body.choices, { text: card.backSideText }],
                         },
                     }, { new: true });
                 });
@@ -298,7 +298,8 @@ exports.UserController = {
                 }, { new: true })
                     .select("-password")
                     .select("-__v");
-                return res.status(200).json({ cards: updatedUser.cards });
+                const all_cards = yield models_1.Card.find({ creator: updatedUser.username });
+                return res.status(200).json({ cards: all_cards });
             }
             catch (error) {
                 console.error(error);

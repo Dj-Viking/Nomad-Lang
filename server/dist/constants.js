@@ -11,9 +11,6 @@ exports.MOCK_CARD_CHOICES = [
     {
         text: "asf8eh3jf",
     },
-    {
-        text: "a;lsdjkf89efj",
-    },
 ];
 exports.IS_PROD = process.env.NODE_ENV === "production";
 exports.MOCK_ADD_CARD = {

@@ -3,8 +3,6 @@ import { ICard, CategorizedCardsObject } from "src/types";
 export function createCategorizedCardsObject(
     cards: Array<ICard>
 ): CategorizedCardsObject {
-    console.log("what am i sending in here", cards);
-    // BUG IN THIS I AM GIVING CARDS ARRAY AS ARRAY OF ID STRINGS OOPS
     let categorizedCardMap = {} as CategorizedCardsObject;
     let iterator = 0;
     while (iterator < cards.length) {

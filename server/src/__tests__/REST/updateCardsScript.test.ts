@@ -1,5 +1,4 @@
 /* eslint-disable */
-// import { Card } from "../../models";
 // import mongoose from "mongoose";
 
 // import {
@@ -15,8 +14,9 @@
 //     await mongoose.connection.close();
 // });
 
-// describe("can get viking", () => {
-//     test(" update cards", async () => {
+// describe("reset local viking's cards thanks", () => {
+//     test("reset cards", async () => {
+//         await Card.deleteMany();
 //         await Card.insertMany([{
 //             "choices": [],
 //             "frontSideText": "Bog",
@@ -89,8 +89,8 @@
 //         }])
 //     });
 // });
-// describe("placeholder", () => {
-//     test("blah", async () => {
+// describe("testing UI updates the choices if not populated yet", () => {
+//     test("GO", async () => {
 //         const cards = await Card.find({ creator: "viking" });
 
 //         const updatePromises = cards.map(card => {

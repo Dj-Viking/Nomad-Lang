@@ -141,15 +141,16 @@ describe("CRUD user tests", () => {
       .send(MOCK_ADD_CARD as ICard);
     expect(addCard.status).toBe(200);
     const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
+    console.log("parsed", parsed);
     expect(parsed.cards).toHaveLength(1);
-    expect(typeof parsed.cards[0]).toBe("string");
-    newCardId = parsed.cards[0] as string;
-    const card = await Card.findOne({ _id: newCardId });
-    expect(typeof card?.frontSideLanguage).toBe("string");
-    expect(card?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
-    expect(card?.creator).toBe("test user");
-    expect(typeof card?.createdAt).toBe("object");
-    expect(typeof card?.updatedAt).toBe("object");
+    expect(typeof parsed.cards[0]._id).toBe("string");
+    expect(typeof parsed.cards[0]).toBe("object");
+    newCardId = parsed.cards[0]._id as string;
+    expect(typeof parsed.cards[0]?.frontSideLanguage).toBe("string");
+    expect(parsed.cards[0]?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
+    expect(parsed.cards[0]?.creator).toBe("test user");
+    expect(typeof parsed.cards[0]?.createdAt).toBe("string");
+    expect(typeof parsed.cards[0]?.updatedAt).toBe("string");
   });
 
   test("POST /user/addCard hits add card route adds another card to see if theres two", async () => {

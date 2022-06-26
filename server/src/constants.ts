@@ -18,9 +18,6 @@ export const MOCK_CARD_CHOICES = [
   {
     text: "asf8eh3jf",
   },
-  {
-    text: "a;lsdjkf89efj",
-  },
 ];
 
 export const IS_PROD: boolean | undefined = process.env.NODE_ENV === "production";

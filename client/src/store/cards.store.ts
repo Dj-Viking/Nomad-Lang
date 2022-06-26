@@ -91,6 +91,7 @@ const mutations = {
     state.allCards = cards.map((card) => {
       return {
         ...card,
+        choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
@@ -106,6 +107,7 @@ const mutations = {
     state.cards = cards.map((card) => {
       return {
         ...card,
+        choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
@@ -120,7 +122,7 @@ const mutations = {
 
     const initCard = {
       ...card,
-      choices: createCardChoices(),
+      choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
       isFrontSide: true,
       isBackSide: false,
     };
@@ -311,8 +313,6 @@ const actions = {
   ): Promise<boolean | Error> {
     try {
       const { cards } = payload;
-      console.log("what cards am i sending here", cards);
-
       //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;
       const toCategorize = [] as Array<ICard>;
@@ -327,14 +327,10 @@ const actions = {
         iter++;
       }
 
-      console.log("what is tocategorize", toCategorize);
-
       //init before falling into the loop where it will change and return as the comit payload
       const returnCategorized = createCategorizedCardsObject(
         toCategorize as ICard[]
       );
-      console.log("stuck here?");
-
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
         returnCategorized,

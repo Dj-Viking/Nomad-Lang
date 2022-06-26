@@ -50,13 +50,11 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(addCard.status).toBe(200);
         const parsed = JSON.parse(addCard.text) as IUserCreateCardResponse;
         expect(parsed.cards).toHaveLength(1);
-        expect(typeof parsed.cards[0]).toBe("string");
-        const card = await Card.findOne({ _id: parsed.cards[0] });
-        expect(typeof card?.frontSideLanguage).toBe("string");
-        expect(card?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
-        expect(card?.creator).toBe("test user");
-        expect(typeof card?.createdAt).toBe("object");
-        expect(typeof card?.updatedAt).toBe("object");
+        expect(typeof parsed.cards[0]._id).toBe("string");
+        expect(parsed.cards[0]?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
+        expect(parsed.cards[0]?.creator).toBe("test user");
+        expect(typeof parsed.cards[0]?.createdAt).toBe("string");
+        expect(typeof parsed.cards[0]?.updatedAt).toBe("string");
     });
 
     test("just keep adding some cards", async () => {

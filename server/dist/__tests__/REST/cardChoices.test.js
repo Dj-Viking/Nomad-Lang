@@ -45,6 +45,7 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(typeof newUserToken).toBe("string");
     }));
     test("POST /user/addCard hits add card route", () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b, _c, _d;
         const addCard = yield (0, supertest_1.default)(app)
             .post("/user/addCard")
             .set({
@@ -54,13 +55,11 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(addCard.status).toBe(200);
         const parsed = JSON.parse(addCard.text);
         expect(parsed.cards).toHaveLength(1);
-        expect(typeof parsed.cards[0]).toBe("string");
-        const card = yield models_1.Card.findOne({ _id: parsed.cards[0] });
-        expect(typeof (card === null || card === void 0 ? void 0 : card.frontSideLanguage)).toBe("string");
-        expect(card === null || card === void 0 ? void 0 : card.frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
-        expect(card === null || card === void 0 ? void 0 : card.creator).toBe("test user");
-        expect(typeof (card === null || card === void 0 ? void 0 : card.createdAt)).toBe("object");
-        expect(typeof (card === null || card === void 0 ? void 0 : card.updatedAt)).toBe("object");
+        expect(typeof parsed.cards[0]._id).toBe("string");
+        expect((_a = parsed.cards[0]) === null || _a === void 0 ? void 0 : _a.frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
+        expect((_b = parsed.cards[0]) === null || _b === void 0 ? void 0 : _b.creator).toBe("test user");
+        expect(typeof ((_c = parsed.cards[0]) === null || _c === void 0 ? void 0 : _c.createdAt)).toBe("string");
+        expect(typeof ((_d = parsed.cards[0]) === null || _d === void 0 ? void 0 : _d.updatedAt)).toBe("string");
     }));
     test("just keep adding some cards", () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, supertest_1.default)(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(constants_1.MOCK_ADD_CARD);
@@ -86,7 +85,7 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(parsed.result).toBe(true);
     }));
     test("/GET /user/me check user's cards for choices in them after choices endpoint has been called", () => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
+        var _e;
         const user = yield (0, supertest_1.default)(app).get("/user/me").set({
             "authorization": `Bearer ${newUserToken}`
         });
@@ -94,7 +93,7 @@ describe("test adding in the card choices to the user's db card collection", () 
         const parsed = JSON.parse(user.text);
         expect(parsed.user.cards).toHaveLength(7);
         const userCards = yield models_1.Card.find({ creator: parsed.user.username });
-        expect((_a = userCards[0]) === null || _a === void 0 ? void 0 : _a.choices).toHaveLength(4);
+        expect((_e = userCards[0]) === null || _e === void 0 ? void 0 : _e.choices).toHaveLength(4);
     }));
     test("delete the user we just made from the database", () => __awaiter(void 0, void 0, void 0, function* () {
         yield models_1.User.deleteOne({ _id: newUserId });

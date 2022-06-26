@@ -180,12 +180,12 @@ export const UserController = {
     try {
       const userCards = await Card.find({ creator: req!.user!.username });
 
-      const updatePromises = userCards.map((id) => {
+      const updatePromises = userCards.map((card) => {
         return Card.findOneAndUpdate(
-          { _id: id },
+          { _id: card._id.toHexString() },
           {
             $set: {
-              choices: req.body.choices,
+              choices: [...req.body.choices, { text: card.backSideText }],
             },
           },
           { new: true }
@@ -323,7 +323,9 @@ export const UserController = {
         .select("-password")
         .select("-__v");
 
-      return res.status(200).json({ cards: updatedUser!.cards });
+      const all_cards = await Card.find({ creator: updatedUser!.username });
+
+      return res.status(200).json({ cards: all_cards });
     } catch (error) {
       console.error(error);
     }
