@@ -112,7 +112,7 @@
           for="modalAddBsText"
           class="label"
         >
-          Back Side Text
+          Answer
         </label>
         <div class="control">
           <input
