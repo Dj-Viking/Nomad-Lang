@@ -302,7 +302,6 @@ const actions = {
     payload: EditCardPayload
   ): Promise<void | boolean> {
     try {
-      console.log("hwat is payload here fucker", payload);
       commit("cards/EDIT_CARD" as RootCommitType, payload, { root: true });
       await dispatch("cards/setCards" as RootDispatchType, { cards: [...state.allCards], choices: payload.choices }, { root: true });
       return Promise.resolve(true);
@@ -317,7 +316,6 @@ const actions = {
   ): Promise<boolean | Error> {
     try {
       const { cards } = payload;
-      console.log("do cards have choices here", cards);
       //set up the uncategorized map them out of the cards array retturn a new one with cards that do have frontsidelanguage
       const uncategorized = [] as Array<ICard>;
       const toCategorize = [] as Array<ICard>;
@@ -337,7 +335,6 @@ const actions = {
         toCategorize as ICard[]
       );
 
-      console.log('what is returnecateg', returnCategorized);
       commit(
         "cards/SET_CATEGORIZED_CARD_MAP" as RootCommitType,
         returnCategorized,
