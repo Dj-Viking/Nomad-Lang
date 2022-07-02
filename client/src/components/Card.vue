@@ -15,13 +15,13 @@
                         <div style="display: flex; justify-content: space-between">
                             <i
                                 style="
-                  color: #f14668;
-                  font-size: 30px;
-                  margin-top: 0.2em;
-                  margin-left: 0.4em;
-                  margin-bottom: 0.4em;
-                  cursor: pointer;
-                "
+                                    color: #f14668;
+                                    font-size: 30px;
+                                    margin-top: 0.2em;
+                                    margin-left: 0.4em;
+                                    margin-bottom: 0.4em;
+                                    cursor: pointer;
+                                "
                                 class="fa fa-trash"
                                 @click.prevent="
                                     ($event) => {
@@ -48,13 +48,13 @@
                             </button>
                         </div>
                         <!-- <div class="card-image">
-              <figure class="image is-4by3">
-                <img
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="Placeholder image"
-                />
-              </figure>
-            </div> -->
+                            <figure class="image is-4by3">
+                                <img
+                                src="https://bulma.io/images/placeholders/1280x960.png"
+                                alt="Placeholder image"
+                                />
+                            </figure>
+                        </div> -->
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
@@ -149,14 +149,14 @@
                         <div style="display: flex; justify-content: space-between">
                             <i
                                 style="
-                  color: #f14668;
-                  font-size: 30px;
-                  margin-top: 0.2em;
-                  margin-left: 0.4em;
-                  margin-bottom: 0.4em;
-                  cursor: pointer;
-                  visibility: hidden;
-                "
+                                    color: #f14668;
+                                    font-size: 30px;
+                                    margin-top: 0.2em;
+                                    margin-left: 0.4em;
+                                    margin-bottom: 0.4em;
+                                    cursor: pointer;
+                                    visibility: hidden;
+                                "
                                 class="fa fa-trash"
                                 @click.prevent="
                                     ($event) => {
@@ -183,13 +183,13 @@
                             </button>
                         </div>
                         <!-- <div class="card-image">
-              <figure class="image is-4by3">
-                <img
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="Placeholder image"
-                />
-              </figure>
-            </div> -->
+                            <figure class="image is-4by3">
+                                <img
+                                src="https://bulma.io/images/placeholders/1280x960.png"
+                                alt="Placeholder image"
+                                />
+                            </figure>
+                        </div> -->
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
@@ -250,11 +250,11 @@
                                             id="check-answer-btn"
                                             class="button is-primary"
                                             style="
-                        color: black; 
-                        margin-top: 1.5rem;
-                        padding-left: 26px;
-                        padding-right: 26px;
-                      "
+                                                color: black; 
+                                                margin-top: 1.5rem;
+                                                padding-left: 26px;
+                                                padding-right: 26px;
+                                            "
                                             type="submit"
                                         >
                                             Flip
