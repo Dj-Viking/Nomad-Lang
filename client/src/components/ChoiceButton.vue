@@ -48,6 +48,7 @@ export default defineComponent({
     },
     methods: {
         parseText(input: string): string {
+            if (input === "") return "";
             let new_str = input;
             const limit = 4;
 
