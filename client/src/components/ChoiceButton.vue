@@ -5,12 +5,23 @@
         :id="card!._id"
         :value="`${text}`"
         class="button is-info"
-        :class="{ 'is-second': order === 2, 'is-fourth': order === 4, 'is-correct': isCorrect === true, 'is-incorrect': isCorrect === false }"
+        :class="{ 'is-tooltip': shouldBeTooltip, 'is-second': order === 2, 'is-fourth': order === 4, 'is-correct': isCorrect === true, 'is-incorrect': isCorrect === false }"
         @click.prevent="(e) => {
             submitCardFlipCheck(e, true)
         }"
     >
-        {{ text || "nothing yet" }}
+        <p
+            v-if="shouldBeTooltip"
+            :class="{ 'tooltiptext': shouldBeTooltip }"
+        >
+            {{ text }}
+        </p>
+        <p
+            :id="card!._id"
+            :class="{ 'long-form': true }"
+        >
+            {{ parseText(text as string) || "nothing yet" }}
+        </p>
     </button>
 </template>
 
@@ -32,13 +43,37 @@ export default defineComponent({
         const isCorrect = ref();
         const store = useStore<MyRootState>();
         const example = ref<string>("works");
-        return { example, store, isCorrect };
+        const shouldBeTooltip = ref<boolean>(false);
+        return { example, store, isCorrect, shouldBeTooltip };
     },
     methods: {
+        parseText(input: string): string {
+            let new_str = input;
+            const limit = 4;
+
+            if (new_str.split(" ").length > limit) {
+                this.shouldBeTooltip = true;
+
+                new_str = new_str.split(" ").map((word, i) => {
+                    if (i === limit && !!word) {
+                        return word.replace(word, word[0] + "...");
+                    }
+                    if (i >= (limit + 1)) {
+                        return null;
+                    }
+                    return word;
+                }).filter(item => item !== null).join(" ");
+                console.log("new str", new_str);
+                return new_str;
+            } else {
+                this.shouldBeTooltip = false;
+                return input;
+            }
+        },
         submitCardFlipCheck(event: any, _isFrontSide: boolean): void {
             const id = event.target.id;
-            const text = event.target.value;
-            console.log("id and text after clicking", id, text);
+            const text = event.target.localName === "p" ? event.target.textContent : event.target.value;
+            console.log("id and text after clicking", `"${id}"`, `"${text}"`, event.target, event);
             if (_isFrontSide) {
                 if (text === this.card?.backSideText) {
                     this.isCorrect = true;
@@ -75,6 +110,7 @@ export default defineComponent({
 
         async shiftCardNext(event?: any, id?: string): Promise<void> {
             const cardId = !event ? id : event.target.id;
+            this.isCorrect = void 0;
             //update display cards array state
             // to shift a card out of the stack after done using it
             await this.store.dispatch("cards/shiftCardNext" as RootDispatchType, cardId, { root: true });
@@ -100,7 +136,43 @@ green border
     margin-left: 0.5em;
 }
 
+.long-form {
+    word-break: break-all;
+    white-space: normal;
+}
+
 .is-fourth {
     margin-left: 0.5em;
+}
+
+
+/* Tooltip container */
+.is-tooltip {
+    position: relative;
+    display: inline-block;
+    /* If you want dots under the hoverable text */
+    border-bottom: 1px dotted black;
+}
+
+/* Tooltip text */
+.is-tooltip .tooltiptext {
+    visibility: hidden;
+    width: fit-content;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 0.5em 0.5em;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    top: -30px;
+    z-index: 1;
+}
+
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.is-tooltip:hover .tooltiptext {
+    visibility: visible;
 }
 </style>
