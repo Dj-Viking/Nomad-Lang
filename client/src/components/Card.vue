@@ -1,18 +1,15 @@
 <template>
-    <Transition
-        type="transition"
-        name="fade"
-        mode="out-in"
-    >
+    <Transition type="transition" name="fade" mode="out-in">
         <div v-if="!isLoading">
-            <Transition
-                type="transition"
-                name="slide-fade"
-                mode="out-in"
-            >
+            <Transition type="transition" name="slide-fade" mode="out-in">
                 <div v-if="card!.isFrontSide">
                     <div class="card">
-                        <div style="display: flex; justify-content: space-between">
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                            "
+                        >
                             <i
                                 style="
                                     color: #f14668;
@@ -32,7 +29,11 @@
                             ></i>
                             <button
                                 class="button is-primary ml-6"
-                                style="color: black; margin-top: 0.3em; margin-right: 0.4em"
+                                style="
+                                    color: black;
+                                    margin-top: 0.3em;
+                                    margin-right: 0.4em;
+                                "
                                 @click.prevent="
                                     ($event) => {
                                         openEditModal($event, card!);
@@ -58,30 +59,49 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
-                                    <div v-if="/<strong>/g.test(card?.frontSideText!)">
+                                    <div
+                                        v-if="/<strong>/g.test(card?.frontSideText!)"
+                                    >
                                         <p v-html="card?.frontSideText"></p>
                                     </div>
                                     <div v-else>
                                         <p
                                             style="margin-bottom: 1.5rem"
                                             class="title is-5"
-                                        >{{ card?.frontSideText }}</p>
+                                        >
+                                            {{ card?.frontSideText }}
+                                        </p>
                                     </div>
                                     <form
                                         :id="id"
                                         @submit.prevent="
                                             ($event) => {
                                                 (async () => {
-                                                    await submitCardFlipCheck($event, true);
+                                                    await submitCardFlipCheck(
+                                                        $event,
+                                                        true
+                                                    );
                                                 })();
                                             }
                                         "
                                     >
                                         <div
-                                            style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; flex-direction: column; justify-content: center;"
+                                            style="
+                                                margin-bottom: 1.5rem;
+                                                display: flex;
+                                                flex-wrap: wrap;
+                                                flex-direction: column;
+                                                justify-content: center;
+                                            "
                                             id="answer-container"
                                         >
-                                            <div style="display: flex; flex-direction: row; justify-content: center;">
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: row;
+                                                    justify-content: center;
+                                                "
+                                            >
                                                 <ChoiceButton
                                                     :order="1"
                                                     :card="card"
@@ -93,7 +113,13 @@
                                                     :text="card?.choices![1].text || `nothing yet`"
                                                 />
                                             </div>
-                                            <div style="display: flex; flex-direction: row; justify-content: center;">
+                                            <div
+                                                style="
+                                                    display: flex;
+                                                    flex-direction: row;
+                                                    justify-content: center;
+                                                "
+                                            >
                                                 <ChoiceButton
                                                     :order="3"
                                                     :card="card"
@@ -118,7 +144,10 @@
                                         <button
                                             id="check-answer-btn"
                                             class="button is-primary"
-                                            style="color: black; margin-top: 1.5rem"
+                                            style="
+                                                color: black;
+                                                margin-top: 1.5rem;
+                                            "
                                             type="submit"
                                         >
                                             Check
@@ -146,7 +175,12 @@
                 </div>
                 <div v-else>
                     <div class="card">
-                        <div style="display: flex; justify-content: space-between">
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                            "
+                        >
                             <i
                                 style="
                                     color: #f14668;
@@ -167,7 +201,12 @@
                             ></i>
                             <button
                                 class="button is-primary ml-6"
-                                style="color: black; margin-top: 0.3em; margin-right: 0.4em; visibility: hidden;"
+                                style="
+                                    color: black;
+                                    margin-top: 0.3em;
+                                    margin-right: 0.4em;
+                                    visibility: hidden;
+                                "
                                 @click.prevent="
                                     ($event) => {
                                         openEditModal($event, card!);
@@ -193,27 +232,38 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
-                                    <div v-if="/<strong>/g.test(card?.backSideText!)">
+                                    <div
+                                        v-if="/<strong>/g.test(card?.backSideText!)"
+                                    >
                                         <p v-html="card?.backSideText"></p>
                                     </div>
                                     <div v-else>
                                         <p
                                             style="margin-bottom: 1.5rem"
                                             class="title is-5"
-                                        >{{ card?.backSideText }}</p>
+                                        >
+                                            {{ card?.backSideText }}
+                                        </p>
                                     </div>
                                     <form
                                         :id="id"
                                         @submit.prevent="
                                             ($event) => {
                                                 (async () => {
-                                                    await shiftCardNext($event, id);
+                                                    await shiftCardNext(
+                                                        $event,
+                                                        id
+                                                    );
                                                 })();
                                             }
                                         "
                                     >
                                         <div
-                                            style="margin-bottom: 1.5rem; max-width: fit-content; visibility: hidden;"
+                                            style="
+                                                margin-bottom: 1.5rem;
+                                                max-width: fit-content;
+                                                visibility: hidden;
+                                            "
                                             id="answer-container"
                                         >
                                             <ChoiceButton
@@ -240,7 +290,11 @@
                                         <input
                                             autocomplete="off"
                                             id="translation-input"
-                                            style="margin: 0 auto; width: 80%; visibility: hidden;"
+                                            style="
+                                                margin: 0 auto;
+                                                width: 80%;
+                                                visibility: hidden;
+                                            "
                                             class="input"
                                             type="text"
                                             v-model="translation"
@@ -250,7 +304,7 @@
                                             id="check-answer-btn"
                                             class="button is-primary"
                                             style="
-                                                color: black; 
+                                                color: black;
                                                 margin-top: 1.5rem;
                                                 padding-left: 26px;
                                                 padding-right: 26px;
@@ -263,7 +317,10 @@
                                     <button
                                         :id="id!"
                                         type="submit"
-                                        style="margin-top: 1.5rem; visibility: hidden;"
+                                        style="
+                                            margin-top: 1.5rem;
+                                            visibility: hidden;
+                                        "
                                         class="button is-warning"
                                         @click.prevent="
                                             ($event) => {
@@ -307,16 +364,15 @@ export default defineComponent({
     name: "Card",
     components: {
         Spinner,
-        ChoiceButton
+        ChoiceButton,
     },
     props: {
         choices: Object as PropType<string[]>,
         card: Object as PropType<CardClass>,
         cards: Array as PropType<Array<CardClass>>,
-        id: String
+        id: String,
     },
     setup() {
-
         const toast = useToast();
         const store = useStore<MyRootState>();
         const translation = ref<string>("");
@@ -339,29 +395,55 @@ export default defineComponent({
     },
     methods: {
         openDeleteCardModal(_event: Event, id: string): void {
-            this.store.commit("modal/SET_MODAL_TITLE" as RootCommitType, "Delete This Card", {
-                root: true,
-            });
-            this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, { _id: id }, {
-                root: true,
-            });
-            this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
-                root: true,
-            });
+            this.store.commit(
+                "modal/SET_MODAL_TITLE" as RootCommitType,
+                "Delete This Card",
+                {
+                    root: true,
+                }
+            );
+            this.store.commit(
+                "modal/SET_MODAL_CONTEXT" as RootCommitType,
+                { _id: id },
+                {
+                    root: true,
+                }
+            );
+            this.store.commit(
+                "modal/SET_MODAL_ACTIVE" as RootCommitType,
+                true,
+                {
+                    root: true,
+                }
+            );
         },
-        async submitCardFlipCheck(event: any, _isFrontSide: boolean): Promise<void> {
-
+        async submitCardFlipCheck(
+            event: any,
+            _isFrontSide: boolean
+        ): Promise<void> {
             const id = event.target.id;
             if (_isFrontSide) {
-                if (new RegExp(`^${this.card!.backSideText}$`, "i").test(this.translation)) {
+                if (
+                    new RegExp(`^${this.card!.backSideText}$`, "i").test(
+                        this.translation
+                    )
+                ) {
                     // increment correct score
-                    this.store.commit("user/INCREMENT_CORRECT" as RootCommitType, null, { root: true });
+                    this.store.commit(
+                        "user/INCREMENT_CORRECT" as RootCommitType,
+                        null,
+                        { root: true }
+                    );
                     // TODO: display message on card that it was right
                     // increment the user's score when right
                     // after some time flip the card back to the front and go to the next card in the CardList being displayed
                 } else {
                     // increment incorrect score
-                    this.store.commit("user/INCREMENT_INCORRECT" as RootCommitType, null, { root: true });
+                    this.store.commit(
+                        "user/INCREMENT_INCORRECT" as RootCommitType,
+                        null,
+                        { root: true }
+                    );
                     // TODO display message on card that it was wrong
                     // decrement the user's score and then show the answer
                     // on the backside, after some time flip back to front and then
@@ -369,43 +451,63 @@ export default defineComponent({
                 }
                 this.translation = "";
                 //set the class on for the flip animation on the card object itself.
-                console.log("flip check after store commit if incorrect");
                 this.store.commit(
-                    "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
+                    "cards/TOGGLE_CARD_SIDE" as RootCommitType,
+                    id,
+                    { root: true }
                 );
-            } else { //is backside, just flip without checking translation
+            } else {
+                //is backside, just flip without checking translation
                 this.store.commit(
-                    "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
+                    "cards/TOGGLE_CARD_SIDE" as RootCommitType,
+                    id,
+                    { root: true }
                 );
                 // done checking answer just go to the next card
                 await this.shiftCardNext(null, id);
             }
         },
         async shiftCardNext(event?: any, id?: string): Promise<void> {
-            const cardId = (() => !event ? id : event.target.id)();
+            const cardId = (() => (!event ? id : event.target.id))();
             //update display cards array state
             // to shift a card out of the stack after done using it
-            await this.store.dispatch("cards/shiftCardNext" as RootDispatchType, cardId, { root: true });
+            await this.store.dispatch(
+                "cards/shiftCardNext" as RootDispatchType,
+                cardId,
+                { root: true }
+            );
         },
         // eslint-disable-next-line
         openEditModal(_event: Event, card: ICard) {
             this.store.commit("modal/SET_MODAL_TITLE", "Edit a card", {
                 root: true,
             });
-            this.store.commit("modal/SET_MODAL_CONTEXT" as RootCommitType, card, {
-                root: true,
-            });
-            this.store.commit("modal/SET_MODAL_ACTIVE" as RootCommitType, true, {
-                root: true,
-            });
+            this.store.commit(
+                "modal/SET_MODAL_CONTEXT" as RootCommitType,
+                card,
+                {
+                    root: true,
+                }
+            );
+            this.store.commit(
+                "modal/SET_MODAL_ACTIVE" as RootCommitType,
+                true,
+                {
+                    root: true,
+                }
+            );
         },
     },
     mounted() {
         if (this.card) {
             setTimeout(() => {
-                this.store.commit("loading/SET_LOADING" as RootCommitType, false, {
-                    root: true,
-                });
+                this.store.commit(
+                    "loading/SET_LOADING" as RootCommitType,
+                    false,
+                    {
+                        root: true,
+                    }
+                );
             }, 500);
         }
     },

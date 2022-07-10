@@ -19,7 +19,7 @@
             }
         "
     >
-        <p v-if="shouldBeTooltip" :class="{ tooltiptext: shouldBeTooltip }">
+        <p v-if="!isMobile" :class="{ tooltiptext: shouldBeTooltip }">
             {{ text }}
         </p>
         <p :id="card!._id" :class="{ 'long-form': true }">
@@ -80,7 +80,6 @@ export default defineComponent({
                     })
                     .filter((item) => item !== null)
                     .join(" ");
-                console.log("new str", new_str);
                 return new_str;
             } else {
                 this.shouldBeTooltip = false;
@@ -88,18 +87,10 @@ export default defineComponent({
             }
         },
         submitCardFlipCheck(event: any, _isFrontSide: boolean): void {
-            const id = event.target.id;
             const text =
                 event.target.localName === "p"
                     ? event.target.textContent
                     : event.target.value;
-            console.log(
-                "id and text after clicking",
-                `"${id}"`,
-                `"${text}"`,
-                event.target,
-                event
-            );
             if (_isFrontSide) {
                 if (text === this.card?.backSideText) {
                     this.isCorrect = true;
@@ -155,10 +146,7 @@ export default defineComponent({
         },
 
         openAnswerInModalIfMobileScreenWidth(card: CardClass): void {
-            console.log("am i calling this please");
-            //
-            if (this.isMobile) {
-                console.log("am i calling this please open the damn modal");
+            if (this.isMobile && this.text!.split(" ").length >= 5) {
                 this.store.commit(
                     "modal/SET_MODAL_TITLE" as RootCommitType,
                     "Choice" as ModalTitles,

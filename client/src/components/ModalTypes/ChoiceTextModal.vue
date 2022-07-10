@@ -1,13 +1,20 @@
 <template>
-    <div>hello world</div>
+    <p style="color: white">
+        {{ modal.context.card.backSideText }}
+    </p>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
+import { MyRootState } from "@/types";
+import { computed } from "@vue/reactivity";
+import { defineComponent } from "@vue/runtime-core";
+import { useStore } from "vuex";
 export default defineComponent({
     name: "ChoiceText",
     setup() {
-        const example = ref<string>("works");
-        return { example };
+        const store = useStore<MyRootState>();
+        const modal = computed(() => store.state.modal.modal);
+
+        return { modal, store };
     },
     methods: {},
 });

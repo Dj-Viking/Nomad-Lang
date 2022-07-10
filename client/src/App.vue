@@ -33,7 +33,6 @@ export default defineComponent({
     mounted() {
         // set global isMobile width state.
         const MediaQueryList = window.matchMedia("(max-width: 600px)");
-        console.log("media query list interface", MediaQueryList);
         if (MediaQueryList.matches) {
             this.store.commit(
                 "mobile/TOGGLE_ISMOBILE" as RootCommitType,
@@ -47,8 +46,6 @@ export default defineComponent({
                 { root: true }
             );
         if (window.innerWidth <= 600) {
-            console.log("on app mount width is smaller or the same as 600");
-
             this.store.commit(
                 "mobile/TOGGLE_ISMOBILE" as RootCommitType,
                 window.innerWidth,
@@ -57,7 +54,6 @@ export default defineComponent({
         }
 
         MediaQueryList.onchange = (e) => {
-            console.log("query list changed ion change callback called ", e);
             if (e.matches)
                 this.store.commit(
                     "mobile/TOGGLE_ISMOBILE" as RootCommitType,
