@@ -5,21 +5,24 @@
         :id="card!._id"
         :value="`${text}`"
         class="button is-info"
-        :class="{ 'is-tooltip': shouldBeTooltip, 'is-second': order === 2, 'is-fourth': order === 4, 'is-correct': isCorrect === true, 'is-incorrect': isCorrect === false }"
-        @click.prevent="(e) => {
-            submitCardFlipCheck(e, true)
+        :class="{
+            'is-tooltip': shouldBeTooltip,
+            'is-second': order === 2,
+            'is-fourth': order === 4,
+            'is-correct': isCorrect === true,
+            'is-incorrect': isCorrect === false,
         }"
+        @click.prevent="
+            (e) => {
+                openAnswerInModalIfMobileScreenWidth(card!);
+                submitCardFlipCheck(e, true);
+            }
+        "
     >
-        <p
-            v-if="shouldBeTooltip"
-            :class="{ 'tooltiptext': shouldBeTooltip }"
-        >
+        <p v-if="shouldBeTooltip" :class="{ tooltiptext: shouldBeTooltip }">
             {{ text }}
         </p>
-        <p
-            :id="card!._id"
-            :class="{ 'long-form': true }"
-        >
+        <p :id="card!._id" :class="{ 'long-form': true }">
             {{ parseText(text as string) || "nothing yet" }}
         </p>
     </button>
@@ -29,7 +32,14 @@
 <!-- hey it's late go to bed! -->
 <!-- shoot, I should probably close the live-share session after I'm done huh lol -->
 <script lang="ts">
-import { CardClass, MyRootState, RootCommitType, RootDispatchType } from "@/types";
+import {
+    CardClass,
+    ModalTitles,
+    MyRootState,
+    RootCommitType,
+    RootDispatchType,
+} from "@/types";
+import { computed } from "@vue/reactivity";
 import { defineComponent, ref, PropType } from "@vue/runtime-core";
 import { useStore } from "vuex";
 export default defineComponent({
@@ -37,33 +47,39 @@ export default defineComponent({
     props: {
         order: Number,
         card: Object as PropType<CardClass>,
-        text: String
+        text: String,
     },
     setup() {
         const isCorrect = ref();
         const store = useStore<MyRootState>();
         const example = ref<string>("works");
         const shouldBeTooltip = ref<boolean>(false);
-        return { example, store, isCorrect, shouldBeTooltip };
+        const isMobile = computed(() => store.getters["mobile/isMobile"]);
+        return { example, store, isCorrect, shouldBeTooltip, isMobile };
     },
     methods: {
         parseText(input: string): string {
             if (input === "") return "";
             let new_str = input;
+            const new_str_split_length = new_str.split(" ").length;
             const limit = 4;
 
-            if (new_str.split(" ").length > limit) {
+            if (new_str_split_length > limit) {
                 this.shouldBeTooltip = true;
 
-                new_str = new_str.split(" ").map((word, i) => {
-                    if (i === limit && !!word) {
-                        return word.replace(word, word[0] + "...");
-                    }
-                    if (i >= (limit + 1)) {
-                        return null;
-                    }
-                    return word;
-                }).filter(item => item !== null).join(" ");
+                new_str = new_str
+                    .split(" ")
+                    .map((word, i) => {
+                        if (i === limit && !!word) {
+                            return word.replace(word, word + "...");
+                        }
+                        if (i >= limit + 1) {
+                            return null;
+                        }
+                        return word;
+                    })
+                    .filter((item) => item !== null)
+                    .join(" ");
                 console.log("new str", new_str);
                 return new_str;
             } else {
@@ -73,20 +89,37 @@ export default defineComponent({
         },
         submitCardFlipCheck(event: any, _isFrontSide: boolean): void {
             const id = event.target.id;
-            const text = event.target.localName === "p" ? event.target.textContent : event.target.value;
-            console.log("id and text after clicking", `"${id}"`, `"${text}"`, event.target, event);
+            const text =
+                event.target.localName === "p"
+                    ? event.target.textContent
+                    : event.target.value;
+            console.log(
+                "id and text after clicking",
+                `"${id}"`,
+                `"${text}"`,
+                event.target,
+                event
+            );
             if (_isFrontSide) {
                 if (text === this.card?.backSideText) {
                     this.isCorrect = true;
                     // increment correct score
-                    this.store.commit("user/INCREMENT_CORRECT" as RootCommitType, null, { root: true });
+                    this.store.commit(
+                        "user/INCREMENT_CORRECT" as RootCommitType,
+                        null,
+                        { root: true }
+                    );
                     // TODO: display message on card that it was right
                     // increment the user's score when right
                     // after some time flip the card back to the front and go to the next card in the CardList being displayed
                 } else {
                     this.isCorrect = false;
                     // increment incorrect score
-                    this.store.commit("user/INCREMENT_INCORRECT" as RootCommitType, null, { root: true });
+                    this.store.commit(
+                        "user/INCREMENT_INCORRECT" as RootCommitType,
+                        null,
+                        { root: true }
+                    );
                     // TODO display message on card that it was wrong
                     // decrement the user's score and then show the answer
                     // on the backside, after some time flip back to front and then
@@ -96,8 +129,8 @@ export default defineComponent({
                 // this.store.commit(
                 //     "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
                 // );
-
-            } else { //is backside, just flip without checking translation
+            } else {
+                //is backside, just flip without checking translation
                 // this.store.commit(
                 //     "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
                 // );
@@ -114,7 +147,34 @@ export default defineComponent({
             this.isCorrect = void 0;
             //update display cards array state
             // to shift a card out of the stack after done using it
-            await this.store.dispatch("cards/shiftCardNext" as RootDispatchType, cardId, { root: true });
+            await this.store.dispatch(
+                "cards/shiftCardNext" as RootDispatchType,
+                cardId,
+                { root: true }
+            );
+        },
+
+        openAnswerInModalIfMobileScreenWidth(card: CardClass): void {
+            console.log("am i calling this please");
+            //
+            if (this.isMobile) {
+                console.log("am i calling this please open the damn modal");
+                this.store.commit(
+                    "modal/SET_MODAL_TITLE" as RootCommitType,
+                    "Choice" as ModalTitles,
+                    { root: true }
+                );
+                this.store.commit(
+                    "modal/SET_MODAL_CONTEXT" as RootCommitType,
+                    card,
+                    { root: true }
+                );
+                this.store.commit(
+                    "modal/SET_MODAL_ACTIVE" as RootCommitType,
+                    true,
+                    { root: true }
+                );
+            }
         },
     },
 });
@@ -130,7 +190,6 @@ green border
 
 .is-incorrect {
     box-shadow: 2px 2px 2px 5px hsl(348deg, 86%, 61%) !important;
-
 }
 
 .is-second {
@@ -145,7 +204,6 @@ green border
 .is-fourth {
     margin-left: 0.5em;
 }
-
 
 /* Tooltip container */
 .is-tooltip {
@@ -170,7 +228,6 @@ green border
     top: -30px;
     z-index: 1;
 }
-
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .is-tooltip:hover .tooltiptext {

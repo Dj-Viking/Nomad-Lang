@@ -148,7 +148,14 @@ export interface SidebarState {
 export interface ThemeState {
   theme: string;
 }
+export interface Mobile {
+  isMobile: boolean;
+}
+export interface MobileState {
+  mobile: Mobile;
+}
 export interface MyRootState {
+  mobile: MobileState;
   user: UserState;
   theme: ThemeState;
   loading: LoadingState;
@@ -263,6 +270,8 @@ export type MyGetters =
   | "user/incorrect"
 
 export type RootCommitType =
+  | "mobile/TOGGILE_ISMOBILE"
+  /** */
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
@@ -378,3 +387,10 @@ export type AddChoicesResponse = {
 } & {
   er?: unknown | null;
 }
+
+export type ModalTitles = 
+| "Choice"
+| "Clear"
+| "Edit"
+| "Add"
+| "Delete";
