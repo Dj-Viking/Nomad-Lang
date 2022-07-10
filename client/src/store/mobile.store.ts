@@ -14,7 +14,6 @@ import {
             console.log("state.mobile", state.mobile);
         }
         if (typeof payload === "number") {
-            console.log("am i calling this fucking shit DEBUG", payload);
             if (payload <= 600) {
                 state.mobile.isMobile = true;
                 console.log("state.mobile", state.mobile);
