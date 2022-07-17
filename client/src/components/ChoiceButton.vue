@@ -200,7 +200,6 @@ green border
 
 .long-form {
     word-break: break-all;
-    white-space: normal;
 }
 
 .is-fourth {
