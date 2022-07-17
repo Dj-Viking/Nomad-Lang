@@ -19,7 +19,10 @@
             }
         "
     >
-        <p v-if="!isMobile" :class="{ tooltiptext: shouldBeTooltip }">
+        <p
+            v-if="!isMobile && shouldBeTooltip"
+            :class="{ tooltiptext: shouldBeTooltip }"
+        >
             {{ text }}
         </p>
         <p :id="card!._id" :class="{ 'long-form': true }">
@@ -34,10 +37,11 @@
 <script lang="ts">
 import {
     CardClass,
-    ModalTitles,
+    ModalTitle,
     MyRootState,
     RootCommitType,
     RootDispatchType,
+    OpenModalPayload,
 } from "@/types";
 import { computed } from "@vue/reactivity";
 import { defineComponent, ref, PropType } from "@vue/runtime-core";
@@ -52,17 +56,27 @@ export default defineComponent({
     setup() {
         const isCorrect = ref();
         const store = useStore<MyRootState>();
+        const allCards = computed<CardClass[]>(() => {
+            return store.state.cards.allCards;
+        });
         const example = ref<string>("works");
         const shouldBeTooltip = ref<boolean>(false);
         const isMobile = computed(() => store.getters["mobile/isMobile"]);
-        return { example, store, isCorrect, shouldBeTooltip, isMobile };
+        return {
+            example,
+            store,
+            isCorrect,
+            shouldBeTooltip,
+            isMobile,
+            allCards,
+        };
     },
     methods: {
         parseText(input: string): string {
             if (input === "") return "";
             let new_str = input;
             const new_str_split_length = new_str.split(" ").length;
-            const limit = 4;
+            const limit = 3;
 
             if (new_str_split_length > limit) {
                 this.shouldBeTooltip = true;
@@ -87,10 +101,16 @@ export default defineComponent({
             }
         },
         submitCardFlipCheck(event: any, _isFrontSide: boolean): void {
-            const text =
+            let text =
                 event.target.localName === "p"
                     ? event.target.textContent
                     : event.target.value;
+
+            if (this.shouldBeTooltip)
+                text = this.allCards.find(
+                    (card) => this.card?._id === card._id
+                )?.backSideText;
+
             if (_isFrontSide) {
                 if (text === this.card?.backSideText) {
                     this.isCorrect = true;
@@ -147,19 +167,13 @@ export default defineComponent({
 
         openAnswerInModalIfMobileScreenWidth(card: CardClass): void {
             if (this.isMobile && this.text!.split(" ").length >= 5) {
-                this.store.commit(
-                    "modal/SET_MODAL_TITLE" as RootCommitType,
-                    "Choice" as ModalTitles,
-                    { root: true }
-                );
-                this.store.commit(
-                    "modal/SET_MODAL_CONTEXT" as RootCommitType,
-                    card,
-                    { root: true }
-                );
-                this.store.commit(
-                    "modal/SET_MODAL_ACTIVE" as RootCommitType,
-                    true,
+                this.store.dispatch(
+                    "modal/openModal" as RootDispatchType,
+                    {
+                        title: "Choice" as ModalTitle,
+                        context: card,
+                        active: true,
+                    } as OpenModalPayload,
                     { root: true }
                 );
             }

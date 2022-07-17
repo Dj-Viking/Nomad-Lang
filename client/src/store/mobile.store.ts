@@ -8,7 +8,7 @@ import {
     }
   };
   const mutations = {
-    TOGGLE_ISMOBILE(state: MobileState, payload: number): void {
+    TOGGLE_ISMOBILE(state: MobileState, payload: number | boolean): void {
         if (typeof payload === "boolean") {
             state.mobile.isMobile = payload;
             console.log("state.mobile", state.mobile);

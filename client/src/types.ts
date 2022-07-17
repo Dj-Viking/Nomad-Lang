@@ -234,6 +234,8 @@ export interface CardState {
 }
 
 export type RootDispatchType =
+  | "modal/openModal"
+  /** */
   | "user/setUserToken"
   | "user/setUserCards"
   | "user/setUser"
@@ -388,9 +390,15 @@ export type AddChoicesResponse = {
   er?: unknown | null;
 }
 
-export type ModalTitles = 
+export type ModalTitle = 
 | "Choice"
 | "Clear"
 | "Edit"
 | "Add"
 | "Delete";
+
+export interface OpenModalPayload { 
+  active: boolean; 
+  context: CardClass;
+  title: string;
+}

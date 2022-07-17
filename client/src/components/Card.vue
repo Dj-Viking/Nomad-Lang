@@ -1,8 +1,8 @@
 <template>
     <Transition type="transition" name="fade" mode="out-in">
         <div v-if="!isLoading">
-            <Transition type="transition" name="slide-fade" mode="out-in">
-                <div v-if="card!.isFrontSide">
+            <TransitionGroup type="transition" name="slide-fade" mode="out-in">
+                <div :key="keyGen()" v-if="card!.isFrontSide">
                     <div class="card">
                         <div
                             style="
@@ -173,7 +173,8 @@
                         </div>
                     </div>
                 </div>
-                <div v-else>
+                <!-- is not front side -->
+                <div :key="keyGen() + 'asdfkjsdkfjdkjf'" v-else>
                     <div class="card">
                         <div
                             style="
@@ -237,9 +238,18 @@
                                     >
                                         <p v-html="card?.backSideText"></p>
                                     </div>
-                                    <div v-else>
+                                    <div
+                                        style="
+                                            max-width: fit-content;
+                                            margin: 0 auto;
+                                        "
+                                        v-else
+                                    >
                                         <p
-                                            style="margin-bottom: 1.5rem"
+                                            style="
+                                                margin-bottom: 1.5rem;
+                                                line-height: 1.5rem;
+                                            "
                                             class="title is-5"
                                         >
                                             {{ card?.backSideText }}
@@ -337,7 +347,7 @@
                         </div>
                     </div>
                 </div>
-            </Transition>
+            </TransitionGroup>
         </div>
         <div v-else>
             <div style="height: 0; margin: 0; padding: 0">
@@ -357,6 +367,7 @@ import {
     RootCommitType,
     RootDispatchType,
 } from "@/types";
+import { keyGen } from "@/utils/keyGen";
 import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
 import ChoiceButton from "../components/ChoiceButton.vue";
@@ -386,6 +397,7 @@ export default defineComponent({
             all_cards,
             my_cards,
             toast,
+            keyGen,
             store,
             translation,
             isLoading,
