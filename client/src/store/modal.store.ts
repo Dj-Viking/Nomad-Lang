@@ -1,7 +1,8 @@
 // import { MyRootState, RootCommitType, RootDispatchType } from "@/types";
 // import { ActionContext } from "vuex";
 
-import { ModalState } from "../../src/types";
+import { ActionContext } from "vuex";
+import { ModalState, MyRootState, OpenModalPayload, RootCommitType } from "@/types";
 
 const state: ModalState = {
   modal: {
@@ -31,7 +32,17 @@ const mutations = {
     state.modal.context.card = {};
   },
 };
-const actions = {};
+const actions = {
+  openModal(
+    { commit }: ActionContext<ModalState, MyRootState>,
+    payload: OpenModalPayload
+  ) {
+    const { active, context, title  } = payload;
+    commit("modal/SET_MODAL_ACTIVE" as RootCommitType, active, { root: true });
+    commit("modal/SET_MODAL_CONTEXT" as RootCommitType, context, { root: true });
+    commit("modal/SET_MODAL_TITLE" as RootCommitType, title, { root: true });
+  },
+};
 const getters = {};
 
 export default {

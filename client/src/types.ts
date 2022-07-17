@@ -148,7 +148,14 @@ export interface SidebarState {
 export interface ThemeState {
   theme: string;
 }
+export interface Mobile {
+  isMobile: boolean;
+}
+export interface MobileState {
+  mobile: Mobile;
+}
 export interface MyRootState {
+  mobile: MobileState;
   user: UserState;
   theme: ThemeState;
   loading: LoadingState;
@@ -227,6 +234,8 @@ export interface CardState {
 }
 
 export type RootDispatchType =
+  | "modal/openModal"
+  /** */
   | "user/setUserToken"
   | "user/setUserCards"
   | "user/setUser"
@@ -263,6 +272,8 @@ export type MyGetters =
   | "user/incorrect"
 
 export type RootCommitType =
+  | "mobile/TOGGILE_ISMOBILE"
+  /** */
   | "user/SET_USER"
   | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
@@ -377,4 +388,17 @@ export type AddChoicesResponse = {
   result: boolean | null;
 } & {
   er?: unknown | null;
+}
+
+export type ModalTitle = 
+| "Choice"
+| "Clear"
+| "Edit"
+| "Add"
+| "Delete";
+
+export interface OpenModalPayload { 
+  active: boolean; 
+  context: CardClass;
+  title: string;
 }
