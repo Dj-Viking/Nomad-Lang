@@ -392,7 +392,6 @@ export default defineComponent({
         const isLoading = computed(() => store.state.loading.loading.isLoading);
         const isLoggedIn = computed(() => store.state.user.user.loggedIn);
         const activeClass = computed(() => store.state.modal.modal.activeClass);
-
         return {
             all_cards,
             my_cards,
