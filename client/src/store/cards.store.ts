@@ -62,12 +62,12 @@ const mutations = {
       };
     })];
 
-    state.cards = [...state.cards.map(card => {
+    state.cards = shuffleArray([...state.cards.map(card => {
       return {
         ...card,
         choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
       };
-    })];
+    })]);
 
 
   },
@@ -88,14 +88,14 @@ const mutations = {
         "payload must be a specific type of object but it was ",
         payload
       );
-    state.allCards = cards.map((card) => {
+    state.allCards = shuffleArray(cards.map((card) => {
       return {
         ...card,
         choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
-    });
+    }));
   },
   SET_DISPLAY_CARDS(state: CardsState, payload: { cards: Array<ICard> }): void {
     const { cards } = payload;
@@ -104,14 +104,14 @@ const mutations = {
         "payload must be a specific type of object but it was ",
         payload
       );
-    state.cards = cards.map((card) => {
+    state.cards = shuffleArray(cards.map((card) => {
       return {
         ...card,
-        choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
+        choices: shuffleArray([...createCardChoices(), { text: card.backSideText }]) as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
-    });
+    }));
   },
   ADD_CARD(state: CardsState, card: ICard): void {
     if (typeof card !== "object" || card === null)
@@ -246,9 +246,6 @@ const actions = {
         { root: true }
       );
 
-
-      // TODO: FIX THIS PLEASE THANKS THIS IS FREEZING THE BROWSER TEMP FIX IN PLACE TO STOP FREEZING BUT
-      // THE CARDS BEING SENT IN ARE NOT CORRECT!!
       //after commits are done set the categories
       await dispatch(
         "cards/setCategorizedCards" as RootDispatchType,

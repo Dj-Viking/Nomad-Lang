@@ -223,20 +223,18 @@ export default defineComponent({
             this.store.commit("user/RESET_ANSWERS" as RootCommitType, null, {
                 root: true,
             });
-            if (this.cards.length !== this.allCards.length) {
-                if (this.aCategoryIsActive) {
-                    this.store.commit(
-                        "cards/SET_DISPLAY_CARDS" as RootCommitType,
-                        { cards: this.currentActiveCategoryCards },
-                        { root: true }
-                    );
-                } else {
-                    this.store.commit(
-                        "cards/SET_DISPLAY_CARDS" as RootCommitType,
-                        { cards: this.allCards },
-                        { root: true }
-                    );
-                }
+            if (this.aCategoryIsActive) {
+                this.store.commit(
+                    "cards/SET_DISPLAY_CARDS" as RootCommitType,
+                    { cards: this.currentActiveCategoryCards },
+                    { root: true }
+                );
+            } else {
+                this.store.commit(
+                    "cards/SET_DISPLAY_CARDS" as RootCommitType,
+                    { cards: this.allCards },
+                    { root: true }
+                );
             }
         },
         // eslint-disable-next-line
