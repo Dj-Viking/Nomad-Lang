@@ -148,7 +148,6 @@ export default defineComponent({
                             return char;
                         }
                     })
-                    .filter((item) => item !== null)
                     .join("");
                 return new_str;
             } else {
