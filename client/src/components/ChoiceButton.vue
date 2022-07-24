@@ -150,9 +150,6 @@ export default defineComponent({
                     })
                     .filter((item) => item !== null)
                     .join("");
-
-                // console.log("replaced", new_str);
-
                 return new_str;
             } else {
                 this.shouldBeTooltip = false;
