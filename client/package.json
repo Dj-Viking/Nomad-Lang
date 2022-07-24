@@ -1,6 +1,6 @@
 {
   "name": "app-lang",
-  "version": "2.6.3",
+  "version": "2.7.3",
   "private": true,
   "engines": {
     "node": "16.14.2",
