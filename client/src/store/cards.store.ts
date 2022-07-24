@@ -55,12 +55,12 @@ const mutations = {
       } as Choice;
     });
 
-    state.allCards = [...state.allCards.map(card => {
+    state.allCards = shuffleArray([...state.allCards.map(card => {
       return {
         ...card,
         choices: shuffleArray([...new_choices, { id: keyGen(), text: card.backSideText }])
       };
-    })];
+    })]);
 
     state.cards = shuffleArray([...state.cards.map(card => {
       return {
