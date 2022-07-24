@@ -107,7 +107,7 @@ const mutations = {
     state.cards = cards.map((card) => {
       return {
         ...card,
-        choices: [...createCardChoices(), { text: card.backSideText }] as Choice[],
+        choices: shuffleArray([...createCardChoices(), { text: card.backSideText }]) as Choice[],
         isFrontSide: true,
         isBackSide: false,
       };
