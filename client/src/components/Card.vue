@@ -132,15 +132,19 @@
                                                 />
                                             </div>
                                         </div>
-                                        <!-- <input
+                                        <input
                                             autocomplete="off"
                                             id="translation-input"
-                                            style="margin: 0 auto; width: 80%"
+                                            style="
+                                                margin: 0 auto;
+                                                width: 80%;
+                                                visibility: hidden;
+                                            "
                                             class="input"
                                             type="text"
                                             v-model="translation"
                                             placeholder="Translate!"
-                                        /> -->
+                                        />
                                         <button
                                             id="check-answer-btn"
                                             class="button is-primary"
