@@ -2,6 +2,10 @@
   "name": "app-lang",
   "version": "2.6.3",
   "private": true,
+  "engines": {
+    "node": "16.14.2",
+    "npm": "8.5.0"
+  },
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "sh ./tests/scripts/cypressRun.sh",

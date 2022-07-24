@@ -3,6 +3,10 @@
   "version": "2.6.3",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "16.14.2",
+    "npm": "8.5.0"
+  },
   "scripts": {
     "test:config": "jest --showConfig",
     "test": "ENV_TXT=$(cat env.txt) jest --verbose --detectOpenHandles --watchAll",
