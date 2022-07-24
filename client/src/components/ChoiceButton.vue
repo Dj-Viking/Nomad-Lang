@@ -21,9 +21,10 @@
     >
         <p
             v-if="!isMobile && shouldBeTooltip"
+            :id="choiceId"
             :class="{ tooltiptext: shouldBeTooltip }"
         >
-            {{ text }}
+            {{ (async () => {await insertLineBreaksInPTag(text as string)})() }}
         </p>
         <p :id="card!._id" :class="{ 'long-form': true }">
             {{ parseText(text as string) || "nothing yet" }}
@@ -51,6 +52,7 @@ export default defineComponent({
     props: {
         order: Number,
         card: Object as PropType<CardClass>,
+        choiceId: String,
         text: String,
     },
     setup() {
@@ -72,28 +74,85 @@ export default defineComponent({
         };
     },
     methods: {
+        async insertLineBreaksInPTag(input: string): Promise<void> {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const limit = 5;
+                    const words = input.split(" ");
+
+                    if (words.length >= limit) {
+                        for (let i = 0; i < words.length; i++) {
+                            console.log("word at index", i, `: ${words[i]}`);
+                            if (i !== 0 && i % 5 === 0) {
+                                console.log(
+                                    `every 5th word check at index ${i}: `,
+                                    words[i]
+                                );
+                                words[i] = words[i] + " <br>";
+                            }
+                        }
+                        const toolTipEl = document.getElementById(
+                            this.choiceId as string
+                        );
+                        // guard against runtime exceptions
+                        // insert the innerHTML with the line breaks to actually render with line breaks
+                        if (toolTipEl) {
+                            console.log(
+                                "found tooltip el",
+                                toolTipEl.innerHTML
+                            );
+                            toolTipEl.innerHTML = words.join(" ");
+                            console.log(
+                                "found tooltip el",
+                                toolTipEl.innerHTML
+                            );
+                        }
+                        resolve();
+                    } else {
+                        const toolTipEl = document.getElementById(
+                            this.choiceId as string
+                        );
+                        // guard against runtime exceptions
+                        // insert the innerHTML with the line breaks to actually render with line breaks
+                        if (toolTipEl) {
+                            console.log(
+                                "found tooltip el",
+                                toolTipEl.innerHTML
+                            );
+                            toolTipEl.innerHTML = words.join(" ");
+                            console.log(
+                                "found tooltip el",
+                                toolTipEl.innerHTML
+                            );
+                        }
+                        resolve();
+                    }
+                }, 300);
+            });
+        },
         parseText(input: string): string {
             if (input === "") return "";
             let new_str = input;
-            const new_str_split_length = new_str.split(" ").length;
-            const limit = 3;
+            const new_str_split_length = new_str.split("").length;
+            const limit = 9;
 
-            if (new_str_split_length > limit) {
+            if (new_str_split_length >= limit) {
                 this.shouldBeTooltip = true;
-
                 new_str = new_str
-                    .split(" ")
-                    .map((word, i) => {
-                        if (i === limit && !!word) {
-                            return word.replace(word, word + "...");
+                    .split("")
+                    .map((char, i) => {
+                        if (i === limit) {
+                            return "...";
                         }
-                        if (i >= limit + 1) {
-                            return null;
+                        if (i < limit) {
+                            return char;
                         }
-                        return word;
                     })
                     .filter((item) => item !== null)
-                    .join(" ");
+                    .join("");
+
+                // console.log("replaced", new_str);
+
                 return new_str;
             } else {
                 this.shouldBeTooltip = false;
@@ -228,6 +287,10 @@ green border
     position: absolute;
     top: -30px;
     z-index: 1;
+}
+
+.is-too-long {
+    max-width: 100px;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
