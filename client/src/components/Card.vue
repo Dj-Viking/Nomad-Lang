@@ -104,11 +104,13 @@
                                             >
                                                 <ChoiceButton
                                                     :order="1"
+                                                    :choiceId="`choice-1-${card?._id}`"
                                                     :card="card"
                                                     :text="card?.choices![0].text || `nothing yet`"
                                                 />
                                                 <ChoiceButton
                                                     :order="2"
+                                                    :choiceId="`choice-2-${card?._id}`"
                                                     :card="card"
                                                     :text="card?.choices![1].text || `nothing yet`"
                                                 />
@@ -123,11 +125,13 @@
                                                 <ChoiceButton
                                                     :order="3"
                                                     :card="card"
+                                                    :choiceId="`choice-3-${card?._id}`"
                                                     :text="card?.choices![2].text || `nothing yet`"
                                                 />
                                                 <ChoiceButton
                                                     :order="4"
                                                     :card="card"
+                                                    :choiceId="`choice-4-${card?._id}`"
                                                     :text="card?.choices![3].text || `nothing yet`"
                                                 />
                                             </div>
