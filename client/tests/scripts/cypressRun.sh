@@ -1,4 +1,7 @@
 #! /bin/bash
+
+set -e
+
 SPECNAME="$1"
 
 CY_SPEC_PATH=""

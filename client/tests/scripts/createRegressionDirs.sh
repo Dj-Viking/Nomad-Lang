@@ -1,7 +1,10 @@
 #! /bin/bash
 # npn run regressionDirs:create <your new spec file name> 
 
-DIR=$1
+#if something errors stop execution of the shell script
+set -e;
+
+DIR=$1;
 
 echo 'creating new directories for the test' $DIR
 echo 'nested inside the base, actual, and diff fixture directories'

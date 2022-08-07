@@ -1,5 +1,8 @@
 #! /bin/bash
 
+
+set -e;
+
 # accept the changes of an actual screenshot and copy it from the actuals folder
 # into the base folder of the given test name
 
