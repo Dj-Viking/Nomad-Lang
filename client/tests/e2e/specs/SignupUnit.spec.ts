@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
-  LOCALHOST_URL,
   EMAIL,
   USERNAME,
   REGISTER_PASSWORD,
@@ -13,37 +11,19 @@ import {
 let unique_username = "";
 let unique_email = "";
 
-// const token = "";
-beforeEach(() => {
-  //@ts-ignore
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  //@ts-ignore
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
 
 describe("deletes-screenshots", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_SIGNUPUNITSPEC_PATH).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_SIGNUPUNITSPEC_PATH,
+      headlessPath: ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS
+    });
   });
   it("visits the home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   it("clicks signup router link to navigate to the signup page", () => {
     cy.get("a.button.is-success")
@@ -166,24 +146,11 @@ describe("tests the register with valid inputs works, has success message, and n
   });
   it("clicks the submit button", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
-    //@ts-ignore
     cy.saveLocalStorage();
     cy.wait(2000);
-    //@ts-ignore
     cy.saveLocalStorage();
-
-    // cy.window().then((window) => {
-    //   // cy.restoreLocalStorage();
-    //   expect(window.localStorage.getItem("token")).to.equal("dkfkdjfk");
-    //   console.log(
-    //     "here is a token i think",
-    //     window.localStorage.getItem("token")
-    //   );
-    // });
-    // cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
-    //@ts-ignore
     cy.restoreLocalStorage();
     cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
   });
@@ -221,7 +188,6 @@ describe("should be able to login with those credentials that we just registered
   it("clicks the submit button", () => {
     cy.get("button").contains("Login").should("have.length", 1).click();
     cy.wait(2000);
-    //@ts-ignore
     cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {

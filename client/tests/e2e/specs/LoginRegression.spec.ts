@@ -1,5 +1,4 @@
 import {
-  LOCALHOST_URL,
   BASE_LOGIN_FULL_PAGE_FIXTURE,
   ACTUAL_LOGIN_FULL_PAGE_FIXTURE,
   DIFF_FIXTURE_FOLDER_PATH,
@@ -25,30 +24,13 @@ let matchNum;
 
 describe("login-page-regression", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log(
-            "delete actuals response dir or null for login regression test",
-            dirOrNull
-          );
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_LOGINREGRESSIONSPEC_PATH).then(
-        (dirOrNull) => {
-          console.log(
-            "delete actuals response dir or null for login regression test",
-            dirOrNull
-          );
-        }
-      );
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_LOGINREGRESSIONSPEC_PATH,
+      headlessPath: ACTUALS_LOGINREGRESSIONSPEC_PATH_HEADLESS
+    });
   });
-
   it("visits the site home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   it("clicks login router link to navigate to the login page", () => {
     cy.get("a.button.is-success")

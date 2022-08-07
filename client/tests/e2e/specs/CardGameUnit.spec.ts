@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
-  LOCALHOST_URL,
   REGISTER_USERNAME,
   REGISTER_EMAIL,
   REGISTER_PASSWORD,
@@ -13,41 +13,24 @@ let unique_username = "";
 let unique_email = "";
 let token: string | null = "";
 
-beforeEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
 
 //delete actuals screenshots
 describe("deletes-screenshots", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_CARD_GAME_UNIT_SPEC_PATH).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
+      headlessPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS
+    });
   });
 });
 
 // load home page and sign up new user
 describe("visits home page", () => {
   it("visits home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
 });
 
@@ -75,8 +58,6 @@ describe("sign up new user", () => {
   it("clicks the submit button", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
     cy.wait(2000);
-    // eslint-disable-next-line
-    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
@@ -92,8 +73,6 @@ describe("sign up new user", () => {
       token = window.localStorage.getItem("id_token");
       console.log("what is the token here", token);
       expect(token).to.not.be.null;
-      // eslint-disable-next-line
-      // @ts-ignore //this is ignored because I didn't make the type yet
       cy.saveLocalStorage();
     });
   });
@@ -104,31 +83,7 @@ describe("sign up new user", () => {
 // checking the translation answer if right or wrong
 describe("adding a card and checking the flip and translation error or success", () => {
   it("adds a card", () => {
-    //open the modal
-    cy.get("button").contains("Add New Card").click();
-    //select input fields and type
-    cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText as string
-    );
-    cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage as string
-    );
-    cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture as string
-    );
-    cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText as string
-    );
-    cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage as string
-    );
-    cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture as string
-    );
-    //get the submit add button
-    cy.get("button[name=submitAddCard]").click();
-    cy.wait(2000);
-    //add a card finish
+    cy.addCard();
   });
 });
 //screenshot the card itself after it is added and loaded after the loading transition
@@ -139,19 +94,45 @@ describe("screenshot-card", () => {
   });
 });
 
-describe("checking translation answer result", () => {
-  it("checks the translation answer submit result", () => {
-    cy.get("input#translation-input")
-      .should("have.length", 1)
-      .type("back side text wrong");
+describe("checking if clicking the choice button answer results in correct and incorrect increment will increment", () => {
 
-    cy.get("button#check-answer-btn")
-      .should("have.length", 1)
-      .click();
+  it("checks that clicking the answer button has the same answer as backside text", () => {
+    cy.wait(200);
+    cy.get("button.button.is-info").then((collection) => {
+      collection.children().each((_index, el) => {
+        if (el.innerHTML === EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText) {
+          expect(el.innerHTML).to.eq(EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText);
+          el.click();
+        }
+      });
+    });
+    //have to put slight wait because headless fails even though the screenshot shows Correct: 1 there
+    // theres some render timing error in headless I guess
+    cy.wait(1); 
+    cy.get("span#correct-score").should("have.length", 1).then(el => {
+      expect(el.text().trim()).to.eq(`Correct: 1`);
+    });
   });
-  it("checks that incorrect was incremented", () => {
+
+  it("clicks the incorrect answer and checks if incorrect was incremented", () => {
+    cy.get("button.button.is-info").then((collection) => {
+      const coll_len = collection.length;
+      for (let i = 0; i < coll_len; i++) {
+        const choice_start = 3;
+        const current_child = collection.eq(i);
+        if (i >= choice_start) {
+          if (current_child.text() !== EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText) {
+            expect(current_child.text()).to.not.eq(EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText);
+            current_child.trigger("click");
+          }
+        }
+      }
+    });
+    //have to put slight wait because headless fails even though the screenshot shows Correct: 1 there
+    // theres some render timing error in headless I guess
+    cy.wait(1); 
     cy.get("span#incorrect-score").should("have.length", 1).then(el => {
-      expect(el.text().trim()).to.eq(`Incorrect: 1`);
+      expect(el.text().trim()).to.eq(`Incorrect: 3`);
     });
   });
 });

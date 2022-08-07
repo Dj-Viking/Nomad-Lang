@@ -13,7 +13,10 @@ echo 'spec we are accepting changes for: '
 echo $SPECNAME
 echo '------------------'
 
+
 # probably unreachable if js script runs before this bash script
+
+
 if [ "$SPECNAME" = "" ]; then
   echo "[ERROR]: Please define the SPECNAME environment variable before executing this shell script"
   echo "example: SPECNAME='HomeRegression.spec.ts' npm run acceptChanges"

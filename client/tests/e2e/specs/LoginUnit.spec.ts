@@ -1,43 +1,19 @@
 import { LOCALHOST_URL, EMAIL, PASSWORD, USERNAME, ACTUALS_LOGINUNITSPEC_PATH_HEADLESS, ACTUALS_LOGINUNITSPEC_PATH } from "../../constants";
 
-beforeEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
 
 describe("login-page-unit", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_LOGINUNITSPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log(
-            "delete actuals response dir or null for login regression test",
-            dirOrNull
-          );
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_LOGINUNITSPEC_PATH).then(
-        (dirOrNull) => {
-          console.log(
-            "delete actuals response dir or null for login regression test",
-            dirOrNull
-          );
-        }
-      );
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_LOGINUNITSPEC_PATH,
+      headlessPath: ACTUALS_LOGINUNITSPEC_PATH_HEADLESS
+    });
   });
 
   it("visits the site home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   it("clicks login router link to navigate to the login page", () => {
     cy.get("a.button.is-success")

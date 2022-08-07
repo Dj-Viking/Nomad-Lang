@@ -24,7 +24,11 @@
             :id="choiceId"
             :class="{ tooltiptext: shouldBeTooltip }"
         >
-            {{ (async () => {await insertLineBreaksInPTag(text as string)})() }}
+            {{
+                (async () => {
+                    await insertLineBreaksInPTag(text as string);
+                })()
+            }}
         </p>
         <p :id="card!._id" :class="{ 'long-form': true }">
             {{ parseText(text as string) || "nothing yet" }}

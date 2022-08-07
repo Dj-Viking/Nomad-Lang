@@ -143,7 +143,6 @@ describe("CRUD user tests", () => {
             .send(constants_1.MOCK_ADD_CARD);
         expect(addCard.status).toBe(200);
         const parsed = JSON.parse(addCard.text);
-        console.log("parsed", parsed);
         expect(parsed.cards).toHaveLength(1);
         expect(typeof parsed.cards[0]._id).toBe("string");
         expect(typeof parsed.cards[0]).toBe("object");

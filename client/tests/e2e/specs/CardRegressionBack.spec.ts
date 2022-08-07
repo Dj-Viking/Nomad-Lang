@@ -1,5 +1,4 @@
 import {
-  LOCALHOST_URL,
   REGISTER_USERNAME,
   REGISTER_EMAIL,
   REGISTER_PASSWORD,
@@ -33,41 +32,24 @@ let unique_email = "";
 let token: string | null = "";
 
 
-beforeEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
 
 //delete actuals screenshots
 describe("deletes-screenshots", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", CARD_BACK_REGRESSION_SPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", CARD_BACK_REGRESSION_SPEC_PATH).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
+    cy.deleteActuals({
+      headedPath: CARD_BACK_REGRESSION_SPEC_PATH,
+      headlessPath: CARD_BACK_REGRESSION_SPEC_PATH_HEADLESS
+    });
   });
 });
 
 // load home page and sign up new user
 describe("visits home page", () => {
   it("visits home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
 });
 describe("sign up new user", () => {

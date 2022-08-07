@@ -1,5 +1,4 @@
 import {
-  LOCALHOST_URL,
   REGISTER_USERNAME,
   REGISTER_EMAIL,
   REGISTER_PASSWORD,
@@ -13,35 +12,19 @@ let unique_username = "";
 let unique_email = "";
 let token: string | null = "";
 
-beforeEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  // eslint-disable-next-line
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
+
 describe("deletes-screenshots", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_CARDUNITSPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_CARDUNITSPEC_PATH).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
+    cy.deleteActuals({
+      headlessPath: ACTUALS_CARDUNITSPEC_PATH,
+      headedPath: ACTUALS_CARDUNITSPEC_PATH_HEADLESS
+    });
   });
   it("visits the home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   it("screenshots-the-entire-page", () => {
     cy.get("html").screenshot({ capture: "runner" });
@@ -56,36 +39,9 @@ describe("checks all CRUD operations of interactions with cards as not logged in
     cy.get("button.button.is-info").contains("Yes").click();
   });
   it("while not logged in open the add card modal", () => {
-    // eslint-disable-next-line
-    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
 
-    //add a card start
-    //open the modal
-    cy.wait(400);
-    cy.get("button").contains("Add New Card").click();
-    //select input fields and type
-    cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText as string
-    );
-    cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage as string
-    );
-    cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture as string
-    );
-    cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText as string
-    );
-    cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage as string
-    );
-    cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture as string
-    );
-    //get the submit edit button
-    cy.get("button[name=submitAddCard]").contains("SUBMIT ADD CARD").click();
-    //add a card finish
+    cy.addCard();
   });
   it("checks that the card that was added has the text we input previously", () => {
     cy.wait(1000);
@@ -122,27 +78,8 @@ describe("checks all CRUD operations of interactions with cards as not logged in
   });
 
   it("adds a couple more cards and then hits clear button", () => {
-    // eslint-disable-next-line
-    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
-    //add a card start
-    //open the modal
-    cy.get("button").contains("Add New Card").click();
-    //select input fields and type
-    cy.get("input[name=modalAddFsText]").type("front side text");
-    cy.get("input[name=modalAddFsTextLanguage]").type(
-      "front side text language"
-    );
-    cy.get("input[name=modalAddFsTextPicture]").type("front side picture");
-    cy.get("input[name=modalAddBsText]").type("back side text");
-    cy.get("input[name=modalAddBsTextLanguage]").type(
-      "back side text language"
-    );
-    cy.get("input[name=modalAddBsTextPicture]").type("back side picture");
-    //get the submit add button
-    cy.get("button[name=submitAddCard]").click();
-    cy.wait(400);
-    // //add a card finish
+    cy.addCard();
   });
   it("checks that the cards are gone after clear button click", () => {
     cy.wait(500);
@@ -176,8 +113,6 @@ describe("registers a new user that will crud the cards", () => {
   it("clicks the submit button", () => {
     cy.get("button").contains("Sign Up!").should("have.length", 1).click();
     cy.wait(2000);
-    // eslint-disable-next-line
-    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.saveLocalStorage();
   });
   it("checks that success message appears ", () => {
@@ -193,83 +128,21 @@ describe("registers a new user that will crud the cards", () => {
       token = window.localStorage.getItem("id_token");
       console.log("what is the token here", token);
       expect(token).to.not.be.null;
-      // eslint-disable-next-line
-      // @ts-ignore //this is ignored because I didn't make the type yet
       cy.saveLocalStorage();
     });
   });
   it("creates DO ALL CRUD operations here since this is the only time the token will be available to make requests", () => {
-    // eslint-disable-next-line
-    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
     cy.window().then((window: Cypress.AUTWindow) => {
       expect(window.localStorage.getItem("id_token")).to.equal(token);
     });
-    // cy.get("input[name=textInput]").type(inputText);
-    // cy.get("button").contains("Add Card").click();
-    //add a card start
-    //open the modal
-    cy.get("button").contains("Add New Card").click();
-    //select input fields and type
-    cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText as string
-    );
-    cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage as string
-    );
-    cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture as string
-    );
-    cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText as string
-    );
-    cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage as string
-    );
-    cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture as string
-    );
-    //get the submit add button
-    cy.get("button[name=submitAddCard]").click();
-    //add a card finish
+    cy.addCard();
 
     //wait a bit for it to appear in the DOM
     cy.wait(1000);
     cy.get("div.some-unique-class").children().eq(2).children();
 
-    //edit standalone operations
-
-    //click the edit card button on a card
-    cy.get("button.button.is-primary.ml-6").contains("Edit").click();
-    //clear everything
-    cy.get("input[name=modalEditFsText]").clear();
-    cy.get("input[name=modalEditFsTextLanguage]").clear();
-    cy.get("input[name=modalEditFsTextPicture]").clear();
-    cy.get("input[name=modalEditBsText]").clear();
-    cy.get("input[name=modalEditBsTextLanguage]").clear();
-    cy.get("input[name=modalEditBsTextPicture]").clear();
-
-    cy.get("input[name=modalEditFsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
-    );
-    cy.get("input[name=modalEditFsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
-    );
-    cy.get("input[name=modalEditFsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
-    );
-    cy.get("input[name=modalEditBsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
-    );
-    cy.get("input[name=modalEditBsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
-    );
-    cy.get("input[name=modalEditBsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
-    );
-
-    cy.get("button").contains("SUBMIT EDIT CARD").click();
-    cy.wait(500);
+    cy.editCard();
 
     // just check that we got the card with the edited text on it
     cy.get("p.title.is-5").then((element) => {
@@ -291,41 +164,7 @@ describe("registers a new user that will crud the cards", () => {
       .children()
       .should("have.length", 3);
 
-    //add a card start
-    //open the modal
-    cy.get("button").contains("Add New Card").click();
-
-    //add card start
-    //select input fields and type
-    //clear everything
-    cy.get("input[name=modalAddFsText]").clear();
-    cy.get("input[name=modalAddFsTextLanguage]").clear();
-    cy.get("input[name=modalAddFsTextPicture]").clear();
-    cy.get("input[name=modalAddBsText]").clear();
-    cy.get("input[name=modalAddBsTextLanguage]").clear();
-    cy.get("input[name=modalAddBsTextPicture]").clear();
-
-    cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
-    );
-    cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
-    );
-    cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
-    );
-    cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
-    );
-    cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
-    );
-    cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
-    );
-    //get the submit add button
-    cy.get("button[name=submitAddCard]").click();
-    //add a card finish
+    cy.addCard();
 
     //check that the card can be deleted
     //   //delete button click
@@ -341,39 +180,7 @@ describe("registers a new user that will crud the cards", () => {
       .children()
       .should("have.length", 3);
 
-    //add card start
-    cy.get("button").contains("Add New Card").click();
-
-    //clear everything
-    cy.get("input[name=modalAddFsText]").clear();
-    cy.get("input[name=modalAddFsTextLanguage]").clear();
-    cy.get("input[name=modalAddFsTextPicture]").clear();
-    cy.get("input[name=modalAddBsText]").clear();
-    cy.get("input[name=modalAddBsTextLanguage]").clear();
-    cy.get("input[name=modalAddBsTextPicture]").clear();
-
-    //select input fields and type
-    cy.get("input[name=modalAddFsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
-    );
-    cy.get("input[name=modalAddFsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
-    );
-    cy.get("input[name=modalAddFsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
-    );
-    cy.get("input[name=modalAddBsText]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
-    );
-    cy.get("input[name=modalAddBsTextLanguage]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
-    );
-    cy.get("input[name=modalAddBsTextPicture]").type(
-      EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
-    );
-    //get the submit add button
-    cy.get("button[name=submitAddCard]").click();
-    //add a card finish
+    cy.addCard();
 
     //clear cards as logged in user
     cy.get("button.is-info.button-shrink").contains("Clear Cards").click();
@@ -393,8 +200,6 @@ describe("registers a new user that will crud the cards", () => {
 
 describe("checks local storage", () => {
   it("checks window local storage here ", () => {
-    // eslint-disable-next-line
-    // @ts-ignore //this is ignored because I didn't make the type yet
     cy.restoreLocalStorage();
     cy.window().then((window: Cypress.AUTWindow) => {
       expect(window.localStorage.getItem("id_token")).to.equal(token);

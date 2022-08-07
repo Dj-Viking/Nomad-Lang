@@ -1,12 +1,10 @@
 import {
   ACTUAL_FORGOTPASS_FULL_PAGE_FIXTURE,
   BASE_FORGOTPASS_FULL_PAGE_FIXTURE,
-  LOCALHOST_URL,
   DIFF_FIXTURE_FOLDER_PATH,
   ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH,
   FORGOT_PASSWORD_SCREENSHOT_FILE_NAME,
   ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS,
-  // ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
 } from "../../constants";
 import { PNG, PNGWithMetadata } from "pngjs";
 import Pixelmatch from "pixelmatch";
@@ -26,26 +24,13 @@ let matchNum = 1;
 
 describe("forgotpass-page-regression", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task(
-        "deleteActuals",
-        ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS
-      ).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task(
-        "deleteActuals",
-        ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH
-      ).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
+    cy.deleteActuals({ 
+      headlessPath: ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH_HEADLESS, 
+      headedPath: ACTUALS_FORGOT_PASSWORD_REGRESSION_SPEC_PATH
+    });
   });
   it("visits the forgot password page", () => {
-    cy.visit(`${LOCALHOST_URL}/forgot`);
+    cy.navigatePage("/forgot");
   });
   it("screenshots-the-entire-page", () => {
     cy.get("html").screenshot({ capture: "runner" });

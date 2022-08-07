@@ -1,42 +1,23 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
-  LOCALHOST_URL,
-  // EMAIL,
-  // PASSWORD,
   ACTUALS_SIDEBARUNITSPEC_PATH,
   ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS,
 } from "../../constants";
 
 
-beforeEach(() => {
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
 
 describe("sidebar-screenshot", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_SIDEBARUNITSPEC_PATH).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_SIDEBARUNITSPEC_PATH,
+      headlessPath: ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS
+    });
   });
   
   it("visit's home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   
   it("opens the sidebar clicking the chevron arrow", () => {

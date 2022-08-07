@@ -1,5 +1,4 @@
 import {
-  LOCALHOST_URL,
   BASE_SIGNUP_FULL_PAGE_FIXTURE,
   ACTUAL_SIGNUP_FULL_PAGE_FIXTURE,
   DIFF_FIXTURE_FOLDER_PATH,
@@ -25,29 +24,13 @@ let matchNum;
 
 describe("signup-page-regression", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log(
-            "delete actuals response dir or null for signup regression test",
-            dirOrNull
-          );
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_SIGNUPREGRESSIONSPEC_PATH).then(
-        (dirOrNull) => {
-          console.log(
-            "delete actuals response dir or null for signup regression test",
-            dirOrNull
-          );
-        }
-      );
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_SIGNUPREGRESSIONSPEC_PATH,
+      headlessPath: ACTUALS_SIGNUPREGRESSIONSPEC_PATH_HEADLESS
+    });
   });
   it("visits the site home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   it("clicks Signup router link to navigate to the Signup page", () => {
     cy.get("a.button.is-success")

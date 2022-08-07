@@ -7,34 +7,19 @@ import {
   ACTUALS_LOADHOMESPEC_PATH,
 } from "../../constants";
 
-beforeEach(() => {
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.restoreLocalStorage();
-});
+beforeEach(() => cy.restoreLocalStorage());
 
-afterEach(() => {
-  // @ts-ignore //this is ignored because I didn't make the type yet
-  cy.saveLocalStorage();
-});
+afterEach(() => cy.saveLocalStorage());
 
 describe("deletes-screenshots", () => {
   it("deletes any actuals for this test before we enter the page", () => {
-    console.log("checking cypress browser running", Cypress.browser);
-    if (Cypress.browser.isHeadless) {
-      cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH_HEADLESS).then(
-        (dirOrNull) => {
-          console.log("delete actuals response dir or null", dirOrNull);
-        }
-      );
-    }
-    if (Cypress.browser.isHeaded) {
-      cy.task("deleteActuals", ACTUALS_LOADHOMESPEC_PATH).then((dirOrNull) => {
-        console.log("delete actuals response dir or null", dirOrNull);
-      });
-    }
+    cy.deleteActuals({
+      headedPath: ACTUALS_LOADHOMESPEC_PATH,
+      headlessPath: ACTUALS_LOADHOMESPEC_PATH_HEADLESS
+    });
   });
   it("visit's home page", () => {
-    cy.visit(LOCALHOST_URL);
+    cy.goToHomePage();
   });
   it("screenshots-the-entire-page", () => {
     cy.get("html").screenshot({ capture: "runner" });
