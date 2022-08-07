@@ -10,7 +10,7 @@
     "install": "cd server && npm i --legacy-peer-deps && cd ../client && npm i --legacy-peer-deps",
     "clean": "npm cache clean --force; rm -rfv node_modules; rm package-lock.json; cd server; npm cache clean --force; rm -rfv node_modules; rm package-lock.json; cd ../client; npm cache clean --force; rm -rfv node_modules; rm package-lock.json",
     "tscheck": "cd client; npm run tscheck",
-    "test:ci": "sh test:ci.sh",
+    "test:ci": "echo \"Running all tests!\" && npm run cover:ci",
     "test": "sh test.sh",
     "cover": "npm run cover:all",
     "cover:all": "npm run test:server; npm run test:client; npx codecov",
