@@ -38,7 +38,7 @@ import {
   REGISTER_PASSWORD,
 } from "../../constants";
 
-let LOCAL_STORAGE_MEMORY = {} as Record<string, string>;
+let LOCAL_STORAGE_MEMORY = {};
 
 // eslint-disable-next-line
 Cypress.Commands.add("saveLocalStorage", () => {
@@ -102,22 +102,22 @@ Cypress.Commands.add("addCard", () => {
   cy.get("button").contains("Add New Card").click();
   //select input fields and type
   cy.get("input[name=modalAddFsText]").type(
-    EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText as string
+    EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText
   );
   cy.get("input[name=modalAddFsTextLanguage]").type(
-    EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage as string
+    EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideLanguage
   );
   cy.get("input[name=modalAddFsTextPicture]").type(
-    EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture as string
+    EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture
   );
   cy.get("input[name=modalAddBsText]").type(
-    EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText as string
+    EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideText
   );
   cy.get("input[name=modalAddBsTextLanguage]").type(
-    EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage as string
+    EXPECTED_ADD_LOCAL_CARD_OBJECT.backSideLanguage
   );
   cy.get("input[name=modalAddBsTextPicture]").type(
-    EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture as string
+    EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture
   );
   //get the submit add button
   cy.get("button[name=submitAddCard]").click();
@@ -139,22 +139,22 @@ Cypress.Commands.add("editCard", () => {
   cy.get("input[name=modalEditBsTextPicture]").clear();
 
   cy.get("input[name=modalEditFsText]").type(
-    EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText as string
+    EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText
   );
   cy.get("input[name=modalEditFsTextLanguage]").type(
-    EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage as string
+    EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideLanguage
   );
   cy.get("input[name=modalEditFsTextPicture]").type(
-    EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture as string
+    EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture
   );
   cy.get("input[name=modalEditBsText]").type(
-    EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText as string
+    EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideText
   );
   cy.get("input[name=modalEditBsTextLanguage]").type(
-    EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage as string
+    EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSideLanguage
   );
   cy.get("input[name=modalEditBsTextPicture]").type(
-    EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture as string
+    EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture
   );
 
   cy.get("button").contains("SUBMIT EDIT CARD").click();
