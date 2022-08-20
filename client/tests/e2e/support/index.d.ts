@@ -33,6 +33,8 @@ declare namespace Cypress {
         saveLocalStorage(): Chainable<Subject>;
         addCard(): Chainable<Subject>;
         editCard(): Chainable<Subject>;
+        deleteCard(): Chainable<Subject>;
+        clearCards(): Chainable<Subject>;
         signup(): Chainable<Subject>;
     }
 }

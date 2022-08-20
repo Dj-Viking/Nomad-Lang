@@ -198,8 +198,8 @@ export interface UserEntityBase {
   email: string;
   token: string | null;
   cards: Array<CardClass>;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date | number;
+  updatedAt: Date | number;
 }
 export interface CardsState {
   allCards: Array<CardClass>;

@@ -160,3 +160,27 @@ Cypress.Commands.add("editCard", () => {
   cy.get("button").contains("SUBMIT EDIT CARD").click();
   cy.wait(500);
 });
+
+Cypress.Commands.add("deleteCard", () => {
+  cy.get("i.fa.fa-trash").click();
+  cy.wait(300);
+  cy.get("button#delete-yes").contains("Yes").should("have.length", 1).click();
+  cy.wait(300);
+  //checks it was deleted
+  cy.get("div.some-unique-class")
+    .children()
+    .eq(1)
+    .children()
+    .should("have.length", 3);
+});
+
+Cypress.Commands.add("clearCards", () => {
+  cy.get("button.is-info.button-shrink").contains("Clear Cards").click();
+  cy.get("button.button.is-info").contains("Yes").click();
+  cy.wait(500);
+  cy.get("div.some-unique-class")
+    .children()
+    .eq(1)
+    .children()
+    .should("have.length", 3);
+});
