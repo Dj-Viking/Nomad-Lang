@@ -33,6 +33,9 @@ import {
   LOCALHOST_URL,
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
   EXPECTED_EDIT_LOCAL_CARD_OBJECT,
+  REGISTER_USERNAME,
+  REGISTER_EMAIL,
+  REGISTER_PASSWORD,
 } from "../../constants";
 
 let LOCAL_STORAGE_MEMORY = {};
@@ -49,6 +52,28 @@ Cypress.Commands.add("restoreLocalStorage", () => {
   Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });
+});
+
+Cypress.Commands.add("signup", () => {
+  let unique_username = "";
+  let unique_email = "";
+  let token = "";
+  //sign in as new user
+  //check that the cards are empty for a newly signed in user comes to home page
+  cy.get("a.button.is-success").contains("Signup").click();
+  unique_username = `${REGISTER_USERNAME}-${Date.now()}`;
+  cy.get("input[name=username]").should("have.length", 1).type(unique_username);
+  unique_email = `${REGISTER_EMAIL}-${Date.now()}`;
+  cy.get("input[name=email]").should("have.length", 1).type(unique_email);
+  cy.get("input[name=password]")
+    .should("have.length", 1)
+    .type(REGISTER_PASSWORD);
+  cy.get("button").contains("Sign Up!").should("have.length", 1).click();
+  cy.wait(2000);
+  cy.saveLocalStorage();
+  cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+  cy.wait(2000);
+  cy.get("button").contains("Add New Card");
 });
 
 Cypress.Commands.add("deleteActuals", (args) => {

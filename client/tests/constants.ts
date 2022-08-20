@@ -6,13 +6,15 @@ import {
   LightBackGroundName,
   LightTextName,
 } from "./types";
+import { ICreateUserResponse } from "../../server/src/types";
 
 let EMAIL: string,
   PASSWORD: string,
   USERNAME: string,
   REGISTER_EMAIL: string,
   REGISTER_PASSWORD: string,
-  REGISTER_USERNAME: string;
+  REGISTER_USERNAME: string,
+  MOCK_USER: ICreateUserResponse;
 if (typeof Cypress !== "undefined") {
   /**
    * CYPRESS ENV EMAIL
@@ -63,8 +65,21 @@ if (typeof Cypress !== "undefined") {
     Cypress && Cypress.env("REGISTER_USERNAME")
       ? Cypress.env("REGISTER_USERNAME")
       : "please define REGISTER_USERNAME in cypress.env.json";
+
+  MOCK_USER = {
+    username: REGISTER_USERNAME,
+    email: REGISTER_EMAIL,
+    _id: "some id lol",
+    role: "user",
+    cards: [],
+    themePref: "light",
+    token: "kdsjfdjksfkdsjfkdj",
+    createdAt: new Date(),
+    updatedAt: new Date()
+  } as ICreateUserResponse;
 }
 export {
+  MOCK_USER,
   USERNAME,
   EMAIL,
   PASSWORD,
