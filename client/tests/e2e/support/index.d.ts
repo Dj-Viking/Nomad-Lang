@@ -56,5 +56,7 @@ declare namespace Cypress {
         tooShortPasswordSignup(): Chainable<Subject>;
         
         alreadyUsedEmailSignup(): Chainable<Subject>;
+
+        openSideBar(): Chainable<Subject>;
     }
 }

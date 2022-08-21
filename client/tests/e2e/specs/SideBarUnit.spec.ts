@@ -17,15 +17,9 @@ describe("sidebar-screenshot", () => {
   });
   
   it("visit's home page", () => {
-    cy.goToHomePage();
+    cy.goToHomePage()
+      .openSideBar();
   });
-  
-  it("opens the sidebar clicking the chevron arrow", () => {
-    cy.get("i.fa.fa-chevron-right").click();
-    cy.wait(1200);
-    cy.get("i.fa.fa-chevron-left").should("have.length", 1);
-  });
-
   it("screenshots-the-entire-page", () => {
     cy.get("div.side-bar").screenshot({ capture: "runner" });
   });

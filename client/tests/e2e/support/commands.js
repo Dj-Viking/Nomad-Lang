@@ -282,3 +282,9 @@ Cypress.Commands.add("alreadyUsedEmailSignup", () => {
   cy.get("input[name=password]").clear();
   cy.wait(1000);
 });
+
+Cypress.Commands.add("openSideBar", () => {
+  cy.get("i.fa.fa-chevron-right").click();
+  cy.wait(1200);
+  cy.get("i.fa.fa-chevron-left").should("have.length", 1);
+});
