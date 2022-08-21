@@ -2,17 +2,17 @@ import { Router } from "express";
 import { UserController } from "../controllers";
 import { authMiddleware } from "../middleware/authMiddleWare";
 const {
-  login,
-  signup,
-  forgotPassword,
-  changePassword,
-  clearCards,
-  me,
-  addCard,
-  editCard,
-  changeThemePref,
-  deleteCard,
-  addChoicesToCards,
+    login,
+    signup,
+    forgotPassword,
+    changePassword,
+    clearCards,
+    me,
+    addCard,
+    editCard,
+    changeThemePref,
+    deleteCard,
+    addChoicesToCards,
 } = UserController;
 
 const userRouter = Router();

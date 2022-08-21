@@ -104,10 +104,11 @@ class ApiService implements IApiService {
       };
     } catch (error) {
       console.error(error);
-      const err = error as Error;
-      throw {
+      
+      return {
         user: null,
-        error: err.message,
+        // @ts-ignore
+        error: error.message as string,
       };
     }
   }
@@ -129,8 +130,6 @@ class ApiService implements IApiService {
         error: null,
       };
     } catch (error) {
-      // @ts-ignore
-      console.error("what is error here", error.message);
       const err = error as Error;
       throw {
         user: null,
@@ -146,8 +145,6 @@ class ApiService implements IApiService {
     this._setInitialHeaders();
     this._setAuthHeader(token);
     try {
-      console.log("card sending", card);
-
       const res = await fetch(`${API_URL}` + "/user/addCard", {
         method: "POST",
         body: JSON.stringify(card),
@@ -157,7 +154,6 @@ class ApiService implements IApiService {
         throw new Error("[ERROR]: UNEXPECTED STATUS" + res.status);
       }
       const data = (await res.json()) as AddCardResponse;
-      console.log("data from add card api service fetch", data);
       return {
         cards: data.cards,
       };
@@ -177,7 +173,6 @@ class ApiService implements IApiService {
         headers: this.headers,
       });
       const data = await res.json();
-      console.log("data from clear cards", data);
       return data;
     } catch (error) {
       console.error(error);
@@ -246,9 +241,7 @@ class ApiService implements IApiService {
         method: "DELETE",
         headers: this.headers,
       });
-      console.log("res for delete card", res);
       const data = await res.json();
-      console.log("data for delete card", data);
       return data;
     } catch (error) {
       console.error(error);

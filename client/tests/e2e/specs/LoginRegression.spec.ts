@@ -30,13 +30,8 @@ describe("login-page-regression", () => {
     });
   });
   it("visits the site home page", () => {
-    cy.goToHomePage();
-  });
-  it("clicks login router link to navigate to the login page", () => {
-    cy.get("a.button.is-success")
-      .contains("Login")
-      .should("have.length", 1)
-      .click();
+    cy.goToHomePage()
+      .clickLoginButton();
   });
   it("screenshots-the-login-page", () => {
     cy.get("html").screenshot({ capture: "viewport" });

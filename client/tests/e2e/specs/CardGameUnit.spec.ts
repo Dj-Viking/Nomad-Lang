@@ -1,17 +1,13 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { RegisterResponse } from "@/types";
+import { IMeResponse } from "../../../../server/src/types";
 import {
-  REGISTER_USERNAME,
-  REGISTER_EMAIL,
-  REGISTER_PASSWORD,
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
   ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
   ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
+  MOCK_USER,
 } from "../../constants";
-
-let unique_username = "";
-let unique_email = "";
-let token: string | null = "";
 
 beforeEach(() => cy.restoreLocalStorage());
 
@@ -35,43 +31,30 @@ describe("visits home page", () => {
 });
 
 describe("sign up new user", () => {
-  //sign in as new user
-  //check that the cards are empty for a newly signed in user comes to home page
-  it("clicks signup link ", () => {
-    cy.get("a.button.is-success").contains("Signup").click();
-  });
-  it("types in username", () => {
-    unique_username = `${REGISTER_USERNAME}-${Date.now()}`;
-    cy.get("input[name=username]")
-      .should("have.length", 1)
-      .type(unique_username);
-  });
-  it("types in email", () => {
-    unique_email = `${REGISTER_EMAIL}-${Date.now()}`;
-    cy.get("input[name=email]").should("have.length", 1).type(unique_email);
-  });
-  it("types in password", () => {
-    cy.get("input[name=password]")
-      .should("have.length", 1)
-      .type(REGISTER_PASSWORD);
-  });
-  it("clicks the submit button", () => {
-    cy.get("button").contains("Sign Up!").should("have.length", 1).click();
-    cy.wait(2000);
-    cy.saveLocalStorage();
-  });
-  it("checks that success message appears ", () => {
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
-  });
-  it("waits a bit and checks we are back at the home page, i.e. checking if the add card button is on the page, and that local storage has a token, and localstorage has a global email set DO ALL LOGGED IN CARDS FEATURES", () => {
-    cy.wait(2000);
-    cy.get("button").contains("Add New Card");
+  it("signs up a user", () => {
+    
+    cy.intercept("**/user/signup", (req) => {
+      req.reply({
+        user: MOCK_USER
+      } as RegisterResponse);
+    }).as("signup");
+
+    cy.intercept("**/user/me", (req) => {
+      req.reply({
+        user: {
+          ...MOCK_USER,
+          cards: [...MOCK_USER.cards, EXPECTED_ADD_LOCAL_CARD_OBJECT]
+        }
+      } as IMeResponse);
+    }).as("me");
+    
+    cy.signup();
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
-    cy.window().then((window: Cypress.AUTWindow) => {
-      console.log("what is the token here", token);
+    let token: string | null = "";
+    cy.restoreLocalStorage().wait("@signup").wait("@me");
+    cy.window().then((window) => {
       token = window.localStorage.getItem("id_token");
-      console.log("what is the token here", token);
       expect(token).to.not.be.null;
       cy.saveLocalStorage();
     });
@@ -83,6 +66,19 @@ describe("sign up new user", () => {
 // checking the translation answer if right or wrong
 describe("adding a card and checking the flip and translation error or success", () => {
   it("adds a card", () => {
+    cy.intercept("**/user/addCard", (req) => {
+      req.reply({
+        cards: [EXPECTED_ADD_LOCAL_CARD_OBJECT]
+      });
+    }).as("addCard");
+    cy.intercept("**/user/me", (req) => {
+      req.reply({
+        user: {
+          ...MOCK_USER,
+          cards: [...MOCK_USER.cards, EXPECTED_ADD_LOCAL_CARD_OBJECT]
+        }
+      } as IMeResponse);
+    }).as("me");
     cy.addCard();
   });
 });
@@ -128,7 +124,7 @@ describe("checking if clicking the choice button answer results in correct and i
         }
       }
     });
-    //have to put slight wait because headless fails even though the screenshot shows Correct: 1 there
+    //have to put slight wait because headless fails even though the screenshot shows Incorrect: 3 there
     // theres some render timing error in headless I guess
     cy.wait(1); 
     cy.get("span#incorrect-score").should("have.length", 1).then(el => {

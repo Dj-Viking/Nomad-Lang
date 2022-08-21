@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   LOCALHOST_URL,
-  EMAIL,
-  PASSWORD,
   ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
   ACTUALS_LOADHOMESPEC_PATH,
+  MOCK_USER,
 } from "../../constants";
 
 beforeEach(() => cy.restoreLocalStorage());
@@ -58,24 +57,26 @@ describe("unit-test-home-link", () => {
 
 describe("logs in to check if the logout link appears when logged in then logs out", () => {
   it("logs in", () => {
-    cy.get("a.button.is-success").contains("Login").click();
-  });
-  it("types in email", () => {
-    cy.get("input[name=email-or-username]")
-      .should("have.length", 1)
-      .type(EMAIL);
-  });
-  it("types in password", () => {
-    cy.get("input[name=password]").should("have.length", 1).type(PASSWORD);
-  });
-  it("clicks the submit button", () => {
-    cy.get("button").contains("Login").should("have.length", 1).click();
-  });
-  it("checks that success message appears ", () => {
-    cy.wait(1000);
-    cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
-  });
-  it("waits a bit and checks we are back at the home page, i.e. checking if the add new card button is on the page, and that local storage has a token, and localstorage has a global email set", () => {
+
+    cy.intercept("**/user/login", (req) => {
+      req.reply(JSON.stringify({
+        status: 200,
+        statusCode: 200,
+        user: MOCK_USER,
+        error: null
+      }));
+    }).as("emailLogin");
+    
+    cy.intercept("**/user/me", (req) => {
+      req.reply({
+        user: {
+          ...MOCK_USER
+        }
+      });
+    }).as("me");
+
+    cy.clickLoginButton();
+    cy.loginWithOnlyEmail();
     cy.wait(2000);
     cy.get("button").contains("Add New Card");
     //not sure why the assertion only works here but okay
@@ -84,10 +85,6 @@ describe("logs in to check if the logout link appears when logged in then logs o
       const token = window.localStorage.getItem("id_token");
       expect(token).to.not.be.null;
     });
-  });
-
-  it("see logout link and clicks it", () => {
-    cy.wait(1000);
-    cy.get("a.button.is-danger").contains("Logout").click();
+    cy.logout();
   });
 });
