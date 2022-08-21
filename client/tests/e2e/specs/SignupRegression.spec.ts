@@ -31,12 +31,7 @@ describe("signup-page-regression", () => {
   });
   it("visits the site home page", () => {
     cy.goToHomePage();
-  });
-  it("clicks Signup router link to navigate to the Signup page", () => {
-    cy.get("a.button.is-success")
-      .contains("Signup")
-      .should("have.length", 1)
-      .click();
+    cy.clickSignupButton();
   });
   it("screenshots-the-signup-page", () => {
     cy.get("html").screenshot({ capture: "viewport" });
