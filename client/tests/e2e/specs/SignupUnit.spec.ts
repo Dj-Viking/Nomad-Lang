@@ -127,7 +127,7 @@ describe("should be able to login with those credentials that we just registered
       } as IMeResponse);
     }).as("me");
 
-    cy.login();
+    cy.loginNew();
 
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
@@ -135,9 +135,7 @@ describe("should be able to login with those credentials that we just registered
       const token = window.localStorage.getItem("id_token");
       expect(token).to.not.be.null;
     });
-    cy.wait(1000);
-    cy.get("a.button.is-danger").contains("Logout").click();
+    
+    cy.logout();
   });
-
-
 });

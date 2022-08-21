@@ -47,9 +47,19 @@ declare namespace Cypress {
         
         signupWhileOnSignupPage(): Chainable<Subject>;
  
-        login(): Chainable<Subject>;
+        loginWithOnlyUsername(): Chainable<Subject>;
+        
+        loginWithOnlyEmail(): Chainable<Subject>;
+        
+        logout(): Chainable<Subject>;
+        
+        loginNew(): Chainable<Subject>;
+        
+        incorrectLogin(): Chainable<Subject>;
 
         clickSignupButton(): Chainable<Subject>;
+        
+        clickLoginButton(): Chainable<Subject>;
 
         invalidEmailSignup(): Chainable<Subject>;
  

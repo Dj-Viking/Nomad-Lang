@@ -37,6 +37,7 @@ import {
   REGISTER_EMAIL,
   EMAIL,
   USERNAME,
+  PASSWORD,
   REGISTER_PASSWORD,
 } from "../../constants";
 
@@ -58,7 +59,53 @@ Cypress.Commands.add("restoreLocalStorage", () => {
   });
 });
 
-Cypress.Commands.add("login", () => {
+Cypress.Commands.add("logout", () => {
+  cy.wait(1000);
+  cy.get("a.button.is-danger").contains("Logout").click();
+});
+
+Cypress.Commands.add("clickLoginButton", () => {
+  cy.get("a.button.is-success")
+    .contains("Login")
+    .should("have.length", 1)
+    .click();
+});
+
+Cypress.Commands.add("incorrectLogin", () => {
+  //clear inputs after this is done so the next test can run just fine
+  cy.get("input[name=email-or-username]")
+    .should("have.length", 1)
+    .type("ksdkjfkdjfd");
+  cy.get("input[name=password]").should("have.length", 1).type("dsafsdf");
+  cy.get("button").contains("Login").should("have.length", 1).click();
+  cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
+  cy.get("input[name=email-or-username]").clear();
+  cy.get("input[name=password]").clear();
+});
+
+Cypress.Commands.add("loginWithOnlyEmail", () => {
+  cy.get("input[name=email-or-username]").should("have.length", 1).type(EMAIL);
+  cy.get("input[name=password]").should("have.length", 1).type(PASSWORD);
+  cy.get("button").contains("Login").should("have.length", 1).click();
+  cy.wait(1000);
+  cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+});
+
+Cypress.Commands.add("loginWithOnlyUsername", () => {
+  cy.get("input[name=email-or-username]")
+    .should("have.length", 1)
+    .type(USERNAME);
+  cy.get("input[name=password]").should("have.length", 1).type(PASSWORD);
+  cy.get("button").contains("Login").should("have.length", 1).click();
+  cy.wait(500);
+  cy.get("div.Vue-Toastification__toast--success").should("have.length", 1);
+  it("logs in using only username", () => {});
+  it("types in password", () => {});
+  it("clicks the submit button", () => {});
+  it("checks that success message appears ", () => {});
+});
+
+Cypress.Commands.add("loginNew", () => {
   //use client side routing to get to login page
   //signed in already lets log out and then log in
   cy.get("a.button.is-danger")
