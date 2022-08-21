@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { RegisterResponse } from "@/types";
 import { IMeResponse } from "../../../../server/src/types";
 import {
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
@@ -31,9 +32,13 @@ describe("visits home page", () => {
 
 describe("sign up new user", () => {
   it("signs up a user", () => {
+    
     cy.intercept("**/user/signup", (req) => {
-      req.reply(MOCK_USER);
+      req.reply({
+        user: MOCK_USER
+      } as RegisterResponse);
     }).as("signup");
+
     cy.intercept("**/user/me", (req) => {
       req.reply({
         user: {
@@ -42,6 +47,7 @@ describe("sign up new user", () => {
         }
       } as IMeResponse);
     }).as("me");
+    
     cy.signup();
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that

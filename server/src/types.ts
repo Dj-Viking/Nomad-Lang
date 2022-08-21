@@ -156,8 +156,8 @@ export interface ILoginResponse {
     role: string;
     cards: Array<ICard>;
     token?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Date | number;
+    updatedAt?: Date | number;
 }
 
 export interface ICard {

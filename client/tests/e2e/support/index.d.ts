@@ -28,13 +28,33 @@ declare namespace Cypress {
          * cy.navigatePage("/login");
          */
         navigatePage(suffix: string): Chainable<Subject>;
+        
         goToHomePage(): Chainable<Subject>;
+        
         restoreLocalStorage(): Chainable<Subject>;
+
         saveLocalStorage(): Chainable<Subject>;
+
         addCard(): Chainable<Subject>;
+
         editCard(): Chainable<Subject>;
+
         deleteCard(): Chainable<Subject>;
+
         clearCards(): Chainable<Subject>;
+
         signup(): Chainable<Subject>;
+        
+        signupWhileOnSignupPage(): Chainable<Subject>;
+ 
+        login(): Chainable<Subject>;
+
+        clickSignupButton(): Chainable<Subject>;
+
+        invalidEmailSignup(): Chainable<Subject>;
+ 
+        tooShortPasswordSignup(): Chainable<Subject>;
+        
+        alreadyUsedEmailSignup(): Chainable<Subject>;
     }
 }

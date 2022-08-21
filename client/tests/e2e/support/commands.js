@@ -35,10 +35,14 @@ import {
   EXPECTED_EDIT_LOCAL_CARD_OBJECT,
   REGISTER_USERNAME,
   REGISTER_EMAIL,
+  EMAIL,
+  USERNAME,
   REGISTER_PASSWORD,
 } from "../../constants";
 
 let LOCAL_STORAGE_MEMORY = {};
+let unique_username = "";
+let unique_email = "";
 
 // eslint-disable-next-line
 Cypress.Commands.add("saveLocalStorage", () => {
@@ -54,9 +58,50 @@ Cypress.Commands.add("restoreLocalStorage", () => {
   });
 });
 
+Cypress.Commands.add("login", () => {
+  //use client side routing to get to login page
+  //signed in already lets log out and then log in
+  cy.get("a.button.is-danger")
+    .contains("Logout")
+    .should("have.length", 1)
+    .click();
+  cy.wait(500);
+  cy.get("a.button.is-success")
+    .contains("Login")
+    .should("have.length", 1)
+    .click();
+  cy.get("input[name=email-or-username]")
+    .should("have.length", 1)
+    .type(unique_email);
+  cy.get("input[name=password]")
+    .should("have.length", 1)
+    .type(REGISTER_PASSWORD);
+  cy.get("button").contains("Login").should("have.length", 1).click();
+  cy.wait(2000);
+  cy.saveLocalStorage();
+  cy.wait(100);
+  cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+  cy.wait(2000);
+  cy.get("button").contains("Add New Card");
+});
+
+Cypress.Commands.add("signupWhileOnSignupPage", () => {
+  unique_username = `${REGISTER_USERNAME}-${Date.now()}`;
+  cy.get("input[name=username]").should("have.length", 1).type(unique_username);
+  unique_email = `${REGISTER_EMAIL}-${Date.now()}`;
+  cy.get("input[name=email]").should("have.length", 1).type(unique_email);
+  cy.get("input[name=password]")
+    .should("have.length", 1)
+    .type(REGISTER_PASSWORD);
+  cy.get("button").contains("Sign Up!").should("have.length", 1).click();
+  cy.wait(2000);
+  cy.saveLocalStorage();
+  cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+  cy.wait(2000);
+  cy.get("button").contains("Add New Card");
+});
+
 Cypress.Commands.add("signup", () => {
-  let unique_username = "";
-  let unique_email = "";
   //sign in as new user
   //check that the cards are empty for a newly signed in user comes to home page
   cy.get("a.button.is-success").contains("Signup").click();
@@ -183,4 +228,57 @@ Cypress.Commands.add("clearCards", () => {
     .eq(1)
     .children()
     .should("have.length", 3);
+});
+
+Cypress.Commands.add("clickSignupButton", () => {
+  cy.get("a.button.is-success")
+    .contains("Signup")
+    .should("have.length", 1)
+    .click();
+});
+
+Cypress.Commands.add("invalidEmailSignup", () => {
+  //clear inputs after this is done so the next test can run just fine
+  cy.get("input[name=username]").should("have.length", 1).type("sldkjfkdjfd");
+  cy.get("input[name=email]").should("have.length", 1).type("ksdkjfkdjfd");
+  cy.get("input[name=password]").should("have.length", 1).type("dsafsdf");
+  cy.get("button").contains("Sign Up!").should("have.length", 1).click();
+  cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
+  cy.get("input[name=username]").clear();
+  cy.get("input[name=email]").clear();
+  cy.get("input[name=password]").clear();
+  cy.wait(1000);
+});
+
+Cypress.Commands.add("tooShortPasswordSignup", () => {
+  cy.get("input[name=username]").should("have.length", 1).type("sldkjfkdjfd");
+  cy.get("input[name=email]").should("have.length", 1).type("alskdjfsadk");
+  cy.get("input[name=password]").should("have.length", 1).type("sdf");
+  cy.get("button").contains("Sign Up!").should("have.length", 1).click();
+  cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
+  cy.get("input[name=username]").clear();
+  cy.get("input[name=email]").clear();
+  cy.get("input[name=password]").clear();
+  cy.wait(1000);
+});
+
+Cypress.Commands.add("alreadyUsedEmailSignup", () => {
+  cy.get("input[name=email]").type(EMAIL);
+  cy.get("input[name=username]").type(USERNAME);
+  cy.get("input[name=password]").type(Date.now().toString());
+  cy.get("button").contains("Sign Up!").click();
+  cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
+  cy.get("input[name=email]").clear();
+  cy.get("input[name=username]").clear();
+  cy.get("input[name=password]").clear();
+  cy.wait(1000);
+  cy.get("input[name=email]").type(EMAIL);
+  cy.get("input[name=username]").type(";adlksjfl;skdjf;");
+  cy.get("input[name=password]").type(Date.now().toString());
+  cy.get("button").contains("Sign Up!").click();
+  cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
+  cy.get("input[name=email]").clear();
+  cy.get("input[name=username]").clear();
+  cy.get("input[name=password]").clear();
+  cy.wait(1000);
 });
