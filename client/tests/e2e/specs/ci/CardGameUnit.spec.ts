@@ -1,13 +1,13 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { RegisterResponse } from "@/types";
-import { IMeResponse } from "../../../../server/src/types";
+import { IMeResponse } from "../../../../../server/src/types";
 import {
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
   ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
   ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
   MOCK_USER,
-} from "../../constants";
+} from "../../../constants";
 
 beforeEach(() => cy.restoreLocalStorage());
 
