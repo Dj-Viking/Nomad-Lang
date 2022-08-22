@@ -47,8 +47,8 @@ jobs:
           ENV_TXT: ${{ secrets.ENV_TXT }}
       # run cypress tests in the client app
       - name: Start client app and run cypress tests
-        run: cd client; npm run test:e2e
-      
+        run: cd client; npm run test:cy:ci
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
