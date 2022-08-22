@@ -4,8 +4,8 @@ import { RegisterResponse } from "@/types";
 import { IMeResponse } from "../../../../../server/src/types";
 import {
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
-  ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
-  ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
+  // ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
+  // ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
   MOCK_USER,
 } from "../../../constants";
 
@@ -14,14 +14,14 @@ beforeEach(() => cy.restoreLocalStorage());
 afterEach(() => cy.saveLocalStorage());
 
 //delete actuals screenshots
-describe("deletes-screenshots", () => {
-  it("deletes any actuals for this test before we enter the page", () => {
-    cy.deleteActuals({
-      headedPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
-      headlessPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS
-    });
-  });
-});
+// describe("deletes-screenshots", () => {
+//   it("deletes any actuals for this test before we enter the page", () => {
+//     cy.deleteActuals({
+//       headedPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
+//       headlessPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS
+//     });
+//   });
+// });
 
 // load home page and sign up new user
 describe("visits home page", () => {
