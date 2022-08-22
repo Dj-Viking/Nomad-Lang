@@ -9,6 +9,7 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "sh ./tests/scripts/cypressRun.sh",
+    "cy:run:ci": "sh ./tests/scripts/cypressRun-ci.sh",
     "create:constant": "ts-node ./tests/scripts/createConstantCli.ts",
     "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts",
     "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts",
@@ -20,7 +21,7 @@
     "showActuals": "ts-node ./tests/scripts/showActuals.ts",
     "showColors": "ts-node ./tests/scripts/showColors.ts",
     "start": "vue-cli-service serve",
-    "test:cy:ci": "vue-cli-service serve & npm run cy:run",
+    "test:cy:ci": "vue-cli-service serve & npm run cy:run:ci",
     "build": "vue-cli-service build",
     "test:jest": "vue-cli-service test:unit --verbose --watchAll --coverage --updateSnapshot --detectOpenHandles",
     "lint": "vue-cli-service lint"
