@@ -86,7 +86,7 @@ describe("adding a card and checking the flip and translation error or success",
 describe("screenshot-card", () => {
   it("finds the first card in the list and screenshots the element", () => {
     // default theme for new user is light theme
-    cy.get("div.notification.is-light").should("have.length", 1).screenshot({ capture: "runner" });
+    cy.get("div.notification.is-light").should("have.length", 1).screenshot();
   });
 });
 
