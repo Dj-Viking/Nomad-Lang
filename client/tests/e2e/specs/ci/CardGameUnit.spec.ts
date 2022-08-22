@@ -1,27 +1,27 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { RegisterResponse } from "@/types";
-import { IMeResponse } from "../../../../server/src/types";
+import { IMeResponse } from "../../../../../server/src/types";
 import {
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
-  ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
-  ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
+  // ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
+  // ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
   MOCK_USER,
-} from "../../constants";
+} from "../../../constants";
 
 beforeEach(() => cy.restoreLocalStorage());
 
 afterEach(() => cy.saveLocalStorage());
 
 //delete actuals screenshots
-describe("deletes-screenshots", () => {
-  it("deletes any actuals for this test before we enter the page", () => {
-    cy.deleteActuals({
-      headedPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
-      headlessPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS
-    });
-  });
-});
+// describe("deletes-screenshots", () => {
+//   it("deletes any actuals for this test before we enter the page", () => {
+//     cy.deleteActuals({
+//       headedPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
+//       headlessPath: ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS
+//     });
+//   });
+// });
 
 // load home page and sign up new user
 describe("visits home page", () => {
@@ -82,13 +82,14 @@ describe("adding a card and checking the flip and translation error or success",
     cy.addCard();
   });
 });
+
 //screenshot the card itself after it is added and loaded after the loading transition
-describe("screenshot-card", () => {
-  it("finds the first card in the list and screenshots the element", () => {
-    // default theme for new user is light theme
-    cy.get("div.notification.is-light").should("have.length", 1).screenshot();
-  });
-});
+// describe("screenshot-card", () => {
+//   it("finds the first card in the list and screenshots the element", () => {
+//     // default theme for new user is light theme
+//     cy.get("div.notification.is-light").should("have.length", 1).screenshot();
+//   });
+// });
 
 describe("checking if clicking the choice button answer results in correct and incorrect increment will increment", () => {
 
