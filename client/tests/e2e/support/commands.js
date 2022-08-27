@@ -59,6 +59,10 @@ Cypress.Commands.add("restoreLocalStorage", () => {
   });
 });
 
+Cypress.Commands.add("getLogoutButton", () => {
+  cy.get("a.button.is-danger").contains("Logout");
+});
+
 Cypress.Commands.add("logout", () => {
   cy.wait(1000);
   cy.get("a.button.is-danger").contains("Logout").click();
@@ -334,4 +338,42 @@ Cypress.Commands.add("openSideBar", () => {
   cy.get("i.fa.fa-chevron-right").click();
   cy.wait(1200);
   cy.get("i.fa.fa-chevron-left").should("have.length", 1);
+});
+
+Cypress.Commands.add("getChangePasswordSubmitButton", () => {
+  cy.get("button.button.is-success.mt-5")
+    .should("have.length", 1)
+    .contains("Submit");
+});
+
+Cypress.Commands.add("getNavHomeButton", () => {
+  cy.get("a.button.is-success").should("have.length", 1).contains("Home");
+});
+
+Cypress.Commands.add("getChangePasswordConfirmInput", () => {
+  cy.get("input[name=confirmInput]").should("have.length", 1);
+});
+
+Cypress.Commands.add("getChangePasswordInput", () => {
+  cy.get("input[name=passwordInput]").should("have.length", 1);
+});
+
+Cypress.Commands.add("clearChangePasswordConfirmInput", () => {
+  cy.get("input[name=confirmInput]").should("have.length", 1).clear();
+});
+
+Cypress.Commands.add("clearChangePasswordInput", () => {
+  cy.get("input[name=passwordInput]").should("have.length", 1).clear();
+});
+
+Cypress.Commands.add("getErrorToast", () => {
+  cy.get("div.Vue-Toastification__toast--error").should("have.length", 1);
+});
+
+Cypress.Commands.add("getSuccessToast", () => {
+  cy.get("div.Vue-Toastification__toast--success").should("have.length", 1);
+});
+
+Cypress.Commands.add("getToastBody", () => {
+  cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
 });

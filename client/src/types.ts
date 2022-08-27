@@ -1,5 +1,5 @@
 export interface ICard {
-  _id: string;
+  _id?: string | unknown;
   choices?: Array<Choice>;
   creatorId?: number | string;
   frontSideText?: string;
@@ -8,13 +8,15 @@ export interface ICard {
   backSideText?: string;
   backSideLanguage?: string;
   backSidePicture?: string;
-  updatedAt?: number | string;
-  createdAt?: number | string;
+  updatedAt?: Date | number | string;
+  createdAt?: Date | number | string;
   isFrontSide?: boolean;
   isBackSide?: boolean;
   categorized?: { [key: string]: CardClass[] };
   uncategorized?: Array<CardClass>;
 }
+
+export type Card = ICard | CardClass;
 
 export class Choice {
   text!: string;
@@ -172,7 +174,7 @@ export interface UserState {
     answers: { correct: number; incorrect: number; };
     email: string | null;
     token?: string | null | undefined;
-    cards: CardClass[];
+    cards: Card[];
     loggedIn: boolean;
     id?: number;
     createdAt?: number;
@@ -211,7 +213,7 @@ export interface CardsState {
 export interface CategorizedCardsObject {
   [key: string]: {
     id?: string;
-    cards: CardClass[];
+    cards: Card[];
     isActive: boolean;
   };
 }
@@ -341,7 +343,7 @@ export type ForgotPassResponse = {
 export type ChangePasswordResponse = {
   done?: boolean | null;
   token?: string | null;
-  cards?: CardClass[] | null;
+  cards?: ICard[] | null;
 } & {
   error: string;
 };

@@ -126,8 +126,8 @@ const mutations = {
       isFrontSide: true,
       isBackSide: false,
     };
-    state.cards.unshift(initCard);
-    state.allCards.unshift(initCard);
+    state.cards.unshift(initCard as any);
+    state.allCards.unshift(initCard as any);
   },
   DELETE_CARD(state: CardsState, id: string): void {
     if (typeof id !== "string" || id === null)

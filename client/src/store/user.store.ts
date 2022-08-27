@@ -1,9 +1,10 @@
 import {
   MyRootState,
   UserState,
-  ICard,
+  // ICard,
   RootCommitType,
   SetUserCommitPayload,
+  Card,
 } from "@/types";
 import { ActionContext } from "vuex";
 
@@ -17,7 +18,7 @@ const state: UserState = {
       incorrect: 0,
     },
     token: "",
-    cards: [] as ICard[],
+    cards: [] as Card[],
     loggedIn: false,
   },
 };
@@ -58,7 +59,7 @@ const mutations = {
       ...payload,
     } as UserState["user"];
   },
-  SET_USER_CARDS(state: UserState, payload: ICard[]): void {
+  SET_USER_CARDS(state: UserState, payload: Card[]): void {
     state.user.cards = payload;
   },
   SET_LOGGED_IN(state: UserState, payload: boolean): void {

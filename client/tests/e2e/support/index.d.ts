@@ -68,5 +68,25 @@ declare namespace Cypress {
         alreadyUsedEmailSignup(): Chainable<Subject>;
 
         openSideBar(): Chainable<Subject>;
+
+        getChangePasswordSubmitButton(): Chainable<Subject>;
+        
+        getNavHomeButton(): Chainable<Subject>;
+        
+        getLogoutButton(): Chainable<Subject>;
+        
+        getChangePasswordInput(): Chainable<Subject>;
+
+        clearChangePasswordInput(): Chainable<Subject>;
+        
+        getChangePasswordConfirmInput(): Chainable<Subject>;
+        
+        clearChangePasswordConfirmInput(): Chainable<Subject>;
+        
+        getErrorToast(): Chainable<Subject>;
+        
+        getSuccessToast(): Chainable<Subject>;
+        
+        getToastBody(): Chainable<Subject>;
     }
 }
