@@ -1,1 +1,3 @@
 **/tests/**/*.js
+**/cypress/support/component.ts
+cypress.config.ts

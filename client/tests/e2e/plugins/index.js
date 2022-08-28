@@ -10,8 +10,6 @@
 // /* eslint-disable import/no-extraneous-dependencies, global-require */
 // const webpack = require('@cypress/webpack-preprocessor')
 
-
-
 // eslint-disable-next-line
 const { deleteActuals } = require("../../utils/deleteActuals");
 // eslint-disable-next-line
@@ -54,7 +52,6 @@ module.exports = (on, config) => {
   //  watchOptions: {}
   // }))
   on("task", {
-    // registerCodeCoverageTasks(on, config)
     deleteActuals: function (path) {
       deleteActuals(path);
       return null;
@@ -79,7 +76,6 @@ module.exports = (on, config) => {
 
   return Object.assign({}, config, {
     fixturesFolder: "tests/e2e/fixtures",
-    integrationFolder: "tests/e2e/specs",
     videosFolder: "tests/e2e/videos",
     supportFile: "tests/e2e/support/index.js",
   });
