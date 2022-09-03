@@ -346,6 +346,16 @@ Cypress.Commands.add("getChangePasswordSubmitButton", () => {
     .contains("Submit");
 });
 
+Cypress.Commands.add("getForgotPasswordEmailInput", () => {
+  cy.get("input[name=emailInput]").should("have.length", 1);
+});
+
+Cypress.Commands.add("getForgotPasswordSubmitButton", () => {
+  cy.get("button.button.is-success.mt-5")
+    .should("have.length", 1)
+    .contains("Send Reset Link");
+});
+
 Cypress.Commands.add("getNavHomeButton", () => {
   cy.get("a.button.is-success").should("have.length", 1).contains("Home");
 });

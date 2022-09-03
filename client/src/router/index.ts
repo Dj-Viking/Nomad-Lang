@@ -31,6 +31,14 @@ export const routes: Array<RouteRecordRaw> = [
     name: "ChangePass",
     component: ChangePassword,
   },
+  {
+    path: "/:catchAll(.*)",
+    name: "Redirect",
+    component: Home,
+    meta: {
+      requiresAuth: false
+    }
+  },
 ];
 
 const router = createRouter({

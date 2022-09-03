@@ -71,6 +71,8 @@ declare namespace Cypress {
 
         getChangePasswordSubmitButton(): Chainable<Subject>;
         
+        getForgotPasswordSubmitButton(): Chainable<Subject>;
+        
         getNavHomeButton(): Chainable<Subject>;
         
         getLogoutButton(): Chainable<Subject>;
@@ -78,6 +80,8 @@ declare namespace Cypress {
         getChangePasswordInput(): Chainable<Subject>;
 
         clearChangePasswordInput(): Chainable<Subject>;
+        
+        getForgotPasswordEmailInput(): Chainable<JQuery<HTMLInputElement>>;
         
         getChangePasswordConfirmInput(): Chainable<Subject>;
         

@@ -262,7 +262,7 @@ class ApiService implements IApiService {
         headers: this.headers,
       });
       if (res.status !== 200) {
-        throw new Error("[ERROR]: UNEXPECTED STATUS" + res.status);
+        throw new Error("[ERROR]: UNEXPECTED STATUS " + res.status);
       }
       const data = await res.json();
       return data;
