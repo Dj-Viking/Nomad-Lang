@@ -67,6 +67,7 @@ describe("CRUD user tests", () => {
         expect(signup.status).toBe(201);
         const parsed = JSON.parse(signup.text) as ICreateUserResponse;
         expect(typeof parsed._id).toBe("string");
+        // @ts-ignore
         newUserId = parsed._id;
         expect(typeof parsed.token).toBe("string");
         expect(parsed.cards).toStrictEqual([]);
@@ -148,8 +149,8 @@ describe("CRUD user tests", () => {
         expect(typeof parsed.cards[0]?.frontSideLanguage).toBe("string");
         expect(parsed.cards[0]?.frontSideLanguage).toBe(MOCK_ADD_CARD.frontSideLanguage);
         expect(parsed.cards[0]?.creator).toBe("test user");
-        expect(typeof parsed.cards[0]?.createdAt).toBe("string");
-        expect(typeof parsed.cards[0]?.updatedAt).toBe("string");
+        expect(typeof parsed.cards[0]?.createdAt).toBe("number");
+        expect(typeof parsed.cards[0]?.updatedAt).toBe("number");
     });
 
     test("POST /user/addCard hits add card route adds another card to see if theres two", async () => {
@@ -165,8 +166,8 @@ describe("CRUD user tests", () => {
         const cards = await Card.find({ _id: newCardId });
         expect(typeof cards[0]?._id.toHexString()).toBe("string");
         expect(cards[0]?.creator).toBe("test user");
-        expect(typeof cards[0]?.createdAt).toBe("object");
-        expect(typeof cards[0]?.updatedAt).toBe("object");
+        expect(typeof cards[0]?.createdAt).toBe("number");
+        expect(typeof cards[0]?.updatedAt).toBe("number");
     });
 
     test("GET /user/me get user cards on me query", async () => {

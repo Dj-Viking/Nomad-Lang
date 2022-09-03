@@ -30,6 +30,7 @@ describe("test change password feature", () => {
         expect(signup.status).toBe(201);
         const parsed = JSON.parse(signup.text) as ICreateUserResponse;
         expect(typeof parsed._id).toBe("string");
+        // @ts-ignore
         newUserId = parsed._id;
         expect(typeof newUserId).toBe("string");
         expect(typeof parsed.token).toBe("string");
