@@ -20,7 +20,7 @@ const state: UserState = {
     token: "",
     cards: [] as Card[],
     loggedIn: false,
-  },
+  } as any,
 };
 const mutations = {
   SAVE_SCORE(state: UserState, payload: { correct: number, incorrect: number }): void {

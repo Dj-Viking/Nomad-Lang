@@ -197,6 +197,13 @@ Cypress.Commands.add("addCard", () => {
   //open the modal
   cy.get("button").contains("Add New Card").click();
   //select input fields and type
+  cy.get("input[name=modalAddFsText]").clear();
+  cy.get("input[name=modalAddFsTextLanguage]").clear();
+  cy.get("input[name=modalAddFsTextPicture]").clear();
+  cy.get("input[name=modalAddBsText]").clear();
+  cy.get("input[name=modalAddBsTextLanguage]").clear();
+  cy.get("input[name=modalAddBsTextPicture]").clear();
+
   cy.get("input[name=modalAddFsText]").type(
     EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSideText
   );
@@ -217,8 +224,15 @@ Cypress.Commands.add("addCard", () => {
   );
   //get the submit add button
   cy.get("button[name=submitAddCard]").click();
-  cy.wait(2000);
+  cy.wait(1000);
   //add a card finish
+});
+
+Cypress.Commands.add("openAndCloseEditModal", () => {
+  //click the edit card button on a card
+  cy.get("button.button.is-primary.ml-6").contains("Edit").click();
+  cy.get("button").contains("SUBMIT EDIT CARD").click();
+  cy.wait(500);
 });
 
 Cypress.Commands.add("editCard", () => {
@@ -386,4 +400,48 @@ Cypress.Commands.add("getSuccessToast", () => {
 
 Cypress.Commands.add("getToastBody", () => {
   cy.get("div.Vue-Toastification__toast-body").should("have.length", 1);
+});
+
+Cypress.Commands.add("pressCToOpenSideBar", () => {
+  cy.get("body").type("c").wait(1200);
+});
+
+Cypress.Commands.add("closeSideBar", () => {
+  cy.get("i.fa.fa-chevron-left").click().wait(1200);
+});
+
+Cypress.Commands.add("toggleThemeToDark", () => {
+  cy.get("button.my-toggle-light").click();
+});
+
+Cypress.Commands.add("toggleThemeToLight", () => {
+  cy.get("button.my-toggle-dark").click();
+});
+
+Cypress.Commands.add("hitOneKeyToActivateCategory", (name) => {
+  cy.get("a#1.category-item-inactive")
+    .should("have.length", 1)
+    .contains(name)
+    .type("1");
+});
+
+Cypress.Commands.add("hitOneKeyToDeactivateCategory", (name) => {
+  cy.get("a#1.category-item-active")
+    .should("have.length", 1)
+    .contains(name)
+    .type("1");
+});
+
+Cypress.Commands.add("clickToActivateCategory", (name) => {
+  cy.get("a#1.category-item-inactive")
+    .should("have.length", 1)
+    .contains(name)
+    .click();
+});
+
+Cypress.Commands.add("clickToDeactivateCategory", (name) => {
+  cy.get("a#1.category-item-active")
+    .should("have.length", 1)
+    .contains(name)
+    .click();
 });

@@ -38,6 +38,8 @@ declare namespace Cypress {
         addCard(): Chainable<Subject>;
 
         editCard(): Chainable<Subject>;
+        
+        openAndCloseEditModal(): Chainable<Subject>;
 
         deleteCard(): Chainable<Subject>;
 
@@ -69,6 +71,8 @@ declare namespace Cypress {
 
         openSideBar(): Chainable<Subject>;
 
+        closeSideBar(): Chainable<Subject>;
+
         getChangePasswordSubmitButton(): Chainable<Subject>;
         
         getForgotPasswordSubmitButton(): Chainable<Subject>;
@@ -92,5 +96,18 @@ declare namespace Cypress {
         getSuccessToast(): Chainable<Subject>;
         
         getToastBody(): Chainable<Subject>;
+
+        pressCToOpenSideBar(): Chainable<Subject>;
+
+        toggleThemeToLight(): Chainable<Subject>;
+        
+        toggleThemeToDark(): Chainable<Subject>;
+
+        hitOneKeyToActivateCategory(name: string): Chainable<JQuery<HTMLAnchorElement>>;
+        
+        hitOneKeyToDeactivateCategory(name: string): Chainable<JQuery<HTMLAnchorElement>>;
+        
+        clickToActivateCategory(name: string): Chainable<JQuery<HTMLAnchorElement>>;
+
     }
 }

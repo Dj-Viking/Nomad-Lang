@@ -47,6 +47,7 @@ import {
     RootCommitType,
     RootDispatchType,
     OpenModalPayload,
+    Card,
 } from "@/types";
 import { computed } from "@vue/reactivity";
 import { defineComponent, ref, PropType } from "@vue/runtime-core";
@@ -55,14 +56,14 @@ export default defineComponent({
     name: "ChoiceButton.vue",
     props: {
         order: Number,
-        card: Object as PropType<CardClass>,
+        card: Object as PropType<Card>,
         choiceId: String,
         text: String,
     },
     setup() {
         const isCorrect = ref();
         const store = useStore<MyRootState>();
-        const allCards = computed<CardClass[]>(() => {
+        const allCards = computed<Card[]>(() => {
             return store.state.cards.allCards;
         });
         const example = ref<string>("works");

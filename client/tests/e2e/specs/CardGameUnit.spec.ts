@@ -75,7 +75,7 @@ describe("adding a card and checking the flip and translation error or success",
       req.reply({
         user: {
           ...MOCK_USER,
-          cards: [...MOCK_USER.cards, EXPECTED_ADD_LOCAL_CARD_OBJECT]
+          cards: [EXPECTED_ADD_LOCAL_CARD_OBJECT]
         }
       } as IMeResponse);
     }).as("me");

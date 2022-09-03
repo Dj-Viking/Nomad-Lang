@@ -109,7 +109,7 @@ class ApiService implements IApiService {
         user: null,
         // @ts-ignore
         error: error.message as string,
-      };
+      } as any;
     }
   }
   public async signup(args: SignupArgs): Promise<RegisterResponse | void> {
@@ -295,7 +295,7 @@ class ApiService implements IApiService {
       const err = error as Error;
       return {
         error: `There was a problem with this change password request! ${err.message}`,
-      };
+      } as any;
     }
   }
   public async changeThemePref(
@@ -311,15 +311,19 @@ class ApiService implements IApiService {
         body: JSON.stringify({ themePref }),
         headers: this.headers,
       });
+      if (res.status !== 200) {
+        throw new Error("The request was not successful. :(");
+      }
       const data = await res.json();
       return {
         themePref: data.themePref,
         error: void 0,
       };
     } catch (error) {
+      console.log("error here", error);
       const err = error as Error;
       return {
-        error: err.message,
+        error: err.message
       };
     }
   }

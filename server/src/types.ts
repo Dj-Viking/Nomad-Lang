@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 // import { GraphQLScalarType, Kind } from 'graphql';
 import jwt from "jsonwebtoken";
 import { CardClass, ChoiceClass } from "./models";
 // & sign in typescript joins types together (intersection)
 // | sign in typescript gives the option for the type to be either one type or another (union)
+
+export type Card = ICard | CardClass;
 
 export type MyContext = {
     req: Request & { user: MyJwtData | null };
@@ -28,7 +30,7 @@ export interface MySendEmailOptions {
 }
 export interface CategorizedCardMap {
     categorized: {
-        [key: string]: Array<ICard>;
+        [key: string]: Card[];
     };
 }
 /**
@@ -90,13 +92,13 @@ export interface ICreateUserPayload {
     password: string;
 }
 export interface IUserCreateCardResponse {
-    cards: Array<ICard>;
+    cards: Card[];
 }
 export interface IUserEditCardResponse {
-    cards: Array<ICard>;
+    cards: Card[];
 }
 export interface IUserDeleteCardResponse {
-    cards: Array<ICard>;
+    cards: Card[];
 }
 
 export interface SignLoginRegisterMeTokenArgs {
@@ -128,22 +130,25 @@ export interface IMeResponse {
     user: {
         username: string;
         email: string;
-        _id: string;
-        role?: string;
-        cards?: CardClass[];
-        token?: string;
+        _id: string | ObjectId | unknown;
+        role: string;
+        cards: Card[];
+        themePref: string;
+        token: string;
+        createdAt: Date | string | number;
+        updatedAt: Date | string | number;
     };
 }
 export interface ICreateUserResponse {
     username: string;
     email: string;
-    _id: string;
+    _id: string | ObjectId;
     role: string;
-    cards: Array<ICard>;
+    cards: Card[];
     themePref?: string;
     token?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date | string | number;
+    updatedAt: Date | string | number;
 }
 
 export interface ILoginError {
@@ -154,15 +159,15 @@ export interface ILoginResponse {
     email: string;
     _id: string;
     role: string;
-    cards: Array<ICard>;
+    cards: Card[];
     token?: string;
-    createdAt?: Date | number;
-    updatedAt?: Date | number;
+    createdAt: Date | string | number;
+    updatedAt: Date | string | number;
 }
 
 export interface ICard {
-    _id?: string | mongoose.Types.ObjectId;
-    choices?: ChoiceClass[];
+    _id: string | mongoose.Types.ObjectId | any;
+    choices: ChoiceClass[];
     frontSideText?: string;
     frontSideLanguage?: string;
     frontSidePicture?: string;
@@ -170,18 +175,18 @@ export interface ICard {
     backSideLanguage?: string;
     backSidePicture?: string;
     creator?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date | string | number;
+    updatedAt: Date | string | number;
 }
 
 export interface IUser {
     _id: string;
-    cards: Array<ICard>;
+    cards: Card[];
     email: string;
     role?: string;
-    updatedAt: Date;
+    updatedAt: Date | string | number;
     themePref?: string;
-    createdAt: Date;
+    createdAt: Date | string | number;
     token: string;
     username: string;
 }
@@ -189,7 +194,7 @@ export interface IUser {
 export interface IUpdateUser {
     username?: string;
     email?: string;
-    cards: Array<ICard>;
+    cards: Card[];
     _id: string;
     role?: string;
 }
@@ -202,9 +207,9 @@ export interface IUpdateUserResponse {
     username: string;
     email: string;
     _id: string;
-    cards: ICard[];
-    createdAt?: Date;
-    updatedAt?: Date;
+    cards: Card[];
+    createdAt: Date | string | number;
+    updatedAt: Date | string | number;
 }
 
 export interface IForgotPassResponse {

@@ -1,6 +1,6 @@
 export interface ICard {
-  _id?: string | unknown;
-  choices?: Array<Choice>;
+  _id: string;
+  choices: Array<Choice>;
   creatorId?: number | string;
   frontSideText?: string;
   frontSideLanguage?: string;
@@ -8,15 +8,15 @@ export interface ICard {
   backSideText?: string;
   backSideLanguage?: string;
   backSidePicture?: string;
-  updatedAt?: Date | number | string;
-  createdAt?: Date | number | string;
+  updatedAt: number | string | Date | any;
+  createdAt: number | string | Date | any;
   isFrontSide?: boolean;
   isBackSide?: boolean;
-  categorized?: { [key: string]: CardClass[] };
-  uncategorized?: Array<CardClass>;
+  categorized?: { [key: string]: Card[] };
+  uncategorized?: Card[];
 }
 
-export type Card = ICard | CardClass;
+export type Card = ICard & CardClass;
 
 export class Choice {
   text!: string;
@@ -25,7 +25,7 @@ export class Choice {
 
 export class CardClass implements ICard {
   _id = "";
-  choices?: Array<Choice>;
+  choices: Array<Choice> = [];
   creatorId?: string | number | undefined;
   frontSideText?: string | undefined;
   frontSideLanguage?: string | undefined;
@@ -33,12 +33,12 @@ export class CardClass implements ICard {
   backSideLanguage?: string | undefined;
   backSidePicture?: string | undefined;
   backSideText?: string | undefined;
-  updatedAt?: string | number | undefined;
-  createdAt?: string | number | undefined;
+  updatedAt: any | number | string | Date = "";
+  createdAt: any | number | string | Date = "";
   isFrontSide?: boolean | undefined;
   isBackSide?: boolean | undefined;
-  categorized?: { [key: string]: CardClass[]; } | undefined;
-  uncategorized?: CardClass[] | undefined;
+  categorized?: { [key: string]: Card[]; } | undefined;
+  uncategorized?: Card[];
 }
 
 export type ThemePrefChangeResponse = {
@@ -177,8 +177,8 @@ export interface UserState {
     cards: Card[];
     loggedIn: boolean;
     id?: number;
-    createdAt?: number;
-    updatedAt?: number;
+    createdAt: number | string | Date;
+    updatedAt: number | string | Date;
   };
 }
 
@@ -189,8 +189,8 @@ export interface SetUserCommitPayload {
   cards: CardClass[];
   loggedIn: boolean;
   id?: number;
-  createdAt?: number;
-  updatedAt?: number;
+  createdAt: number | string | Date;
+  updatedAt: number | string | Date;
 }
 
 export interface UserEntityBase {
@@ -199,15 +199,15 @@ export interface UserEntityBase {
   themePref: string;
   email: string;
   token: string | null;
-  cards: Array<CardClass>;
-  createdAt: Date | number;
-  updatedAt: Date | number;
+  cards: Card[];
+  createdAt: number | string | Date;
+  updatedAt: number | string | Date;
 }
 export interface CardsState {
-  allCards: Array<CardClass>;
-  cards: Array<CardClass>;
+  allCards: Card[];
+  cards: Card[];
   categorized: CategorizedCardsObject; //class of categorized
-  uncategorized?: Array<CardClass>;
+  uncategorized?: Card[];
 }
 
 export interface CategorizedCardsObject {
@@ -262,7 +262,7 @@ export interface AddCardPayload {
   backSidePicture?: string;
 }
 export type AddCardResponse = {
-  cards?: CardClass[];
+  cards: CardClass[];
 } & {
   error?: unknown;
 };
@@ -329,7 +329,7 @@ export type RegisterResponse = {
 };
 
 export type LoginResponse = {
-  user?: UserEntityBase | null;
+  user: UserEntityBase;
 } & {
   error?: string | null;
 };
@@ -343,7 +343,7 @@ export type ForgotPassResponse = {
 export type ChangePasswordResponse = {
   done?: boolean | null;
   token?: string | null;
-  cards?: ICard[] | null;
+  cards: Card[];
 } & {
   error: string;
 };
@@ -357,7 +357,7 @@ export interface IAddCardPayload {
   backSidePicture?: string;
 }
 export type ClearCardsResponse = {
-  user?: UserEntityBase | null;
+  user: UserEntityBase;
 } & {
   error?: unknown | null;
 };

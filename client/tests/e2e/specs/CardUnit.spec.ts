@@ -84,10 +84,13 @@ describe("checks all CRUD operations of interactions with cards as not logged in
 });
 
 describe("registers a new user that will crud the cards", () => {
+
   it("sign up user", () => {
+
     cy.intercept("**/user/signup", (req) => {
       req.reply(MOCK_USER);
     }).as("signup");
+
     cy.intercept("**/user/me", (req) => {
       req.reply({
         user: {
@@ -96,6 +99,7 @@ describe("registers a new user that will crud the cards", () => {
         }
       } as IMeResponse);
     }).as("me");
+
     cy.signup();
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
@@ -108,9 +112,11 @@ describe("registers a new user that will crud the cards", () => {
   });
   it("creates DO ALL CRUD operations here since this is the only time the token will be available to make requests", () => {
     cy.restoreLocalStorage();
+
     cy.window().then((window: Cypress.AUTWindow) => {
       expect(window.localStorage.getItem("id_token")).to.equal(token);
     });
+
     cy.intercept("**/user/addCard", (req) => {
       req.reply({
         cards: [EXPECTED_ADD_LOCAL_CARD_OBJECT]
@@ -121,7 +127,7 @@ describe("registers a new user that will crud the cards", () => {
       req.reply({
         user: {
           ...MOCK_USER,
-          cards: [...MOCK_USER.cards, EXPECTED_EDIT_LOCAL_CARD_OBJECT] //HACK FOR THIS PARTICULAR TEST
+          cards: [EXPECTED_EDIT_LOCAL_CARD_OBJECT] //HACK FOR THIS PARTICULAR TEST
         }
       } as IMeResponse);
     }).as("me");
@@ -146,6 +152,7 @@ describe("registers a new user that will crud the cards", () => {
         }
       } as ClearCardsResponse);
     }).as("clearCards");
+
     cy.addCard();
 
     //wait a bit for it to appear in the DOM
@@ -156,6 +163,8 @@ describe("registers a new user that will crud the cards", () => {
     cy.wait(1);
     // just check that we got the card with the edited text on it
     cy.get("p.title.is-5").should("have.text", EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSideText).wait("@editCard");
+
+    cy.openAndCloseEditModal();
     
     cy.deleteCard()
       .addCard()

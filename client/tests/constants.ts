@@ -1,4 +1,4 @@
-import { ICard } from "@/types";
+import { Card } from "@/types";
 import { keyGen } from "./utils/keyGen";
 import {
   TextColor,
@@ -6,7 +6,54 @@ import {
   LightBackGroundName,
   LightTextName,
 } from "./types";
-import { ICreateUserResponse } from "../../server/src/types";
+import { IMeResponse } from "../../server/src/types";
+
+export const EXPECTED_ADD_LOCAL_CARD_OBJECT: Card = {
+  _id: keyGen(),
+  creatorId: 0,
+  frontSideText: "front side text",
+  frontSideLanguage: "front side text language",
+  frontSidePicture: "front side picture",
+  backSideText: "back side text",
+  choices: [
+    {_id: keyGen(), text: "asdf"},
+    {_id: keyGen(), text: "asdf"},
+    {_id: keyGen(), text: "asdf"},
+    {_id: keyGen(), text: "asdf"}
+  ],
+  backSideLanguage: "back side text language",
+  backSidePicture: "",
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
+  EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;
+
+export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: Card = {
+  frontSideText: "edited text we expect to be here",
+  frontSideLanguage: "RU",
+  frontSidePicture: "dkfdkjf",
+  backSideText: "backside text",
+  backSideLanguage: "backside language",
+  backSidePicture: "",
+  createdAt: "right now",
+  updatedAt: "right now",
+  creatorId: 0,
+  choices: [
+    {_id: keyGen(), text: "asdf"},
+    {_id: keyGen(), text: "asdf"},
+    {_id: keyGen(), text: "asdf"},
+    {_id: keyGen(), text: "asdf"}
+  ],
+  _id: keyGen(),
+  categorized: { test: [ {choices: [],  _id: keyGen(), createdAt: new Date(), updatedAt: new Date() }] },
+};
+EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture =
+  EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture;
+
+export function createMockCard() {
+  return EXPECTED_ADD_LOCAL_CARD_OBJECT;
+}
 
 let EMAIL: string,
   PASSWORD: string,
@@ -14,7 +61,8 @@ let EMAIL: string,
   REGISTER_EMAIL: string,
   REGISTER_PASSWORD: string,
   REGISTER_USERNAME: string,
-  MOCK_USER: ICreateUserResponse;
+  MOCK_USER: IMeResponse["user"],
+  MOCK_USER_WITH_CARDS: IMeResponse["user"];
 if (typeof Cypress !== "undefined") {
   /**
    * CYPRESS ENV EMAIL
@@ -71,15 +119,21 @@ if (typeof Cypress !== "undefined") {
     email: REGISTER_EMAIL,
     _id: "some id lol",
     role: "user",
-    cards: [],
+    cards: [createMockCard(), createMockCard()],
     themePref: "light",
     token: "kdsjfdjksfkdsjfkdj",
     createdAt: new Date(),
     updatedAt: new Date()
-  } as ICreateUserResponse;
+  };
+  
+  MOCK_USER_WITH_CARDS = {
+    ...MOCK_USER,
+    cards: [createMockCard(), createMockCard()]
+  };
 }
 export {
   MOCK_USER,
+  MOCK_USER_WITH_CARDS,
   USERNAME,
   EMAIL,
   PASSWORD,
@@ -434,33 +488,3 @@ export const lightTextNames: Array<LightTextName> = [
   "light-primary",
 ];
 
-// export const EDITED_CARD_FIXTURE_PATH = "editedCardInstance.json";
-
-export const EXPECTED_ADD_LOCAL_CARD_OBJECT: ICard = {
-  _id: keyGen(),
-  creatorId: 0,
-  frontSideText: "front side text",
-  frontSideLanguage: "front side text language",
-  frontSidePicture: "front side picture",
-  backSideText: "back side text",
-  backSideLanguage: "back side text language",
-  backSidePicture: "",
-};
-EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
-  EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;
-
-export const EXPECTED_EDIT_LOCAL_CARD_OBJECT: ICard = {
-  frontSideText: "edited text we expect to be here",
-  frontSideLanguage: "RU",
-  frontSidePicture: "dkfdkjf",
-  backSideText: "backside text",
-  backSideLanguage: "backside language",
-  backSidePicture: "",
-  createdAt: "right now",
-  updatedAt: "right now",
-  creatorId: 0,
-  _id: keyGen(),
-  categorized: { test: [{ _id: keyGen() }] },
-};
-EXPECTED_EDIT_LOCAL_CARD_OBJECT.backSidePicture =
-  EXPECTED_EDIT_LOCAL_CARD_OBJECT.frontSidePicture;

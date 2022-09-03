@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ChangePasswordResponse } from "@/types";
-import { EXPECTED_ADD_LOCAL_CARD_OBJECT, MOCK_USER } from "tests/constants";
+import { EXPECTED_ADD_LOCAL_CARD_OBJECT, MOCK_USER, MOCK_USER_WITH_CARDS } from "tests/constants";
 import { IMeResponse } from "../../../../server/src/types";
 
 beforeEach(() => cy.restoreLocalStorage());
@@ -45,7 +46,8 @@ describe("check that the change password page works correctly", () => {
             const res: ChangePasswordResponse = {
                 done: true,
                 token: "kdjfkdjfjkd",
-                cards: [...MOCK_USER.cards],
+                // @ts-ignore
+                cards: [...MOCK_USER_WITH_CARDS.cards],
                 error: ""
             };
 

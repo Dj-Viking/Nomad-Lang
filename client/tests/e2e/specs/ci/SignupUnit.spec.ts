@@ -84,7 +84,7 @@ describe("tests the register with valid inputs works, has success message, and n
     cy.intercept("**/user/signup", (req) => {
       req.reply({
         user: MOCK_USER
-      } as RegisterResponse);
+      } as unknown as RegisterResponse);
     }).as("signup");
 
     cy.intercept("**/user/me", (req) => {
