@@ -146,7 +146,6 @@
                                             "
                                             class="input"
                                             type="text"
-                                            v-model="translation"
                                             placeholder="Translate!"
                                         />
                                         <button
@@ -315,7 +314,6 @@
                                             "
                                             class="input"
                                             type="text"
-                                            v-model="translation"
                                             placeholder="Translate!"
                                         />
                                         <button
@@ -366,7 +364,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, PropType } from "@vue/runtime-core";
+import { defineComponent, computed, PropType } from "@vue/runtime-core";
 import Spinner from "../components/Spinner.vue";
 import {
     CardClass,
@@ -394,7 +392,6 @@ export default defineComponent({
     setup() {
         const toast = useToast();
         const store = useStore<MyRootState>();
-        const translation = ref<string>("");
         const all_cards = computed(() => store.state.cards.allCards);
         const my_cards = computed(() => store.state.cards.cards);
         const isLoading = computed(() => store.state.loading.loading.isLoading);
@@ -406,7 +403,6 @@ export default defineComponent({
             toast,
             keyGen,
             store,
-            translation,
             isLoading,
             isLoggedIn,
             activeClass,
@@ -442,33 +438,6 @@ export default defineComponent({
         ): Promise<void> {
             const id = event.target.id;
             if (_isFrontSide) {
-                if (
-                    new RegExp(`^${this.card!.backSideText}$`, "i").test(
-                        this.translation
-                    )
-                ) {
-                    // increment correct score
-                    this.store.commit(
-                        "user/INCREMENT_CORRECT" as RootCommitType,
-                        null,
-                        { root: true }
-                    );
-                    // TODO: display message on card that it was right
-                    // increment the user's score when right
-                    // after some time flip the card back to the front and go to the next card in the CardList being displayed
-                } else {
-                    // increment incorrect score
-                    this.store.commit(
-                        "user/INCREMENT_INCORRECT" as RootCommitType,
-                        null,
-                        { root: true }
-                    );
-                    // TODO display message on card that it was wrong
-                    // decrement the user's score and then show the answer
-                    // on the backside, after some time flip back to front and then
-                    // go to the next card in the CardList
-                }
-                this.translation = "";
                 //set the class on for the flip animation on the card object itself.
                 this.store.commit(
                     "cards/TOGGLE_CARD_SIDE" as RootCommitType,

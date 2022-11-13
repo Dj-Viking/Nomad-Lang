@@ -58,8 +58,8 @@ describe("test adding in the card choices to the user's db card collection", () 
         expect(typeof parsed.cards[0]._id).toBe("string");
         expect((_a = parsed.cards[0]) === null || _a === void 0 ? void 0 : _a.frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
         expect((_b = parsed.cards[0]) === null || _b === void 0 ? void 0 : _b.creator).toBe("test user");
-        expect(typeof ((_c = parsed.cards[0]) === null || _c === void 0 ? void 0 : _c.createdAt)).toBe("string");
-        expect(typeof ((_d = parsed.cards[0]) === null || _d === void 0 ? void 0 : _d.updatedAt)).toBe("string");
+        expect(typeof ((_c = parsed.cards[0]) === null || _c === void 0 ? void 0 : _c.createdAt)).toBe("number");
+        expect(typeof ((_d = parsed.cards[0]) === null || _d === void 0 ? void 0 : _d.updatedAt)).toBe("number");
     }));
     test("just keep adding some cards", () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, supertest_1.default)(app).post("/user/addCard").set({ authorization: `Bearer ${newUserToken}`, }).send(constants_1.MOCK_ADD_CARD);
