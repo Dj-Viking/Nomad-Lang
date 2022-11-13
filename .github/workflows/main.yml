@@ -41,14 +41,12 @@ jobs:
             npm i
           fi
       # Runs a set of commands using the runners shell
-      - name: Run server automated tests
+      # run both server tests and cypress tests
+      - name: Run all automated tests
         run: echo Running server automated tests; npm run test:ci;
         env:
           ENV_TXT: ${{ secrets.ENV_TXT }}
-      # run cypress tests in the client app
-      - name: Start client app and run cypress tests
-        run: cd client; npm run test:cy:ci
-
+      # upload code coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:

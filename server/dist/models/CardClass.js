@@ -48,11 +48,11 @@ __decorate([
 ], CardClass.prototype, "creator", void 0);
 __decorate([
     (0, typegoose_1.prop)({ default: Date.now() }),
-    __metadata("design:type", Date)
+    __metadata("design:type", Object)
 ], CardClass.prototype, "createdAt", void 0);
 __decorate([
     (0, typegoose_1.prop)({ default: Date.now() }),
-    __metadata("design:type", Date)
+    __metadata("design:type", Object)
 ], CardClass.prototype, "updatedAt", void 0);
 CardClass = __decorate([
     (0, typegoose_1.modelOptions)({

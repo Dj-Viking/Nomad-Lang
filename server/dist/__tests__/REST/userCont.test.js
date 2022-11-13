@@ -150,8 +150,8 @@ describe("CRUD user tests", () => {
         expect(typeof ((_a = parsed.cards[0]) === null || _a === void 0 ? void 0 : _a.frontSideLanguage)).toBe("string");
         expect((_b = parsed.cards[0]) === null || _b === void 0 ? void 0 : _b.frontSideLanguage).toBe(constants_1.MOCK_ADD_CARD.frontSideLanguage);
         expect((_c = parsed.cards[0]) === null || _c === void 0 ? void 0 : _c.creator).toBe("test user");
-        expect(typeof ((_d = parsed.cards[0]) === null || _d === void 0 ? void 0 : _d.createdAt)).toBe("string");
-        expect(typeof ((_e = parsed.cards[0]) === null || _e === void 0 ? void 0 : _e.updatedAt)).toBe("string");
+        expect(typeof ((_d = parsed.cards[0]) === null || _d === void 0 ? void 0 : _d.createdAt)).toBe("number");
+        expect(typeof ((_e = parsed.cards[0]) === null || _e === void 0 ? void 0 : _e.updatedAt)).toBe("number");
     }));
     test("POST /user/addCard hits add card route adds another card to see if theres two", () => __awaiter(void 0, void 0, void 0, function* () {
         var _f, _g, _h, _j;
@@ -167,8 +167,8 @@ describe("CRUD user tests", () => {
         const cards = yield models_1.Card.find({ _id: newCardId });
         expect(typeof ((_f = cards[0]) === null || _f === void 0 ? void 0 : _f._id.toHexString())).toBe("string");
         expect((_g = cards[0]) === null || _g === void 0 ? void 0 : _g.creator).toBe("test user");
-        expect(typeof ((_h = cards[0]) === null || _h === void 0 ? void 0 : _h.createdAt)).toBe("object");
-        expect(typeof ((_j = cards[0]) === null || _j === void 0 ? void 0 : _j.updatedAt)).toBe("object");
+        expect(typeof ((_h = cards[0]) === null || _h === void 0 ? void 0 : _h.createdAt)).toBe("number");
+        expect(typeof ((_j = cards[0]) === null || _j === void 0 ? void 0 : _j.updatedAt)).toBe("number");
     }));
     test("GET /user/me get user cards on me query", () => __awaiter(void 0, void 0, void 0, function* () {
         const me = yield (0, supertest_1.default)(app)
