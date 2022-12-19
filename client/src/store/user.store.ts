@@ -16,11 +16,12 @@ const state: UserState = {
     answers: {
       correct: 0,
       incorrect: 0,
+      guesses: 0
     },
     token: "",
     cards: [] as Card[],
     loggedIn: false,
-  } as any,
+  } as UserState["user"],
 };
 const mutations = {
   SAVE_SCORE(state: UserState, payload: { correct: number, incorrect: number }): void {
@@ -34,6 +35,12 @@ const mutations = {
       score: score
     };
     localStorage.setItem("user_score", JSON.stringify(user));
+  },
+  INCREMENT_GUESS_COUNTER(state: UserState): void {
+    state.user.answers.guesses++;
+  },
+  RESET_GUESS_COUNTER(state: UserState): void {
+    state.user.answers.guesses = 0;
   },
   RESET_ANSWERS(state: UserState): void {
     state.user.answers.correct = 0;

@@ -16,7 +16,7 @@
             (e: any) => {
                 openAnswerInModalIfMobileScreenWidth(card!);
 
-                if (e.target.localName === 'button' || !new RegExp('choice', 'g').test(e.target.id)) {
+                if ((e.target.localName === 'button' || e.target.localName === 'p') && !new RegExp('choice', 'g').test(e.target.id)) {
                     (async () => {
                         await submitCardFlipCheck(e, true);
                     })();
@@ -68,6 +68,7 @@ import {
 } from "@/types";
 import { computed } from "@vue/reactivity";
 import { defineComponent, ref, PropType } from "@vue/runtime-core";
+import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
 export default defineComponent({
     name: "ChoiceButton.vue",
@@ -79,7 +80,11 @@ export default defineComponent({
     },
     setup() {
         const isCorrect = ref();
-        const guessCounter = ref<number>();
+        const toast = useToast();
+        const guessesCounter = computed<number>(() => {
+            return store.state.user.user.answers.guesses;
+        });
+        console.log("re-render?");
         const store = useStore<MyRootState>();
         const allCards = computed<Card[]>(() => {
             return store.state.cards.allCards;
@@ -90,8 +95,9 @@ export default defineComponent({
             () => store.getters["mobile/isMobile" as MyGetters]
         );
         return {
+            toast,
             example,
-            guessCounter,
+            guessesCounter,
             store,
             isCorrect,
             shouldBeTooltip,
@@ -164,6 +170,12 @@ export default defineComponent({
             event: MyCustomEvent,
             _isFrontSide: boolean
         ): Promise<void> {
+            this.store.commit(
+                "user/INCREMENT_GUESS_COUNTER" as RootCommitType,
+                null,
+                { root: true }
+            );
+            console.log("what is guess counter", this.guessesCounter);
             let text =
                 event.target.localName === "p"
                     ? event.target.textContent
@@ -175,7 +187,6 @@ export default defineComponent({
 
             if (_isFrontSide) {
                 if (text === this.card?.backSideText) {
-                    console.log("was correct", event.target.id);
                     this.isCorrect = true;
                     // increment correct score
                     this.store.commit(
@@ -186,7 +197,13 @@ export default defineComponent({
                     // TODO: display message on card that it was right
                     // increment the user's score when right
                     // after some time flip the card back to the front and go to the next card in the CardList being displayed
+                    this.toast.success("Correct!", { timeout: 500 });
                     setTimeout(async () => {
+                        this.store.commit(
+                            "user/RESET_GUESS_COUNTER" as RootCommitType,
+                            null,
+                            { root: true }
+                        );
                         await this.shiftCardNext(null, this.card?._id);
                     }, 1000);
                 } else {
@@ -197,15 +214,32 @@ export default defineComponent({
                         null,
                         { root: true }
                     );
-                    // TODO display message on card that it was wrong
-                    // decrement the user's score and then show the answer when the user gets it wrong 3 times
-                    // on the backside,
-                    // after some time
+                    if (this.guessesCounter === 3) {
+                        // TODO display message on card that it was wrong
+                        // on the backside,
+                        this.store.commit(
+                            "cards/TOGGLE_CARD_SIDE" as RootCommitType,
+                            this.card?._id,
+                            { root: true }
+                        );
+                        this.toast.error(
+                            "Oops! that was the wrong answer :( \n check the answer and try again!",
+                            {
+                                timeout: 3000,
+                            }
+                        );
+                        setTimeout(async () => {
+                            this.store.commit(
+                                "user/RESET_GUESS_COUNTER" as RootCommitType,
+                                null,
+                                { root: true }
+                            );
+                            await this.shiftCardNext(null, this.card?._id);
+                        }, 3500);
+                    }
+                    // after some time shift to the next card
                 }
                 //set the class on for the flip animation on the card object itself.
-                // this.store.commit(
-                //     "cards/TOGGLE_CARD_SIDE" as RootCommitType, id, { root: true }
-                // );
             } else {
                 //is backside, just flip without checking translation
                 // this.store.commit(

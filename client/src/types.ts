@@ -171,7 +171,7 @@ export interface UserState {
   user: {
     username: string | null;
     score: number;
-    answers: { correct: number; incorrect: number; };
+    answers: { correct: number; incorrect: number; guesses: number; };
     email: string | null;
     token?: string | null | undefined;
     cards: Card[];
@@ -296,6 +296,8 @@ export type RootCommitType =
   | "user/SET_LOGGED_IN"
   | "user/INCREMENT_CORRECT"
   | "user/INCREMENT_INCORRECT"
+  | "user/INCREMENT_GUESS_COUNTER"
+  | "user/RESET_GUESS_COUNTER"
   | "user/SAVE_SCORE"
   | "user/RESET_ANSWERS"
   /** */
