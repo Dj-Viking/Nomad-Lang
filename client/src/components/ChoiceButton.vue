@@ -13,9 +13,14 @@
             'is-incorrect': isCorrect === false,
         }"
         @click.prevent="
-            (e) => {
+            (e: any) => {
                 openAnswerInModalIfMobileScreenWidth(card!);
-                submitCardFlipCheck(e, true);
+
+                if (e.target.localName === 'button' || !new RegExp('choice', 'g').test(e.target.id)) {
+                    (async () => {
+                        await submitCardFlipCheck(e, true);
+                    })();
+                }
             }
         "
     >
@@ -23,6 +28,15 @@
             v-if="!isMobile && shouldBeTooltip"
             :id="choiceId"
             :class="{ tooltiptext: shouldBeTooltip }"
+            @click.prevent="
+                (e: any) => {
+                    if (e.target.localName === 'p' && new RegExp('choice', 'g').test(e.target.id)) {
+                        (async () => {
+                            await submitCardFlipCheck(e, true);
+                        })();
+                    }
+                }
+            "
         >
             {{
                 (async () => {
@@ -44,10 +58,13 @@ import {
     CardClass,
     ModalTitle,
     MyRootState,
+    Nullable,
     RootCommitType,
     RootDispatchType,
     OpenModalPayload,
     Card,
+    MyGetters,
+    MyCustomEvent,
 } from "@/types";
 import { computed } from "@vue/reactivity";
 import { defineComponent, ref, PropType } from "@vue/runtime-core";
@@ -62,15 +79,19 @@ export default defineComponent({
     },
     setup() {
         const isCorrect = ref();
+        const guessCounter = ref<number>();
         const store = useStore<MyRootState>();
         const allCards = computed<Card[]>(() => {
             return store.state.cards.allCards;
         });
         const example = ref<string>("works");
         const shouldBeTooltip = ref<boolean>(false);
-        const isMobile = computed(() => store.getters["mobile/isMobile"]);
+        const isMobile = computed<boolean>(
+            () => store.getters["mobile/isMobile" as MyGetters]
+        );
         return {
             example,
+            guessCounter,
             store,
             isCorrect,
             shouldBeTooltip,
@@ -87,12 +108,7 @@ export default defineComponent({
 
                     if (words.length >= limit) {
                         for (let i = 0; i < words.length; i++) {
-                            console.log("word at index", i, `: ${words[i]}`);
                             if (i !== 0 && i % 5 === 0) {
-                                console.log(
-                                    `every 5th word check at index ${i}: `,
-                                    words[i]
-                                );
                                 words[i] = words[i] + " <br>";
                             }
                         }
@@ -102,15 +118,7 @@ export default defineComponent({
                         // guard against runtime exceptions
                         // insert the innerHTML with the line breaks to actually render with line breaks
                         if (toolTipEl) {
-                            console.log(
-                                "found tooltip el",
-                                toolTipEl.innerHTML
-                            );
                             toolTipEl.innerHTML = words.join(" ");
-                            console.log(
-                                "found tooltip el",
-                                toolTipEl.innerHTML
-                            );
                         }
                         resolve();
                     } else {
@@ -120,15 +128,7 @@ export default defineComponent({
                         // guard against runtime exceptions
                         // insert the innerHTML with the line breaks to actually render with line breaks
                         if (toolTipEl) {
-                            console.log(
-                                "found tooltip el",
-                                toolTipEl.innerHTML
-                            );
                             toolTipEl.innerHTML = words.join(" ");
-                            console.log(
-                                "found tooltip el",
-                                toolTipEl.innerHTML
-                            );
                         }
                         resolve();
                     }
@@ -160,19 +160,22 @@ export default defineComponent({
                 return input;
             }
         },
-        submitCardFlipCheck(event: any, _isFrontSide: boolean): void {
+        async submitCardFlipCheck(
+            event: MyCustomEvent,
+            _isFrontSide: boolean
+        ): Promise<void> {
             let text =
                 event.target.localName === "p"
                     ? event.target.textContent
                     : event.target.value;
 
             if (this.shouldBeTooltip)
-                text = this.allCards.find(
-                    (card) => this.card?._id === card._id
-                )?.backSideText;
+                text = this.allCards.find((card) => this.card?._id === card._id)
+                    ?.backSideText as string;
 
             if (_isFrontSide) {
                 if (text === this.card?.backSideText) {
+                    console.log("was correct", event.target.id);
                     this.isCorrect = true;
                     // increment correct score
                     this.store.commit(
@@ -183,6 +186,9 @@ export default defineComponent({
                     // TODO: display message on card that it was right
                     // increment the user's score when right
                     // after some time flip the card back to the front and go to the next card in the CardList being displayed
+                    setTimeout(async () => {
+                        await this.shiftCardNext(null, this.card?._id);
+                    }, 1000);
                 } else {
                     this.isCorrect = false;
                     // increment incorrect score
@@ -192,9 +198,9 @@ export default defineComponent({
                         { root: true }
                     );
                     // TODO display message on card that it was wrong
-                    // decrement the user's score and then show the answer
-                    // on the backside, after some time flip back to front and then
-                    // go to the next card in the CardList
+                    // decrement the user's score and then show the answer when the user gets it wrong 3 times
+                    // on the backside,
+                    // after some time
                 }
                 //set the class on for the flip animation on the card object itself.
                 // this.store.commit(
@@ -213,7 +219,7 @@ export default defineComponent({
             }
         },
 
-        async shiftCardNext(event?: any, id?: string): Promise<void> {
+        async shiftCardNext(event: Nullable, id?: string): Promise<void> {
             const cardId = !event ? id : event.target.id;
             this.isCorrect = void 0;
             //update display cards array state

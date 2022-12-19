@@ -267,11 +267,26 @@ export type AddCardResponse = {
   error?: unknown;
 };
 
+export interface MyCustomEvent extends Event {
+  target: Event["target"] & {
+    id: string;
+    value: string;
+    localName: string;
+    textContent: string;
+  }
+}
+
+export type Nullable<T = MyCustomEvent> = T | null; 
+
 export type MyGetters =
+  /** */
   | "sidebarCategories/aCategoryIsActive"
   | "sidebarCategories/currentActiveCategoryCards"
+  /** */
   | "user/correct"
   | "user/incorrect"
+  /** */
+  | "mobile/isMobile"
 
 export type RootCommitType =
   | "mobile/TOGGILE_ISMOBILE"
