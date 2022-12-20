@@ -171,7 +171,7 @@ export interface UserState {
   user: {
     username: string | null;
     score: number;
-    answers: { correct: number; incorrect: number; };
+    answers: { correct: number; incorrect: number; guesses: number; };
     email: string | null;
     token?: string | null | undefined;
     cards: Card[];
@@ -267,11 +267,26 @@ export type AddCardResponse = {
   error?: unknown;
 };
 
+export interface MyCustomEvent extends Event {
+  target: Event["target"] & {
+    id: string;
+    value: string;
+    localName: string;
+    textContent: string;
+  }
+}
+
+export type Nullable<T = MyCustomEvent> = T | null; 
+
 export type MyGetters =
+  /** */
   | "sidebarCategories/aCategoryIsActive"
   | "sidebarCategories/currentActiveCategoryCards"
+  /** */
   | "user/correct"
   | "user/incorrect"
+  /** */
+  | "mobile/isMobile"
 
 export type RootCommitType =
   | "mobile/TOGGILE_ISMOBILE"
@@ -281,6 +296,8 @@ export type RootCommitType =
   | "user/SET_LOGGED_IN"
   | "user/INCREMENT_CORRECT"
   | "user/INCREMENT_INCORRECT"
+  | "user/INCREMENT_GUESS_COUNTER"
+  | "user/RESET_GUESS_COUNTER"
   | "user/SAVE_SCORE"
   | "user/RESET_ANSWERS"
   /** */
