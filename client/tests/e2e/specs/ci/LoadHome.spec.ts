@@ -78,7 +78,7 @@ describe("logs in to check if the logout link appears when logged in then logs o
     cy.clickLoginButton();
     cy.loginWithOnlyEmail();
     cy.wait(2000);
-    cy.get("button").contains("Add New Card");
+    cy.get("button").contains("Add New Card").wait("@me");
     //not sure why the assertion only works here but okay
     // cypress trashes local storage during the test to prevent buildup of state or something like that
     cy.window().then((window: Cypress.AUTWindow) => {
