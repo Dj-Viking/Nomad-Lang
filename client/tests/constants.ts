@@ -26,6 +26,26 @@ export const EXPECTED_ADD_LOCAL_CARD_OBJECT: Card = {
   createdAt: new Date(),
   updatedAt: new Date()
 };
+
+export const EXPECTED_ADD_LOCAL_CARD_OBJECT2: Card = {
+  _id: keyGen(),
+  creatorId: 0,
+  frontSideText: "front side text2",
+  frontSideLanguage: "front side text language2",
+  frontSidePicture: "front side picture2",
+  backSideText: "back side text2",
+  choices: [
+    {_id: keyGen(), text: "asdf2"},
+    {_id: keyGen(), text: "asdf22"},
+    {_id: keyGen(), text: "asdf222"},
+    {_id: keyGen(), text: "asdf2222"}
+  ],
+  backSideLanguage: "back side text language2",
+  backSidePicture: "",
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
 EXPECTED_ADD_LOCAL_CARD_OBJECT.backSidePicture =
   EXPECTED_ADD_LOCAL_CARD_OBJECT.frontSidePicture;
 
