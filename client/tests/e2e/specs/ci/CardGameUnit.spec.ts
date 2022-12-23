@@ -7,6 +7,7 @@ import {
   ACTUALS_CARD_GAME_UNIT_SPEC_PATH_HEADLESS,
   ACTUALS_CARD_GAME_UNIT_SPEC_PATH,
   MOCK_USER,
+  EXPECTED_ADD_LOCAL_CARD_OBJECT2,
 } from "../../../constants";
 
 beforeEach(() => cy.restoreLocalStorage());
@@ -75,18 +76,11 @@ describe("adding a card and checking the flip and translation error or success",
       req.reply({
         user: {
           ...MOCK_USER,
-          cards: [EXPECTED_ADD_LOCAL_CARD_OBJECT]
+          cards: [EXPECTED_ADD_LOCAL_CARD_OBJECT, EXPECTED_ADD_LOCAL_CARD_OBJECT2]
         }
       } as IMeResponse);
     }).as("me");
     cy.addCard();
-  });
-});
-//screenshot the card itself after it is added and loaded after the loading transition
-describe("screenshot-card", () => {
-  it("finds the first card in the list and screenshots the element", () => {
-    // default theme for new user is light theme
-    cy.get("div.notification.is-light").should("have.length", 1).screenshot();
   });
 });
 
@@ -108,6 +102,7 @@ describe("checking if clicking the choice button answer results in correct and i
     cy.get("span#correct-score").should("have.length", 1).then(el => {
       expect(el.text().trim()).to.eq(`Correct: 1`);
     });
+    cy.wait(1000);
   });
 
   it("clicks the incorrect answer and checks if incorrect was incremented", () => {
@@ -130,6 +125,11 @@ describe("checking if clicking the choice button answer results in correct and i
     cy.get("span#incorrect-score").should("have.length", 1).then(el => {
       expect(el.text().trim()).to.eq(`Incorrect: 3`);
     });
+    cy.wait(3500);
+  });
+
+  it("clicks play again to start the game over", () => {
+    cy.get("button.button.is-info").contains("Play Again").click();
   });
 });
 

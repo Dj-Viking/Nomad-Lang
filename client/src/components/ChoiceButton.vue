@@ -84,7 +84,6 @@ export default defineComponent({
         const guessesCounter = computed<number>(() => {
             return store.state.user.user.answers.guesses;
         });
-        console.log("re-render?");
         const store = useStore<MyRootState>();
         const allCards = computed<Card[]>(() => {
             return store.state.cards.allCards;
@@ -175,7 +174,6 @@ export default defineComponent({
                 null,
                 { root: true }
             );
-            console.log("what is guess counter", this.guessesCounter);
             let text =
                 event.target.localName === "p"
                     ? event.target.textContent
