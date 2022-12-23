@@ -66,21 +66,11 @@ const mutations = {
       ...payload,
     } as UserState["user"];
   },
-  SET_USER_CARDS(state: UserState, payload: Card[]): void {
-    state.user.cards = payload;
-  },
   SET_LOGGED_IN(state: UserState, payload: boolean): void {
     state.user = {
       ...state.user,
       loggedIn: payload,
     };
-  },
-  // eslint-disable-next-line
-  CLEAR_USER(state: UserState, payload: any): void {
-    state.user = payload;
-  },
-  CLEAR_USER_TOKEN(state: UserState): void {
-    state.user.token = null;
   },
 };
 const actions = {

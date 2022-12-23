@@ -235,23 +235,6 @@ export interface CardState {
   };
 }
 
-export type RootDispatchType =
-  | "modal/openModal"
-  /** */
-  | "user/setUserToken"
-  | "user/setUserCards"
-  | "user/setUser"
-  /** */
-  | "sidebarCategories/toggleWithOneKey"
-  /** */
-  | "cards/saveChoices"
-  | "cards/getCardsChoices" | "cards/setCards"
-  | "cards/deleteCard"
-  | "cards/editCard"
-  | "cards/addCard"
-  | "cards/shiftCardNext"
-  | "cards/setCategorizedCards";
-
 export interface AddCardPayload {
   frontSideText?: string;
   creator?: string;
@@ -278,6 +261,23 @@ export interface MyCustomEvent extends Event {
 
 export type Nullable<T = MyCustomEvent> = T | null; 
 
+export type RootDispatchType =
+  | "modal/openModal"
+  /** */
+  | "user/setUserToken"
+  | "user/setUserCards"
+  | "user/setUser"
+  /** */
+  | "sidebarCategories/toggleWithOneKey"
+  /** */
+  | "cards/saveChoices"
+  | "cards/getCardsChoices" | "cards/setCards"
+  | "cards/deleteCard"
+  | "cards/editCard"
+  | "cards/addCard"
+  | "cards/shiftCardNext"
+  | "cards/setCategorizedCards";
+
 export type MyGetters =
   /** */
   | "sidebarCategories/aCategoryIsActive"
@@ -292,7 +292,6 @@ export type RootCommitType =
   | "mobile/TOGGILE_ISMOBILE"
   /** */
   | "user/SET_USER"
-  | "user/CLEAR_USER_TOKEN"
   | "user/SET_LOGGED_IN"
   | "user/INCREMENT_CORRECT"
   | "user/INCREMENT_INCORRECT"

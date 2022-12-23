@@ -119,13 +119,13 @@ describe("checking if clicking the choice button answer results in correct and i
         }
       }
     });
+    //have to put slight wait because headless fails even though the screenshot shows Incorrect: 3 there
+    // theres some render timing error in headless I guess
     cy.wait(1); 
     cy.get("span#incorrect-score").should("have.length", 1).then(el => {
       expect(el.text().trim()).to.eq(`Incorrect: 3`);
     });
     cy.wait(3500);
-    //have to put slight wait because headless fails even though the screenshot shows Incorrect: 3 there
-    // theres some render timing error in headless I guess
   });
 
   it("clicks play again to start the game over", () => {
