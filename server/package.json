@@ -10,7 +10,7 @@
   "scripts": {
     "test:config": "jest --showConfig",
     "test": "ENV_TXT=$(cat env.txt) jest --verbose --detectOpenHandles --watchAll",
-    "test:coverage": "ENV_TXT=$(cat env.txt) jest --verbose --detectOpenHandles --watchAll --coverage",
+    "test:coverage": "ENV_TXT=$(cat env.txt) jest --verbose --detectOpenHandles --watchAll=false --coverage",
     "server:ci": "jest --verbose --watchAll=false --detectOpenHandles --coverage",
     "tsw": "tsc -w",
     "tsc": "tsc",
