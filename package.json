@@ -7,6 +7,7 @@
     "npm": "8.5.0"
   },
   "scripts": {
+    "docker-build": "sh docker-build.sh",
     "install": "cd server && npm i --legacy-peer-deps && cd ../client && npm i --legacy-peer-deps",
     "clean": "npm cache clean --force; rm -rfv node_modules; rm package-lock.json; cd server; npm cache clean --force; rm -rfv node_modules; rm package-lock.json; cd ../client; npm cache clean --force; rm -rfv node_modules; rm package-lock.json",
     "tscheck": "cd client; npm run tscheck",
