@@ -1,35 +1,40 @@
 import { AddCardResponse, ChangeThemePrefResponse, LoginResponse } from "@/types";
+import { ACTUALS_SIDEBARUNITSPEC_PATH, ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS, EXPECTED_ADD_LOCAL_CARD_OBJECT, MOCK_USER_WITH_CARDS } from "../../../constants";
 import { IMeResponse } from "../../../../../server/src/types";
-import { EXPECTED_ADD_LOCAL_CARD_OBJECT, MOCK_USER_WITH_CARDS } from "../../../constants";
 
 
 beforeEach(() => cy.restoreLocalStorage());
 
 afterEach(() => cy.saveLocalStorage());
 
-describe("sidebar-screenshot", () => {
-  // it("deletes any actuals for this test before we enter the page", () => {
-  //   cy.deleteActuals({
-  //     headedPath: ACTUALS_SIDEBARUNITSPEC_PATH,
-  //     headlessPath: ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS
-  //   });
-  // });
-  
-  it("visit's home page", () => {
-    cy.goToHomePage()
-      .openSideBar();
+if (Cypress.env("TAKE_SCREENSHOTS") === "yes") {
+  describe("sidebar-screenshot", () => {
+    it("deletes any actuals for this test before we enter the page", () => {
+      cy.deleteActuals({
+        headedPath: ACTUALS_SIDEBARUNITSPEC_PATH,
+        headlessPath: ACTUALS_SIDEBARUNITSPEC_PATH_HEADLESS
+      });
+    });
+    
+    it("visit's home page", () => {
+      cy.goToHomePage()
+        .openSideBar();
+    });
+    it("screenshots-the-entire-page", () => {
+      cy.get("div.side-bar").screenshot({ capture: "runner" });
+    });
+    
+    it("closes the sidebar clicking the chevron arrow", () => {
+      cy.closeSideBar()
+        .get("i.fa.fa-chevron-right").should("have.length", 1);
+    });
   });
-  // it("screenshots-the-entire-page", () => {
-  //   cy.get("div.side-bar").screenshot({ capture: "runner" });
-  // });
-  
-  it("closes the sidebar clicking the chevron arrow", () => {
-    cy.closeSideBar()
-      .get("i.fa.fa-chevron-right").should("have.length", 1);
-  });
-});
+}
 
 describe("tests sidebar opening with c key", () => {
+  it("visits home page", () => {
+    cy.goToHomePage();
+  });
   it("opens sidebar with the c key pressed on the document object", () => {
     cy.pressCToOpenSideBar();
     cy.get("i.fa.fa-chevron-left").should("have.length", 1);

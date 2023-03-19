@@ -22,9 +22,9 @@ else
 fi
 
 if [ "$SPECNAME" = "*" ]; then
-  CY_SPEC_PATH="./tests/e2e/specs/$SPECNAME"
+  CY_SPEC_PATH="./tests/e2e/specs/ci/$SPECNAME"
   $(npm bin)/cypress run --headless --spec "$CY_SPEC_PATH"
 else
-  CY_SPEC_PATH="./tests/e2e/specs/$SPECNAME.spec.ts"
+  CY_SPEC_PATH="./tests/e2e/specs/ci/$SPECNAME.spec.ts"
   $(npm bin)/cypress run --headless --spec "$CY_SPEC_PATH"
 fi

@@ -1,7 +1,7 @@
 import { 
   LOCALHOST_URL, 
-  // ACTUALS_LOGINUNITSPEC_PATH_HEADLESS, 
-  // ACTUALS_LOGINUNITSPEC_PATH, 
+  ACTUALS_LOGINUNITSPEC_PATH_HEADLESS, 
+  ACTUALS_LOGINUNITSPEC_PATH, 
   MOCK_USER
 } from "../../../constants";
 
@@ -9,22 +9,24 @@ beforeEach(() => cy.restoreLocalStorage());
 
 afterEach(() => cy.saveLocalStorage());
 
-describe("login-page-unit", () => {
-  // it("deletes any actuals for this test before we enter the page", () => {
-  //   cy.deleteActuals({
-  //     headedPath: ACTUALS_LOGINUNITSPEC_PATH,
-  //     headlessPath: ACTUALS_LOGINUNITSPEC_PATH_HEADLESS
-  //   });
-  // });
-
-  it("visits the site login page", () => {
-    cy.goToHomePage()
-      .clickLoginButton();
+if (Cypress.env("TAKE_SCREENSHOTS") === "yes") {
+  describe("login-page-unit", () => {
+    it("deletes any actuals for this test before we enter the page", () => {
+      cy.deleteActuals({
+        headedPath: ACTUALS_LOGINUNITSPEC_PATH,
+        headlessPath: ACTUALS_LOGINUNITSPEC_PATH_HEADLESS
+      });
+    });
+  
+    it("visits the site login page", () => {
+      cy.goToHomePage()
+        .clickLoginButton();
+    });
+    it("screenshots-the-login-page", () => {
+      cy.get("html").screenshot({ capture: "viewport" });
+    });
   });
-  // it("screenshots-the-login-page", () => {
-  //   cy.get("html").screenshot({ capture: "viewport" });
-  // });
-});
+}
   
 
 describe("login-unit-test, tests login functionality", () => {
