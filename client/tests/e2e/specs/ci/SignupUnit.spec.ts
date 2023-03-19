@@ -1,8 +1,8 @@
 import { RegisterResponse } from "@/types";
 import { ILoginResponse, IMeResponse } from "../../../../../server/src/types";
 import {
-  // ACTUALS_SIGNUPUNITSPEC_PATH,
-  // ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS,
+  ACTUALS_SIGNUPUNITSPEC_PATH,
+  ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS,
   MOCK_USER,
 } from "../../../constants";
 
@@ -10,30 +10,37 @@ beforeEach(() => cy.restoreLocalStorage());
 
 afterEach(() => cy.saveLocalStorage());
 
-describe("deletes-screenshots", () => {
-  // it("deletes any actuals for this test before we enter the page", () => {
-  //   cy.deleteActuals({
-  //     headedPath: ACTUALS_SIGNUPUNITSPEC_PATH,
-  //     headlessPath: ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS
-  //   });
-  // });
-  it("visits the home page and then signup page", () => {
-    cy.intercept("**/user/me", (req) => {
-      req.reply({
-        user: {
-          ...MOCK_USER,
-        }
-      } as IMeResponse);
-    }).as("me");
+if (Cypress.env("TAKE_SCREENSHOTS") === "yes") {
+  describe("deletes-screenshots", () => {
+    it("deletes any actuals for this test before we enter the page", () => {
+      cy.deleteActuals({
+        headedPath: ACTUALS_SIGNUPUNITSPEC_PATH,
+        headlessPath: ACTUALS_SIGNUPUNITSPEC_PATH_HEADLESS
+      });
+    });
+    it("visits the home page and then signup page", () => {
+      cy.intercept("**/user/me", (req) => {
+        req.reply({
+          user: {
+            ...MOCK_USER,
+          }
+        } as IMeResponse);
+      }).as("me");
+      cy.goToHomePage()
+        .clickSignupButton();
+    });
+    it("screenshots-the-entire-page", () => {
+      cy.get("html").screenshot({ capture: "runner" });
+    });
+  });
+}
+
+describe("tests signup with invalid email, has error message", () => {
+
+  it("goes to signup page", () => {
     cy.goToHomePage()
       .clickSignupButton();
   });
-  // it("screenshots-the-entire-page", () => {
-  //   cy.get("html").screenshot({ capture: "runner" });
-  // });
-});
-
-describe("tests signup with invalid email, has error message", () => {
   it("tries to signup with invalid email", () => {
     
     cy.intercept("**/user/signup", (req) => {

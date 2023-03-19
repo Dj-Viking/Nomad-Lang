@@ -9,7 +9,7 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "sh ./tests/scripts/cypressRun.sh",
-    "cy:run:ci": "sh ./tests/scripts/cypressRun-ci.sh",
+    "cy:run:ci": "sh ./tests/scripts/cypressRun-ci.sh ci",
     "create:constant": "ts-node ./tests/scripts/createConstantCli.ts",
     "create:fixture": "ts-node ./tests/scripts/createFixtureCli.ts",
     "deleteactuals": "ts-node ./tests/scripts/deleteActuals.ts",

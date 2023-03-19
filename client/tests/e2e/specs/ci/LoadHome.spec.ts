@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   LOCALHOST_URL,
-  // ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
-  // ACTUALS_LOADHOMESPEC_PATH,
+  ACTUALS_LOADHOMESPEC_PATH_HEADLESS,
+  ACTUALS_LOADHOMESPEC_PATH,
   MOCK_USER,
 } from "../../../constants";
 
@@ -10,20 +10,22 @@ beforeEach(() => cy.restoreLocalStorage());
 
 afterEach(() => cy.saveLocalStorage());
 
-describe("deletes-screenshots", () => {
-  // it("deletes any actuals for this test before we enter the page", () => {
-  //   cy.deleteActuals({
-  //     headedPath: ACTUALS_LOADHOMESPEC_PATH,
-  //     headlessPath: ACTUALS_LOADHOMESPEC_PATH_HEADLESS
-  //   });
-  // });
-  it("visit's home page", () => {
-    cy.goToHomePage();
+if (Cypress.env("TAKE_SCREENSHOTS") === "yes") {
+  describe("deletes-screenshots", () => {
+    it("deletes any actuals for this test before we enter the page", () => {
+      cy.deleteActuals({
+        headedPath: ACTUALS_LOADHOMESPEC_PATH,
+        headlessPath: ACTUALS_LOADHOMESPEC_PATH_HEADLESS
+      });
+    });
+    it("visit's home page", () => {
+      cy.goToHomePage();
+    });
+    it("screenshots-the-entire-page", () => {
+      cy.get("html").screenshot({ capture: "runner" });
+    });
   });
-  // it("screenshots-the-entire-page", () => {
-  //   cy.get("html").screenshot({ capture: "runner" });
-  // });
-});
+}
 
 describe("Check-the-nav-bar-for-the-correct-nav-links", () => {
   it("visit's home page", () => {

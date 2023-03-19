@@ -1,5 +1,5 @@
 #! /bin/bash
-# npn run regressionDirs:create <your new spec file name> 
+# npm run regressionDirs:create <your new spec file name> 
 
 #if something errors stop execution of the shell script
 set -e;

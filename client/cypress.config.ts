@@ -2,6 +2,7 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   screenshotsFolder: "tests/e2e/fixtures/screenshots/actuals",
+  screenshotOnRunFailure: true,
   viewportHeight: 1200,
   viewportWidth: 1400,
   video: false,
@@ -9,8 +10,10 @@ export default defineConfig({
   projectId: "g6qzak",
   fixturesFolder: "tests/e2e/fixtures",
   videosFolder: "tests/e2e/videos",
-
   e2e: {
+    env: {
+      TAKE_SCREENSHOTS: "yes"
+    },
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {

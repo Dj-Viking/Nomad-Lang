@@ -54,8 +54,8 @@ export enum ANSI_ESCAPES {
 declare global {
     namespace NodeJS {
         interface ProcessEnv {
-            NODE_ENV: "development" | "production" | "test";
-            PORT?: string;
+            readonly NODE_ENV: "development" | "production" | "test";
+            readonly PORT?: string;
             EXPIRED_TOKEN?: string;
             INVALID_SIGNATURE?: string;
             SECRET?: string;

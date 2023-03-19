@@ -5,7 +5,12 @@
 
 
 declare namespace Cypress {
- 
+    interface EnvConfig {
+        TAKE_SCREENSHOTS: "yes" | "no"
+    }
+    interface Cypress {
+        env<K extends keyof EnvConfig>(config: K): EnvConfig[K];
+    }
     interface DeleteActualsArgs {
         headlessPath: string;
         headedPath: string;

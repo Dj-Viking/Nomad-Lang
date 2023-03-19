@@ -3,8 +3,8 @@ import { IMeResponse, IUserDeleteCardResponse, IUserEditCardResponse } from "../
 import {
   EXPECTED_ADD_LOCAL_CARD_OBJECT,
   EXPECTED_EDIT_LOCAL_CARD_OBJECT,
-  // ACTUALS_CARDUNITSPEC_PATH_HEADLESS,
-  // ACTUALS_CARDUNITSPEC_PATH,
+  ACTUALS_CARDUNITSPEC_PATH_HEADLESS,
+  ACTUALS_CARDUNITSPEC_PATH,
   MOCK_USER,
 } from "../../../constants";
 
@@ -14,22 +14,27 @@ beforeEach(() => cy.restoreLocalStorage());
 
 afterEach(() => cy.saveLocalStorage());
 
-describe("deletes-screenshots", () => {
-  // it("deletes any actuals for this test before we enter the page", () => {
-  //   cy.deleteActuals({
-  //     headlessPath: ACTUALS_CARDUNITSPEC_PATH,
-  //     headedPath: ACTUALS_CARDUNITSPEC_PATH_HEADLESS
-  //   });
-  // });
+if (Cypress.env("TAKE_SCREENSHOTS") === "yes") {
+  describe("deletes-screenshots", () => {
+    it("deletes any actuals for this test before we enter the page", () => {
+      cy.deleteActuals({
+        headlessPath: ACTUALS_CARDUNITSPEC_PATH,
+        headedPath: ACTUALS_CARDUNITSPEC_PATH_HEADLESS
+      });
+    });
+    it("visits the home page", () => {
+      cy.goToHomePage();
+    });
+    it("screenshots-the-entire-page", () => {
+      cy.get("html").screenshot({ capture: "runner" });
+    });
+  });
+}
+
+describe("checks all CRUD operations of interactions with cards as not logged in", () => {
   it("visits the home page", () => {
     cy.goToHomePage();
   });
-  // it("screenshots-the-entire-page", () => {
-  //   cy.get("html").screenshot({ capture: "runner" });
-  // });
-});
-
-describe("checks all CRUD operations of interactions with cards as not logged in", () => {
   it("clears todos on the screen", () => {
     cy.clearCards();
   });
