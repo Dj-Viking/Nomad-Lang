@@ -27,7 +27,7 @@
     "start": "sh start.sh",
     "concurrently": "NODE_ENV=development concurrently \"cd server && npm start\" \"cd client && npm start\"",
     "test:concurrently": "cd client && npm run test:e2e",
-    "start:prod": "echo 'current dir\n' && ls ./ && echo '======\n' && echo 'one dir from current server js file\n' && ls ../ && echo '============' && echo '2 dirs up from current server js file' && ls ../../ && cd server && npm start"
+    "start:prod": "echo 'current client dir\n' && ls ./client && echo '======\n' && echo 'one dir from current server js file\n' && ls ../ && echo '============' && echo '2 dirs up from current server js file' && ls ../../ && cd server && npm start"
   },
   "repository": {
     "type": "git",
