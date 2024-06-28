@@ -19,7 +19,7 @@ function signToken(args) {
                 uuid,
                 _id,
                 email,
-            }, SECRET, { expiresIn: EXPIRATION });
+            }, SECRET, { expiresIn: "1d" });
         }
         case Boolean(username && uuid && exp && resetEmail): {
             return jsonwebtoken_1.default.sign({

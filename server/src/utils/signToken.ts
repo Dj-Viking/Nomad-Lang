@@ -26,7 +26,7 @@ export function signToken(args: SignLoginRegisterMeTokenArgs | SignResetPassword
           email,
         },
         SECRET as string,
-        { expiresIn: EXPIRATION as string }
+        { expiresIn: "1d" as string }
       );
     }
     case Boolean(username && uuid && exp && resetEmail): {

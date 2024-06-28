@@ -97,7 +97,9 @@ exports.UserController = {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 const { username, email, password } = req.body;
                 if (!username || !email || !password) {
-                    return res.status(400).json({ error: "missing username, email, and/or password input!" });
+                    return res
+                        .status(400)
+                        .json({ error: "missing username, email, and/or password input!" });
                 }
                 if (!emailRegex.test(email)) {
                     return res.status(400).json({ error: "Email was not correct format" });

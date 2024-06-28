@@ -19,7 +19,11 @@ export const UserController = {
                 _id: user!._id,
                 uuid: uuid.v4(),
             });
-            const updated = await User.findOneAndUpdate({ email: user!.email }, { token }, { new: true })
+            const updated = await User.findOneAndUpdate(
+                { email: user!.email },
+                { token },
+                { new: true }
+            )
                 .select("-password")
                 .select("-__v");
 
@@ -51,6 +55,7 @@ export const UserController = {
                 user = await User.findOne({ email });
             }
             if (user === null) return res.status(400).json({ error: "Incorrect Credentials" });
+            // @ts-ignore
             const verifyPass = await user!.isCorrectPassword(password);
             if (!verifyPass) return res.status(400).json({ error: "Incorrect Credentials" });
             const token = signToken({
@@ -83,7 +88,9 @@ export const UserController = {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const { username, email, password } = req.body;
             if (!username || !email || !password) {
-                return res.status(400).json({ error: "missing username, email, and/or password input!" });
+                return res
+                    .status(400)
+                    .json({ error: "missing username, email, and/or password input!" });
             }
 
             if (!emailRegex.test(email)) {
@@ -229,7 +236,10 @@ export const UserController = {
             return res.status(500);
         }
     },
-    forgotPassword: async function (req: Express.MyRequest, res: Response): Promise<Response | void> {
+    forgotPassword: async function (
+        req: Express.MyRequest,
+        res: Response
+    ): Promise<Response | void> {
         try {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             const { email } = req.body;

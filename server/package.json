@@ -14,7 +14,7 @@
     "server:ci": "jest --verbose --watchAll=false --detectOpenHandles --coverage",
     "tsw": "tsc -w",
     "tsc": "tsc",
-    "watch": "cd dist; nodemon -L index.js",
+    "watch": "cd dist && nodemon -L index.js",
     "start": "sh start.sh",
     "ts:run": "ts-node src/index.ts",
     "ts:watch": "nodemon src/index.ts",

@@ -1,3 +1,11 @@
+// @ts-check
+const { ESLint } = require("eslint");
+
+void ESLint;
+
+/**
+ * @type {ESLint.ConfigData}
+ */
 module.exports = {
   root: true,
   env: {
@@ -12,6 +20,7 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    "linebreak-style": "off",
     "vue/multi-word-component-names": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "no-extra-boolean-cast": "off",
