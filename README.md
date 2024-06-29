@@ -5,7 +5,7 @@
 
 # Deployed application 
 * <a href="https://nomad-lang.onrender.com" rel="noopener noreferrer">
-  On Heroku
+  On Render
 </a>
 
 # Motivation
