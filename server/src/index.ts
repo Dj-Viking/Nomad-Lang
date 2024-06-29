@@ -27,9 +27,9 @@ const {
 
     const corsRegExp = ((): RegExp => {
         if (IS_PROD) {
-            return new RegExp(CORS_ALLOWED_PROD) as any as RegExp;
+            return new RegExp(CORS_ALLOWED_PROD, "g") as any as RegExp;
         }
-        return new RegExp(CORS_ALLOWED_DEV) as any as RegExp;
+        return new RegExp(CORS_ALLOWED_DEV, "g") as any as RegExp;
     })();
 
     app.use(

@@ -32,9 +32,9 @@ const { CORS_ALLOWED_PROD, CORS_ALLOWED_DEV, } = process.env;
         const app = (0, express_1.default)();
         const corsRegExp = (() => {
             if (constants_1.IS_PROD) {
-                return new RegExp(CORS_ALLOWED_PROD);
+                return new RegExp(CORS_ALLOWED_PROD, "g");
             }
-            return new RegExp(CORS_ALLOWED_DEV);
+            return new RegExp(CORS_ALLOWED_DEV, "g");
         })();
         app.use((0, cors_1.default)({
             origin: corsRegExp,
