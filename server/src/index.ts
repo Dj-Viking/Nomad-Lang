@@ -32,6 +32,8 @@ const {
         return new RegExp(CORS_ALLOWED_DEV, "g") as any as RegExp;
     })();
 
+    console.log("WHAT IS THE REGEX HERE", corsRegExp);
+
     app.use(
         cors({
             origin: corsRegExp,

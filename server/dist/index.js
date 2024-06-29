@@ -36,6 +36,7 @@ const { CORS_ALLOWED_PROD, CORS_ALLOWED_DEV, } = process.env;
             }
             return new RegExp(CORS_ALLOWED_DEV, "g");
         })();
+        console.log("WHAT IS THE REGEX HERE", corsRegExp);
         app.use((0, cors_1.default)({
             origin: corsRegExp,
             credentials: true,
