@@ -25,20 +25,13 @@ const readEnv_1 = require("./utils/readEnv");
 (0, readEnv_1.readEnv)();
 const PORT = process.env.PORT || 4000;
 const logger = helpers_1.ColorLog;
-const { CORS_ALLOWED_PROD, CORS_ALLOWED_DEV, } = process.env;
+console.log("what is nodeenv", process.env.NODE_ENV);
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         console.log("hello world");
         const app = (0, express_1.default)();
-        const corsRegExp = (() => {
-            if (constants_1.IS_PROD) {
-                return new RegExp(CORS_ALLOWED_PROD, "g");
-            }
-            return new RegExp(CORS_ALLOWED_DEV, "g");
-        })();
-        console.log("WHAT IS THE REGEX HERE", corsRegExp);
         app.use((0, cors_1.default)({
-            origin: corsRegExp,
+            origin: constants_1.IS_PROD ? "https://nomad-lang.onrender.com" : "http://localhost:8080",
             credentials: true,
         }));
         app.use(express_1.default.urlencoded({

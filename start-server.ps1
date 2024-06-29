@@ -3,7 +3,7 @@ param(
     $dev
 )
 $env:SECRET = "blah";
-$env:NODE_ENV = $(if (-not $dev.IsPresent) {"development"} elseif($dev -eq $false) { "production" })
+$env:NODE_ENV = $(if (-not $dev) { "production"} else { "development"})
 $env:ENV_TXT = $(Get-Content -Path "./env.sample.txt")
 Push-Location ./server;
 Write-Host "start server here"

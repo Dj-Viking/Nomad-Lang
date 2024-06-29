@@ -13,33 +13,20 @@ readEnv();
 
 const PORT = process.env.PORT || 4000;
 const logger = ColorLog;
-
-const {
-    CORS_ALLOWED_PROD,
-    CORS_ALLOWED_DEV,
-    // NODEMAILER_EMAIL_TO
-} = process.env;
+console.log("what is nodeenv", process.env.NODE_ENV);
 
 (async function (): Promise<void> {
     console.log("hello world");
 
     const app = express();
 
-    const corsRegExp = ((): RegExp => {
-        if (IS_PROD) {
-            return new RegExp(CORS_ALLOWED_PROD, "g") as any as RegExp;
-        }
-        return new RegExp(CORS_ALLOWED_DEV, "g") as any as RegExp;
-    })();
-
-    console.log("WHAT IS THE REGEX HERE", corsRegExp);
-
     app.use(
         cors({
-            origin: corsRegExp,
+            origin: IS_PROD ? "https://nomad-lang.onrender.com" : "http://localhost:8080",
             credentials: true,
         })
     );
+
     app.use(
         express.urlencoded({
             extended: false,

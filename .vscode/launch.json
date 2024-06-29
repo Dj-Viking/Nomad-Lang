@@ -10,6 +10,16 @@
             "request": "launch",
             "script": "${file}",
             "args": ["-dev"]
+        },
+        {
+            "name": "Launch",
+            "type": "node",
+            "env": {
+                "EXPIRATION": "1d",
+                "NODE_ENV": "development",
+                "SECRET": "SOMETHING"
+            },
+            "args": ["./server/dist/index.js"]
         }
     ]
 }
