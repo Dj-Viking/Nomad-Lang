@@ -11,7 +11,7 @@ export async function verifyTokenAsync(token: string): Promise<MyJwtData | null 
     jwt.verify(
       token as string,
       SECRET as string,
-      { maxAge: EXPIRATION }, //maxage deprecated but still accepted...
+      { maxAge: "1d" }, //maxage deprecated but still accepted...
       (error, decoded) => {
         if (!!error) returnMe = error;
         if (decoded) returnMe = decoded;

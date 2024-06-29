@@ -21,7 +21,7 @@ function verifyTokenAsync(token) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve) => {
             let returnMe;
-            jsonwebtoken_1.default.verify(token, SECRET, { maxAge: EXPIRATION }, (error, decoded) => {
+            jsonwebtoken_1.default.verify(token, SECRET, { maxAge: "1d" }, (error, decoded) => {
                 if (!!error)
                     returnMe = error;
                 if (decoded)

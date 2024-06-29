@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-window.process ? null : window.process = {
-  env: process?.env?.NODE_ENV || "production" 
-} as any;
 
-export const API_URL =
-  process.env.NODE_ENV === "production"
+function isprod() {
+  return /onrender/g.test(window.location.host);
+}
+
+export const API_URL = (() => {
+
+  return isprod()
     ? "https://nomad-lang.onrender.com"
     : "http://localhost:4000";
+})();
