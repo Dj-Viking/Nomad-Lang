@@ -47,7 +47,7 @@ const {
     console.log("===================");
     console.log("WHAT IS CURRENT DIR", __dirname);
     console.log("===================");
-    app.use(express.static(path.resolve(__dirname, "client/dist")));
+    app.use(express.static(path.join(__dirname, "../../client/dist")));
     app.use(router);
 
     //IF-ENV IN PRODUCTION
