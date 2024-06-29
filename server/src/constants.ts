@@ -40,5 +40,5 @@ export const MOCK_EDIT_CARD = {
 };
 
 export const APP_DOMAIN_PREFIX: string | undefined = IS_PROD
-  ? "https://https://nomad-lang.herokuapp.com"
+  ? "https://https://nomad-lang.onrender.com"
   : "http://localhost:8080";

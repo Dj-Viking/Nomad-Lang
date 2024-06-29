@@ -4,7 +4,7 @@
 * A language learning game where users can customize their own flashcards. Organized in categories by language. View cards from certain languages by selecting the category within the sidebar.
 
 # Deployed application 
-* <a href="https://nomad-lang.herokuapp.com" rel="noopener noreferrer">
+* <a href="https://nomad-lang.onrender.com" rel="noopener noreferrer">
   On Heroku
 </a>
 
