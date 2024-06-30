@@ -7,4 +7,8 @@ router.get("/", (_req, res) => {
 });
 router.use("/user", userRouter);
 
+// router.use("*", (_, res) => {
+//     res.sendFile(path.join(__dirname, "../../../client/dist/index.html"));
+// });
+
 export default router;
