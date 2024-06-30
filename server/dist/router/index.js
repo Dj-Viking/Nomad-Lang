@@ -11,5 +11,8 @@ router.get("/", (_req, res) => {
     res.sendFile(path_1.default.join(__dirname, "../../../client/dist/index.html"));
 });
 router.use("/user", userRouter_1.userRouter);
+router.use("*", (_, res) => {
+    res.sendFile(path_1.default.join(__dirname, "../../../client/dist/index.html"));
+});
 exports.default = router;
 //# sourceMappingURL=index.js.map
